@@ -13,6 +13,7 @@
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { applySchema, getDb } from './init.js';
+import { committeeCanonical } from './load-bill-committees.js';
 
 const HOME     = process.env.HOME!;
 const PIPE_DIR = resolve(HOME, '.hermes/civiclens/pipeline');
@@ -188,9 +189,9 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
     if (!c?.name) continue;
     await conn.run(
       `INSERT OR REPLACE INTO committees
-       (member_id, committee_name, role, source_url, fetched_at)
-       VALUES (?,?,?,?,?)`,
-      [memberId, c.name, c.role ?? null, c.sourceUrl ?? null, fetchedAt]
+       (member_id, committee_name, committee_canonical, role, source_url, fetched_at)
+       VALUES (?,?,?,?,?,?)`,
+      [memberId, c.name, committeeCanonical(c.name), c.role ?? null, c.sourceUrl ?? null, fetchedAt]
     );
     committeeCount++;
   }

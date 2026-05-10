@@ -7,6 +7,7 @@ export type AgentName =
   | 'predictor'
   | 'connection-mapper'
   | 'trade-analyst'
+  | 'revolving-door'
   | 'summarizer'
   | 'coder'
   | 'code-checker'
@@ -23,6 +24,7 @@ export type PipelineStatus =
   | 'predicting'
   | 'connecting'
   | 'analyzing-trades'
+  | 'detecting-revolving-door'
   | 'summarizing'
   | 'coding'
   | 'reviewing-code'
@@ -132,6 +134,60 @@ export interface ConnectionData {
   targetType: 'politician' | 'donor' | 'organization' | 'pac';
   relationshipType: string;
   strength: number;
+}
+
+// Super PAC independent expenditures (FEC Schedule E + A)
+export type SupportOppose = 'S' | 'O';
+
+export interface SuperPacIE {
+  committeeId: string;
+  committeeName: string;
+  committeeType: string | null;       // e.g. "PAC - Nonqualified", "Independent Expenditure-Only"
+  designation: string | null;         // e.g. "Leadership PAC"
+  party: string | null;               // "DEM" | "REP" | "IND" | "NON" | null
+  cycle: number;
+  supportOppose: SupportOppose;       // 'S' = supporting candidate, 'O' = opposing
+  totalAmount: number;
+  count: number;                      // number of itemized filings aggregated
+}
+
+export interface IEFiling {
+  committeeId: string;
+  committeeName: string;
+  candidateId: string;
+  supportOppose: SupportOppose;
+  amount: number;
+  expenditureDate: string | null;
+  disbursementDate: string | null;
+  description: string | null;
+  payeeName: string | null;
+  pdfUrl: string | null;
+  reportYear: number | null;
+  electionType: string | null;        // e.g. "P2022", "G2024"
+  transactionId: string;
+}
+
+export interface SuperPacFunder {
+  contributorName: string;
+  contributorEmployer: string | null;
+  contributorOccupation: string | null;
+  contributorState: string | null;
+  entityType: string | null;
+  amount: number;
+  date: string | null;
+  isPassthrough: boolean;             // true for ActBlue/WinRed conduit aggregates
+}
+
+export interface SuperPacIEReport {
+  candidateId: string;
+  cycle: number;
+  fetchedAt: string;
+  supporting: SuperPacIE[];           // sorted by totalAmount desc
+  opposing: SuperPacIE[];             // sorted by totalAmount desc
+  totalSupporting: number;
+  totalOpposing: number;
+  filings?: IEFiling[];               // populated when itemized=true
+  topFunders?: Record<string, SuperPacFunder[]>; // committeeId -> top donors
 }
 
 // Data Checker output

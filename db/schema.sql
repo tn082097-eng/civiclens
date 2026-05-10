@@ -364,3 +364,64 @@ SELECT
   fetched_at,
   date_diff('day', fetched_at, current_timestamp) AS days_since_fetch
 FROM members;
+
+-- ─── LDA (Lobbying Disclosure Act) ──────────────────────────────────────────
+-- Source: lda.senate.gov REST API (paginated, page_size capped at 25).
+-- Two tables: one row per (filing × lobbyist), plus filing-level metadata.
+-- Only filings with at least one non-null `covered_position` are retained —
+-- that's the revolving-door signal. Bulk filings without former-government
+-- ties would balloon the table to ~2M rows for no analytic value.
+CREATE TABLE IF NOT EXISTS lda_filings (
+  filing_uuid        TEXT PRIMARY KEY,
+  filing_year        INTEGER NOT NULL,
+  filing_period      TEXT,                  -- first_quarter | second_quarter | ...
+  filing_type        TEXT,                  -- Q1 | Q2 | YE | RR | ...
+  registrant_name    TEXT,                  -- lobbying firm
+  client_name        TEXT,                  -- entity that hired the firm
+  income             DOUBLE,
+  expenses           DOUBLE,
+  posted_at          TIMESTAMP,
+  filing_url         TEXT,
+  source_url         TEXT,                  -- canonical lda.senate.gov filing URL
+  fetched_at         TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS lda_lobbyists (
+  filing_uuid        TEXT NOT NULL,
+  lobbyist_id        INTEGER NOT NULL,      -- lda.senate.gov lobbyist primary key
+  first_name         TEXT,
+  last_name          TEXT,
+  middle_name        TEXT,
+  full_name          TEXT,                  -- "First Middle Last" — convenience
+  full_name_canonical TEXT,                 -- UPPER, punctuation/suffix stripped
+  covered_position   TEXT,                  -- raw free-text former gov role
+  general_issues     TEXT,                  -- "/"-joined issue codes lobbied
+  government_entities TEXT,                 -- "/"-joined federal entities targeted
+  is_new             BOOLEAN,
+  fetched_at         TIMESTAMP NOT NULL,
+  PRIMARY KEY (filing_uuid, lobbyist_id)
+);
+
+-- Latest registration per lobbyist (for member-page joins). Picks the most
+-- recent filing per lobbyist; useful when one person has dozens of quarterly
+-- filings under the same registrant.
+CREATE OR REPLACE VIEW v_lobbyist_latest AS
+SELECT
+  l.lobbyist_id,
+  l.full_name,
+  l.full_name_canonical,
+  l.covered_position,
+  f.registrant_name,
+  f.client_name,
+  f.filing_year,
+  f.filing_period,
+  l.general_issues,
+  l.government_entities,
+  f.source_url,
+  ROW_NUMBER() OVER (
+    PARTITION BY l.lobbyist_id
+    ORDER BY f.filing_year DESC, f.posted_at DESC
+  ) AS rn
+FROM lda_lobbyists l
+JOIN lda_filings f USING (filing_uuid)
+QUALIFY rn = 1;

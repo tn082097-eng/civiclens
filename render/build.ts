@@ -9,7 +9,7 @@
  * Pages:
  *   site/index.html          — corpus overview + closest-trades feed
  *   site/network.html        — co-sponsorship network (D3 force graph + edge table)
- *   site/members/<id>.html   — per-member: bio, donors, trades, trades×votes, predictor
+ *   site/members/<id>.html   — per-member: bio, glance, timeline, trades×votes, donors, outside spending, co-sponsorship
  *
  * Usage:
  *   npx tsx render/build.ts
@@ -28,6 +28,8 @@ import {
   cosponsorNetwork,
   type TradeNearVote,
 } from '../db/queries.js';
+import { fetchSuperPacIE } from '../lib/fec-ie.js';
+import type { SuperPacIEReport, SuperPacIE, SuperPacFunder } from '../lib/types.js';
 
 const HOME = process.env.HOME!;
 const OUT_DIR = resolve(HOME, '.hermes/civiclens/site');
@@ -78,6 +80,38 @@ interface TradeRow {
   closest: TradeNearVote;                           // smallest days_abs
   closestJurisdiction: TradeNearVote | null;        // smallest days_abs where member_on_bill_committee
   example_votes: TradeNearVote[];                   // up to 3 sample votes
+}
+
+// Deterministic 0-100 intensity from the strongest pair in a TradeRow.
+// Mirrors the trade-analyst scoring rubric so render weights and agent
+// findings stay consistent. Output mapped to low/medium/high CSS classes.
+type Intensity = 'low' | 'medium' | 'high';
+
+function rowIntensityScore(row: TradeRow): number {
+  const candidates = [row.closest, row.closestJurisdiction, ...row.example_votes].filter(Boolean) as TradeNearVote[];
+  let best = 0;
+  for (const v of candidates) {
+    const onCmte = v.member_on_bill_committee;
+    const ticker = (v as any).bill_mentions_ticker === true;
+    const days = v.days_before_vote;
+    let s = 0;
+    if (days === 0 && onCmte) s = 100;
+    else if (days === 0)      s = 90;
+    else if (days <= 3 && onCmte) s = 85;
+    else if (days <= 3)       s = 80;
+    else if (onCmte)          s = 70;
+    else                      s = 50;
+    if (ticker) s += 5;  // small bump for direct ticker mention
+    if (s > best) best = s;
+  }
+  return best;
+}
+
+function rowIntensity(row: TradeRow): Intensity {
+  const s = rowIntensityScore(row);
+  if (s >= 85) return 'high';
+  if (s >= 70) return 'medium';
+  return 'low';
 }
 
 function collapseTrades(pairs: TradeNearVote[]): TradeRow[] {
@@ -191,8 +225,16 @@ footer a { color: var(--fg-dim); }
 .filter-toggle input { accent-color: var(--accent); cursor: pointer; }
 .filter-count { font-size: 12px; color: var(--fg-muted); margin-left: auto; }
 /* Trade card layout */
-.trade-card { border: 1px solid var(--line); border-radius: 4px; padding: 12px 14px; margin-bottom: 10px; }
+.trade-card { border: 1px solid var(--line); border-radius: 4px; padding: 12px 14px; margin-bottom: 10px; transition: border-color .15s; }
 .trade-card:hover { border-color: #3a3e45; }
+/* Intensity-mapped rendering — visual weight scales with anomaly substrate
+   (committee jurisdiction × proximity × ticker mention). Crude v1: density,
+   left-edge accent, asset weight. No text label — the page's voice stays neutral. */
+.trade-card.intensity-low    { opacity: 0.78; padding: 8px 12px; }
+.trade-card.intensity-low .tc-asset { font-weight: 400; }
+.trade-card.intensity-medium { border-left: 3px solid rgba(247,201,72,0.5); padding-left: 12px; }
+.trade-card.intensity-high   { border-left: 3px solid #d65a5a; padding-left: 12px; background: rgba(214,90,90,0.03); }
+.trade-card.intensity-high .tc-asset { font-weight: 600; }
 .trade-card .tc-header { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
 .trade-card .tc-asset { font-size: 14px; font-weight: 500; flex: 1; min-width: 180px; }
 .trade-card .tc-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; font-size: 12px; color: var(--fg-dim); }
@@ -208,6 +250,18 @@ footer a { color: var(--fg-dim); }
 .section-tab.active { color: var(--fg); border-bottom-color: var(--accent); }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
+.pac-totals { display: flex; gap: 16px; margin: 8px 0 4px; font-size: 13px; }
+.pac-side { padding: 4px 10px; border: 1px solid var(--line); border-radius: 3px; }
+.pac-side.support { color: #4caf7d; border-color: rgba(76,175,125,0.4); }
+.pac-side.oppose  { color: #e07840; border-color: rgba(224,120,64,0.4); }
+.pac-list { display: flex; flex-direction: column; gap: 8px; }
+.pac-row { border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; }
+.pac-row .pac-name { margin-bottom: 4px; }
+.pac-row .pac-amount { font-size: 13px; }
+.glance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 4px; margin: 8px 0 16px; overflow: hidden; }
+.glance-cell { background: var(--bg); padding: 12px 14px; }
+.glance-value { font-size: 22px; font-weight: 500; color: var(--fg); line-height: 1.1; }
+.glance-label { font-size: 11px; color: var(--fg-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
 `;
 
 function layout(title: string, breadcrumb: string, body: string): string {
@@ -453,7 +507,7 @@ interface MemberDetail {
   trade_activity: string | null;
 }
 
-async function fetchMember(memberId: string): Promise<MemberDetail | null> {
+export async function fetchMember(memberId: string): Promise<MemberDetail | null> {
   const conn = await getDb();
   const r = await conn.run(
     `SELECT member_id, name, party, chamber, state, district, bio_summary, bioguide_id,
@@ -496,17 +550,6 @@ async function fetchAllTrades(memberId: string, limit = 500): Promise<any[]> {
      FROM pfd_transactions WHERE member_id = ?
      ORDER BY tx_date DESC LIMIT ?`,
     [memberId, limit],
-  );
-  return await r.getRowObjects() as any[];
-}
-
-async function fetchPredictor(memberId: string): Promise<any[]> {
-  const conn = await getDb();
-  const r = await conn.run(
-    `SELECT model, brier_score, log_loss, accuracy, train_count, test_count
-     FROM predictions WHERE member_id = ?
-     ORDER BY brier_score ASC NULLS LAST`,
-    [memberId],
   );
   return await r.getRowObjects() as any[];
 }
@@ -741,15 +784,253 @@ function buildTimelineBlock(_memberId: string, votes: TimelineVote[], trades: Ti
 <\/script>`;
 }
 
-async function buildMemberPage(m: MemberDetail): Promise<void> {
-  const [donors, trades, peers, suspiciousPairs, allTradePairs, predictor, timeline] = await Promise.all([
+// Current Congress + cycle. 118th Congress = 2023-2024. Update when 119th seats.
+const CURRENT_CONGRESS = 118;
+const CYCLE_START = '2023-01-03';
+const CYCLE_END   = '2025-01-03';
+
+interface ActivityGlance {
+  trades: number;
+  tradeVolume: number;       // sum of band midpoints, nullable bands skipped
+  votes: number;
+  billsSponsored: number;
+  topDonorType: string | null;
+  distinctTickers: number;   // distinct tickers in pfd_transactions for this cycle
+  tradesNearRelatedVote: number; // distinct trades within 14d of a related vote (ticker mention OR committee jurisdiction)
+}
+
+async function fetchActivityGlance(memberId: string): Promise<ActivityGlance> {
+  const conn = await getDb();
+
+  // Single rolled-up query for the four counts that come from per-member tables.
+  const r = await conn.run(`
+    WITH band_mid AS (
+      SELECT CASE amount_band
+        WHEN '$1,001 - $15,000'        THEN 8000
+        WHEN '$15,001 - $50,000'       THEN 32500
+        WHEN '$50,001 - $100,000'      THEN 75000
+        WHEN '$100,001 - $250,000'     THEN 175000
+        WHEN '$250,001 - $500,000'     THEN 375000
+        WHEN '$500,001 - $1,000,000'   THEN 750000
+        WHEN '$1,000,001 - $5,000,000' THEN 3000000
+        WHEN '$5,000,001 - $25,000,000' THEN 15000000
+        WHEN '$25,000,001 - $50,000,000' THEN 37500000
+        WHEN 'Over $50,000,000'        THEN 50000000
+        ELSE NULL
+      END AS mid
+      FROM pfd_transactions
+      WHERE member_id = ? AND tx_date >= ?::DATE AND tx_date < ?::DATE
+    ),
+    counts AS (
+      SELECT
+        (SELECT count(*) FROM pfd_transactions WHERE member_id = ? AND tx_date >= ?::DATE AND tx_date < ?::DATE) AS trades,
+        (SELECT coalesce(sum(mid), 0) FROM band_mid)                                                           AS trade_volume,
+        (SELECT count(*) FROM votes  WHERE member_id = ? AND date >= ?::DATE AND date < ?::DATE)               AS votes,
+        (SELECT count(*) FROM bills  WHERE member_id = ? AND sponsor_role = 'sponsor')                         AS bills_sponsored
+    )
+    SELECT * FROM counts
+  `, [
+    memberId, CYCLE_START, CYCLE_END,
+    memberId, CYCLE_START, CYCLE_END,
+    memberId, CYCLE_START, CYCLE_END,
+    memberId,
+  ]);
+  const row = (await r.getRowObjects())[0] as any;
+
+  // Top donor type — separate query (different aggregation shape).
+  const dtR = await conn.run(`
+    SELECT donor_type, sum(amount) AS total
+    FROM donors
+    WHERE member_id = ? AND donor_type IS NOT NULL
+    GROUP BY donor_type
+    ORDER BY total DESC
+    LIMIT 1
+  `, [memberId]);
+  const dtRow = (await dtR.getRowObjects())[0] as any;
+
+  // Distinct tickers traded in cycle.
+  const dtcR = await conn.run(`
+    SELECT count(DISTINCT ticker) AS n
+    FROM pfd_transactions
+    WHERE member_id = ? AND ticker IS NOT NULL AND ticker <> ''
+      AND tx_date >= ?::DATE AND tx_date < ?::DATE
+  `, [memberId, CYCLE_START, CYCLE_END]);
+  const dtcRow = (await dtcR.getRowObjects())[0] as any;
+
+  // Spec metric: distinct trades within 14 days of a related vote, where
+  // "related" means the bill summary names the traded ticker OR the trader
+  // sits on a committee with jurisdiction over the bill. Counts unique
+  // (filing, asset/ticker) trades, not pair rows.
+  const relR = await conn.run(`
+    SELECT count(DISTINCT (trade_filing_id || '|' || COALESCE(asset,'') || '|' || COALESCE(ticker,''))) AS n
+    FROM v_suspicious_trades
+    WHERE member_id = ?
+      AND tx_date >= ?::DATE AND tx_date < ?::DATE
+      AND days_abs <= 14
+      AND (bill_mentions_ticker = TRUE OR member_on_bill_committee = TRUE)
+  `, [memberId, CYCLE_START, CYCLE_END]);
+  const relRow = (await relR.getRowObjects())[0] as any;
+
+  return {
+    trades:           Number(row.trades ?? 0),
+    tradeVolume:      Number(row.trade_volume ?? 0),
+    votes:            Number(row.votes ?? 0),
+    billsSponsored:   Number(row.bills_sponsored ?? 0),
+    topDonorType:     dtRow ? String(dtRow.donor_type) : null,
+    distinctTickers:  Number(dtcRow.n ?? 0),
+    tradesNearRelatedVote: Number(relRow?.n ?? 0),
+  };
+}
+
+function renderActivityGlance(g: ActivityGlance): string {
+  const cell = (label: string, value: string) =>
+    `<div class="glance-cell"><div class="glance-value">${value}</div><div class="glance-label">${esc(label)}</div></div>`;
+  return `
+<h2>Activity at a glance</h2>
+<p class="lede" style="margin-bottom:8px;">${CURRENT_CONGRESS}th Congress, ${CYCLE_START.slice(0,4)}–${CYCLE_END.slice(0,4)} cycle. Counts only.</p>
+<div class="glance-grid">
+  ${cell('Trades',                   g.trades.toLocaleString())}
+  ${cell('Trade volume',             fmtMoney(g.tradeVolume))}
+  ${cell('Votes cast',               g.votes.toLocaleString())}
+  ${cell('Bills sponsored (all-time)', g.billsSponsored.toLocaleString())}
+  ${cell('Top donor type',           g.topDonorType ?? '—')}
+  ${cell('Distinct tickers traded',  g.distinctTickers.toLocaleString())}
+  ${cell('Trades within 14d of related vote', g.tradesNearRelatedVote.toLocaleString())}
+</div>
+`;
+}
+
+interface CosponsorEdgeForMember {
+  peer_id: string;
+  peer_name: string;
+  peer_party: string | null;
+  shared_bills: number;
+}
+
+async function fetchCosponsorEdgesForMember(memberId: string, limit = 5): Promise<CosponsorEdgeForMember[]> {
+  const conn = await getDb();
+  const r = await conn.run(`
+    WITH pairs AS (
+      SELECT b.member_id AS peer_id, count(*) AS shared_bills
+      FROM bills a
+      JOIN bills b ON a.bill_id = b.bill_id AND a.member_id <> b.member_id
+      WHERE a.member_id = ?
+      GROUP BY b.member_id
+    )
+    SELECT p.peer_id, m.name AS peer_name, m.party AS peer_party, p.shared_bills
+    FROM pairs p
+    JOIN members m ON m.member_id = p.peer_id
+    ORDER BY p.shared_bills DESC
+    LIMIT ?
+  `, [memberId, limit]);
+  const rows = await r.getRowObjects() as any[];
+  return rows.map(row => ({
+    peer_id:      String(row.peer_id),
+    peer_name:    String(row.peer_name),
+    peer_party:   row.peer_party ?? null,
+    shared_bills: Number(row.shared_bills),
+  }));
+}
+
+function renderCosponsorEmbed(edges: CosponsorEdgeForMember[]): string {
+  if (edges.length === 0) {
+    return `
+<h2>Co-sponsorship</h2>
+<p class="muted">No shared-bill peers in corpus.</p>
+`;
+  }
+  const rows = edges.map(e => `
+    <tr>
+      <td><a class="member" href="${esc(e.peer_id)}.html">${esc(e.peer_name)}</a> ${e.peer_party ? `<span class="tag ${partyClass(e.peer_party)}" style="margin-left:4px;">${esc(e.peer_party)}</span>` : ''}</td>
+      <td class="num">${e.shared_bills}</td>
+    </tr>`).join('');
+  return `
+<h2>Co-sponsorship</h2>
+<p class="lede" style="margin-bottom:8px;">Top peers by shared bills in the loaded corpus. <a class="row-link" href="../network.html">→ Full co-sponsorship network</a></p>
+<table>
+  <thead><tr><th>Peer</th><th class="num">Shared bills</th></tr></thead>
+  <tbody>${rows}</tbody>
+</table>
+`;
+}
+
+function renderPatternsPlaceholder(): string {
+  return `
+<h2>Patterns detected</h2>
+<p class="muted">Pattern detection coming soon — see <a class="row-link" href="../about.html">/about</a> for methodology when published.</p>
+`;
+}
+
+async function renderOutsideSpending(m: MemberDetail, cycle: number): Promise<string> {
+  if (!m.fec_candidate_id) return '';
+
+  let report: SuperPacIEReport;
+  try {
+    report = await fetchSuperPacIE(m.fec_candidate_id, cycle, { topFunders: 3 });
+  } catch (e) {
+    console.warn(`[outside-spending] fetch failed for ${m.member_id}:`, (e as Error).message);
+    return '';
+  }
+
+  if (report.supporting.length === 0 && report.opposing.length === 0) return '';
+
+  function fmtPac(p: SuperPacIE, funders: SuperPacFunder[] | undefined): string {
+    const meta = [p.committeeType, p.designation, p.party].filter(Boolean).join(' · ');
+    const realFunders = (funders ?? []).filter(f => !f.isPassthrough);
+    const fundersHtml = realFunders.length > 0
+      ? `<div class="dim" style="font-size:11px; margin-top:4px;">
+           Top funders: ${realFunders.slice(0, 3).map(f =>
+             `${esc(f.contributorName)} <span class="muted">${fmtMoney(f.amount)}</span>`
+           ).join(' · ')}
+         </div>`
+      : '';
+    return `<div class="pac-row">
+      <div class="pac-name"><strong>${esc(p.committeeName ?? p.committeeId)}</strong>
+        ${meta ? `<span class="muted" style="font-size:11px;"> · ${esc(meta)}</span>` : ''}
+      </div>
+      <div class="pac-amount num">${fmtMoney(p.totalAmount)} <span class="muted" style="font-size:11px;">(${p.count} filing${p.count === 1 ? '' : 's'})</span></div>
+      ${fundersHtml}
+    </div>`;
+  }
+
+  const supportingTop = report.supporting.slice(0, 3);
+  const opposingTop = report.opposing.slice(0, 3);
+  const funders = report.topFunders ?? {};
+
+  const supportingBlock = supportingTop.length === 0
+    ? `<p class="muted">No supporting independent expenditure in ${cycle} cycle.</p>`
+    : `<div class="pac-list">${supportingTop.map(p => fmtPac(p, funders[p.committeeId])).join('')}</div>`;
+
+  const opposingBlock = opposingTop.length === 0
+    ? `<p class="muted">No opposing independent expenditure in ${cycle} cycle.</p>`
+    : `<div class="pac-list">${opposingTop.map(p => fmtPac(p, funders[p.committeeId])).join('')}</div>`;
+
+  return `
+<h2>Outside spending (Super PACs)</h2>
+<p class="lede" style="margin-bottom:8px;">
+  Independent expenditure for or against ${esc(m.name)}, ${cycle} cycle.
+  Uncapped, not coordinated with the candidate. Funders shown where Schedule A is available.
+</p>
+<div class="pac-totals">
+  <span class="pac-side support">Supporting: ${fmtMoney(report.totalSupporting)}</span>
+  <span class="pac-side oppose">Opposing: ${fmtMoney(report.totalOpposing)}</span>
+</div>
+<h3 style="margin-top:16px;">Supporting Super PACs</h3>
+${supportingBlock}
+<h3 style="margin-top:16px;">Opposing Super PACs</h3>
+${opposingBlock}
+`;
+}
+
+export async function buildMemberPage(m: MemberDetail): Promise<void> {
+  const [donors, trades, peers, suspiciousPairs, allTradePairs, timeline, cosponsorEdges] = await Promise.all([
     fetchTopDonors(m.member_id),
     fetchAllTrades(m.member_id),
     findSharedDonors(m.member_id),
     findSuspiciousTrades(m.member_id, 90),    // discretionary, before-vote only
     findTradesNearVotes(m.member_id, 30),     // all trades for raw count
-    fetchPredictor(m.member_id),
     fetchTimelineData(m.member_id),
+    fetchCosponsorEdgesForMember(m.member_id, 5),
   ]);
   const collapsedSuspicious = collapseTrades(suspiciousPairs);
   const collapsedTrades = collapseTrades(allTradePairs);
@@ -876,7 +1157,7 @@ async function buildMemberPage(m: MemberDetail): Promise<void> {
       ? `<div class="tc-votes">${voteRows.join('')}</div>`
       : '';
 
-    return `<div class="trade-card">${header}${votesHtml}</div>`;
+    return `<div class="trade-card intensity-${rowIntensity(t)}">${header}${votesHtml}</div>`;
   }
 
   const suspiciousTradesBlock = collapsedSuspicious.length === 0 && trades.length === 0
@@ -902,29 +1183,19 @@ async function buildMemberPage(m: MemberDetail): Promise<void> {
   </tr>`).join('')}</tbody>
 </table>`;
 
-  const predictorBlock = predictor.length === 0
-    ? '<p class="muted">No predictor calibration in DB for this member.</p>'
-    : `<table>
-<thead><tr><th>Model</th><th class="num">Brier</th><th class="num">Log-loss</th><th class="num">Accuracy</th><th class="num">Train</th><th class="num">Test</th></tr></thead>
-<tbody>${predictor.map(p => `
-  <tr>
-    <td>${esc(p.model)}</td>
-    <td class="num">${p.brier_score === null ? '—' : Number(p.brier_score).toFixed(4)}</td>
-    <td class="num">${p.log_loss === null ? '—' : Number(p.log_loss).toFixed(4)}</td>
-    <td class="num">${p.accuracy === null ? '—' : (Number(p.accuracy) * 100).toFixed(1) + '%'}</td>
-    <td class="num"><span class="muted">${p.train_count ?? '—'}</span></td>
-    <td class="num"><span class="muted">${p.test_count ?? '—'}</span></td>
-  </tr>`).join('')}</tbody>
-</table>
-<p class="muted" style="font-size:11px; margin-top:8px;">Lower Brier is better. Models are baselines: naive-half (always 0.5), always-yes (always 1.0), historical-rate (member's own yea-rate), laplace-smoothed, and party-class-rate (party + chamber base rate).</p>`;
-
   const timelineBlock = buildTimelineBlock(m.member_id, timeline.votes, timeline.trades);
+  const outsideSpendingBlock = await renderOutsideSpending(m, 2024);
+  const cosponsorBlock = renderCosponsorEmbed(cosponsorEdges);
+  const patternsBlock = renderPatternsPlaceholder();
+  const glance = await fetchActivityGlance(m.member_id);
+  const glanceBlock = renderActivityGlance(glance);
   const tabId = `tabs-${m.member_id.replace(/[^a-z0-9]/g, '-')}`;
 
   const body = `
 <h2>${esc(m.name)}</h2>
 ${meta}
 ${bio}
+${glanceBlock}
 ${tradeActivityBlock}
 <h2>Timeline</h2>
 <p class="lede" style="margin-bottom:8px;">Votes (circles, top row) and trades (diamonds, bottom row) plotted on the same axis. Hover for detail. One dot per month — most significant vote shown (Nay preferred over Yea).</p>
@@ -963,8 +1234,11 @@ ${donorsBlock}
 <h2>Shared-donor peers in corpus</h2>
 ${peersBlock}
 
-<h2>Predictor calibration</h2>
-${predictorBlock}
+${outsideSpendingBlock}
+
+${cosponsorBlock}
+
+${patternsBlock}
 
 <p style="margin-top: 32px;"><a class="row-link" href="../index.html">← back to corpus</a></p>
 `;

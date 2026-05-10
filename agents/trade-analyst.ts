@@ -21,6 +21,14 @@ export interface TradeFinding {
   member_committee_role: string | null;
 }
 
+export interface TradeTickerSummary {
+  ticker: string;
+  count: number;
+  firstDate: string;
+  lastDate: string;
+  txTypes: string;
+}
+
 export interface TradeAnalystOutput {
   taskId: string;
   analyzedAt: string;
@@ -29,6 +37,8 @@ export interface TradeAnalystOutput {
   tradeNarrative: string;
   topFindings: TradeFinding[];
   totalSuspiciousTrades: number;
+  allDiscretionaryTrades: TradeTickerSummary[];
+  totalDiscretionaryTrades: number;
 }
 
 function computeSuspicionLevel(findings: TradeFinding[]): SuspicionLevel {
@@ -61,6 +71,8 @@ function writeEmpty(
   task: PipelineTask,
   suspicionLevel: SuspicionLevel,
   totalSuspiciousTrades = 0,
+  allDiscretionaryTrades: TradeTickerSummary[] = [],
+  totalDiscretionaryTrades = 0,
 ): void {
   const output: TradeAnalystOutput = {
     taskId:               task.taskId,
@@ -70,6 +82,8 @@ function writeEmpty(
     tradeNarrative:       'N/A',
     topFindings:          [],
     totalSuspiciousTrades,
+    allDiscretionaryTrades,
+    totalDiscretionaryTrades,
   };
   writePipe(task.taskId, 'trade-analyst', output);
   markAgent(task, 'trade-analyst', 'complete', { suspicionLevel, findings: 0 });
@@ -78,7 +92,7 @@ function writeEmpty(
 export async function runTradeAnalyst(task: PipelineTask): Promise<boolean> {
   markAgent(task, 'trade-analyst', 'running');
 
-  const ANALYST_MODEL = process.env.LLM_SUMMARIZER_MODEL ?? 'claude-sonnet-4-6';
+  const ANALYST_MODEL = process.env.LLM_TRADE_MODEL ?? process.env.LLM_SUMMARIZER_MODEL ?? 'claude-sonnet-4-6';
   const memberName = task.target.name;
 
   // ── 1. Look up member_id from DB ────────────────────────────────────────────
@@ -105,28 +119,73 @@ export async function runTradeAnalyst(task: PipelineTask): Promise<boolean> {
     return true;
   }
 
-  // ── 2. Query top suspicious trades ─────────────────────────────────────────
+  // ── 2. Query top suspicious trades (deduplicated per trade×best-vote) ──────
   let findings: TradeFinding[] = [];
   let totalSuspiciousTrades = 0;
+  let allDiscretionaryTrades: TradeTickerSummary[] = [];
+  let totalDiscretionaryTrades = 0;
   try {
+    // Two-level deduplication:
+    //   Level 1 (rn=1): per (ticker, tx_date), keep only the best-matching vote.
+    //     Prefer committee involvement > proximity > substantive bill over procedural.
+    //   Level 2 (rn2=1): per tx_date, keep only the single best ticker.
+    //     This prevents all 5 slots being consumed by different tickers all traded
+    //     on the same date, which would hide closer but fewer-coincident trades
+    //     on other dates (e.g. PLTR Jul 15 × H.R.4016 Jul 18).
     const r = await db!.run(
-      `SELECT DISTINCT asset, ticker, tx_type, tx_date::text AS tx_date, amount_band,
-              days_before_vote, bill_title, vote_question,
-              member_on_bill_committee, member_committee_role,
-              bill_source_url, vote_source_url
-       FROM v_suspicious_trades
-       WHERE member_id = ?
-         AND days_before_vote <= 30
-       ORDER BY
-         CASE
-           WHEN days_before_vote = 0 AND member_on_bill_committee THEN 100
-           WHEN days_before_vote = 0                              THEN 90
-           WHEN days_before_vote <= 3 AND member_on_bill_committee THEN 85
-           WHEN days_before_vote <= 3                             THEN 80
-           WHEN member_on_bill_committee                          THEN 70
-           ELSE 50
-         END DESC,
-         days_before_vote ASC
+      `WITH ranked AS (
+         SELECT DISTINCT
+           asset, ticker, tx_type, tx_date::text AS tx_date, amount_band,
+           days_before_vote, bill_title, vote_question,
+           member_on_bill_committee, member_committee_role,
+           bill_source_url, vote_source_url,
+           ROW_NUMBER() OVER (
+             PARTITION BY ticker, tx_date
+             ORDER BY
+               CASE
+                 WHEN days_before_vote = 0 AND member_on_bill_committee THEN 100
+                 WHEN days_before_vote = 0                              THEN 90
+                 WHEN days_before_vote <= 3 AND member_on_bill_committee THEN 85
+                 WHEN days_before_vote <= 3                             THEN 80
+                 WHEN member_on_bill_committee                          THEN 70
+                 ELSE 50
+               END DESC,
+               days_before_vote ASC,
+               -- prefer substantive bill votes over procedural ones
+               CASE
+                 WHEN vote_question ILIKE 'On Ordering the Previous Question%' THEN 2
+                 WHEN vote_question ILIKE 'On Motion to%'                      THEN 2
+                 WHEN vote_question ILIKE 'H.Res.%'                            THEN 2
+                 ELSE 1
+               END ASC
+           ) AS rn,
+           CASE
+             WHEN days_before_vote = 0 AND member_on_bill_committee THEN 100
+             WHEN days_before_vote = 0                              THEN 90
+             WHEN days_before_vote <= 3 AND member_on_bill_committee THEN 85
+             WHEN days_before_vote <= 3                             THEN 80
+             WHEN member_on_bill_committee                          THEN 70
+             ELSE 50
+           END AS score
+         FROM v_suspicious_trades
+         WHERE member_id = ?
+           AND days_before_vote <= 30
+       ),
+       by_date AS (
+         SELECT *,
+           ROW_NUMBER() OVER (
+             PARTITION BY tx_date
+             ORDER BY score DESC, days_before_vote ASC
+           ) AS rn2
+         FROM ranked
+         WHERE rn = 1
+       )
+       SELECT asset, ticker, tx_type, tx_date, amount_band, days_before_vote,
+              bill_title, vote_question, member_on_bill_committee,
+              member_committee_role, bill_source_url, vote_source_url
+       FROM by_date
+       WHERE rn2 = 1
+       ORDER BY score DESC, days_before_vote ASC
        LIMIT 5`,
       [memberId],
     );
@@ -151,6 +210,44 @@ export async function runTradeAnalyst(task: PipelineTask): Promise<boolean> {
     );
     const countRows = await countR.getRowObjects() as any[];
     totalSuspiciousTrades = Number(countRows[0]?.n ?? 0);
+
+    // All discretionary trades — ticker-level rollup for pattern context
+    const discreteFilter = `
+      asset_type NOT IN ('GS', 'MF', 'EF', 'BA', 'CT', 'AB', 'Corporate Bond', 'Municipal Security')
+      AND NOT (asset_type IN ('OT', 'Stock') AND (
+        LOWER(asset) LIKE '%etf%' OR LOWER(asset) LIKE '%index fund%'
+        OR LOWER(asset) LIKE '%s&p 500%' OR LOWER(asset) LIKE '%vanguard%'
+        OR LOWER(asset) LIKE '%ishares%' OR LOWER(asset) LIKE '%schwab%'
+        OR LOWER(asset) LIKE '%fidelity%'
+      ))`;
+    const allR = await db!.run(
+      `SELECT COALESCE(ticker, asset) AS ticker,
+              COUNT(*)::int AS cnt,
+              MIN(tx_date::text) AS first_tx,
+              MAX(tx_date::text) AS last_tx,
+              STRING_AGG(DISTINCT tx_type, '/') AS tx_types
+       FROM pfd_transactions
+       WHERE member_id = ? AND ${discreteFilter}
+       GROUP BY COALESCE(ticker, asset)
+       ORDER BY cnt DESC
+       LIMIT 40`,
+      [memberId],
+    );
+    const allRows = await allR.getRowObjects() as any[];
+    allDiscretionaryTrades = allRows.map((row: any): TradeTickerSummary => ({
+      ticker:    String(row.ticker ?? ''),
+      count:     Number(row.cnt),
+      firstDate: String(row.first_tx ?? ''),
+      lastDate:  String(row.last_tx ?? ''),
+      txTypes:   String(row.tx_types ?? ''),
+    }));
+
+    const totalR = await db!.run(
+      `SELECT COUNT(*)::int AS n FROM pfd_transactions WHERE member_id = ? AND ${discreteFilter}`,
+      [memberId],
+    );
+    const totalRows = await totalR.getRowObjects() as any[];
+    totalDiscretionaryTrades = Number(totalRows[0]?.n ?? 0);
   } catch (e: any) {
     warn('Trade Analyst', `query failed: ${e.message}`);
     writeEmpty(task, 'none');
@@ -158,39 +255,57 @@ export async function runTradeAnalyst(task: PipelineTask): Promise<boolean> {
   }
 
   if (findings.length === 0) {
-    writeEmpty(task, 'none', totalSuspiciousTrades);
+    writeEmpty(task, 'none', totalSuspiciousTrades, allDiscretionaryTrades, totalDiscretionaryTrades);
     ok('Trade Analyst', 'no discretionary trades before votes — N/A');
     return true;
   }
 
   // ── 3. Compute suspicion level (deterministic) ─────────────────────────────
   const suspicionLevel = computeSuspicionLevel(findings);
-  const sentenceTarget = totalSuspiciousTrades > 10 ? '4–6' : '3–4';
-
   // ── 4. LLM narrative ────────────────────────────────────────────────────────
   spin('Trade Analyst', `generating ${suspicionLevel} suspicion narrative via ${ANALYST_MODEL}…`);
 
-  const systemPrompt = `You are a sharp, neutral financial transparency analyst writing for a public accountability tool.
-Your job is to analyze trade-vote proximity data for a U.S. member of Congress and write a factual,
-analytical paragraph. You do not speculate about intent or legality — you only state what the records show.`;
+  const systemPrompt = `You are a sharp, neutral financial transparency analyst specializing in congressional trading patterns.
 
-  const userPrompt = `Write a ${sentenceTarget} sentence analytical paragraph about the most significant trade-vote proximity patterns for ${memberName}.
+You are given:
+- The top 5 most relevant trade-vote proximity findings for a U.S. member of Congress
+- A summary of their full discretionary trading portfolio (tickers, frequency, date ranges)
 
-Focus on:
-1. The strongest findings first — same-day trades, trades 1–3 days before a vote, and trades near bills where the member serves on the relevant committee.
-2. State timing precisely: "purchased N days before", "sold the same day as".
-3. If the member sat on a committee that handled the bill, state it factually.
-4. Group related trades when possible (e.g. multiple purchases of the same ticker near the same bill).
-5. If there are no particularly close patterns, say so concisely.
+Your job is to write a single, cohesive analytical paragraph (4–6 sentences) that reveals the most important patterns.
 
-FORBIDDEN words (do NOT use): extreme, radical, corrupt, suspicious, illegal, improper,
-dishonest, claims to, pretends to, hero, champion.
+**Core Rules:**
+- Focus on **patterns and relationships**, not just listing individual trades.
+- Prioritize: same-day or 1–3 day proximity + committee involvement + repeated behavior.
+- Use precise timing language: "purchased on the same day as", "sold 2 days before", "3 days prior to".
+- If the member served on a committee with jurisdiction over a bill, state it factually.
+- Reference the broader portfolio when relevant (e.g., "Despite heavy concentration in [sector]..." or "Across ${totalDiscretionaryTrades} transactions in ${allDiscretionaryTrades.length} positions...").
+- Never speculate about intent, legality, or ethics.
+- Avoid repetitive phrasing. Vary sentence structure.
 
-Do not use bullet points. Do not add a conclusion about legality or ethics.
-Cite specific tickers, dates, amounts, and bill titles from the data.
+**What to Emphasize (in order of importance):**
+1. The strongest proximity signals (especially same-day or committee-related)
+2. Any recurring patterns across multiple trades
+3. Concentration in specific sectors or tickers
+4. Notable absence of proximity in high-volume holdings
+
+**Output Format:**
+Write exactly one paragraph of 4–6 sentences. No bullet points. No concluding sentence. No moralizing.`;
+
+  const allTradesSummary = allDiscretionaryTrades.length > 0
+    ? allDiscretionaryTrades
+        .map(t => `${t.ticker} ×${t.count} (${t.firstDate}–${t.lastDate}, ${t.txTypes})`)
+        .join(', ')
+    : 'none';
+
+  const userPrompt = `**Input Data:**
 
 Top findings (ranked by proximity and committee involvement):
-${findingsToText(findings)}`;
+${findingsToText(findings)}
+
+Full discretionary portfolio (${totalDiscretionaryTrades} total transactions across ${allDiscretionaryTrades.length} positions; top 40 by frequency):
+${allTradesSummary}
+
+Member: ${memberName}`;
 
   let tradeNarrative: string;
   try {
@@ -218,6 +333,8 @@ ${findingsToText(findings)}`;
     tradeNarrative,
     topFindings:          findings,
     totalSuspiciousTrades,
+    allDiscretionaryTrades,
+    totalDiscretionaryTrades,
   };
 
   writePipe(task.taskId, 'trade-analyst', output);
