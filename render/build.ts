@@ -175,6 +175,16 @@ body {
   margin: 0;
   font: 15px/1.5 -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
   background: var(--bg); color: var(--fg);
+  font-feature-settings: 'kern' 1;
+}
+header h1, h2 {
+  font-family: 'Charter', 'Source Serif 4', 'Iowan Old Style', Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.num, td.num, .tc-asset, .tc-vote-row, .vote-count, .pac-totals, .kv .v {
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
 }
 header { padding: 24px 32px 12px; border-bottom: 1px solid var(--line); }
 header h1 { margin: 0 0 4px; font-size: 20px; letter-spacing: -0.01em; }
