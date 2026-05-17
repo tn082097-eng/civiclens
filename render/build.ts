@@ -216,9 +216,9 @@ a.member:hover { border-bottom-color: var(--accent); color: var(--accent); }
 .kv .k { color: var(--fg-dim); }
 .notice { padding: 10px 14px; background: rgba(121, 184, 255, 0.06); border: 1px solid rgba(121, 184, 255, 0.2); border-radius: 4px; font-size: 13px; color: var(--fg-dim); margin-bottom: 24px; }
 .trade-activity { margin: 0 0 24px; }
-.suspicion-badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 500; }
-.suspicion-badge.medium { background: rgba(247,201,72,0.12); color: #f7c948; border: 1px solid rgba(247,201,72,0.4); }
-.suspicion-badge.high   { background: rgba(214,90,90,0.12);  color: #d65a5a; border: 1px solid rgba(214,90,90,0.4); }
+.suspicion-badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 500; border: 1px solid var(--line); color: var(--fg-dim); }
+.suspicion-badge.medium { border-color: var(--fg-dim); color: var(--fg); font-weight: 600; }
+.suspicion-badge.high   { border-color: var(--fg);     color: var(--fg); font-weight: 700; }
 .bar { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; display: inline-block; vertical-align: middle; width: 80px; margin-right: 6px; }
 .bar > div { height: 100%; background: var(--accent); }
 footer { padding: 24px 32px; color: var(--fg-muted); font-size: 12px; border-top: 1px solid var(--line); }
@@ -237,14 +237,15 @@ footer a { color: var(--fg-dim); }
 /* Trade card layout */
 .trade-card { border: 1px solid var(--line); border-radius: 4px; padding: 12px 14px; margin-bottom: 10px; transition: border-color .15s; }
 .trade-card:hover { border-color: #3a3e45; }
-/* Intensity-mapped rendering — visual weight scales with anomaly substrate
-   (committee jurisdiction × proximity × ticker mention). Crude v1: density,
-   left-edge accent, asset weight. No text label — the page's voice stays neutral. */
-.trade-card.intensity-low    { opacity: 0.78; padding: 8px 12px; }
-.trade-card.intensity-low .tc-asset { font-weight: 400; }
-.trade-card.intensity-medium { border-left: 3px solid rgba(247,201,72,0.5); padding-left: 12px; }
-.trade-card.intensity-high   { border-left: 3px solid #d65a5a; padding-left: 12px; background: rgba(214,90,90,0.03); }
-.trade-card.intensity-high .tc-asset { font-weight: 600; }
+/* Intensity-mapped rendering — weight + density only. No moralizing color.
+   Quiet members render quiet pages; loud members render loud pages.
+   Per docs/superpowers/specs/2026-05-10-visual-identity-design.md. */
+.trade-card.intensity-low    { border-left: 1px solid var(--line);    padding: 6px 12px; }
+.trade-card.intensity-low .tc-asset    { font-weight: 400; font-size: 13px; }
+.trade-card.intensity-medium { border-left: 2px solid var(--fg-dim);  padding: 10px 14px; padding-left: 12px; }
+.trade-card.intensity-medium .tc-asset { font-weight: 500; font-size: 13px; }
+.trade-card.intensity-high   { border-left: 3px solid var(--fg);      padding: 12px 16px; padding-left: 13px; }
+.trade-card.intensity-high .tc-asset   { font-weight: 600; font-size: 14px; }
 .trade-card .tc-header { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
 .trade-card .tc-asset { font-size: 14px; font-weight: 500; flex: 1; min-width: 180px; }
 .trade-card .tc-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; font-size: 12px; color: var(--fg-dim); }
