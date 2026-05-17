@@ -159,6 +159,51 @@ CREATE TABLE IF NOT EXISTS pfd_transactions (
   PRIMARY KEY (filing_id, tx_index)
 );
 
+-- ─── Super PAC independent expenditures (FEC Schedule E) ───────────────────
+-- Persists what lib/fec-ie.ts fetched live at render time, so the Pattern
+-- Discovery contract's CitedRow.kind = 'ie' has a substrate to cite.
+-- Aggregate row per (member, committee, cycle, support/oppose).
+CREATE TABLE IF NOT EXISTS super_pac_ie (
+  member_id       TEXT NOT NULL,        -- resolved from members.fec_candidate_id
+  candidate_id    TEXT NOT NULL,        -- FEC candidate id (e.g. H0GA06192)
+  cycle           INTEGER NOT NULL,     -- even-year election cycle
+  committee_id    TEXT,                 -- nullable: FEC by_candidate rows without committee_id
+  committee_name  TEXT,
+  committee_type  TEXT,
+  designation     TEXT,
+  party           TEXT,
+  support_oppose  TEXT NOT NULL,        -- 'S' = supporting member, 'O' = opposing
+  total_amount    DOUBLE NOT NULL,
+  filing_count    INTEGER NOT NULL,     -- itemized filings aggregated by FEC
+  fetched_at      TIMESTAMP NOT NULL
+  -- No PRIMARY KEY: committee_id is nullable (FEC by_candidate rows without a
+  -- committee_id), and PK columns are implicitly NOT NULL in DuckDB. Idempotent
+  -- via the loader's DELETE-then-insert per (member_id, cycle).
+);
+
+-- Itemized Schedule E filings — the clickable CitedRow.kind = 'ie' rows.
+CREATE TABLE IF NOT EXISTS super_pac_ie_filings (
+  transaction_id  TEXT,                 -- nullable: FEC omits it on some rows
+  member_id       TEXT NOT NULL,
+  candidate_id    TEXT NOT NULL,
+  cycle           INTEGER NOT NULL,
+  committee_id    TEXT,
+  committee_name  TEXT,
+  support_oppose  TEXT NOT NULL,
+  amount          DOUBLE NOT NULL,
+  expenditure_date DATE,
+  disbursement_date DATE,
+  description     TEXT,
+  payee_name      TEXT,
+  election_type   TEXT,                 -- e.g. "P2022", "G2024"
+  report_year     INTEGER,
+  pdf_url         TEXT,
+  fetched_at      TIMESTAMP NOT NULL
+  -- No PRIMARY KEY: FEC repeats transaction_id within a member (amendments,
+  -- per-election-type splits). Idempotent via DELETE-then-insert per
+  -- (member_id, cycle), same as super_pac_ie.
+);
+
 -- ─── Pipeline runs (replaces task-*/state.json + final-review.json) ─────────
 CREATE TABLE IF NOT EXISTS pipeline_runs (
   task_id           TEXT PRIMARY KEY,
