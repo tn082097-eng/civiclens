@@ -191,11 +191,11 @@ header h1 { margin: 0 0 4px; font-size: 20px; letter-spacing: -0.01em; }
 header .sub { color: var(--fg-dim); font-size: 13px; }
 header a { color: var(--accent); text-decoration: none; }
 main { padding: 24px 32px 64px; max-width: 1200px; }
-h2 { font-size: 17px; margin: 32px 0 12px; letter-spacing: -0.01em; }
+h2 { font-size: 19px; margin: 48px 0 14px; letter-spacing: -0.01em; }
 h2:first-child { margin-top: 0; }
 .lede { color: var(--fg-dim); margin: 0 0 24px; max-width: 720px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+th, td { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { color: var(--fg-dim); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
 tbody tr:hover { background: rgba(255,255,255,0.02); }
 .num { text-align: right; font-variant-numeric: tabular-nums; }
