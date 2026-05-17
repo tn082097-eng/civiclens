@@ -965,11 +965,86 @@ function renderCosponsorEmbed(edges: CosponsorEdgeForMember[]): string {
 `;
 }
 
-function renderPatternsPlaceholder(): string {
+// Mechanical, non-pejorative display labels (spec: pattern names describe what
+// the pattern IS, never what it implies).
+const PATTERN_LABELS: Record<string, string> = {
+  'trade-vote-alignment': 'Trade ↔ vote alignment',
+  'spousal-trade-timing': 'Spousal trade timing',
+};
+
+// Pattern intensity (0..1) → existing weight-only visual tier from the visual
+// identity pass. No color affect; weight scales with substrate, not "badness".
+function patternIntensityClass(i: number): string {
+  if (i >= 0.8) return 'intensity-high';
+  if (i >= 0.6) return 'intensity-medium';
+  return 'intensity-low';
+}
+
+async function renderPatterns(memberSlug: string): Promise<string> {
+  const conn = await getDb();
+  const res = await conn.run(
+    `SELECT pattern, finding, intensity, citing_json, dates_json
+       FROM pattern_hits WHERE member = ?
+      ORDER BY intensity DESC, detected_at DESC`,
+    [memberSlug],
+  );
+  const rows = (await res.getRowObjects()) as any[];
+
+  if (rows.length === 0) {
+    return `
+<h2>Patterns detected</h2>
+<p class="muted">No patterns detected at current thresholds.</p>`;
+  }
+
+  const cards = rows
+    .map(r => {
+      const label = PATTERN_LABELS[String(r.pattern)] ?? String(r.pattern);
+      const intensity = Number(r.intensity);
+      const citing = JSON.parse(String(r.citing_json)) as {
+        kind: string;
+        id: string;
+        label: string;
+      }[];
+      const dates = JSON.parse(String(r.dates_json)) as string[];
+      const span =
+        dates.length > 1
+          ? `${dates[0]} – ${dates[dates.length - 1]}`
+          : dates[0] ?? '';
+
+      // Citing rows are listed as labeled evidence (ticker + date), not deep
+      // links: profile rows have no per-row anchors in v1. The reader locates
+      // them in the Trades & bills / Timeline sections above. Tracked follow-up.
+      const byKind = new Map<string, string[]>();
+      for (const c of citing) {
+        if (!byKind.has(c.kind)) byKind.set(c.kind, []);
+        byKind.get(c.kind)!.push(c.label);
+      }
+      const evidence = [...byKind.entries()]
+        .map(([kind, labels]) => {
+          const shown = labels.slice(0, 8).map(esc).join(' · ');
+          const more =
+            labels.length > 8 ? ` <span class="muted">+${labels.length - 8} more</span>` : '';
+          return `<div class="dim" style="font-size:12px; margin-top:4px;">
+            <span class="muted" style="text-transform:uppercase; letter-spacing:0.04em;">${esc(kind)}</span> ${shown}${more}
+          </div>`;
+        })
+        .join('');
+
+      return `<div class="trade-card ${patternIntensityClass(intensity)}">
+        <div class="tc-header">
+          <div class="tc-asset">${esc(label)}</div>
+          <div class="tc-meta">${esc(span)}</div>
+        </div>
+        <div>${esc(String(r.finding))}</div>
+        ${evidence}
+      </div>`;
+    })
+    .join('\n');
+
   return `
 <h2>Patterns detected</h2>
-<p class="muted">Pattern detection coming soon — see <a class="row-link" href="../about.html">/about</a> for methodology when published.</p>
-`;
+<p class="lede" style="margin-bottom:12px;">Named patterns from the post-pipeline detection pass. Each cites the underlying rows — verify them in the sections above. Weight reflects substrate, not judgment.</p>
+${cards}`;
 }
 
 async function renderOutsideSpending(m: MemberDetail, cycle: number): Promise<string> {
@@ -1197,7 +1272,7 @@ export async function buildMemberPage(m: MemberDetail): Promise<void> {
   const timelineBlock = buildTimelineBlock(m.member_id, timeline.votes, timeline.trades);
   const outsideSpendingBlock = await renderOutsideSpending(m, 2024);
   const cosponsorBlock = renderCosponsorEmbed(cosponsorEdges);
-  const patternsBlock = renderPatternsPlaceholder();
+  const patternsBlock = await renderPatterns(m.member_id);
   const glance = await fetchActivityGlance(m.member_id);
   const glanceBlock = renderActivityGlance(glance);
   const tabId = `tabs-${m.member_id.replace(/[^a-z0-9]/g, '-')}`;

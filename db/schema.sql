@@ -425,3 +425,22 @@ SELECT
 FROM lda_lobbyists l
 JOIN lda_filings f USING (filing_uuid)
 QUALIFY rn = 1;
+
+-- ─── Pattern hits (Pattern Discovery v2) ────────────────────────────────────
+-- Written by a separate post-pipeline pass (pipeline/run-patterns.ts), not by
+-- an agent. One row per (pattern, member, dates window). citing_json/dates_json
+-- are JSON arrays because the read pattern is "all hits for member X" and the
+-- citing rows are always read together with the hit. detected_at lets the
+-- render layer order by recency within an intensity tier.
+CREATE TABLE IF NOT EXISTS pattern_hits (
+  pattern         TEXT NOT NULL,
+  member          TEXT NOT NULL,
+  finding         TEXT NOT NULL,
+  intensity       DOUBLE NOT NULL,
+  citing_json     TEXT NOT NULL,
+  dates_json      TEXT NOT NULL,
+  detected_at     TIMESTAMP NOT NULL,
+  PRIMARY KEY (pattern, member, dates_json)
+);
+CREATE INDEX IF NOT EXISTS idx_pattern_hits_member  ON pattern_hits(member);
+CREATE INDEX IF NOT EXISTS idx_pattern_hits_pattern ON pattern_hits(pattern);
