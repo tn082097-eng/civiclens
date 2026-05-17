@@ -160,15 +160,15 @@ function collapseTrades(pairs: TradeNearVote[]): TradeRow[] {
 
 const STYLE = `
 :root {
-  --bg: #0e1014;
-  --fg: #e8eaed;
-  --fg-dim: #9aa0a6;
-  --fg-muted: #5f6368;
-  --line: #2a2e35;
-  --accent: #79b8ff;
-  --p-d: #5b9ed8;
+  --bg: #14110d;
+  --fg: #f5f1e8;
+  --fg-dim: #a59f8e;
+  --fg-muted: #6b6557;
+  --line: #2e2a22;
+  --accent: #f5f1e8;
+  --p-d: #79b8ff;
   --p-r: #d65a5a;
-  --p-i: #b88a3f;
+  --p-i: #9aa0a6;
 }
 * { box-sizing: border-box; }
 body {
