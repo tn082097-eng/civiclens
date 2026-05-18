@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Secrets / auth state — never commit
+.baileys_auth/
+*.env
+.env*
+
+# Local databases + backups + WAL
+*.duckdb
+*.duckdb.*
+*.wal
+
+# Caches (regenerable from primary sources)
+pfd-cache/
+senate-ptr-cache/
+legislators-cache/
+
+# Generated pipeline task outputs (keep pipeline/patterns/ + run-patterns.ts source)
+pipeline/task-*/
+pipeline/smoke-test/
+pipeline/mackenzie-scott-comprehensive/
+pipeline/mackenzie-scott-research/
+pipeline-grok/
+pipeline-hybrid/
+
+# Generated static site
+site/
+
+# Logs + run artifacts
+logs/
+batch-log.json
+
+# Generated reports
+*.html
