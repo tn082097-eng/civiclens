@@ -85,7 +85,9 @@ const THEME_MATCH: Array<{ theme: string; policyAreas: string[]; subjectPatterns
     subjectPatterns: ['%pharmaceutic%', '%vaccine%'] },
   { theme: 'Banks & Finance',
     policyAreas: ['Finance and Financial Sector', 'Taxation'],
-    subjectPatterns: ['%securities%', '%banking%', '%insurance%'] },
+    subjectPatterns: [] },  // %insurance%/%banking%/%securities% dropped — they fire on
+                            // incidental tags (gun/sanctions/disaster bills). Finance +
+                            // Taxation policy areas cover genuine finance-sector bills.
   { theme: 'Payments',
     policyAreas: ['Finance and Financial Sector'],
     subjectPatterns: ['%payment%', '%credit card%', '%interchange%'] },
@@ -106,7 +108,9 @@ const THEME_MATCH: Array<{ theme: string; policyAreas: string[]; subjectPatterns
     subjectPatterns: ['%aviation%', '%railroad%', '%trucking%'] },
   { theme: 'Industrials',
     policyAreas: ['Commerce', 'Transportation and Public Works'],
-    subjectPatterns: ['%manufacturing%', '%motor vehicle%'] },
+    subjectPatterns: ['%motor vehicle%'] },  // %manufacturing% dropped (incidental on
+                                             // appliance-standard/NDAA bills); %motor vehicle%
+                                             // kept — it surfaces real EV/auto-industry bills.
   { theme: 'Materials & Mining',
     policyAreas: ['Public Lands and Natural Resources', 'Environmental Protection'],
     subjectPatterns: ['%mining%', '%mineral%'] },

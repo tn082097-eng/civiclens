@@ -231,6 +231,56 @@ export async function cosponsorNetwork(): Promise<CosponsorEdge[]> {
   }));
 }
 
+export interface NexusRow {
+  member_id: string;
+  member_name: string;
+  tx_date: string | null;
+  tx_type: string | null;
+  ticker: string;
+  asset: string | null;
+  amount_band: string | null;
+  sic_description: string | null;
+  theme: string;
+  bill_id: string;
+  bill_title: string;
+  vote_date: string | null;
+  vote_question: string | null;
+  vote_position: string | null;
+  days_before_vote: number;
+  trade_source_url: string | null;
+  vote_source_url: string | null;
+  bill_source_url: string | null;
+}
+
+// Every qualifying trade↔bill nexus pair, ranked by trade-to-vote proximity.
+// Reads the deterministic v_trade_bill_nexus view — no scoring, no LLM.
+export async function tradeBillNexus(): Promise<NexusRow[]> {
+  const conn = await getDb();
+  const sql  = loadSql('trade-bill-nexus');
+  const r    = await conn.run(sql);
+  const rows = await r.getRowObjects() as any[];
+  return rows.map(row => ({
+    member_id:        String(row.member_id),
+    member_name:      String(row.member_name),
+    tx_date:          row.tx_date ? String(row.tx_date) : null,
+    tx_type:          row.tx_type ?? null,
+    ticker:           String(row.ticker),
+    asset:            row.asset ?? null,
+    amount_band:      row.amount_band ?? null,
+    sic_description:  row.sic_description ?? null,
+    theme:            String(row.theme),
+    bill_id:          String(row.bill_id),
+    bill_title:       String(row.bill_title),
+    vote_date:        row.vote_date ? String(row.vote_date) : null,
+    vote_question:    row.vote_question ?? null,
+    vote_position:    row.vote_position ?? null,
+    days_before_vote: Number(row.days_before_vote),
+    trade_source_url: row.trade_source_url ?? null,
+    vote_source_url:  row.vote_source_url ?? null,
+    bill_source_url:  row.bill_source_url ?? null,
+  }));
+}
+
 // ─── CLI smoke ──────────────────────────────────────────────────────────────
 
 function fmtTrade(t: TradeNearVote): string {

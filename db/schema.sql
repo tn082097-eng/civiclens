@@ -579,7 +579,14 @@ LEFT JOIN ticker_theme_override o ON o.ticker = UPPER(t.ticker)
 JOIN bill_subjects           bs ON bs.bill_id = t.bill_id
 JOIN theme_bill_match        m  ON m.theme = COALESCE(o.theme, st.theme)
   AND ( (m.policy_area     IS NOT NULL AND bs.policy_area = m.policy_area)
-     OR (m.subject_pattern IS NOT NULL AND bs.subject ILIKE m.subject_pattern) )
+     OR (m.subject_pattern IS NOT NULL AND bs.subject ILIKE m.subject_pattern
+          -- Subject-pattern matches only count on FOCUSED bills. Broad vehicles
+          -- carry dozens of incidental subject tags (Fiscal Responsibility Act:
+          -- 160, Limit Save Grow: 111), so any single tag is meaningless there;
+          -- focused bills carry few (POWER Act: 1, Critical Mineral Act: 3).
+          -- policy_area matches are exempt (CHIPS has 49 tags but matches its
+          -- editorial policy_area, not a subject).
+          AND (SELECT COUNT(*) FROM bill_subjects b2 WHERE b2.bill_id = t.bill_id) <= 25) )
 WHERE t.bill_id IS NOT NULL
   AND t.days_before_vote >= 0
   AND t.bill_title IS NOT NULL
@@ -592,4 +599,6 @@ WHERE t.bill_id IS NOT NULL
   AND t.bill_title NOT ILIKE '%relief act%'
   AND t.bill_title NOT ILIKE '%reconciliation%'
   AND t.bill_title NOT ILIKE '%omnibus%'
+  AND t.bill_title NOT ILIKE '%national defense authorization%'
+  AND t.bill_title NOT ILIKE '%rescissions act%'
   AND regexp_extract(t.bill_id, '-(hr|s|hjres|sjres)-', 1) <> '';

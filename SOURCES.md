@@ -281,10 +281,19 @@ rules), and `ticker_theme_override` (per-ticker theme fixes).
 are deliberately NOT used as a broad surface — they are both over-broad and
 sometimes wrong (see traps). `theme_bill_match.subject_pattern` rules are kept
 only as a *narrow, high-specificity* supplement (unambiguous terms like
-`%semiconductor%` that won't appear as incidental tags). Catch-all substrings
-were pruned (`%technolog%` alone had fired on 162 unrelated bills). Dangerous
-broad substrings are banned: `%ship%` (relationship), `%securit%` (national
-security), `%property%` (intellectual property), `%drug%` (drug enforcement).
+`%semiconductor%`, `%electric power%`, `%motor vehicle%` that surface real
+loops — e.g. VST → POWER Act electrical-resilience). Catch-all substrings were
+pruned (`%technolog%` alone had fired on 162 unrelated bills). Dangerous broad
+substrings are banned: `%ship%` (relationship), `%securit%` (national
+security), `%property%` (intellectual property), `%drug%` (drug enforcement);
+low-discrimination ones dropped entirely (`%insurance%`/`%banking%` fired on
+gun/sanctions/disaster bills — Banks & Finance is now policy-area-only).
+- **Subject-pattern matches are gated by a subject-count guard:** a subject
+  match counts only when the bill carries ≤ 25 legislative subjects. Broad
+  vehicles tag dozens of incidental subjects (Fiscal Responsibility Act: 160,
+  Limit Save Grow: 111), so any single tag is meaningless there; focused bills
+  carry few (POWER Act: 1, Critical Mineral Act: 3). policy_area matches are
+  exempt from the guard (CHIPS has 49 tags but matches its editorial policy_area).
 - **Media & Telecom carries NO `policy_area` rule on purpose:** it shares the
   coarse `"Science, Technology, Communications"` area with Tech, so matching that
   area would put cable/broadcast names (WBD) on semiconductor bills (CHIPS). It
@@ -295,8 +304,10 @@ security), `%property%` (intellectual property), `%drug%` (drug enforcement).
   (AKAM, left as Tech). The override pins the misfiled ones without mutating
   SEC-sourced `ticker_sectors`.
 
-Effect: nexus rows 33,853 → 10,128; Tech bills 164 → 29; Visa 156 → 30 bills
-(all finance/payments-relevant); flagship Pelosi→NVDA→CHIPS preserved.
+Effect: nexus rows 33,853 → 6,467; Tech bills 164 → 29; Visa 156 → 30 bills
+(all finance/payments-relevant); egregious false matches gone (NVDA↔gun bill,
+Goldman↔Safer Communities, WBD↔CHIPS, NDAA omnibus); flagships preserved
+(Pelosi→NVDA→CHIPS, VST→POWER Act). Rendered as the ranked feed at `site/nexus.html`.
 
 ### Caveats / traps
 - A trade matches a bill only if the ticker's sector intersects the bill's
@@ -311,7 +322,9 @@ Effect: nexus rows 33,853 → 10,128; Tech bills 164 → 29; Visa 156 → 30 bil
   subject-based — the flagship loop matches via policyArea alone.
 - Omnibus / appropriations / budget resolutions / H.Res "rules" have broad or
   no specific subjects — excluded as bill vehicles by `v_trade_bill_nexus`
-  title filters (now also `%relief act%`, `%reconciliation%`, `%omnibus%`, plus
-  a `LENGTH(bill_title) >= 6` guard against degenerate stub titles like "of").
+  title filters (`%relief act%`, `%reconciliation%`, `%omnibus%`, `%national
+  defense authorization%`, `%rescissions act%`, plus a `LENGTH(bill_title) >= 6`
+  guard against degenerate stub titles like "of"). The subject-count guard above
+  is the generic backstop for any other omnibus vehicle.
 - ETFs/index funds have no single SIC — leave sector NULL (already excluded by
   `v_suspicious_trades` asset-type filter).

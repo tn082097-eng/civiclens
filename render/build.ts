@@ -26,7 +26,9 @@ import {
   suspiciousTradesCorpus,
   memberTradeSummary,
   cosponsorNetwork,
+  tradeBillNexus,
   type TradeNearVote,
+  type NexusRow,
 } from '../db/queries.js';
 import { fetchSuperPacIE } from '../lib/fec-ie.js';
 import type { SuperPacIEReport, SuperPacIE, SuperPacFunder } from '../lib/types.js';
@@ -406,6 +408,7 @@ async function buildIndex(): Promise<void> {
 
   const body = `
 <h2>Explore</h2>
+<p class="lede"><a class="row-link" href="nexus.html">→ Trade ↔ bill nexus</a> — trades whose sector intersects a bill the member then voted on, ranked by proximity.</p>
 <p class="lede"><a class="row-link" href="network.html">→ Co-sponsorship network</a> — who introduces bills together across the loaded corpus.</p>
 
 <h2>Trades before votes — discretionary equities only</h2>
@@ -1523,6 +1526,69 @@ ${graphSection}
   console.log(`  ✓ site/network.html  (${nodes.length} nodes, ${edges.length} edges)`);
 }
 
+// ─── Trade ↔ bill nexus feed ──────────────────────────────────────────────
+
+function proximityLabel(daysBefore: number): string {
+  if (daysBefore === 0) return 'same day';
+  return `${daysBefore}d before`;
+}
+
+function srcLink(url: string | null, label: string): string {
+  if (!url) return '';
+  return `<a class="row-link" href="${esc(url)}" target="_blank" rel="noopener" style="font-size:11px;">${esc(label)}</a>`;
+}
+
+function nexusRowHtml(r: NexusRow): string {
+  const tradeAmt = r.amount_band ? ` · ${esc(r.amount_band)}` : '';
+  const tradeDate = r.tx_date ? ` · ${esc(r.tx_date)}` : '';
+  const trade = `<strong>${esc((r.tx_type ?? 'trade'))}</strong> ${esc(r.ticker)}${tradeAmt}${tradeDate}`;
+  const sector = `${esc(r.theme)}${r.sic_description ? `<br><span class="dim" style="font-size:11px;">${esc(r.sic_description)}</span>` : ''}`;
+  const billLink = r.bill_source_url
+    ? `<a class="row-link" href="${esc(r.bill_source_url)}" target="_blank" rel="noopener">${esc(r.bill_title)}</a>`
+    : esc(r.bill_title);
+  const votePos = r.vote_position ? ` · voted <strong>${esc(r.vote_position)}</strong>` : '';
+  const voteDate = r.vote_date ? ` ${esc(r.vote_date)}` : '';
+  const links = [srcLink(r.trade_source_url, 'filing'), srcLink(r.vote_source_url, 'vote'), srcLink(r.bill_source_url, 'bill')].filter(Boolean).join(' · ');
+  return '<tr>'
+    + `<td class="num" style="white-space:nowrap;">${esc(proximityLabel(r.days_before_vote))}</td>`
+    + `<td><a class="member" href="members/${esc(r.member_id)}.html">${esc(r.member_name)}</a></td>`
+    + `<td>${trade}</td>`
+    + `<td>${sector}</td>`
+    + `<td>${billLink}<br><span class="dim" style="font-size:11px;">${esc(r.bill_id)}${votePos}${voteDate}</span></td>`
+    + `<td class="dim" style="font-size:11px;white-space:nowrap;">${links}</td>`
+    + '</tr>';
+}
+
+async function buildNexus(): Promise<void> {
+  const rows = await tradeBillNexus();
+  const RENDER_CAP = 300;
+  const shown = rows.slice(0, RENDER_CAP);
+  const members = new Set(rows.map(r => r.member_id)).size;
+  const bills = new Set(rows.map(r => r.bill_id)).size;
+
+  const feed = rows.length === 0
+    ? '<div class="notice">No trade↔bill nexus instances yet. Run the relevance-edge loaders (--load-ticker-sectors, --load-bill-subjects, --load-sector-crosswalk) first.</div>'
+    : `<table>
+  <thead><tr>
+    <th class="num">Before vote</th><th>Member</th><th>Trade</th><th>Sector</th><th>Bill (vote)</th><th>Sources</th>
+  </tr></thead>
+  <tbody>${shown.map(nexusRowHtml).join('')}</tbody>
+</table>
+${rows.length > RENDER_CAP ? `<p class="muted" style="margin-top:12px;">Showing the ${RENDER_CAP} closest of ${esc(rows.length)} nexus instances.</p>` : ''}`;
+
+  const body = `
+<h2>Trade ↔ bill nexus</h2>
+<p class="lede">Each row is a trade whose company's industry sector intersects the topic of a bill the same member later voted on — a closed loop of <strong>trade → relevant bill → vote</strong>. Relevance is deterministic (the company's SEC sector vs. the bill's Congress.gov policy area), and every edge links to its primary source. No suspicion score is assigned: proximity is shown as a raw fact and you draw your own conclusions. Ranked by how close the trade was to the vote.</p>
+<p class="lede" style="margin-bottom:24px;"><span class="muted">${esc(rows.length)} nexus instances · ${esc(members)} members · ${esc(bills)} bills.</span></p>
+${feed}
+<p style="margin-top: 32px;"><a class="row-link" href="index.html">← back to corpus</a></p>
+`;
+
+  const html = layout('CivicLens — Trade ↔ Bill Nexus', `<a href="index.html">Corpus</a> · Trade ↔ bill nexus`, body);
+  writeFileSync(resolve(OUT_DIR, 'nexus.html'), html);
+  console.log(`  ✓ site/nexus.html  (${rows.length} nexus instances, ${members} members, ${bills} bills)`);
+}
+
 // ─── Main ───────────────────────────────────────────────────────────────────
 
 export async function buildAll(): Promise<void> {
@@ -1532,6 +1598,7 @@ export async function buildAll(): Promise<void> {
   console.log('Building CivicLens site…\n');
   await buildIndex();
   await buildNetwork();
+  await buildNexus();
   const overview = await fetchOverview();
   for (const m of overview) {
     const detail = await fetchMember(m.member_id);
