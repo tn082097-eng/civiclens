@@ -422,6 +422,28 @@ ${bold('CivicLens Pipeline Runner')}
     await loadBills({ limit, apiPass, apiLimit });
     process.exit(0);
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
+} else if (arg === '--load-ticker-sectors') {
+  (async () => {
+    const { loadTickerSectors } = await import('../db/load-ticker-sectors.js');
+    const li = process.argv.indexOf('--limit');
+    const limit = li >= 0 ? parseInt(process.argv[li + 1] ?? '', 10) : undefined;
+    await loadTickerSectors({ limit });
+    process.exit(0);
+  })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
+} else if (arg === '--load-sector-crosswalk') {
+  (async () => {
+    const { loadSectorCrosswalk } = await import('../db/load-sector-crosswalk.js');
+    await loadSectorCrosswalk();
+    process.exit(0);
+  })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
+} else if (arg === '--load-bill-subjects') {
+  (async () => {
+    const { loadBillSubjects } = await import('../db/load-bill-subjects.js');
+    const li = process.argv.indexOf('--limit');
+    const limit = li >= 0 ? parseInt(process.argv[li + 1] ?? '', 10) : undefined;
+    await loadBillSubjects({ limit });
+    process.exit(0);
+  })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
 } else if (arg === '--load-senate-ptr') {
   const dryRun = process.argv.includes('--dry-run');
   (async () => {

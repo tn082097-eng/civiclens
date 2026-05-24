@@ -223,3 +223,95 @@ Canonical extracted shape (`pfd-cache/2024/greene-marjorie-taylor-mrs-20025337.j
 - **`P` only for trades.** Loading `O`/`C` filings into `pfd_transactions` would be wrong — annual reports are holdings, not transactions.
 - `filer.name` in the extract is mangled ("Hon. Marjorie Taylor Mrs Greene" — title + suffix folded into the name). `load-pfd.ts:stripTitles` + last-name match absorb this, but the bulk index has clean `Last`/`First`/`Prefix`/`Suffix` columns — prefer those for member resolution if the organizer builds the filer record.
 - Bulk index is House-only. Senate PTRs come from `efdsearch.senate.gov` (JS/terms-gated — the one place browser-harness is justified; separate source, not probed here).
+
+---
+
+## Relevance edge — bill→topic + ticker→sector (verified 2026-05-23)
+
+Substrate for the trade-vote *nexus* loop. Proximity alone is noise (basket
+traders coincide with every same-day vote). The loop needs a deterministic
+relevance edge so we only surface trades whose company/sector intersects the
+bill's actual subject. Two free, deterministic, sourced inputs + a static
+crosswalk. NO LLM in the edge.
+
+### Source A — Congress.gov bill subjects + policy area
+
+**Endpoint:** `GET /v3/bill/{congress}/{type}/{number}/subjects?format=json&api_key={KEY}&limit=250`
+**Auth:** `CONGRESS_API_KEY` (same key as summaries). **Rate limit:** 5,000/hr.
+
+Frozen sample — `119-hr-2071` (Save Our Shrimpers Act):
+```json
+{
+  "subjects": {
+    "policyArea": { "name": "Foreign Trade and International Finance" },
+    "legislativeSubjects": [
+      { "name": "Agricultural trade" }, { "name": "Congressional oversight" },
+      { "name": "Government information and archives" },
+      { "name": "Government studies and investigations" },
+      { "name": "International monetary system and foreign exchange" },
+      { "name": "Seafood" }
+    ]
+  }
+}
+```
+- `policyArea.name` — single top-level category (~32 controlled values).
+- `legislativeSubjects[].name` — granular controlled tags (the join surface).
+- Only fetch for the distinct `bill_id`s referenced by votes (now dense after
+  the `--load-bills` backfill — ~hundreds, not all of Congress).
+
+### Source B — SEC ticker→sector (SIC)
+
+**Two key-free calls (require a descriptive User-Agent):**
+1. `GET https://www.sec.gov/files/company_tickers.json` → ticker→CIK map (10,371 tickers; we need only the ~108 distinct traded tickers).
+2. `GET https://data.sec.gov/submissions/CIK{cik:010d}.json` → `sic` + `sicDescription`.
+
+Frozen sample — `AAPL` → CIK `320193` → `sic: 3571`, `sicDescription: "Electronic Computers"`.
+- SIC 4-digit → 2-digit major group → sector. Deterministic.
+- Only 108 lookups; cache to `pfd-cache/` and re-run rarely.
+
+### The crosswalk (the only judgment, static + auditable)
+
+SIC sector → Congress.gov `policyArea`/`legislativeSubject` is NOT 1:1. Three
+hand-curated, version-controlled tables (seeded by `db/load-sector-crosswalk.ts`,
+NO LLM): `sic_theme` (SIC→industry theme), `theme_bill_match` (theme→bill match
+rules), and `ticker_theme_override` (per-ticker theme fixes).
+
+**Policy-area-primary matching (refined 2026-05-23).** A bill's single editorial
+`policyArea` is the trusted relevance signal. Granular `legislativeSubject` tags
+are deliberately NOT used as a broad surface — they are both over-broad and
+sometimes wrong (see traps). `theme_bill_match.subject_pattern` rules are kept
+only as a *narrow, high-specificity* supplement (unambiguous terms like
+`%semiconductor%` that won't appear as incidental tags). Catch-all substrings
+were pruned (`%technolog%` alone had fired on 162 unrelated bills). Dangerous
+broad substrings are banned: `%ship%` (relationship), `%securit%` (national
+security), `%property%` (intellectual property), `%drug%` (drug enforcement).
+- **Media & Telecom carries NO `policy_area` rule on purpose:** it shares the
+  coarse `"Science, Technology, Communications"` area with Tech, so matching that
+  area would put cable/broadcast names (WBD) on semiconductor bills (CHIPS). It
+  matches specific broadcast/telecom subjects only.
+- **`ticker_theme_override`:** SIC 7389 "Business Services, NEC" is a grab-bag —
+  it holds card networks (V, PYPL, WEX → `Payments`) and an e-commerce
+  marketplace (MELI → `Retail & Consumer`) alongside genuine tech-services
+  (AKAM, left as Tech). The override pins the misfiled ones without mutating
+  SEC-sourced `ticker_sectors`.
+
+Effect: nexus rows 33,853 → 10,128; Tech bills 164 → 29; Visa 156 → 30 bills
+(all finance/payments-relevant); flagship Pelosi→NVDA→CHIPS preserved.
+
+### Caveats / traps
+- A trade matches a bill only if the ticker's sector intersects the bill's
+  subjects. For a basket trader (MTG) on an off-topic bill this correctly
+  yields ZERO — that's the point.
+- **Amended vehicles carry the WRONG granular subjects.** HR 4346 (CHIPS &
+  Science Act) was originally a Legislative-Branch Appropriations bill; its
+  `legislativeSubjects` are still the original shell's ("Architect of the
+  Capitol", "Arkansas", "Terrorism") with NO "semiconductor". Only its
+  `policyArea` ("Science, Technology, Communications") reflects the final
+  content. This is the core reason matching is policy-area-primary, not
+  subject-based — the flagship loop matches via policyArea alone.
+- Omnibus / appropriations / budget resolutions / H.Res "rules" have broad or
+  no specific subjects — excluded as bill vehicles by `v_trade_bill_nexus`
+  title filters (now also `%relief act%`, `%reconciliation%`, `%omnibus%`, plus
+  a `LENGTH(bill_title) >= 6` guard against degenerate stub titles like "of").
+- ETFs/index funds have no single SIC — leave sector NULL (already excluded by
+  `v_suspicious_trades` asset-type filter).

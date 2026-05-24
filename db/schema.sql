@@ -489,3 +489,107 @@ CREATE TABLE IF NOT EXISTS pattern_hits (
 );
 CREATE INDEX IF NOT EXISTS idx_pattern_hits_member  ON pattern_hits(member);
 CREATE INDEX IF NOT EXISTS idx_pattern_hits_pattern ON pattern_hits(pattern);
+
+-- ─── Relevance edge: ticker → sector (SEC SIC) ──────────────────────────────
+-- Deterministic ticker→company→SIC sector map from SEC. Only the distinct
+-- tickers actually traded need rows. `sector` is the 2-digit SIC major-group
+-- label; NULL for ETFs/index funds with no single issuer. See SOURCES.md
+-- "Source B". Feeds the trade↔bill nexus join (ticker sector ∩ bill subject).
+CREATE TABLE IF NOT EXISTS ticker_sectors (
+  ticker          TEXT PRIMARY KEY,
+  cik             TEXT,             -- SEC CIK, zero-padded
+  sic             TEXT,             -- 4-digit SIC code
+  sic_description TEXT,             -- e.g. "Electronic Computers"
+  sector          TEXT,             -- 2-digit SIC major-group label
+  source_url      TEXT,
+  fetched_at      TIMESTAMP NOT NULL
+);
+
+-- ─── Relevance edge: bill → policy area + subjects (Congress.gov) ────────────
+-- One row per (bill_id, subject). `policy_area` repeated per row (single
+-- top-level category); `subject` is a granular legislative subject tag (the
+-- join surface). See SOURCES.md "Source A". Only fetch distinct bill_ids that
+-- votes reference (dense after the --load-bills backfill).
+CREATE TABLE IF NOT EXISTS bill_subjects (
+  bill_id     TEXT NOT NULL,
+  policy_area TEXT,                 -- single top-level category
+  subject     TEXT NOT NULL,        -- granular legislative subject tag
+  source_url  TEXT,
+  fetched_at  TIMESTAMP NOT NULL,
+  PRIMARY KEY (bill_id, subject)
+);
+CREATE INDEX IF NOT EXISTS idx_bill_subjects_bill ON bill_subjects(bill_id);
+
+-- ─── Relevance crosswalk (seeded by db/load-sector-crosswalk.ts) ────────────
+-- The only judgment in the relevance edge: a static, hand-curated, version-
+-- controlled mapping. NOT an LLM. sic_theme maps each traded SIC to an industry
+-- theme; theme_bill_match says which bill policy areas / subject patterns mean
+-- a bill materially affects that theme.
+CREATE TABLE IF NOT EXISTS sic_theme (
+  sic   TEXT PRIMARY KEY,
+  theme TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS theme_bill_match (
+  theme           TEXT NOT NULL,
+  policy_area     TEXT,             -- exact match on bill_subjects.policy_area
+  subject_pattern TEXT              -- ILIKE pattern on bill_subjects.subject
+);
+-- Per-ticker theme override. A handful of tickers share a grab-bag SIC with
+-- unrelated businesses (e.g. SIC 7389 "Business Services, NEC" holds both CDN
+-- tech and card networks). The override pins those to the correct theme,
+-- taking precedence over the SIC→theme map without mutating SEC-sourced data.
+CREATE TABLE IF NOT EXISTS ticker_theme_override (
+  ticker TEXT PRIMARY KEY,
+  theme  TEXT NOT NULL,
+  note   TEXT              -- why the SIC-derived theme is wrong for this ticker
+);
+
+-- ─── Trade ↔ bill nexus (the credible-loop view) ────────────────────────────
+-- A trade qualifies only when the traded ticker's industry theme intersects the
+-- bill's topic — every edge deterministic and sourced, no scalar score.
+--
+-- Relevance is policy-area-primary: Congress.gov's single editorial policy_area
+-- is the reliable signal. Granular `subject` tags are NOT trusted as a primary
+-- surface — they are both over-broad (a bill carries dozens of tangential tags,
+-- so ILIKE '%technology%' fires on unrelated bills) and sometimes wrong (an
+-- amended vehicle keeps its original shell's subjects — e.g. HR 4346 / CHIPS
+-- carries Legislative-Branch-Appropriations subjects). subject_pattern rules are
+-- kept only as a narrow, high-specificity supplement (e.g. '%semiconductor%')
+-- and to discriminate themes that share one coarse policy_area: Tech and Media
+-- both fall under "Science, Technology, Communications", so Media&Telecom matches
+-- on specific subjects ONLY (no policy_area) to keep cable/broadcast names off
+-- semiconductor bills.
+--
+-- Broad money vehicles (appropriations / CR / consolidated / relief /
+-- reconciliation / omnibus / "providing for consideration" rules), ceremonial
+-- resolution types, and degenerate stub titles are excluded as having no
+-- specific nexus; substantive single-subject bills (hr/s/hjres/sjres) remain.
+CREATE OR REPLACE VIEW v_trade_bill_nexus AS
+SELECT DISTINCT
+  t.member_id, t.member_name,
+  t.tx_date, t.tx_type, t.ticker, t.asset, t.amount_band,
+  ts.sic, ts.sic_description, COALESCE(o.theme, st.theme) AS theme,
+  t.bill_id, t.bill_title, t.vote_id, t.vote_date, t.vote_question, t.vote_position,
+  t.days_before_vote,
+  t.trade_source_url, t.vote_source_url, t.bill_source_url
+FROM v_suspicious_trades t
+JOIN ticker_sectors          ts ON ts.ticker = UPPER(t.ticker)
+LEFT JOIN sic_theme          st ON st.sic = ts.sic
+LEFT JOIN ticker_theme_override o ON o.ticker = UPPER(t.ticker)
+JOIN bill_subjects           bs ON bs.bill_id = t.bill_id
+JOIN theme_bill_match        m  ON m.theme = COALESCE(o.theme, st.theme)
+  AND ( (m.policy_area     IS NOT NULL AND bs.policy_area = m.policy_area)
+     OR (m.subject_pattern IS NOT NULL AND bs.subject ILIKE m.subject_pattern) )
+WHERE t.bill_id IS NOT NULL
+  AND t.days_before_vote >= 0
+  AND t.bill_title IS NOT NULL
+  AND COALESCE(o.theme, st.theme) IS NOT NULL
+  AND LENGTH(t.bill_title) >= 6
+  AND t.bill_title NOT ILIKE 'Providing for consideration%'
+  AND t.bill_title NOT ILIKE '%appropriations%'
+  AND t.bill_title NOT ILIKE '%consolidated%'
+  AND t.bill_title NOT ILIKE '%continuing%'
+  AND t.bill_title NOT ILIKE '%relief act%'
+  AND t.bill_title NOT ILIKE '%reconciliation%'
+  AND t.bill_title NOT ILIKE '%omnibus%'
+  AND regexp_extract(t.bill_id, '-(hr|s|hjres|sjres)-', 1) <> '';
