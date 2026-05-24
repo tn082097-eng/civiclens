@@ -1566,6 +1566,225 @@ async function buildNexus(): Promise<void> {
   const members = new Set(rows.map(r => r.member_id)).size;
   const bills = new Set(rows.map(r => r.bill_id)).size;
 
+  // ── Per-member loop aggregation for the D3 multipartite graph ──────────────
+  // rows arrive sorted by proximity (closest first). Keep each member's closest
+  // distinct (ticker, bill) loops, capped, so every member renders legibly —
+  // a full subgraph (Pelosi: 168 bills) would be an unreadable hairball.
+  type Loop = { t: string; theme: string; b: string; title: string; vp: string | null;
+                d: number; tu: string | null; vu: string | null; bu: string | null };
+  const LOOP_CAP = 40;
+  const byMember = new Map<string, { name: string; loops: Loop[]; seen: Set<string> }>();
+  for (const r of rows) {
+    let m = byMember.get(r.member_id);
+    if (!m) { m = { name: r.member_name, loops: [], seen: new Set() }; byMember.set(r.member_id, m); }
+    const key = r.ticker + '|' + r.bill_id;
+    if (m.seen.has(key) || m.loops.length >= LOOP_CAP) continue;
+    m.seen.add(key);
+    m.loops.push({ t: r.ticker, theme: r.theme, b: r.bill_id, title: r.bill_title,
+                   vp: r.vote_position, d: r.days_before_vote,
+                   tu: r.trade_source_url, vu: r.vote_source_url, bu: r.bill_source_url });
+  }
+  const nexusObj: Record<string, { name: string; loops: Loop[] }> = {};
+  for (const [id, m] of byMember) nexusObj[id] = { name: m.name, loops: m.loops };
+  const nexusJson = JSON.stringify(nexusObj);
+  const memberOpts = [...byMember.entries()]
+    .sort((a, b) => b[1].loops.length - a[1].loops.length)
+    .map(([id, m]) => ({ id, name: m.name, n: m.loops.length }));
+  const defaultMember = byMember.has('nancy-pelosi') ? 'nancy-pelosi' : (memberOpts[0]?.id ?? '');
+
+  const themeColors: Record<string, string> = {
+    'Tech & Semiconductors': '#5b9ed8', 'Energy': '#d6a15a', 'Banks & Finance': '#6fae7d',
+    'Payments': '#8bd0c4', 'Industrials': '#b08968', 'Retail & Consumer': '#c98bb0',
+    'Transportation': '#7f9cc4', 'Media & Telecom': '#cf7b7b', 'Materials & Mining': '#9c8f6f',
+    'Pharma & Health': '#9d8bd0', 'Defense & Aerospace': '#c0c07a', 'Real Estate': '#7ab0a0',
+  };
+
+  const graphScript = `
+(function() {
+  const NEXUS = ${nexusJson};
+  const THEME = ${JSON.stringify(themeColors)};
+  const MEMBER_COLOR = '#e8c45a', BILL_COLOR = '#7d8794';
+  let sim = null;
+
+  function escHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function buildData(memberId) {
+    const m = NEXUS[memberId];
+    const nodes = [], idx = new Map(), links = [];
+    function add(id, label, type, theme, n) {
+      if (!idx.has(id)) { idx.set(id, true); nodes.push({ id: id, label: label, type: type, theme: theme || null, n: n || 0 }); }
+    }
+    const mId = 'M:' + memberId;
+    add(mId, m.name, 'member');
+    const tCount = {}, mtSeen = {}, mbSeen = {};
+    m.loops.forEach(function(lp){ tCount[lp.t] = (tCount[lp.t]||0)+1; });
+    m.loops.forEach(function(lp){
+      const tId = 'T:' + lp.t, bId = 'B:' + lp.b;
+      add(tId, lp.t, 'ticker', lp.theme, tCount[lp.t]);
+      add(bId, lp.title, 'bill');
+      if (!mtSeen[tId]) { mtSeen[tId] = 1; links.push({ source: mId, target: tId, kind: 'trade' }); }
+      if (!mbSeen[bId]) { mbSeen[bId] = 1; links.push({ source: mId, target: bId, kind: 'vote' }); }
+      links.push({ source: tId, target: bId, kind: 'rel', d: lp.d, vp: lp.vp, tu: lp.tu, vu: lp.vu, bu: lp.bu, ticker: lp.t, title: lp.title, bill: lp.b });
+    });
+    return { nodes: nodes, links: links };
+  }
+
+  function nodeColor(d) {
+    if (d.type === 'member') return MEMBER_COLOR;
+    if (d.type === 'bill') return BILL_COLOR;
+    return THEME[d.theme] || '#9aa0a6';
+  }
+  function nodeRadius(d) {
+    if (d.type === 'member') return 16;
+    if (d.type === 'ticker') return Math.max(7, Math.min(16, 5 + d.n * 1.4));
+    return 5;
+  }
+
+  function showDetail(html) {
+    const el = document.getElementById('nx-detail');
+    el.textContent = ''; el.insertAdjacentHTML('beforeend', html); el.style.display = '';
+  }
+
+  function render(memberId) {
+    const data = buildData(memberId);
+    const host = document.getElementById('nx-graph');
+    host.textContent = '';
+    if (sim) sim.stop();
+    const W = host.clientWidth, H = host.clientHeight;
+    const svg = d3.select('#nx-graph').append('svg').attr('width', W).attr('height', H).style('background', '#0e1014');
+    const g = svg.append('g');
+    svg.call(d3.zoom().scaleExtent([0.3, 6]).on('zoom', function(ev){ g.attr('transform', ev.transform); }));
+
+    const link = g.append('g').selectAll('line').data(data.links).join('line')
+      .attr('stroke', function(d){ return d.kind === 'rel' ? '#d6a15a' : '#33373f'; })
+      .attr('stroke-width', function(d){ return d.kind === 'rel' ? 1.6 : 1; })
+      .attr('stroke-opacity', function(d){ return d.kind === 'rel' ? 0.8 : 0.45; })
+      .attr('stroke-dasharray', function(d){ return d.kind === 'vote' ? '3,3' : null; })
+      .attr('cursor', function(d){ return d.kind === 'rel' ? 'pointer' : 'default'; })
+      .on('click', function(ev, d){ if (d.kind === 'rel') { ev.stopPropagation(); applyEdgeSelection(d); showLoop(d); } });
+
+    const node = g.append('g').selectAll('g').data(data.nodes).join('g').attr('cursor', 'pointer')
+      .call(d3.drag()
+        .on('start', function(ev, d){ if (!ev.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+        .on('drag',  function(ev, d){ d.fx = ev.x; d.fy = ev.y; })
+        .on('end',   function(ev, d){ if (!ev.active) sim.alphaTarget(0); if (d.type !== 'member') { d.fx = null; d.fy = null; } }))
+      .on('click', function(ev, d){ ev.stopPropagation(); applySelection(d.id); pulse(d); showNode(d, data); });
+
+    node.append('circle').attr('r', nodeRadius).attr('fill', nodeColor)
+      .attr('fill-opacity', 0.9).attr('stroke', '#0e1014').attr('stroke-width', 1.5);
+    node.append('text')
+      .attr('dy', function(d){ return d.type === 'bill' ? 3 : -nodeRadius(d) - 4; })
+      .attr('text-anchor', 'middle').attr('font-size', function(d){ return d.type === 'member' ? '12px' : '10px'; })
+      .attr('fill', function(d){ return d.type === 'bill' ? 'transparent' : '#c8ccd2'; })
+      .attr('pointer-events', 'none')
+      .text(function(d){ return d.type === 'ticker' ? d.label : (d.type === 'member' ? d.label : ''); });
+
+    const mNode = data.nodes[0];
+    mNode.fx = W / 2; mNode.fy = H / 2;
+    sim = d3.forceSimulation(data.nodes)
+      .force('link', d3.forceLink(data.links).id(function(d){ return d.id; })
+        .distance(function(l){ return l.kind === 'rel' ? 55 : 110; }).strength(0.5))
+      .force('charge', d3.forceManyBody().strength(-160))
+      .force('collision', d3.forceCollide(14))
+      .on('tick', function(){
+        link.attr('x1', function(d){ return d.source.x; }).attr('y1', function(d){ return d.source.y; })
+            .attr('x2', function(d){ return d.target.x; }).attr('y2', function(d){ return d.target.y; });
+        node.attr('transform', function(d){ return 'translate(' + d.x + ',' + d.y + ')'; });
+      });
+
+    function neighborsOf(id){
+      const set = new Set([id]);
+      data.links.forEach(function(l){ const s = l.source.id || l.source, t = l.target.id || l.target;
+        if (s === id) set.add(t); if (t === id) set.add(s); });
+      return set;
+    }
+    function applySelection(id){
+      const keep = neighborsOf(id);
+      node.transition().duration(150).attr('opacity', function(d){ return keep.has(d.id) ? 1 : 0.12; });
+      link.transition().duration(150)
+        .attr('stroke-opacity', function(l){ const s=l.source.id||l.source, t=l.target.id||l.target; return (s===id||t===id) ? (l.kind==='rel'?1:0.75) : 0.04; })
+        .attr('stroke-width', function(l){ const s=l.source.id||l.source, t=l.target.id||l.target; const on=(s===id||t===id); return on ? (l.kind==='rel'?3:1.6) : (l.kind==='rel'?1.6:1); });
+      node.select('circle').attr('stroke', function(d){ return d.id===id ? '#ffffff' : '#0e1014'; }).attr('stroke-width', function(d){ return d.id===id ? 2.5 : 1.5; });
+    }
+    function applyEdgeSelection(sel){
+      const s = sel.source.id || sel.source, t = sel.target.id || sel.target; const keep = new Set([s,t]);
+      node.transition().duration(150).attr('opacity', function(d){ return keep.has(d.id) ? 1 : 0.12; });
+      link.transition().duration(150)
+        .attr('stroke-opacity', function(x){ return x===sel ? 1 : 0.04; })
+        .attr('stroke-width', function(x){ return x===sel ? 3.5 : (x.kind==='rel'?1.6:1); });
+      node.select('circle').attr('stroke', function(d){ return keep.has(d.id) ? '#ffffff' : '#0e1014'; }).attr('stroke-width', function(d){ return keep.has(d.id) ? 2.5 : 1.5; });
+    }
+    function clearSel(){
+      node.transition().duration(150).attr('opacity', 1);
+      link.transition().duration(150)
+        .attr('stroke-opacity', function(l){ return l.kind==='rel'?0.8:0.45; })
+        .attr('stroke-width', function(l){ return l.kind==='rel'?1.6:1; });
+      node.select('circle').attr('stroke', '#0e1014').attr('stroke-width', 1.5);
+    }
+    function pulse(d){
+      node.filter(function(n){ return n.id === d.id; }).select('circle')
+        .transition().duration(130).attr('r', nodeRadius(d) * 1.7)
+        .transition().duration(200).attr('r', nodeRadius(d));
+    }
+
+    svg.on('click', function(){ clearSel(); showDetail('<span class="dim">Click a ticker, bill, or the amber relevance edge to inspect a loop.</span>'); });
+    showDetail('<span class="dim">' + escHtml(NEXUS[memberId].name) + ' — ' + data.nodes.filter(function(n){return n.type==='ticker';}).length + ' sectors, ' + data.nodes.filter(function(n){return n.type==='bill';}).length + ' bills. Click a node or amber edge.</span>');
+  }
+
+  function showLoop(d) {
+    const prox = d.d === 0 ? 'same day' : d.d + 'd before vote';
+    const vote = d.vp ? ' · voted <strong>' + escHtml(d.vp) + '</strong>' : '';
+    const parts = [];
+    if (d.tu) parts.push('<a class="row-link" href="' + escHtml(d.tu) + '" target="_blank" rel="noopener">filing</a>');
+    if (d.vu) parts.push('<a class="row-link" href="' + escHtml(d.vu) + '" target="_blank" rel="noopener">vote</a>');
+    if (d.bu) parts.push('<a class="row-link" href="' + escHtml(d.bu) + '" target="_blank" rel="noopener">bill</a>');
+    showDetail('<strong>' + escHtml(d.ticker) + '</strong> &cap; <strong>' + escHtml(d.title) + '</strong>'
+      + '<br><span class="dim" style="font-size:12px;">' + escHtml(prox) + vote + ' · ' + escHtml(d.bill) + '</span>'
+      + '<div style="margin-top:6px;font-size:12px;">' + parts.join(' · ') + '</div>');
+  }
+
+  function showNode(d, data) {
+    if (d.type === 'bill') {
+      const rels = data.links.filter(function(l){ return l.kind === 'rel' && (l.target.id === d.id || l.target === d.id); });
+      if (rels[0]) { showLoop(rels[0]); return; }
+    }
+    if (d.type === 'ticker') {
+      const rels = data.links.filter(function(l){ return l.kind === 'rel' && (l.source.id === d.id || l.source === d.id); });
+      showDetail('<strong>' + escHtml(d.label) + '</strong> <span class="dim">(' + escHtml(d.theme || '') + ')</span> — relevant to ' + rels.length + ' bill' + (rels.length === 1 ? '' : 's') + ' this member voted on.');
+      return;
+    }
+    showDetail('<strong>' + escHtml(d.label) + '</strong>');
+  }
+
+  function boot() {
+    const sel = document.getElementById('nx-member');
+    sel.addEventListener('change', function(){ render(sel.value); });
+    render(sel.value);
+  }
+  const s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js';
+  s.onload = boot;
+  document.head.appendChild(s);
+})();
+`;
+
+  const graphSection = rows.length === 0 ? '' : `
+<h2 style="margin-bottom:6px;">The loop, drawn</h2>
+<p class="lede" style="margin-bottom:10px;">A member's closest loops as a multipartite graph: the <span style="color:#e8c45a;">member</span> ▸ the <span style="color:#5b9ed8;">tickers</span> they traded (sized by how many of their votes the sector touches) ▸ the <span style="color:#7d8794;">bills</span> they voted on. The amber edge is the sector ∩ bill-topic intersection — click it (or a node) to see the loop and its sources. Showing each member's ${LOOP_CAP} closest loops; the full list is in the table below.</p>
+<div style="margin-bottom:10px;">
+  <label for="nx-member" class="muted" style="font-size:13px;">Member: </label>
+  <select id="nx-member" style="background:#181b20;color:var(--fg);border:1px solid var(--line);border-radius:3px;padding:4px 8px;font-size:13px;">
+    ${memberOpts.map(o => `<option value="${esc(o.id)}"${o.id === defaultMember ? ' selected' : ''}>${esc(o.name)} (${esc(o.n)})</option>`).join('')}
+  </select>
+</div>
+<div id="nx-graph" style="width:100%;height:520px;border:1px solid var(--line);border-radius:4px;overflow:hidden;"></div>
+<div id="nx-detail" style="margin:10px 0 28px;min-height:20px;font-size:13px;"></div>
+<script>${graphScript}<\/script>`;
+
   const feed = rows.length === 0
     ? '<div class="notice">No trade↔bill nexus instances yet. Run the relevance-edge loaders (--load-ticker-sectors, --load-bill-subjects, --load-sector-crosswalk) first.</div>'
     : `<table>
@@ -1580,6 +1799,7 @@ ${rows.length > RENDER_CAP ? `<p class="muted" style="margin-top:12px;">Showing 
 <h2>Trade ↔ bill nexus</h2>
 <p class="lede">Each row is a trade whose company's industry sector intersects the topic of a bill the same member later voted on — a closed loop of <strong>trade → relevant bill → vote</strong>. Relevance is deterministic (the company's SEC sector vs. the bill's Congress.gov policy area), and every edge links to its primary source. No suspicion score is assigned: proximity is shown as a raw fact and you draw your own conclusions. Ranked by how close the trade was to the vote.</p>
 <p class="lede" style="margin-bottom:24px;"><span class="muted">${esc(rows.length)} nexus instances · ${esc(members)} members · ${esc(bills)} bills.</span></p>
+${graphSection}
 ${feed}
 <p style="margin-top: 32px;"><a class="row-link" href="index.html">← back to corpus</a></p>
 `;
