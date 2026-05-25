@@ -973,6 +973,7 @@ function renderCosponsorEmbed(edges: CosponsorEdgeForMember[]): string {
 const PATTERN_LABELS: Record<string, string> = {
   'trade-vote-alignment': 'Trade ↔ vote alignment',
   'spousal-trade-timing': 'Spousal trade timing',
+  'donor-sector-vote-alignment': 'Donor sector ↔ sponsorship',
 };
 
 // Pattern intensity (0..1) → existing weight-only visual tier from the visual
