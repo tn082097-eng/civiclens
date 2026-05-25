@@ -17,13 +17,21 @@
  * Education, public-sector) is excluded by construction, so "top donor theme"
  * means top among tradable-industry themes only — stated plainly in the finding.
  *
- * Thresholds (baseline, expect tuning):
+ * Thresholds (tightened 2026-05-25 after the sponsored-bill loader gave the
+ * detector complete policy-area coverage — see db/load-sponsored.ts. The 0.10/
+ * top-3 baseline was set when only ~52 sponsored bills carried subjects; with
+ * full coverage it fired on 35/37 members and stopped discriminating):
  *   - A theme qualifies as "top" if it ranks in the member's top 3 mapped themes
- *     AND accounts for ≥10% of their mapped industry dollars (filters trivial
- *     long-tail themes).
+ *     AND accounts for ≥20% of their mapped industry dollars (genuine donor
+ *     concentration, above the observed roster median of ~21%).
+ *   - The member must SPONSOR ≥3 focused bills in that theme — sustained
+ *     legislative engagement, not a one-off anecdote.
  *   - Bills are FOCUSED only: the same broad-vehicle exclusions and ≤25-subject
  *     guard as v_trade_bill_nexus (appropriations/omnibus/NDAA etc. carry dozens
  *     of incidental subjects and are not evidence of sector intent).
+ *   Known confound (future refinement, not yet handled): a prolific member who
+ *   sponsors hundreds of bills will clear the count floor in many themes; a
+ *   share-of-sponsored-output measure would discriminate better than a raw count.
  *
  * Editorial: finding is one neutral sentence — dollars, share, sponsored count,
  * cycle span. No moralizing words.
@@ -34,7 +42,8 @@ import type { PatternDetector, PatternHit, CitedRow } from './types.js';
 
 const NAME = 'donor-sector-vote-alignment';
 const TOP_N = 3;
-const MIN_SHARE = 0.10;
+const MIN_SHARE = 0.20;
+const MIN_BILLS = 3;
 
 // Member's donor money rolled up to mapped themes, across all loaded cycles.
 const DONOR_SQL = `
@@ -134,7 +143,7 @@ export const donorSectorVoteAlignment: PatternDetector = {
     const hits: PatternHit[] = [];
     for (const dt of topThemes) {
       const bills = sponsoredByTheme.get(dt.theme);
-      if (!bills || bills.length === 0) continue;
+      if (!bills || bills.length < MIN_BILLS) continue;
 
       const share = Number(dt.theme_total) / mappedTotal;
       const themeTotal = Number(dt.theme_total);
