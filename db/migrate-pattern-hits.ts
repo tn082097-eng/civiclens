@@ -23,12 +23,15 @@ CREATE TABLE IF NOT EXISTS pattern_hits (
   dates_json      TEXT NOT NULL,
   detected_at     TIMESTAMP NOT NULL
 );
-CREATE INDEX IF NOT EXISTS idx_pattern_hits_member  ON pattern_hits(member);
-CREATE INDEX IF NOT EXISTS idx_pattern_hits_pattern ON pattern_hits(pattern);
 `;
 
 export async function migratePatternHits(): Promise<void> {
   const conn = await getDb();
+  // Drop any ART indexes (PK + secondary) on pattern_hits — in this DuckDB
+  // version they all hit "Failed to delete all rows from index" on run-patterns
+  // re-runs. See schema.sql. Safe if they don't exist.
+  await conn.run('DROP INDEX IF EXISTS idx_pattern_hits_member');
+  await conn.run('DROP INDEX IF EXISTS idx_pattern_hits_pattern');
   // Drop a legacy PK-bearing table in place (its unique ART index is the bug);
   // preserve existing rows. CREATE-IF-NOT-EXISTS alone can't alter an existing
   // table, so detect the PK and rebuild without it.

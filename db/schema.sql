@@ -493,8 +493,9 @@ CREATE TABLE IF NOT EXISTS pattern_hits (
   dates_json      TEXT NOT NULL,
   detected_at     TIMESTAMP NOT NULL
 );
-CREATE INDEX IF NOT EXISTS idx_pattern_hits_member  ON pattern_hits(member);
-CREATE INDEX IF NOT EXISTS idx_pattern_hits_pattern ON pattern_hits(pattern);
+-- No secondary ART indexes either: in this DuckDB version they hit the same
+-- "Failed to delete all rows from index" bug as the PK on run-patterns re-runs.
+-- pattern_hits is small (hundreds of rows) so full scans are instant.
 
 -- ─── Relevance edge: ticker → sector (SEC SIC) ──────────────────────────────
 -- Deterministic ticker→company→SIC sector map from SEC. Only the distinct
