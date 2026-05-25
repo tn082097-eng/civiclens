@@ -354,6 +354,7 @@ ${bold('CivicLens Pipeline Runner')}
   ${cyan('npx tsx agents/pipeline.ts --load-fec-ie <cycle[,cycle]> [--dry-run]')} load FEC Super PAC IE into DuckDB
   ${cyan('npx tsx agents/pipeline.ts --load-opensecrets <cycle[,cycle]> [--dry-run]')} parse cached OpenSecrets industry HTML into DuckDB
   ${cyan('npx tsx agents/pipeline.ts --load-bills [--api-pass] [--api-limit N] [--limit N]')} backfill votes.bill_id + fetch summaries
+  ${cyan('npx tsx agents/pipeline.ts --load-sponsored [member-id]')} authoritative sponsor rows + inline policyArea (run AFTER load-from-tasks)
   ${cyan('npx tsx agents/pipeline.ts --render')}                     build static site at ~/.hermes/civiclens/site/
   ${cyan('npx tsx agents/pipeline.ts --refresh-research "Name"')}    fetch researcher data only (no LLM agents, no predictor) and sync to DB
 `);
@@ -454,6 +455,13 @@ ${bold('CivicLens Pipeline Runner')}
     const li = process.argv.indexOf('--limit');
     const limit = li >= 0 ? parseInt(process.argv[li + 1] ?? '', 10) : undefined;
     await loadBillSubjects({ limit });
+    process.exit(0);
+  })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
+} else if (arg === '--load-sponsored') {
+  (async () => {
+    const { loadSponsored } = await import('../db/load-sponsored.js');
+    const memberId = arg2 && !arg2.startsWith('--') ? arg2 : null;
+    await loadSponsored({ memberId });
     process.exit(0);
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
 } else if (arg === '--load-senate-ptr') {

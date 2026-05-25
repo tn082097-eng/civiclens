@@ -162,6 +162,43 @@ Returns bills the member cosponsored. Same payload shape as `sponsored-legislati
 
 ---
 
+## Congress.gov API — Sponsored Legislation (authoritative sponsor rows + inline policyArea)
+
+**Endpoint:** `GET /member/{bioguide}/sponsored-legislation?format=json&limit={n}&offset={n}`
+Probe verified live 2026-05-25 on `mike-turner` (`bioguide=T000463`).
+
+Replaces the LLM-fabricated sponsor list (Grok-3 researcher → `load-from-tasks.ts`) with primary-source data, and — critically — carries `policyArea.name` **inline in the list response**, so the donor-sector detector's sponsored bills get a policy area with **no per-bill `/subjects` call**.
+
+Sample items (`d.sponsoredLegislation[]`, `d.pagination.count = 192` for Turner):
+
+```json
+{
+  "congress": 119,
+  "introducedDate": "2026-04-09",
+  "latestAction": { "actionDate": "2026-04-09", "text": "Referred to the House Committee on Ways and Means." },
+  "number": "8242",
+  "policyArea": { "name": "Taxation" },
+  "title": "Health Coverage Tax Credit Reauthorization Act of 2026",
+  "type": "HR",
+  "url": "https://api.congress.gov/v3/bill/119/hr/8242?format=json"
+}
+```
+
+### Mapping (dual-write — note the two id formats)
+
+- **`bills` table** — `bill_id = ${congress}/${type.toLowerCase()}/${number}` (SLASH, e.g. `119/hr/8242`), `sponsor_role='sponsor'`, `ON CONFLICT DO UPDATE` (authoritative data wins over the LLM row).
+- **`bill_subjects` table** — `bill_id = ${congress}-${type.toLowerCase()}-${number}` (DASH, e.g. `119-hr-8242`), stored as `(bill_id, policy_area=name, subject=name)`. The detector joins `bill_subjects bs ON bs.bill_id = REPLACE(b.bill_id,'/','-')`, so the dash form is required for the join to land. Mirrors `load-bill-subjects.ts` policyArea-as-subject fallback.
+
+### Caveats / traps
+
+- `type` is UPPERCASE in the payload (`"HR"`, `"HRES"`) — must `.toLowerCase()`.
+- `policyArea.name` is often `null` for very recently introduced bills (CRS hasn't classified them yet). When null: still upsert the `bills` row, but write NO `bill_subjects` row (no policy area = nothing to match).
+- Granular `legislativeSubjects` are NOT in the list response — only the single `policyArea`. Per-bill `/subjects` (or GPO BILLSTATUS bulk) is deferred (Tier 2).
+- Sponsored set is disjoint from cosponsored set (you don't cosponsor your own bill), so `DO UPDATE` here cannot clobber authoritative cosponsor rows.
+- **Durability:** `load-from-tasks.ts` uses `INSERT OR REPLACE INTO bills`, which re-fabricates sponsor rows from LLM data. This loader MUST run **after** `load-from-tasks` in any sequence — it is a post-research enrichment loader.
+
+---
+
 ## House Clerk — Financial Disclosure Bulk Data (key-free, no rate limit)
 
 **Base URL:** `https://disclosures-clerk.house.gov/`
