@@ -477,6 +477,13 @@ QUALIFY rn = 1;
 -- are JSON arrays because the read pattern is "all hits for member X" and the
 -- citing rows are always read together with the hit. detected_at lets the
 -- render layer order by recency within an intensity tier.
+-- No enforced PRIMARY KEY. An enforced PK builds a unique ART index, and DuckDB
+-- throws "Failed to delete all rows from index. Only deleted 0 out of N rows"
+-- when run-patterns re-runs over a member whose prior hit is being replaced —
+-- corrupting the pass for ALL detectors. Idempotency is enforced in code by
+-- run-patterns (DELETE WHERE pattern+member, then INSERT), so the constraint was
+-- redundant. Matches the deliberate no-PK convention of donor_industry /
+-- super_pac_ie (churned, DELETE-then-insert tables).
 CREATE TABLE IF NOT EXISTS pattern_hits (
   pattern         TEXT NOT NULL,
   member          TEXT NOT NULL,
@@ -484,8 +491,7 @@ CREATE TABLE IF NOT EXISTS pattern_hits (
   intensity       DOUBLE NOT NULL,
   citing_json     TEXT NOT NULL,
   dates_json      TEXT NOT NULL,
-  detected_at     TIMESTAMP NOT NULL,
-  PRIMARY KEY (pattern, member, dates_json)
+  detected_at     TIMESTAMP NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_pattern_hits_member  ON pattern_hits(member);
 CREATE INDEX IF NOT EXISTS idx_pattern_hits_pattern ON pattern_hits(pattern);

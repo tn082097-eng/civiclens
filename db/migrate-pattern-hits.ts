@@ -11,6 +11,8 @@
 
 import { getDb } from './init.js';
 
+// No enforced PRIMARY KEY — see the note in schema.sql. An enforced PK trips
+// DuckDB's "Failed to delete all rows from index" bug on run-patterns re-runs.
 const DDL = `
 CREATE TABLE IF NOT EXISTS pattern_hits (
   pattern         TEXT NOT NULL,
@@ -19,8 +21,7 @@ CREATE TABLE IF NOT EXISTS pattern_hits (
   intensity       DOUBLE NOT NULL,
   citing_json     TEXT NOT NULL,
   dates_json      TEXT NOT NULL,
-  detected_at     TIMESTAMP NOT NULL,
-  PRIMARY KEY (pattern, member, dates_json)
+  detected_at     TIMESTAMP NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_pattern_hits_member  ON pattern_hits(member);
 CREATE INDEX IF NOT EXISTS idx_pattern_hits_pattern ON pattern_hits(pattern);
@@ -28,6 +29,29 @@ CREATE INDEX IF NOT EXISTS idx_pattern_hits_pattern ON pattern_hits(pattern);
 
 export async function migratePatternHits(): Promise<void> {
   const conn = await getDb();
+  // Drop a legacy PK-bearing table in place (its unique ART index is the bug);
+  // preserve existing rows. CREATE-IF-NOT-EXISTS alone can't alter an existing
+  // table, so detect the PK and rebuild without it.
+  const hasPk = (await (await conn.run(
+    `SELECT COUNT(*) AS n FROM duckdb_constraints()
+      WHERE table_name = 'pattern_hits' AND constraint_type = 'PRIMARY KEY'`,
+  )).getRowObjects())[0] as { n: number | bigint };
+  if (Number(hasPk.n) > 0) {
+    await conn.run('BEGIN');
+    try {
+      await conn.run(`CREATE OR REPLACE TEMP TABLE _pattern_hits_bak AS SELECT * FROM pattern_hits`);
+      await conn.run('DROP TABLE pattern_hits');
+      for (const stmt of DDL.split(/;\s*\n/).map(s => s.trim()).filter(Boolean)) {
+        await conn.run(stmt);
+      }
+      await conn.run('INSERT INTO pattern_hits SELECT * FROM _pattern_hits_bak');
+      await conn.run('COMMIT');
+    } catch (e) {
+      await conn.run('ROLLBACK');
+      throw e;
+    }
+    return;
+  }
   for (const stmt of DDL.split(/;\s*\n/).map(s => s.trim()).filter(Boolean)) {
     await conn.run(stmt);
   }
