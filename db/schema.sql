@@ -544,6 +544,58 @@ CREATE TABLE IF NOT EXISTS ticker_theme_override (
   note   TEXT              -- why the SIC-derived theme is wrong for this ticker
 );
 
+-- ─── Donor-sector substrate (Pattern Discovery v2, Phase 2) ─────────────────
+-- Per-member industry breakdown of campaign money, the donor-side analogue of
+-- the trade nexus. Authoritative tier = OpenSecrets per-member industry rollup
+-- (source='opensecrets'); fallback tier = FEC Schedule A employer/occupation
+-- fuzzy classification (source='fec') for members/cycles OpenSecrets lacks.
+-- Idempotency: DELETE-then-insert per (member_id, cycle, source). No PK — a
+-- member can have the same industry under both tiers across reconciliation, and
+-- OpenSecrets industry strings are not guaranteed unique within a sector.
+CREATE TABLE IF NOT EXISTS donor_industry (
+  member_id    TEXT NOT NULL,
+  cycle        INTEGER NOT NULL,
+  sector       TEXT,                 -- OpenSecrets 13-sector label (null for fec tier)
+  industry     TEXT NOT NULL,        -- OpenSecrets industry, or FEC-derived label
+  total        DOUBLE NOT NULL,      -- total $ from this industry
+  individuals  DOUBLE,               -- $ from individuals
+  pacs         DOUBLE,               -- $ from PACs
+  source       TEXT NOT NULL,        -- 'opensecrets' | 'fec'
+  source_url   TEXT,
+  fetched_at   TIMESTAMP NOT NULL
+);
+
+-- Donor-industry → theme crosswalk. Same hand-curated, version-controlled
+-- philosophy as sic_theme/theme_bill_match: an ILIKE pattern against
+-- donor_industry.industry maps it to one of the existing economic-sector
+-- themes. Industries with no pattern match (Labor, Ideology, Lawyers, Retired,
+-- Education, public sector) are deliberately UNMAPPED — they carry no
+-- tradable-industry theme, so they sit outside the donor↔sponsorship lens.
+-- Seeded by db/load-sector-crosswalk.ts.
+CREATE TABLE IF NOT EXISTS donor_industry_theme (
+  industry_pattern TEXT NOT NULL,    -- ILIKE pattern on donor_industry.industry
+  theme            TEXT NOT NULL,    -- one of the existing theme_bill_match themes
+  note             TEXT
+);
+
+-- Per-member donor money rolled up to mapped economic-sector themes. The donor
+-- analogue of theme exposure. Only mapped industries contribute; unmapped money
+-- (Labor/Ideology/etc.) is intentionally excluded so themes are comparable to
+-- the trade/bill theme space.
+CREATE OR REPLACE VIEW v_member_donor_theme AS
+SELECT
+  di.member_id,
+  di.cycle,
+  m.theme,
+  SUM(di.total)       AS theme_total,
+  SUM(di.individuals) AS theme_individuals,
+  SUM(di.pacs)        AS theme_pacs,
+  COUNT(*)            AS industry_count,
+  ANY_VALUE(di.source) AS source
+FROM donor_industry di
+JOIN donor_industry_theme m ON di.industry ILIKE m.industry_pattern
+GROUP BY di.member_id, di.cycle, m.theme;
+
 -- ─── Trade ↔ bill nexus (the credible-loop view) ────────────────────────────
 -- A trade qualifies only when the traded ticker's industry theme intersects the
 -- bill's topic — every edge deterministic and sourced, no scalar score.

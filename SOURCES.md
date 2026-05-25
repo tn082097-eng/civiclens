@@ -328,3 +328,58 @@ Goldman↔Safer Communities, WBD↔CHIPS, NDAA omnibus); flagships preserved
   is the generic backstop for any other omnibus vehicle.
 - ETFs/index funds have no single SIC — leave sector NULL (already excluded by
   `v_suspicious_trades` asset-type filter).
+
+## OpenSecrets — per-member donor industry breakdown (verified 2026-05-24)
+
+Powers the donor side of Pattern Discovery v2 (`donor-sector-vote-alignment`).
+OpenSecrets publishes each member's campaign money already classified into a
+3-tier taxonomy (Sector → Industry → Category). We ingest the **Industry** level
+and crosswalk it to the existing economic-sector themes (`donor_industry_theme`).
+
+### Access — NOT the API, NOT the widget endpoint
+- The OpenSecrets **API** is key-gated and we have no key; skipped.
+- The data-bearing widget endpoint
+  `/widgets/industries_contribution_details_widget?cid=&cycle=&mpid=...` is
+  **hard-blocked by Cloudflare WAF** (HTTP 403 at the Chrome level, regardless of
+  a valid `_app_session` cookie). Do NOT target it.
+- **What works:** the normal member profile page
+  `https://www.opensecrets.org/profiles/{slug}/us_congress/industries?mpid={mpid}&cycle={cycle}`
+  is not WAF-gated and embeds the fully rendered industries table (the lazy
+  turbo-frame arrives `complete`). Include `&cycle=` (else defaults to latest).
+- OpenSecrets is behind Cloudflare bot protection, so plain HTTP 403s — the page
+  must be fetched with a real browser (browser-harness). This makes the harvest
+  a browser step, NOT a headless/cron loader. Raw HTML is frozen to
+  `pfd-cache/opensecrets/<cycle>/<member_id>.html`; `db/load-opensecrets.ts` is a
+  pure parser over those files (cron-safe, idempotent).
+
+### Resolving a member → OpenSecrets CID + mpid (no API key)
+1. slug = lowercase name, spaces→hyphens, strip apostrophes/periods.
+2. GET `/members-of-congress/{slug}/summary` (follow redirect).
+3. CID from `og:image`: `congress-members/photos/([Nn]\d{8})\.jpg`.
+4. mpid from the final URL: `mpid=(\d+)`.
+Common-name collisions (e.g. "Mike Johnson") may need state disambiguation.
+
+### Page structure (the parser contract)
+DataTables nested-child layout: each sector is a top-level `<tr>` (sector name +
+3 money cells) whose hidden cell holds a nested `<table>` of its industries, each
+a `[name, total, individuals, pacs]` `<tr>`. The parser walks every row's cells
+in groups of `[label, $, $, $]`; a leading group whose label is one of the 13
+sector names sets the current sector and is **skipped** (its dollars equal the
+sum of its industries — storing it would double count). Deduped by industry name.
+
+### Crosswalk to themes (the only judgment — static, auditable)
+`donor_industry_theme(industry_pattern, theme)` maps an ILIKE pattern on the
+industry name to one of the 12 economic-sector themes (same set as
+`theme_bill_match`). Seeded by `db/load-sector-crosswalk.ts`. Industries with no
+pattern (Labor, Ideology, Lawyers, Retired, Education, public-sector,
+single-issue) are deliberately UNMAPPED — they carry no tradable-industry theme,
+so they sit outside the donor↔sponsorship lens and are excluded from
+`v_member_donor_theme`. v1 patterns — expect eyeball-tuning as more members load.
+
+### Caveats / traps
+- The widget endpoint worked during the first probe but is now WAF-blocked; the
+  profile page is the stable target.
+- The profile page defaults to the latest cycle when `&cycle=` is omitted — a
+  page saved without it is mislabeled (e.g. 2026 data in a `2024/` file).
+- Domain-scraping mechanics live in
+  `~/Developer/browser-harness/agent-workspace/domain-skills/opensecrets/`.

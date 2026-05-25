@@ -352,6 +352,7 @@ ${bold('CivicLens Pipeline Runner')}
   ${cyan('npx tsx agents/pipeline.ts --load-pfd <year> [--dry-run]')} load House Clerk PFDs for year into DuckDB
   ${cyan('npx tsx agents/pipeline.ts --load-senate-ptr [--dry-run]')} load Senate EFDS PTRs into DuckDB
   ${cyan('npx tsx agents/pipeline.ts --load-fec-ie <cycle[,cycle]> [--dry-run]')} load FEC Super PAC IE into DuckDB
+  ${cyan('npx tsx agents/pipeline.ts --load-opensecrets <cycle[,cycle]> [--dry-run]')} parse cached OpenSecrets industry HTML into DuckDB
   ${cyan('npx tsx agents/pipeline.ts --load-bills [--api-pass] [--api-limit N] [--limit N]')} backfill votes.bill_id + fetch summaries
   ${cyan('npx tsx agents/pipeline.ts --render')}                     build static site at ~/.hermes/civiclens/site/
   ${cyan('npx tsx agents/pipeline.ts --refresh-research "Name"')}    fetch researcher data only (no LLM agents, no predictor) and sync to DB
@@ -409,6 +410,17 @@ ${bold('CivicLens Pipeline Runner')}
     const withIe = results.filter((r: any) => !r.error && r.aggregates > 0).length;
     console.log(`\nFEC IE load: ${results.length} member-cycle rows, ${withIe} with IE, ${errored} errored${dryRun ? ' (dry-run)' : ''}`);
     process.exit(errored > 0 ? 1 : 0);
+  })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(2); });
+} else if (arg === '--load-opensecrets') {
+  const dryRun = process.argv.includes('--dry-run');
+  const cycleArg = arg2 && !arg2.startsWith('--') ? arg2 : '2024';
+  (async () => {
+    const { loadOpenSecrets, parseArgs } = await import('../db/load-opensecrets.js');
+    const { cycles } = parseArgs([cycleArg]);
+    const { results, errored } = await loadOpenSecrets(cycles, { dryRun });
+    const ok = results.filter((r: any) => !r.error).length;
+    console.log(`\nOpenSecrets load: ${results.length} member-cycle file(s), ${ok} loaded, ${errored} errored${dryRun ? ' (dry-run)' : ''}`);
+    process.exit(errored > 0 && results.every((r: any) => r.error) ? 1 : 0);
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(2); });
 } else if (arg === '--load-bills') {
   (async () => {

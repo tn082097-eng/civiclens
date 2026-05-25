@@ -130,7 +130,118 @@ const TICKER_OVERRIDE: Array<{ ticker: string; theme: string; note: string }> = 
   { ticker: 'MELI', theme: 'Retail & Consumer', note: 'MercadoLibre — e-commerce marketplace, SIC 7389, not Tech' },
 ];
 
-export async function loadSectorCrosswalk(): Promise<{ sicRows: number; matchRows: number; overrideRows: number }> {
+// OpenSecrets industry name → theme (donor side). ILIKE patterns against
+// donor_industry.industry, same hand-curated philosophy as theme_bill_match's
+// subject_pattern. Maps to the SAME 12 economic-sector themes so donor exposure
+// is comparable to the trade/bill theme space. Industries with no pattern here
+// (Labor, Ideology, Lawyers, Retired, Education, public sector, single-issue
+// groups) are deliberately UNMAPPED — they carry no tradable-industry theme.
+//
+// v1 crosswalk — tuned by hand against the OpenSecrets taxonomy; expect
+// eyeball-tuning as more members' breakdowns are loaded. Patterns aim to be
+// mutually exclusive; minor overlaps (a few % of dollars) won't flip a top
+// theme. Order does not matter — every matching pattern contributes.
+const DONOR_INDUSTRY_THEME: Array<{ pattern: string; theme: string; note?: string }> = [
+  // Energy & Natural Resources
+  { pattern: '%oil & gas%', theme: 'Energy' },
+  { pattern: '%electric utilit%', theme: 'Energy' },
+  { pattern: '%natural gas%', theme: 'Energy' },
+  { pattern: '%coal%', theme: 'Energy' },
+  { pattern: '%alternative energy%', theme: 'Energy' },
+  { pattern: '%nuclear energy%', theme: 'Energy' },
+  { pattern: '%power utilit%', theme: 'Energy' },
+  { pattern: '%petroleum%', theme: 'Energy' },
+  // Pharma & Health
+  { pattern: '%pharmaceutic%', theme: 'Pharma & Health' },
+  { pattern: '%health product%', theme: 'Pharma & Health' },
+  { pattern: '%hospital%', theme: 'Pharma & Health' },
+  { pattern: '%nursing home%', theme: 'Pharma & Health' },
+  { pattern: '%health profession%', theme: 'Pharma & Health' },
+  { pattern: '%health services%', theme: 'Pharma & Health' },
+  { pattern: '%hmo%', theme: 'Pharma & Health' },
+  { pattern: '%medical device%', theme: 'Pharma & Health' },
+  { pattern: '%medical suppl%', theme: 'Pharma & Health' },
+  { pattern: '%physician%', theme: 'Pharma & Health' },
+  { pattern: '%health worker%', theme: 'Pharma & Health' },
+  // Banks & Finance
+  { pattern: '%commercial bank%', theme: 'Banks & Finance' },
+  { pattern: '%securities & invest%', theme: 'Banks & Finance' },
+  { pattern: '%insurance%', theme: 'Banks & Finance' },
+  { pattern: '%finance/credit%', theme: 'Banks & Finance' },
+  { pattern: '%hedge fund%', theme: 'Banks & Finance' },
+  { pattern: '%private equity%', theme: 'Banks & Finance' },
+  { pattern: '%accountant%', theme: 'Banks & Finance' },
+  { pattern: '%credit union%', theme: 'Banks & Finance' },
+  { pattern: '%savings & loan%', theme: 'Banks & Finance' },
+  { pattern: '%mortgage banker%', theme: 'Banks & Finance' },
+  { pattern: '%investment firm%', theme: 'Banks & Finance' },
+  { pattern: '%venture capital%', theme: 'Banks & Finance' },
+  { pattern: '%stock broker%', theme: 'Banks & Finance' },
+  // Payments (thin on the donor side; card networks rarely itemized separately)
+  { pattern: '%credit card%', theme: 'Payments' },
+  // Defense & Aerospace
+  { pattern: '%defense aero%', theme: 'Defense & Aerospace' },
+  { pattern: '%aerospace%', theme: 'Defense & Aerospace' },
+  { pattern: '%defense electron%', theme: 'Defense & Aerospace' },
+  { pattern: '%misc defense%', theme: 'Defense & Aerospace' },
+  // Tech & Semiconductors
+  { pattern: '%computer software%', theme: 'Tech & Semiconductors' },
+  { pattern: '%internet%', theme: 'Tech & Semiconductors' },
+  { pattern: '%electronics mf%', theme: 'Tech & Semiconductors' },
+  { pattern: '%semiconductor%', theme: 'Tech & Semiconductors' },
+  { pattern: '%data processing%', theme: 'Tech & Semiconductors' },
+  { pattern: '%hosting/cloud%', theme: 'Tech & Semiconductors' },
+  { pattern: '%search engine%', theme: 'Tech & Semiconductors' },
+  { pattern: '%video game%', theme: 'Tech & Semiconductors' },
+  { pattern: '%computers/elect%', theme: 'Tech & Semiconductors' },
+  { pattern: '%computer component%', theme: 'Tech & Semiconductors' },
+  // Media & Telecom
+  { pattern: '%tv/movies/music%', theme: 'Media & Telecom' },
+  { pattern: '%telephone util%', theme: 'Media & Telecom' },
+  { pattern: '%telecom%', theme: 'Media & Telecom' },
+  { pattern: '%motion picture%', theme: 'Media & Telecom' },
+  { pattern: '%commercial tv%', theme: 'Media & Telecom' },
+  { pattern: '%recorded music%', theme: 'Media & Telecom' },
+  { pattern: '%publishing%', theme: 'Media & Telecom' },
+  { pattern: '%newspaper%', theme: 'Media & Telecom' },
+  { pattern: '%broadcast%', theme: 'Media & Telecom' },
+  { pattern: '%entertainment industry%', theme: 'Media & Telecom' },
+  // Retail & Consumer
+  { pattern: '%retail sales%', theme: 'Retail & Consumer' },
+  { pattern: '%restaurant%', theme: 'Retail & Consumer' },
+  { pattern: '%food & beverage%', theme: 'Retail & Consumer' },
+  { pattern: '%lodging/tourism%', theme: 'Retail & Consumer' },
+  { pattern: '%beer, wine & liquor%', theme: 'Retail & Consumer' },
+  { pattern: '%casino%', theme: 'Retail & Consumer' },
+  { pattern: '%food stores%', theme: 'Retail & Consumer' },
+  { pattern: '%online retail%', theme: 'Retail & Consumer' },
+  // Transportation
+  { pattern: '%air transport%', theme: 'Transportation' },
+  { pattern: '%automotive%', theme: 'Transportation' },
+  { pattern: '%sea transport%', theme: 'Transportation' },
+  { pattern: '%railroad%', theme: 'Transportation' },
+  { pattern: '%trucking%', theme: 'Transportation' },
+  // Industrials & Construction
+  { pattern: '%misc manufactur%', theme: 'Industrials' },
+  { pattern: '%general contractor%', theme: 'Industrials' },
+  { pattern: '%special trade%', theme: 'Industrials' },
+  { pattern: '%construction services%', theme: 'Industrials' },
+  { pattern: '%building material%', theme: 'Industrials' },
+  { pattern: '%industrial%', theme: 'Industrials' },
+  // Materials, Mining & Chemicals
+  { pattern: '%mining%', theme: 'Materials & Mining' },
+  { pattern: '%steel%', theme: 'Materials & Mining' },
+  { pattern: '%chemical%', theme: 'Materials & Mining' },
+  { pattern: '%forestry%', theme: 'Materials & Mining' },
+  { pattern: '%mineral%', theme: 'Materials & Mining' },
+  // Real Estate
+  { pattern: '%real estate%', theme: 'Real Estate' },
+  { pattern: '%home builder%', theme: 'Real Estate' },
+  { pattern: '%mortgage broker%', theme: 'Real Estate' },
+  { pattern: '%property management%', theme: 'Real Estate' },
+];
+
+export async function loadSectorCrosswalk(): Promise<{ sicRows: number; matchRows: number; overrideRows: number; donorThemeRows: number }> {
   await applySchema();
   const conn = await getDb();
 
@@ -161,8 +272,22 @@ export async function loadSectorCrosswalk(): Promise<{ sicRows: number; matchRow
     overrideRows++;
   }
 
-  console.log(`Seeded crosswalk: ${sicRows} SIC→theme rows, ${matchRows} theme→bill-match rows across ${THEME_MATCH.length} themes, ${overrideRows} ticker overrides.`);
-  return { sicRows, matchRows, overrideRows };
+  await conn.run(`DELETE FROM donor_industry_theme`);
+  let donorThemeRows = 0;
+  for (const { pattern, theme, note } of DONOR_INDUSTRY_THEME) {
+    await conn.run(
+      `INSERT INTO donor_industry_theme (industry_pattern, theme, note) VALUES (?,?,?)`,
+      [pattern, theme, note ?? null],
+    );
+    donorThemeRows++;
+  }
+
+  console.log(
+    `Seeded crosswalk: ${sicRows} SIC→theme rows, ${matchRows} theme→bill-match rows across ` +
+    `${THEME_MATCH.length} themes, ${overrideRows} ticker overrides, ` +
+    `${donorThemeRows} donor-industry→theme patterns.`,
+  );
+  return { sicRows, matchRows, overrideRows, donorThemeRows };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
