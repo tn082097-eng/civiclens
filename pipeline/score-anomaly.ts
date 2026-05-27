@@ -42,6 +42,12 @@ SELECT
   bill_mentions_ticker
 FROM v_suspicious_trades
 WHERE member_id = ?
+-- Deterministic TOTAL order is load-bearing: the volume-shuffle null assigns
+-- shuffled dates to trades positionally, so a stable trades[] order is required
+-- for the seeded result to be reproducible across runs (idempotency guarantee).
+-- Must include the full trade identity (a basket trader files many instruments
+-- on one date under one filing, which would otherwise tie and reorder freely).
+ORDER BY filing_id, tx_date, tx_type, instrument, vote_id
 `;
 
 function assemble(rows: Row[]): { trades: Trade[]; votes: NexusVote[] } {
