@@ -66,7 +66,7 @@ function fmtLinks(items: any[], kind: 'direct' | 'hidden' | 'indirect'): string[
   return out.length ? out : ['- _(none)_'];
 }
 
-async function dbFacts(conn: any, memberId: string, displayName: string): Promise<string[]> {
+async function dbFacts(conn: any, memberId: string): Promise<string[]> {
   const q = async (sql: string) => { const r = await conn.run(sql); return (await r.getRowObjects()) as any[]; };
   const esc = (s: string) => s.replace(/'/g, "''");
   const id = esc(memberId);
@@ -85,7 +85,8 @@ async function dbFacts(conn: any, memberId: string, displayName: string): Promis
     ORDER BY date DESC LIMIT 8`);
   const trades = await q(`SELECT tx_date, tx_type, asset, ticker, amount_band, holder FROM pfd_transactions
     WHERE member_id='${id}' ORDER BY tx_date DESC LIMIT 20`);
-  const hits = await q(`SELECT pattern, finding, intensity FROM pattern_hits WHERE member='${esc(displayName)}' ORDER BY intensity DESC`);
+  const hits = await q(`SELECT pattern, finding, intensity, null_model, observed, expected, p_value
+    FROM pattern_hits WHERE member='${id}' ORDER BY z_score DESC NULLS LAST, intensity DESC`);
 
   if (member.bio_summary) { L.push(member.bio_summary as string); L.push(''); }
 
@@ -115,7 +116,13 @@ async function dbFacts(conn: any, memberId: string, displayName: string): Promis
   L.push('');
 
   L.push('## Pattern hits', '');
-  if (hits.length) for (const h of hits) L.push(`- **${h.pattern}** (intensity ${num(h.intensity).toFixed(2)}) — ${h.finding}`);
+  if (hits.length) for (const h of hits) {
+    L.push(`- **${h.pattern}** (intensity ${num(h.intensity).toFixed(2)}) — ${h.finding}`);
+    if (h.null_model != null) {
+      const verdict = num(h.p_value) <= 0.05 ? 'Exceeds chance' : 'Consistent with chance';
+      L.push(`  - _Rigor:_ **${verdict}** — observed ${num(h.observed)} vs expected ${num(h.expected).toFixed(2)} (${h.null_model} null, p=${num(h.p_value).toFixed(3)})`);
+    }
+  }
   else L.push('- _(no detector fired)_');
   L.push('');
 
@@ -173,7 +180,7 @@ async function main() {
   const allNames = new Map<string, string | null>();
   for (const [mid, data] of best) {
     const net = networkSection(mid, data);
-    const facts = await dbFacts(conn, mid, net.name);
+    const facts = await dbFacts(conn, mid);
     const header = [
       '---', `member: ${net.name}`, `member_id: ${mid}`,
       `analyzed_at: ${data.analyzedAt ?? ''}`, `corpus_size: ${net.comp.length}`,
