@@ -144,7 +144,9 @@ The slice shipped, but the data refuted the predicted contrast — recorded here
 
 **What this validates:** the rigor pillar works on its first run, and its first finding is that CivicLens's only roster-wide `trade-vote-alignment` hit (which `intensity` rated 0.85) is statistical noise. That is the pillar earning its keep — deflating a hit visual weight overstated. **Implication:** committee-jurisdiction nexus is a weak signal for active committee members; the ticker-named path is the real signal, and no one in the contrast pair has one. Under rigor, the roster currently shows *no* significant trade-vote alignment. User accepted shipping this honestly rather than tuning.
 
-**Performance caveat:** the volume-shuffle null is O(trades × votes × nPerm); MTG (388 × 1,182 × 10k) took minutes. Before any roster-wide scoring run, `countNexus` needs a per-ticker sorted-vote-date + binary-search optimization.
+**Performance (resolved):** the naive null was O(trades × votes × nPerm) and MTG (388 × 1,897 × 10k) took minutes. Now the votes fold once into a sorted `NexusIndex` (committee dates + per-ticker named-bill dates) and each trade is an O(log V) binary search, dropping the run to ~1s. `countNexus` keeps its signature and delegates to the indexed path, so the rule is unchanged (verified: 0 count divergences vs the naive path over 500 real MTG draws).
+
+**Reproducibility (fixed during verification):** the seed alone does *not* guarantee identical results — the volume-shuffle assigns shuffled dates to trades positionally, so `trades[]` must have a stable order. The scoring query originally had no `ORDER BY`, so row order varied across runs and z drifted (−0.66/−0.67) despite the fixed seed. Fix: a *total* `ORDER BY filing_id, tx_date, tx_type, instrument, vote_id` (a basket trader files many instruments per date per filing, so the partial key tied and reordered). The seeded-idempotency guarantee depends on this total order.
 
 ## Open questions
 
