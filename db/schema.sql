@@ -491,7 +491,15 @@ CREATE TABLE IF NOT EXISTS pattern_hits (
   intensity       DOUBLE NOT NULL,
   citing_json     TEXT NOT NULL,
   dates_json      TEXT NOT NULL,
-  detected_at     TIMESTAMP NOT NULL
+  detected_at     TIMESTAMP NOT NULL,
+  -- Rigor pillar (additive, nullable): null model output. NULL = unscored
+  -- detector, renders exactly as before. intensity is left untouched.
+  null_model      TEXT,        -- 'calendar' | 'volume-shuffle' | NULL
+  observed        INTEGER,
+  expected        DOUBLE,
+  p_value         DOUBLE,
+  z_score         DOUBLE,
+  n_perm          INTEGER
 );
 -- No secondary ART indexes either: in this DuckDB version they hit the same
 -- "Failed to delete all rows from index" bug as the PK on run-patterns re-runs.

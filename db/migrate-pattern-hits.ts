@@ -21,9 +21,26 @@ CREATE TABLE IF NOT EXISTS pattern_hits (
   intensity       DOUBLE NOT NULL,
   citing_json     TEXT NOT NULL,
   dates_json      TEXT NOT NULL,
-  detected_at     TIMESTAMP NOT NULL
+  detected_at     TIMESTAMP NOT NULL,
+  null_model      TEXT,
+  observed        INTEGER,
+  expected        DOUBLE,
+  p_value         DOUBLE,
+  z_score         DOUBLE,
+  n_perm          INTEGER
 );
 `;
+
+// Rigor-pillar scoring columns. Added via ALTER ... IF NOT EXISTS so an
+// existing DB gains them without a rebuild. All nullable (unscored = NULL).
+const SCORING_COLS: [string, string][] = [
+  ['null_model', 'TEXT'],
+  ['observed', 'INTEGER'],
+  ['expected', 'DOUBLE'],
+  ['p_value', 'DOUBLE'],
+  ['z_score', 'DOUBLE'],
+  ['n_perm', 'INTEGER'],
+];
 
 export async function migratePatternHits(): Promise<void> {
   const conn = await getDb();
@@ -47,16 +64,31 @@ export async function migratePatternHits(): Promise<void> {
       for (const stmt of DDL.split(/;\s*\n/).map(s => s.trim()).filter(Boolean)) {
         await conn.run(stmt);
       }
-      await conn.run('INSERT INTO pattern_hits SELECT * FROM _pattern_hits_bak');
+      // Explicit columns: the backup predates the scoring columns, so SELECT *
+      // into the wider new table would mismatch arity.
+      await conn.run(
+        `INSERT INTO pattern_hits
+           (pattern, member, finding, intensity, citing_json, dates_json, detected_at)
+         SELECT pattern, member, finding, intensity, citing_json, dates_json, detected_at
+           FROM _pattern_hits_bak`,
+      );
       await conn.run('COMMIT');
     } catch (e) {
       await conn.run('ROLLBACK');
       throw e;
     }
+    await addScoringCols(conn);
     return;
   }
   for (const stmt of DDL.split(/;\s*\n/).map(s => s.trim()).filter(Boolean)) {
     await conn.run(stmt);
+  }
+  await addScoringCols(conn);
+}
+
+async function addScoringCols(conn: Awaited<ReturnType<typeof getDb>>): Promise<void> {
+  for (const [col, type] of SCORING_COLS) {
+    await conn.run(`ALTER TABLE pattern_hits ADD COLUMN IF NOT EXISTS ${col} ${type}`);
   }
 }
 
