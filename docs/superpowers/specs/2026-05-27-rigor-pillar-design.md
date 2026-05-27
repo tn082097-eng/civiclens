@@ -135,6 +135,17 @@ Per the active-retrieval vault convention, the scorer writes each scored finding
 - Timing and synthesis pillars are out of scope (separate specs).
 - `intensity` is not changed, deprecated, or re-derived.
 
+## Outcome (2026-05-27, post-implementation)
+
+The slice shipped, but the data refuted the predicted contrast — recorded here because the result is the point, not the prediction.
+
+- **Jayapal:** observed=1, expected=0.65, **p=0.647** → *consistent with chance*, NOT "signal survives." Her lone trade has 1,182 eligible votes over ~2.5 years, of which 162 are committee votes and **0 are ticker-named**. With a committee vote every ~5–6 days, ~65% of the trading calendar is a nexus "hot zone," so a single trade landing there is unremarkable. The calendar window is correct (verified ~2.5yr span); the signal is genuinely weak.
+- **MTG:** **0 detector hits** → the confound never manifested in this detector (the nexus requirement already excludes her); observed=0, p=1.0. Nothing to collapse.
+
+**What this validates:** the rigor pillar works on its first run, and its first finding is that CivicLens's only roster-wide `trade-vote-alignment` hit (which `intensity` rated 0.85) is statistical noise. That is the pillar earning its keep — deflating a hit visual weight overstated. **Implication:** committee-jurisdiction nexus is a weak signal for active committee members; the ticker-named path is the real signal, and no one in the contrast pair has one. Under rigor, the roster currently shows *no* significant trade-vote alignment. User accepted shipping this honestly rather than tuning.
+
+**Performance caveat:** the volume-shuffle null is O(trades × votes × nPerm); MTG (388 × 1,182 × 10k) took minutes. Before any roster-wide scoring run, `countNexus` needs a per-ticker sorted-vote-date + binary-search optimization.
+
 ## Open questions
 
 - Whether to backfill the other shipped detectors (`donor-sector-vote-alignment`, `spousal-trade-timing`) with rigor scores after the slice validates — deferred to a follow-up.
