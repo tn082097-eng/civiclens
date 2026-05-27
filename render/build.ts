@@ -984,12 +984,20 @@ function patternIntensityClass(i: number): string {
   return 'intensity-low';
 }
 
+// Rigor pillar: turn a null-model result into a neutral one-line verdict.
+// p ≤ 0.05 → the observed nexus count is above what the member's own trading
+// would produce by chance; otherwise it is not. No moralizing words.
+function anomalyVerdict(pValue: number): string {
+  return pValue <= 0.05 ? 'Exceeds chance' : 'Consistent with chance';
+}
+
 async function renderPatterns(memberSlug: string): Promise<string> {
   const conn = await getDb();
   const res = await conn.run(
-    `SELECT pattern, finding, intensity, citing_json, dates_json
+    `SELECT pattern, finding, intensity, citing_json, dates_json,
+            null_model, observed, expected, p_value, z_score, n_perm
        FROM pattern_hits WHERE member = ?
-      ORDER BY intensity DESC, detected_at DESC`,
+      ORDER BY z_score DESC NULLS LAST, intensity DESC, detected_at DESC`,
     [memberSlug],
   );
   const rows = (await res.getRowObjects()) as any[];
@@ -1034,12 +1042,31 @@ async function renderPatterns(memberSlug: string): Promise<string> {
         })
         .join('');
 
+      // Rigor block: only for scored rows (null_model set). Shows observed vs
+      // expected, the neutral verdict, and full provenance for reproducibility.
+      let rigor = '';
+      if (r.null_model != null) {
+        const observed = Number(r.observed);
+        const expected = Number(r.expected);
+        const pValue = Number(r.p_value);
+        const nPerm = Number(r.n_perm);
+        const verdict = anomalyVerdict(pValue);
+        rigor = `<div class="anomaly" style="margin-top:8px; font-size:13px;">
+          <span style="font-weight:600;">${esc(verdict)}</span>
+          <span class="dim"> — observed ${observed} vs expected ${expected.toFixed(2)} under a random null</span>
+          <div class="muted" style="font-size:11px; margin-top:2px; letter-spacing:0.02em;">
+            null model: ${esc(String(r.null_model))} · ${nPerm.toLocaleString()} permutations · p = ${pValue.toFixed(3)}
+          </div>
+        </div>`;
+      }
+
       return `<div class="trade-card ${patternIntensityClass(intensity)}">
         <div class="tc-header">
           <div class="tc-asset">${esc(label)}</div>
           <div class="tc-meta">${esc(span)}</div>
         </div>
         <div>${esc(String(r.finding))}</div>
+        ${rigor}
         ${evidence}
       </div>`;
     })
