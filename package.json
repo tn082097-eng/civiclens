@@ -4,7 +4,8 @@
   "type": "module",
   "description": "CivicLens multi-agent data pipeline",
   "scripts": {
-    "state": "tsx lib/state.ts"
+    "state": "tsx lib/state.ts",
+    "test": "tsx --test pipeline/patterns/*.test.ts"
   },
   "dependencies": {
     "@duckdb/node-api": "^1.5.2-r.1",

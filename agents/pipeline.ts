@@ -60,9 +60,9 @@ function findFreshTask(name: string, maxAgeMs = 24 * 60 * 60 * 1000): string | n
 // Keep the NoService vault's Connections/Members notes in sync with the latest
 // connection-mapper output so the vault never drifts after a pipeline run.
 function regenerateVault() {
-  const script = path.join(HOME, '.hermes/civiclens', 'render', 'connections-to-vault.py');
+  const script = path.join(HOME, '.hermes/civiclens', 'render', 'connections-to-vault.ts');
   if (!fs.existsSync(script)) { warn('Vault', `regenerator missing: ${script}`); return; }
-  const r = spawnSync('python3', [script], { encoding: 'utf-8' });
+  const r = spawnSync('npx', ['tsx', script], { encoding: 'utf-8' });
   if (r.status === 0) {
     const last = (r.stdout || '').trim().split('\n').filter(Boolean).pop() ?? '';
     ok('Vault', `regenerated — ${last}`);
