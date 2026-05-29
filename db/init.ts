@@ -26,6 +26,20 @@ export async function getDb(): Promise<DuckDBConnection> {
   return _conn;
 }
 
+/**
+ * Release the DuckDB file lock so a separate process can open the DB.
+ * DuckDB is single-writer per file: while this process holds an open
+ * connection, spawned subprocesses (e.g. the vault regenerator) fail with
+ * "Could not set lock on file". Call this before handing the DB to another
+ * process, or at the end of a batch. getDb() will lazily reconnect if needed.
+ */
+export function closeDb(): void {
+  _conn?.closeSync();
+  _instance?.closeSync();
+  _conn = null;
+  _instance = null;
+}
+
 export async function applySchema(): Promise<void> {
   const conn = await getDb();
   const sql  = readFileSync(SCHEMA_PATH, 'utf-8');
@@ -42,12 +56,6 @@ export async function applySchema(): Promise<void> {
   for (const s of stmts) {
     await conn.run(s);
   }
-}
-
-export async function closeDb(): Promise<void> {
-  // node-api closes implicitly on process exit; leaving as no-op for parity.
-  _conn = null;
-  _instance = null;
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

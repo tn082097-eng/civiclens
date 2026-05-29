@@ -23,6 +23,7 @@ import {
   initTask, readTask, writeTask, readPipe, pipeFile, setStatus,
 } from './shared.js';
 import { syncTask } from '../db/sync-task.js';
+import { closeDb } from '../db/init.js';
 import { runResearcher } from './researcher.js';
 import { runDataChecker } from './data-checker.js';
 import { runPredictor } from './predictor.js';
@@ -62,6 +63,10 @@ function findFreshTask(name: string, maxAgeMs = 24 * 60 * 60 * 1000): string | n
 function regenerateVault() {
   const script = path.join(HOME, '.hermes/civiclens', 'render', 'connections-to-vault.ts');
   if (!fs.existsSync(script)) { warn('Vault', `regenerator missing: ${script}`); return; }
+  // Release our DuckDB file lock first — the regenerator is a separate process
+  // and DuckDB is single-writer per file. Without this it crashes with
+  // "Could not set lock on file". getDb() reconnects lazily if needed after.
+  closeDb();
   const r = spawnSync('npx', ['tsx', script], { encoding: 'utf-8' });
   if (r.status === 0) {
     const last = (r.stdout || '').trim().split('\n').filter(Boolean).pop() ?? '';
