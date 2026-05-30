@@ -33,3 +33,4 @@ batch-log.json
 
 # Generated reports
 *.html
+artifacts/
