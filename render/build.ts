@@ -275,6 +275,21 @@ footer a { color: var(--fg-dim); }
 .glance-cell { background: var(--bg); padding: 12px 14px; }
 .glance-value { font-size: 22px; font-weight: 500; color: var(--fg); line-height: 1.1; }
 .glance-label { font-size: 11px; color: var(--fg-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+/* Flag card (Patterns section) — weight-only, reuses .trade-card intensity tiers. No color affect. */
+.flag-card .fc-why     { font-size: 14px; margin: 6px 0; }
+.flag-card .fc-conf    { font-size: 13px; margin: 6px 0; }
+.flag-card .fc-conf strong { font-weight: 600; }
+.flag-card .fc-mech    { font-size: 12px; color: var(--fg-dim); margin: 4px 0; }
+.flag-card .fc-stats   { font-size: 11px; color: var(--fg-muted); letter-spacing: 0.02em; margin: 2px 0; }
+.flag-card .fc-caveat  { font-size: 12px; color: var(--fg-muted); margin-top: 6px; font-style: italic; }
+.flag-card .fc-evidence{ font-size: 12px; color: var(--fg-dim); margin-top: 6px; }
+.flag-card .fc-evidence .ev-kind { text-transform: uppercase; letter-spacing: 0.04em; color: var(--fg-muted); margin-right: 4px; }
+.flag-card .fc-evidence .ev-chip { display: inline-block; padding: 1px 6px; margin: 1px 2px 1px 0; border: 1px solid var(--line); border-radius: 3px; font-size: 11px; color: var(--fg-dim); text-decoration: none; }
+.flag-card .fc-evidence a.ev-chip:hover { border-color: var(--accent); color: var(--accent); }
+/* Homepage interpretability framing */
+.how-to-read { border: 1px solid var(--line); border-radius: 4px; padding: 14px 16px; margin: 12px 0 28px; }
+.how-to-read ul { margin: 8px 0 0; padding-left: 18px; }
+.how-to-read li { margin-bottom: 4px; font-size: 13px; color: var(--fg-dim); }
 `;
 
 function layout(title: string, breadcrumb: string, body: string): string {
@@ -339,8 +354,54 @@ async function fetchOverview(): Promise<MemberOverview[]> {
   }));
 }
 
+interface StrongestFlag {
+  member_id: string;
+  member_name: string;
+  pattern: string;
+  intensity: number;
+  null_model: string | null;
+  observed: number | null;
+  expected: number | null;
+  p_value: number | null;
+  n_perm: number | null;
+  citingCount: number;
+}
+
+// Corpus-wide strongest flags for the homepage. Read-only; same inline-SQL
+// pattern as fetchOverview. Ordered by statistical strength then weight.
+async function fetchStrongestFlags(limit = 12): Promise<StrongestFlag[]> {
+  const conn = await getDb();
+  const r = await conn.run(
+    `SELECT ph.pattern, ph.member, m.name AS member_name, ph.intensity, ph.citing_json,
+            ph.null_model, ph.observed, ph.expected, ph.p_value, ph.n_perm
+       FROM pattern_hits ph
+       JOIN members m ON m.member_id = ph.member
+      ORDER BY ph.z_score DESC NULLS LAST, ph.intensity DESC, ph.detected_at DESC
+      LIMIT ?`,
+    [limit],
+  );
+  const rows = (await r.getRowObjects()) as any[];
+  return rows.map(row => {
+    let citingCount = 0;
+    try { citingCount = (JSON.parse(String(row.citing_json)) as unknown[]).length; } catch { citingCount = 0; }
+    return {
+      member_id: String(row.member),
+      member_name: String(row.member_name),
+      pattern: String(row.pattern),
+      intensity: Number(row.intensity),
+      null_model: row.null_model ?? null,
+      observed: row.observed != null ? Number(row.observed) : null,
+      expected: row.expected != null ? Number(row.expected) : null,
+      p_value: row.p_value != null ? Number(row.p_value) : null,
+      n_perm: row.n_perm != null ? Number(row.n_perm) : null,
+      citingCount,
+    };
+  });
+}
+
 async function buildIndex(): Promise<void> {
   const overview = await fetchOverview();
+  const strongest = await fetchStrongestFlags();
   // Use the focused suspicious-trades feed: discretionary equities only,
   // before-vote direction only, 30-day window.  Cap per member so a single
   // high-volume trader (e.g. Pelosi) doesn't crowd out the rest.
@@ -406,7 +467,48 @@ async function buildIndex(): Promise<void> {
     </tr>`;
   }).join('');
 
+  const strongestRows = strongest.map(f => {
+    const label = PATTERN_LABELS[f.pattern] ?? f.pattern;
+    const conf = confidencePhrase({
+      null_model: f.null_model,
+      observed: f.observed,
+      expected: f.expected,
+      p_value: f.p_value,
+      n_perm: f.n_perm,
+      citingCount: f.citingCount,
+    });
+    return `
+    <tr>
+      <td><a class="member" href="members/${esc(f.member_id)}.html">${esc(f.member_name)}</a></td>
+      <td>${esc(label)}</td>
+      <td>${esc(conf.lead)}</td>
+    </tr>`;
+  }).join('');
+
+  const strongestBlock = strongest.length === 0
+    ? ''
+    : `<h2>Strongest flags</h2>
+<p class="lede" style="margin-bottom:12px;">The patterns that most exceed what each member's own activity would produce by chance, across the corpus. Open a profile to see the evidence and method behind each.</p>
+<table>
+<thead><tr><th>Member</th><th>Pattern</th><th>Confidence</th></tr></thead>
+<tbody>${strongestRows}</tbody>
+</table>`;
+
   const body = `
+<p class="lede" style="max-width:760px;">CivicLens reconstructs what members of Congress did — trades, votes, sponsorships, and donors — from primary sources, and flags where the timing or the money lines up in ways that stand out from chance. Every flag is reproducible and links back to the filing it came from. It reports patterns, not verdicts.</p>
+
+<div class="how-to-read">
+  <strong>How to read a flag</strong>
+  <ul>
+    <li>A flag is a measured pattern in the public record — not an accusation or a finding of wrongdoing.</li>
+    <li>Confidence says how far the pattern exceeds what the member's own activity would produce by chance; the exact statistics are shown on each flag.</li>
+    <li>Timing or sector alignment is not proof of intent or of non-public information. Read the cited records and judge for yourself.</li>
+  </ul>
+  <p style="margin:8px 0 0;"><a class="row-link" href="methodology.html">Full methodology — how each pattern is measured and scored →</a></p>
+</div>
+
+${strongestBlock}
+
 <h2>Explore</h2>
 <p class="lede"><a class="row-link" href="nexus.html">→ Trade ↔ bill nexus</a> — trades whose sector intersects a bill the member then voted on, ranked by proximity.</p>
 <p class="lede"><a class="row-link" href="network.html">→ Co-sponsorship network</a> — who introduces bills together across the loaded corpus.</p>
@@ -976,6 +1078,15 @@ const PATTERN_LABELS: Record<string, string> = {
   'donor-sector-vote-alignment': 'Donor sector ↔ sponsorship',
 };
 
+// Maps a cited-row kind to the in-page section anchor that renders it, so flag
+// evidence chips deep-link to the underlying rows. Only kinds with a dedicated
+// rendered section appear here; others (bill/contract/ie) render as plain text.
+const EVIDENCE_ANCHOR: Record<string, string> = {
+  trade: '#sec-trades',
+  vote: '#sec-timeline',
+  donor: '#sec-donors',
+};
+
 // Pattern intensity (0..1) → existing weight-only visual tier from the visual
 // identity pass. No color affect; weight scales with substrate, not "badness".
 function patternIntensityClass(i: number): string {
@@ -984,11 +1095,73 @@ function patternIntensityClass(i: number): string {
   return 'intensity-low';
 }
 
-// Rigor pillar: turn a null-model result into a neutral one-line verdict.
-// p ≤ 0.05 → the observed nexus count is above what the member's own trading
-// would produce by chance; otherwise it is not. No moralizing words.
-function anomalyVerdict(pValue: number): string {
-  return pValue <= 0.05 ? 'Exceeds chance' : 'Consistent with chance';
+// Static, render-only display copy per detector. This is UI text, not data —
+// no schema or pipeline dependency. "How measured" + "what this doesn't show".
+// Voice: factual, evidence-driven, non-accusatory.
+const PATTERN_META: Record<string, { mechanism: string; caveat: string }> = {
+  'trade-vote-alignment': {
+    mechanism:
+      'Counts discretionary stock trades placed within 14 days before a vote on a bill the ' +
+      "member's committee handled or whose text names the traded company, then compares that " +
+      "count to a seeded permutation null built from the member's own trading pace.",
+    caveat:
+      'Timing proximity is not proof of intent or of non-public information. Committee ' +
+      'jurisdiction is a proxy for influence, not evidence of a hearing on that company.',
+  },
+  'spousal-trade-timing': {
+    mechanism:
+      'Flags trades held by a spouse or jointly, placed within 14 days before a vote on a ' +
+      "bill the member's committee handled.",
+    caveat:
+      'Spouse or joint accounts may be independently managed. CivicLens has no hearing ' +
+      'calendar; committee jurisdiction is the relevance proxy.',
+  },
+  'donor-sector-vote-alignment': {
+    mechanism:
+      'Flags economic sectors where the member both draws top campaign money and personally ' +
+      'sponsors focused legislation, using a hand-curated, version-controlled industry-to-theme crosswalk.',
+    caveat:
+      'Drawing donations from, and legislating on, the same sector is expected for members who ' +
+      'represent that industry. This is alignment, not a quid pro quo.',
+  },
+};
+
+// Plain-English confidence + exact stat backing. Derived ONLY from pattern_hits
+// columns the caller already has (null_model/observed/expected/p_value/n_perm)
+// plus the count of cited rows. Never fabricates statistics: unscored detectors
+// (null_model IS NULL) get an honest descriptive lead and no stat line.
+function confidencePhrase(r: {
+  null_model: string | null;
+  observed: number | null;
+  expected: number | null;
+  p_value: number | null;
+  n_perm: number | null;
+  citingCount: number;
+}): { lead: string; stats: string | null } {
+  if (r.null_model == null || r.p_value == null) {
+    return {
+      lead: `Based on ${r.citingCount} cited record${r.citingCount === 1 ? '' : 's'}; not statistically scored against a null model.`,
+      stats: null,
+    };
+  }
+  const p = Number(r.p_value);
+  const observed = Number(r.observed);
+  const expected = Number(r.expected);
+  const nPerm = Number(r.n_perm);
+  const stats =
+    `observed ${observed} vs expected ${expected.toFixed(2)} under a ${r.null_model} null` +
+    ` · ${nPerm.toLocaleString()} permutations · p = ${p.toFixed(3)}`;
+  if (p <= 0.05) {
+    const fold = expected > 0 ? observed / expected : null;
+    const foldTxt = fold && Number.isFinite(fold)
+      ? `about ${fold.toFixed(1)}× more than this member's own trading would produce by chance`
+      : "more than this member's own trading would produce by chance";
+    return { lead: `Stands out: ${foldTxt}.`, stats };
+  }
+  return {
+    lead: "About what this member's own trading would produce by chance — not flagged as unusual.",
+    stats,
+  };
 }
 
 async function renderPatterns(memberSlug: string): Promise<string> {
@@ -1023,9 +1196,21 @@ async function renderPatterns(memberSlug: string): Promise<string> {
           ? `${dates[0]} – ${dates[dates.length - 1]}`
           : dates[0] ?? '';
 
-      // Citing rows are listed as labeled evidence (ticker + date), not deep
-      // links: profile rows have no per-row anchors in v1. The reader locates
-      // them in the Trades & bills / Timeline sections above. Tracked follow-up.
+      const meta = PATTERN_META[String(r.pattern)];
+      const conf = confidencePhrase({
+        null_model: r.null_model ?? null,
+        observed: r.observed ?? null,
+        expected: r.expected ?? null,
+        p_value: r.p_value ?? null,
+        n_perm: r.n_perm ?? null,
+        citingCount: citing.length,
+      });
+
+      // Evidence: labeled chips grouped by kind. Each chip links to the on-page
+      // section that renders that evidence, so the reader can jump from the flag
+      // to the underlying rows. Kinds without a dedicated section (bill/contract/
+      // ie — no standalone list is rendered) stay plain text rather than point at
+      // a non-existent anchor.
       const byKind = new Map<string, string[]>();
       for (const c of citing) {
         if (!byKind.has(c.kind)) byKind.set(c.kind, []);
@@ -1033,48 +1218,40 @@ async function renderPatterns(memberSlug: string): Promise<string> {
       }
       const evidence = [...byKind.entries()]
         .map(([kind, labels]) => {
-          const shown = labels.slice(0, 8).map(esc).join(' · ');
+          const anchor = EVIDENCE_ANCHOR[kind];
+          const chip = (l: string) =>
+            anchor
+              ? `<a class="ev-chip" href="${anchor}">${esc(l)}</a>`
+              : `<span class="ev-chip">${esc(l)}</span>`;
+          const shown = labels.slice(0, 8).map(chip).join(' ');
           const more =
             labels.length > 8 ? ` <span class="muted">+${labels.length - 8} more</span>` : '';
-          return `<div class="dim" style="font-size:12px; margin-top:4px;">
-            <span class="muted" style="text-transform:uppercase; letter-spacing:0.04em;">${esc(kind)}</span> ${shown}${more}
-          </div>`;
+          return `<div style="margin-top:4px;"><span class="ev-kind">${esc(kind)}</span>${shown}${more}</div>`;
         })
         .join('');
 
-      // Rigor block: only for scored rows (null_model set). Shows observed vs
-      // expected, the neutral verdict, and full provenance for reproducibility.
-      let rigor = '';
-      if (r.null_model != null) {
-        const observed = Number(r.observed);
-        const expected = Number(r.expected);
-        const pValue = Number(r.p_value);
-        const nPerm = Number(r.n_perm);
-        const verdict = anomalyVerdict(pValue);
-        rigor = `<div class="anomaly" style="margin-top:8px; font-size:13px;">
-          <span style="font-weight:600;">${esc(verdict)}</span>
-          <span class="dim"> — observed ${observed} vs expected ${expected.toFixed(2)} under a random null</span>
-          <div class="muted" style="font-size:11px; margin-top:2px; letter-spacing:0.02em;">
-            null model: ${esc(String(r.null_model))} · ${nPerm.toLocaleString()} permutations · p = ${pValue.toFixed(3)}
-          </div>
-        </div>`;
-      }
+      const mechHtml = meta ? `<div class="fc-mech">How measured: ${esc(meta.mechanism)}</div>` : '';
+      const statsHtml = conf.stats ? `<div class="fc-stats">${esc(conf.stats)}</div>` : '';
+      const caveatHtml = meta ? `<div class="fc-caveat">What this doesn't show: ${esc(meta.caveat)}</div>` : '';
 
-      return `<div class="trade-card ${patternIntensityClass(intensity)}">
+      return `<div class="trade-card flag-card ${patternIntensityClass(intensity)}">
         <div class="tc-header">
           <div class="tc-asset">${esc(label)}</div>
           <div class="tc-meta">${esc(span)}</div>
         </div>
-        <div>${esc(String(r.finding))}</div>
-        ${rigor}
-        ${evidence}
+        <div class="fc-why">${esc(String(r.finding))}</div>
+        ${mechHtml}
+        <div class="fc-conf"><strong>${esc(conf.lead)}</strong></div>
+        ${statsHtml}
+        <div class="fc-evidence">${evidence}</div>
+        ${caveatHtml}
       </div>`;
     })
     .join('\n');
 
   return `
 <h2>Patterns detected</h2>
-<p class="lede" style="margin-bottom:12px;">Named patterns from the post-pipeline detection pass. Each cites the underlying rows — verify them in the sections above. Weight reflects substrate, not judgment.</p>
+<p class="lede" style="margin-bottom:12px;">Named patterns from the deterministic detection pass. Each shows how it was measured, how confident the statistics are, and the records it cites — click an evidence chip to jump to the rows, or verify them in the sections above. Weight reflects the strength of the evidence, not a verdict. <a class="row-link" href="../methodology.html">How patterns are measured →</a></p>
 ${cards}`;
 }
 
@@ -1314,11 +1491,11 @@ ${meta}
 ${bio}
 ${glanceBlock}
 ${tradeActivityBlock}
-<h2>Timeline</h2>
+<h2 id="sec-timeline">Timeline</h2>
 <p class="lede" style="margin-bottom:8px;">Votes (circles, top row) and trades (diamonds, bottom row) plotted on the same axis. Hover for detail. One dot per month — most significant vote shown (Nay preferred over Yea).</p>
 ${timelineBlock}
 
-<h2>Trades &amp; bills</h2>
+<h2 id="sec-trades">Trades &amp; bills</h2>
 <p class="lede" style="margin-bottom:12px;">
   Showing <strong>${collapsedSuspicious.length}</strong> discretionary equity trade${collapsedSuspicious.length === 1 ? '' : 's'} made <em>before</em> a vote within 90 days.
   T-bills, ETFs, index funds, munis, and bonds excluded — they carry no single-company vote nexus.
@@ -1345,7 +1522,7 @@ function showTab(tabGroupId, panelName) {
 }
 </script>
 
-<h2>Top donors (lifetime, 4-cycle FEC union)</h2>
+<h2 id="sec-donors">Top donors (lifetime, 4-cycle FEC union)</h2>
 ${donorsBlock}
 
 <h2>Shared-donor peers in corpus</h2>
@@ -1839,12 +2016,60 @@ ${feed}
 
 // ─── Main ───────────────────────────────────────────────────────────────────
 
+// ─── Methodology page ───────────────────────────────────────────────────────
+// Static, render-only. Assembled from the same PATTERN_META / PATTERN_LABELS the
+// flag cards use, so the detector catalogue here never drifts from what renders
+// on profiles. No DB reads, no schema dependency.
+async function buildMethodology(): Promise<void> {
+  const detectorBlocks = Object.keys(PATTERN_META)
+    .map(key => {
+      const label = PATTERN_LABELS[key] ?? key;
+      const meta = PATTERN_META[key];
+      return `<div class="trade-card flag-card" style="margin-bottom:14px;">
+  <div class="tc-header"><div class="tc-asset">${esc(label)}</div><div class="tc-meta"><span class="muted">${esc(key)}</span></div></div>
+  <div class="fc-mech">How measured: ${esc(meta.mechanism)}</div>
+  <div class="fc-caveat">What this doesn't show: ${esc(meta.caveat)}</div>
+</div>`;
+    })
+    .join('\n');
+
+  const body = `
+<h2>Methodology</h2>
+<p class="lede" style="max-width:760px;">CivicLens reconstructs what members of Congress did — trades, votes, sponsorships, and donors — from primary sources, then runs a fixed set of deterministic detectors over that record. This page documents how each detector measures a pattern, how confidence is computed, and what the numbers can and cannot show. It reports patterns, not verdicts.</p>
+
+<h2 id="how-flags-are-scored">How a flag is scored</h2>
+<div class="how-to-read">
+  <ul>
+    <li><strong>A flag is a measured pattern</strong> in the public record — never an accusation or a finding of wrongdoing.</li>
+    <li><strong>Confidence comes from a permutation null model.</strong> For a scored detector, the observed count is compared against many shuffles of the member's <em>own</em> activity, holding their pace fixed. The p-value is the share of shuffles that match or exceed the observed count; a low p-value means the pattern is hard to produce by that member's ordinary behaviour alone.</li>
+    <li><strong>Statistics are shown, never invented.</strong> Detectors that are not scored against a null model say so plainly and show only the count of cited records — no fabricated p-value.</li>
+    <li><strong>Weight reflects evidence strength, not a verdict.</strong> Visual intensity on a flag card maps to the strength of the statistical signal; it carries no moral colour.</li>
+    <li><strong>Everything is reproducible.</strong> The null model is seeded, so the same inputs yield the same scores. Every flag cites real rows you can verify in the sections above it.</li>
+  </ul>
+</div>
+
+<h2 id="detectors">Detectors</h2>
+<p class="lede" style="margin-bottom:12px;">The deterministic detection pass. Each runs over the corpus and only emits a flag when it can cite real underlying rows.</p>
+${detectorBlocks}
+
+<h2 id="sources">Primary sources</h2>
+<p class="lede" style="max-width:760px;">Every claim links back to the filing it came from. CivicLens draws only on primary sources: Congress.gov (bills, sponsorship, votes), GovTrack (vote records), OpenFEC (campaign finance), and House Clerk Periodic Transaction Reports (member trades). No claim rests on LLM-generated or stub data.</p>
+
+<p style="margin-top: 32px;"><a class="row-link" href="index.html">← back to corpus</a></p>
+`;
+
+  const html = layout('CivicLens — Methodology', `<a href="index.html">Corpus</a> · Methodology`, body);
+  writeFileSync(resolve(OUT_DIR, 'methodology.html'), html);
+  console.log('  ✓ site/methodology.html');
+}
+
 export async function buildAll(): Promise<void> {
   if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
   if (!existsSync(MEMBERS_DIR)) mkdirSync(MEMBERS_DIR, { recursive: true });
 
   console.log('Building CivicLens site…\n');
   await buildIndex();
+  await buildMethodology();
   await buildNetwork();
   await buildNexus();
   const overview = await fetchOverview();
