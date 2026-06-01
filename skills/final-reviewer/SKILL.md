@@ -12,7 +12,7 @@ QC gate. Read all pipeline outputs, run the checklist, approve or reject using y
 
 ```bash
 for f in state researcher data-checker connection-mapper summarizer coder; do
-  cat ~/.hermes/civiclens/pipeline/<task-id>/$f.json
+  cat ~/Developer/civiclens/pipeline/<task-id>/$f.json
 done
 ```
 
@@ -48,7 +48,7 @@ Flag any forbidden words: extreme, radical, corrupt, hero, champion, maverick, p
 
 ## Step 5: Write output
 
-Write to `~/.hermes/civiclens/pipeline/<task-id>/final-review.json`:
+Write to `~/Developer/civiclens/pipeline/<task-id>/final-review.json`:
 ```json
 {
   "taskId": "<task-id>",
@@ -64,5 +64,5 @@ Write to `~/.hermes/civiclens/pipeline/<task-id>/final-review.json`:
 
 Update state:
 ```bash
-npx --prefix ~/.hermes/civiclens tsx ~/.hermes/civiclens/lib/state.ts update <task-id> final-reviewer '{"status":"complete"}'
+npx --prefix ~/Developer/civiclens tsx ~/Developer/civiclens/lib/state.ts update <task-id> final-reviewer '{"status":"complete"}'
 ```

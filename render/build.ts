@@ -2,7 +2,7 @@
  * CivicLens static-site generator.
  *
  * Reads from DuckDB (the source of truth post-migration) and writes a small
- * static site to ~/.hermes/civiclens/site/. No framework — single Node entry,
+ * static site to ~/Developer/civiclens/site/. No framework — single Node entry,
  * inline CSS, XSS-safe by construction (every dynamic value goes through esc()
  * or is built via DOM-style child appends; no string concatenation into HTML).
  *
@@ -32,9 +32,9 @@ import {
 } from '../db/queries.js';
 import { fetchSuperPacIE } from '../lib/fec-ie.js';
 import type { SuperPacIEReport, SuperPacIE, SuperPacFunder } from '../lib/types.js';
+import { SITE_DIR } from '../lib/paths.js';
 
-const HOME = process.env.HOME!;
-const OUT_DIR = resolve(HOME, '.hermes/civiclens/site');
+const OUT_DIR = SITE_DIR;
 const MEMBERS_DIR = resolve(OUT_DIR, 'members');
 
 // ─── HTML helpers (XSS-safe) ────────────────────────────────────────────────

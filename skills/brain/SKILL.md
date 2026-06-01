@@ -11,7 +11,7 @@ tags: [civiclens, pipeline, politician]
 Any time the user mentions a politician — by any phrasing — run this command using your Bash tool:
 
 ```bash
-npx tsx ~/.hermes/civiclens/agents/pipeline.ts "<name>"
+npx tsx ~/Developer/civiclens/agents/pipeline.ts "<name>"
 ```
 
 ## Trigger phrases (not exhaustive)
@@ -39,6 +39,6 @@ When done, report:
 - The final decision (APPROVED / APPROVED WITH WARNINGS / REJECTED)
 - The task ID
 - If approved, remind the user they can apply with:
-  `npx tsx ~/.hermes/civiclens/agents/pipeline.ts --apply <task-id>`
+  `npx tsx ~/Developer/civiclens/agents/pipeline.ts --apply <task-id>`
 
 If no name was provided, ask: "Which politician should I run the pipeline for?"

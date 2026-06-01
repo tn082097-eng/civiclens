@@ -66,7 +66,7 @@ Notes on the changes:
 Run:
 
 ```bash
-cd ~/.hermes/civiclens && npx tsx render/build.ts 2>&1 | tail -20
+cd ~/Developer/civiclens && npx tsx render/build.ts 2>&1 | tail -20
 ```
 
 Expected: build succeeds, no errors. If you see TypeScript or runtime errors, investigate before proceeding — the change is purely textual and should not break the build.
@@ -78,7 +78,7 @@ Open `site/members/amy-klobuchar.html` in a browser. Expected: same warm-dark fe
 - [ ] **Step 3: Commit**
 
 ```bash
-cd ~/.hermes/civiclens
+cd ~/Developer/civiclens
 git add render/build.ts
 git commit -m "style(render): warm-dark palette, bone-white accent
 
@@ -138,7 +138,7 @@ Notes:
 Run:
 
 ```bash
-cd ~/.hermes/civiclens && npx tsx render/build.ts 2>&1 | tail -10
+cd ~/Developer/civiclens && npx tsx render/build.ts 2>&1 | tail -10
 ```
 
 Open `site/members/marjorie-taylor-greene.html`. Expected:
@@ -154,7 +154,7 @@ If serif headings look wrong on your platform: the spec accepts the system-stack
 - [ ] **Step 3: Commit**
 
 ```bash
-cd ~/.hermes/civiclens
+cd ~/Developer/civiclens
 git add render/build.ts
 git commit -m "style(render): editorial serif headings + monospace numerals
 
@@ -234,7 +234,7 @@ Notes:
 Run:
 
 ```bash
-cd ~/.hermes/civiclens && npx tsx render/build.ts 2>&1 | tail -10
+cd ~/Developer/civiclens && npx tsx render/build.ts 2>&1 | tail -10
 ```
 
 Open `site/members/marjorie-taylor-greene.html`. MTG should have several `intensity-high` trade cards. Expected:
@@ -253,7 +253,7 @@ If a quiet member's page somehow looks identical to a loud member's, the intensi
 - [ ] **Step 4: Commit**
 
 ```bash
-cd ~/.hermes/civiclens
+cd ~/Developer/civiclens
 git add render/build.ts
 git commit -m "style(render): weight-only intensity, strip moralizing color
 
@@ -308,7 +308,7 @@ Notes:
 Run:
 
 ```bash
-cd ~/.hermes/civiclens && npx tsx render/build.ts 2>&1 | tail -10
+cd ~/Developer/civiclens && npx tsx render/build.ts 2>&1 | tail -10
 ```
 
 Open `site/members/marjorie-taylor-greene.html`. Expected:
@@ -323,7 +323,7 @@ If the page now feels too cramped (rows touching) or too sparse (sections drifti
 - [ ] **Step 3: Commit**
 
 ```bash
-cd ~/.hermes/civiclens
+cd ~/Developer/civiclens
 git add render/build.ts
 git commit -m "style(render): tighten row rhythm, expand section spacing
 
@@ -344,7 +344,7 @@ treatment from the typography pass."
 Run:
 
 ```bash
-cd ~/.hermes/civiclens && npx tsx render/build.ts 2>&1 | tail -20
+cd ~/Developer/civiclens && npx tsx render/build.ts 2>&1 | tail -20
 ```
 
 Expected: clean build for all 36 members. If any member errors, the visual pass did NOT cause it (no logic changes) — flag separately and continue.
@@ -394,7 +394,7 @@ And a corresponding short memory file at `~/.claude/projects/-home-captainanime/
 If Task 5 spot-checking turned up a tweak (e.g., the rhythm needed ±2px adjustment), commit it now:
 
 ```bash
-cd ~/.hermes/civiclens
+cd ~/Developer/civiclens
 git add render/build.ts
 git commit -m "style(render): post-review rhythm/typography tweaks"
 ```

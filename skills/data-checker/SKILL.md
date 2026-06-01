@@ -11,8 +11,8 @@ Validate researcher output. Report issues — do not fix them.
 ## Step 1: Read and validate schema
 
 ```bash
-cat ~/.hermes/civiclens/pipeline/<task-id>/researcher.json
-npx --prefix ~/.hermes/civiclens tsx ~/.hermes/civiclens/lib/schemas.ts ~/.hermes/civiclens/pipeline/<task-id>/researcher.json
+cat ~/Developer/civiclens/pipeline/<task-id>/researcher.json
+npx --prefix ~/Developer/civiclens tsx ~/Developer/civiclens/lib/schemas.ts ~/Developer/civiclens/pipeline/<task-id>/researcher.json
 ```
 
 If the file is missing or invalid JSON, write `passed: false, score: 0` and stop.
@@ -39,7 +39,7 @@ ollama run qwen3:14b "Is this a plausible political bio for <name>? Reply YES or
 Score: start 1.0, subtract 0.3 per critical, 0.1 per warning.
 `passed: true` if no critical issues.
 
-Write to `~/.hermes/civiclens/pipeline/<task-id>/data-checker.json`:
+Write to `~/Developer/civiclens/pipeline/<task-id>/data-checker.json`:
 ```json
 {
   "taskId": "<task-id>",

@@ -11,7 +11,7 @@ Generate Sigma.js graph data and chart configs from validated relationship data.
 ## Step 1: Read connection mapper output
 
 ```bash
-cat ~/.hermes/civiclens/pipeline/<task-id>/connection-mapper.json
+cat ~/Developer/civiclens/pipeline/<task-id>/connection-mapper.json
 ```
 
 If the file is missing or invalid JSON, write `passed: false` and stop.
@@ -25,7 +25,7 @@ ollama run qwen3.6:35b-a3b "Given this political relationship data, generate a S
 
 ## Step 3: Write output
 
-Write to `~/.hermes/civiclens/pipeline/<task-id>/visualizer.json`:
+Write to `~/Developer/civiclens/pipeline/<task-id>/visualizer.json`:
 ```json
 {
   "taskId": "<task-id>",

@@ -14,9 +14,7 @@ import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { applySchema, getDb } from './init.js';
 import { committeeCanonical } from './load-bill-committees.js';
-
-const HOME     = process.env.HOME!;
-const PIPE_DIR = resolve(HOME, '.hermes/civiclens/pipeline');
+import { PIPE_DIR } from '../lib/paths.js';
 
 interface TaskPick {
   taskId: string;

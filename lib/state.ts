@@ -2,19 +2,18 @@
 /**
  * Pipeline State Manager
  * Usage:
- *   npx tsx ~/.hermes/civiclens/lib/state.ts init <task-id> <target-json>
- *   npx tsx ~/.hermes/civiclens/lib/state.ts read <task-id>
- *   npx tsx ~/.hermes/civiclens/lib/state.ts update <task-id> <agent> <result-json>
- *   npx tsx ~/.hermes/civiclens/lib/state.ts status <task-id>
- *   npx tsx ~/.hermes/civiclens/lib/state.ts list
- *   npx tsx ~/.hermes/civiclens/lib/state.ts log <task-id> <decision> <reasoning>
+ *   npx tsx ~/Developer/civiclens/lib/state.ts init <task-id> <target-json>
+ *   npx tsx ~/Developer/civiclens/lib/state.ts read <task-id>
+ *   npx tsx ~/Developer/civiclens/lib/state.ts update <task-id> <agent> <result-json>
+ *   npx tsx ~/Developer/civiclens/lib/state.ts status <task-id>
+ *   npx tsx ~/Developer/civiclens/lib/state.ts list
+ *   npx tsx ~/Developer/civiclens/lib/state.ts log <task-id> <decision> <reasoning>
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
 import type { PipelineTask, AgentName, AgentResult, BrainLogEntry } from './types.js';
-
-const PIPELINE_DIR = path.join(process.env.HOME!, '.hermes/civiclens', 'pipeline');
+import { PIPE_DIR as PIPELINE_DIR } from './paths.js';
 
 function taskDir(taskId: string) {
   return path.join(PIPELINE_DIR, taskId);

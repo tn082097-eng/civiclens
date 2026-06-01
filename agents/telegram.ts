@@ -10,10 +10,9 @@ import * as path from 'path';
 import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
+import { ROOT, PIPE_DIR, STUB_PATH } from '../lib/paths.js';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const HOME      = process.env.HOME!;
-const PIPE_DIR  = path.join(HOME, '.hermes/civiclens', 'pipeline');
-const STUB_PATH = path.join(HOME, '.hermes/civiclens', 'skills', 'researcher', 'stub-data.json');
 
 const TOKEN = process.env.BOT_TOKEN;
 if (!TOKEN) {
@@ -95,7 +94,7 @@ function escHtml(s: string): string {
 function runPipeline(name: string): void {
   const result = spawnSync(
     'npx', ['tsx', path.join(__dirname, 'pipeline.ts'), name],
-    { encoding: 'utf8', timeout: 600_000, cwd: path.join(HOME, '.hermes/civiclens') }
+    { encoding: 'utf8', timeout: 600_000, cwd: ROOT }
   );
   if (result.status !== 0) throw new Error(result.stderr || result.stdout || 'Pipeline failed');
 }

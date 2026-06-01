@@ -16,12 +16,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import {
-  HOME, PIPE_DIR,
+  PIPE_DIR,
   c, bold, dim, red, green, yellow, cyan,
   header, ok, fail, warn,
   loadHermesEnv,
   initTask, readTask, writeTask, readPipe, pipeFile, setStatus,
 } from './shared.js';
+import { ROOT, NAMES_PATH } from '../lib/paths.js';
 import { syncTask } from '../db/sync-task.js';
 import { closeDb } from '../db/init.js';
 import { runResearcher } from './researcher.js';
@@ -61,7 +62,7 @@ function findFreshTask(name: string, maxAgeMs = 24 * 60 * 60 * 1000): string | n
 // Keep the NoService vault's Connections/Members notes in sync with the latest
 // connection-mapper output so the vault never drifts after a pipeline run.
 function regenerateVault() {
-  const script = path.join(HOME, '.hermes/civiclens', 'render', 'connections-to-vault.ts');
+  const script = path.join(ROOT, 'render', 'connections-to-vault.ts');
   if (!fs.existsSync(script)) { warn('Vault', `regenerator missing: ${script}`); return; }
   // Release our DuckDB file lock first — the regenerator is a separate process
   // and DuckDB is single-writer per file. Without this it crashes with
@@ -245,7 +246,7 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
     finalReview.decision === 'approved_with_warnings' ? yellow('APPROVED WITH WARNINGS') :
     red('REJECTED')
   }`);
-  console.log(`  ${dim('Output:')} ~/.hermes/civiclens/pipeline/${taskId}/`);
+  console.log(`  ${dim('Output:')} ~/Developer/civiclens/pipeline/${taskId}/`);
   console.log(`  ${dim('Files:')} ${allFiles.map(f => path.basename(f)).join(', ')}`);
 
   if (postSync?.fecResolved === 'unresolved' || postSync?.fecResolved === 'error') {
@@ -315,7 +316,7 @@ async function runBatch(namesArg: string, concurrency = 3) {
 
 // ─── Append + run + auto-apply ────────────────────────────────────────────────
 async function appendAndRun(name: string) {
-  const namesPath = path.join(HOME, '.hermes/civiclens', 'names.txt');
+  const namesPath = NAMES_PATH;
   const existing = fs.existsSync(namesPath)
     ? fs.readFileSync(namesPath, 'utf-8').split('\n').map(s => s.trim()).filter(Boolean)
     : [];
@@ -360,7 +361,7 @@ ${bold('CivicLens Pipeline Runner')}
   ${cyan('npx tsx agents/pipeline.ts --load-opensecrets <cycle[,cycle]> [--dry-run]')} parse cached OpenSecrets industry HTML into DuckDB
   ${cyan('npx tsx agents/pipeline.ts --load-bills [--api-pass] [--api-limit N] [--limit N]')} backfill votes.bill_id + fetch summaries
   ${cyan('npx tsx agents/pipeline.ts --load-sponsored [member-id]')} authoritative sponsor rows + inline policyArea (run AFTER load-from-tasks)
-  ${cyan('npx tsx agents/pipeline.ts --render')}                     build static site at ~/.hermes/civiclens/site/
+  ${cyan('npx tsx agents/pipeline.ts --render')}                     build static site at ~/Developer/civiclens/site/
   ${cyan('npx tsx agents/pipeline.ts --refresh-research "Name"')}    fetch researcher data only (no LLM agents, no predictor) and sync to DB
 `);
 } else if (arg === '--list') {

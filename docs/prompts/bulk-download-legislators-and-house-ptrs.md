@@ -1,6 +1,6 @@
 # Bulk Download — congress-legislators + House PTR ZIPs
 
-Hand this prompt to a fresh Claude Code session running in `~/.hermes/civiclens/`.
+Hand this prompt to a fresh Claude Code session running in `~/Developer/civiclens/`.
 Self-contained: includes context, file destinations, and verification steps.
 
 ---
@@ -8,7 +8,7 @@ Self-contained: includes context, file destinations, and verification steps.
 ## Context
 
 CivicLens is a congressional transparency project. The DuckDB warehouse at
-`~/.hermes/civiclens/civiclens.duckdb` is populated for 35 members but has
+`~/Developer/civiclens/civiclens.duckdb` is populated for 35 members but has
 two known gaps that bulk downloads from primary sources will close:
 
 1. **Committee assignments are sparse.** `committees` table has 300 rows but
@@ -37,7 +37,7 @@ disk + a one-line summary per source.
 
 - Source: <https://github.com/unitedstates/congress-legislators>
 - Method: `git clone --depth 1 https://github.com/unitedstates/congress-legislators.git`
-- Destination: `~/.hermes/civiclens/legislators-cache/`
+- Destination: `~/Developer/civiclens/legislators-cache/`
 - Resulting layout: `legislators-cache/.git/`, `legislators-cache/legislators-current.yaml`,
   `legislators-cache/committees-current.yaml`, etc.
 - Verify: `ls -la legislators-cache/*.yaml` shows at least
@@ -52,7 +52,7 @@ disk + a one-line summary per source.
 - Method: plain `curl -L -o ...` (no auth needed). Add a User-Agent header
   (`-A 'CivicLens/1.0 (research)'`) to be polite — clerk.house.gov has
   occasionally returned 403 for default curl UA in the past.
-- Destination: `~/.hermes/civiclens/pfd-cache/house-bulk/<year>/`
+- Destination: `~/Developer/civiclens/pfd-cache/house-bulk/<year>/`
   - Save the raw ZIP as `pfd-cache/house-bulk/<year>/<year>FD.zip`
   - Extract into `pfd-cache/house-bulk/<year>/` (will produce one XML index
     + many PDFs).
@@ -77,7 +77,7 @@ disk + a one-line summary per source.
 
 Run in **background** via `Bash` `run_in_background: true`. The PTR ZIPs
 each take a few minutes; the user does not need to watch the bytes scroll.
-Stream progress to a log file under `~/.hermes/civiclens/logs/bulk-download-<timestamp>.log`
+Stream progress to a log file under `~/Developer/civiclens/logs/bulk-download-<timestamp>.log`
 and tail at the end.
 
 ## Deliverable (report back to user)

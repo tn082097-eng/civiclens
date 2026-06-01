@@ -27,8 +27,7 @@
 import { applySchema, getDb } from './init.js';
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-
-const CACHE_ROOT = join(process.env.HOME ?? '', '.hermes/civiclens/pfd-cache/opensecrets');
+import { OPENSECRETS_CACHE as CACHE_ROOT } from '../lib/paths.js';
 
 // The 13 OpenSecrets top-level sector labels. A table row whose first label cell
 // is one of these is a sector-aggregate row (and carries its first industry in

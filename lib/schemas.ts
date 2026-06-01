@@ -102,7 +102,7 @@ export const ResearcherOutputSchema = z.object({
 });
 
 // CLI: validate a JSON file
-// Usage: npx tsx ~/.hermes/civiclens/lib/schemas.ts <path-to-json>
+// Usage: npx tsx ~/Developer/civiclens/lib/schemas.ts <path-to-json>
 const _isMain = !!process.argv[1]?.match(/schemas\.[jt]s$/);
 if (_isMain && process.argv[2]) {
   const { readFileSync } = await import('fs');

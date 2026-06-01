@@ -10,13 +10,14 @@ import * as path from 'path';
 import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
 import type { PipelineTask, AgentName, PipelineStatus } from '../lib/types.js';
+import * as paths from '../lib/paths.js';
 
 export const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const HOME       = process.env.HOME!;
-export const PIPE_DIR   = process.env.CIVICLENS_PIPE_DIR ?? path.join(HOME, '.hermes/civiclens', 'pipeline');
-export const STUB_PATH  = path.join(HOME, '.hermes/civiclens', 'skills', 'researcher', 'stub-data.json');
+export const PIPE_DIR   = process.env.CIVICLENS_PIPE_DIR ?? paths.PIPE_DIR;
+export const STUB_PATH  = paths.STUB_PATH;
 export const SEED_PATH  = path.join(HOME, 'civiclens', 'src', 'db', 'seed.ts');
-export const SKILLS_DIR = path.join(HOME, '.hermes/civiclens', 'skills');
+export const SKILLS_DIR = paths.SKILLS_DIR;
 
 // ─── ANSI helpers ─────────────────────────────────────────────────────────────
 export const c = {
@@ -153,7 +154,7 @@ export function setStatus(task: PipelineTask, status: PipelineStatus) {
 
 // ─── Env loader ───────────────────────────────────────────────────────────────
 export function loadHermesEnv() {
-  const envPath = path.join(HOME, '.hermes', '.env');
+  const envPath = paths.ENV_PATH;
   try {
     const raw = fs.readFileSync(envPath, 'utf-8');
     for (const line of raw.split('\n')) {
@@ -225,7 +226,7 @@ async function claudeViaApi(
   opts: { maxTokens?: number; timeoutMs?: number; model?: string } = {},
 ): Promise<string> {
   const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) throw new Error('ANTHROPIC_API_KEY not set in ~/.hermes/.env');
+  if (!key) throw new Error('ANTHROPIC_API_KEY not set in the CivicLens .env');
   const system = messages.find(m => m.role === 'system')?.content;
   const nonSystem = messages.filter(m => m.role !== 'system');
   const controller = new AbortController();
@@ -268,7 +269,7 @@ async function grok(
   opts: { maxTokens?: number; timeoutMs?: number; model?: string } = {},
 ): Promise<string> {
   const key = process.env.XAI_API_KEY;
-  if (!key) throw new Error('XAI_API_KEY not set in ~/.hermes/.env');
+  if (!key) throw new Error('XAI_API_KEY not set in the CivicLens .env');
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), opts.timeoutMs ?? 120_000);
   try {

@@ -11,10 +11,9 @@ node_modules/
 *.duckdb.*
 *.wal
 
-# Caches (regenerable from primary sources)
-pfd-cache/
-senate-ptr-cache/
-legislators-cache/
+# Generated/runtime data — DB + regenerable caches (see lib/paths.ts)
+data/caches/
+data/imports/
 
 # Generated pipeline task outputs (keep pipeline/patterns/ + run-patterns.ts source)
 pipeline/task-*/

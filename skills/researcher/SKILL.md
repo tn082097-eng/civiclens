@@ -6,7 +6,7 @@ tools: Read, Write, Bash
 
 # Researcher Agent
 
-Fetch real, primary-source data for the target politician. Write results to `~/.hermes/civiclens/pipeline/<task-id>/researcher.json`. Do not validate, summarize, or invent data.
+Fetch real, primary-source data for the target politician. Write results to `~/Developer/civiclens/pipeline/<task-id>/researcher.json`. Do not validate, summarize, or invent data.
 
 ## Primary-sources-only rule
 

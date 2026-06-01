@@ -11,7 +11,7 @@ Apply the approved seed block to seed.ts. No generation, no LLM — this is a de
 ## Step 1: Check approval gate
 
 ```bash
-cat ~/.hermes/civiclens/pipeline/<task-id>/final-review.json
+cat ~/Developer/civiclens/pipeline/<task-id>/final-review.json
 ```
 
 If `readyToApply` is not `true`, stop immediately and report the decision and reasons. Do not touch seed.ts.
@@ -19,7 +19,7 @@ If `readyToApply` is not `true`, stop immediately and report the decision and re
 ## Step 2: Run apply script
 
 ```bash
-npx --prefix ~/.hermes/civiclens tsx ~/.hermes/civiclens/skills/publisher/apply.ts <task-id>
+npx --prefix ~/Developer/civiclens tsx ~/Developer/civiclens/skills/publisher/apply.ts <task-id>
 ```
 
 The script will:
@@ -32,11 +32,11 @@ The script will:
 
 ```bash
 grep -n "<politicianId>" ~/civiclens/src/db/seed.ts
-cat ~/.hermes/civiclens/pipeline/<task-id>/publisher.json
+cat ~/Developer/civiclens/pipeline/<task-id>/publisher.json
 ```
 
 ## Step 4: Update state
 
 ```bash
-npx --prefix ~/.hermes/civiclens tsx ~/.hermes/civiclens/lib/state.ts update <task-id> publisher '{"status":"complete"}'
+npx --prefix ~/Developer/civiclens tsx ~/Developer/civiclens/lib/state.ts update <task-id> publisher '{"status":"complete"}'
 ```

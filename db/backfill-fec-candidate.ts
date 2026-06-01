@@ -11,9 +11,8 @@
  */
 
 import { readFileSync } from 'node:fs';
-import { homedir } from 'node:os';
-import { join } from 'node:path';
 import { applySchema, getDb } from './init.js';
+import { ENV_PATH } from '../lib/paths.js';
 
 const UA = 'CivicLens/1.0 (research)';
 
@@ -25,7 +24,7 @@ function loadEnvOnce() {
   envLoaded = true;
   if (process.env.OPENFEC_API_KEY) return;
   try {
-    const raw = readFileSync(join(homedir(), '.hermes', '.env'), 'utf-8');
+    const raw = readFileSync(ENV_PATH, 'utf-8');
     for (const line of raw.split('\n')) {
       const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/);
       if (!m) continue;

@@ -1,7 +1,7 @@
 /**
  * DuckDB connection and schema bootstrap.
  *
- * Single-file embedded DB at ~/.hermes/civiclens/civiclens.duckdb.
+ * Single-file embedded DB at <repo>/data/civiclens.duckdb (see lib/paths.ts).
  * Idempotent: running init.ts multiple times re-applies schema (CREATE
  * TABLE IF NOT EXISTS).
  */
@@ -10,10 +10,11 @@ import { DuckDBInstance, DuckDBConnection } from '@duckdb/node-api';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { DB_PATH } from '../lib/paths.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-export const DB_PATH = resolve(process.env.HOME!, '.hermes/civiclens/civiclens.duckdb');
+export { DB_PATH };
 const SCHEMA_PATH   = resolve(__dirname, 'schema.sql');
 
 let _instance: DuckDBInstance | null = null;

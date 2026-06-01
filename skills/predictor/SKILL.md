@@ -6,13 +6,13 @@ tools: Read, Write, Bash
 
 # Predictor Agent
 
-Given a politician's historical vote record (from the Researcher), fit several baseline predictive models, backtest them on a temporal hold-out split, and report calibration scores per model. Write results to `~/.hermes/civiclens/pipeline/<task-id>/predictor.json`.
+Given a politician's historical vote record (from the Researcher), fit several baseline predictive models, backtest them on a temporal hold-out split, and report calibration scores per model. Write results to `~/Developer/civiclens/pipeline/<task-id>/predictor.json`.
 
 ## Mission alignment
 
 The rest of the pipeline is retrospective by design. The Predictor is prospective — but the editorial rule still holds, because a probability grounded in a base rate is falsifiable, not an opinion. If we say 94% and it comes in 94%, we're calibrated. If we say 94% and it comes in 50%, that miss belongs on the page as loudly as the prediction did.
 
-The full design rationale and scope is in `~/.hermes/civiclens/plans/prediction-agent.md`.
+The full design rationale and scope is in `~/Developer/civiclens/plans/prediction-agent.md`.
 
 ## Invocation
 

@@ -10,10 +10,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
+import { ROOT, PIPE_DIR, NAMES_PATH, BATCH_LOG } from '../lib/paths.js';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const HOME     = process.env.HOME!;
-const PIPE_DIR = path.join(HOME, '.hermes/civiclens', 'pipeline');
-const NAMES_PATH = path.join(HOME, '.hermes/civiclens', 'names.txt');
 
 // Politician list lives in names.txt so the batch runner and single-name runs
 // share a single source of truth. One name per line, blank lines ignored.
@@ -78,7 +77,7 @@ async function runOne(name: string): Promise<BatchResult> {
   // Run pipeline
   const proc = spawnSync(
     'npx', ['tsx', path.join(__dirname, 'pipeline.ts'), name],
-    { encoding: 'utf8', timeout: 600_000, cwd: path.join(HOME, '.hermes/civiclens'),
+    { encoding: 'utf8', timeout: 600_000, cwd: ROOT,
       stdio: ['pipe', 'inherit', 'inherit'] }
   );
 
@@ -123,7 +122,7 @@ async function runOne(name: string): Promise<BatchResult> {
     console.log(`\n  ${cyan('›')}  ${bold('Applying to seed.ts…')}`);
     const applyProc = spawnSync(
       'npx', ['tsx', path.join(__dirname, 'pipeline.ts'), '--apply', taskId],
-      { encoding: 'utf8', timeout: 30_000, cwd: path.join(HOME, '.hermes/civiclens'),
+      { encoding: 'utf8', timeout: 30_000, cwd: ROOT,
         stdio: ['pipe', 'inherit', 'inherit'] }
     );
     result.applied = applyProc.status === 0;
@@ -166,7 +165,7 @@ async function main() {
       process.stdout.write(`  ${cyan('↻')}  ${r.name.padEnd(30)} ${dim('(' + r.taskId + ')')} ... `);
       const proc = spawnSync(
         'npx', ['tsx', path.join(__dirname, 'pipeline.ts'), '--rerun-mapper', r.taskId!],
-        { encoding: 'utf8', timeout: 120_000, cwd: path.join(HOME, '.hermes/civiclens'),
+        { encoding: 'utf8', timeout: 120_000, cwd: ROOT,
           stdio: ['pipe', 'pipe', 'pipe'] }
       );
       if (proc.status === 0) {
@@ -206,7 +205,7 @@ async function main() {
   console.log(`  ${bold('Rejected: ')} ${rejected.length > 0 ? red(String(rejected.length)) : '0'}\n`);
 
   // Write full log
-  const logPath = path.join(HOME, '.hermes/civiclens', 'batch-log.json');
+  const logPath = BATCH_LOG;
   fs.writeFileSync(logPath, JSON.stringify({ runAt: new Date().toISOString(), results }, null, 2));
   console.log(`  ${dim('Full log → ' + logPath)}\n`);
 

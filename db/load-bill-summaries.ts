@@ -325,7 +325,7 @@ export async function main(opts: {
 
   if (opts.backfillOnly) return;
   if (!CONGRESS_KEY) {
-    throw new Error('CONGRESS_API_KEY missing — set in ~/.hermes/.env');
+    throw new Error('CONGRESS_API_KEY missing — set in the CivicLens .env');
   }
   const r = await loadSummaries({ limit: opts.limit });
   console.log(`\nDone: ${r.fetched} fetched, ${r.cached} already cached, ${r.skipped} skipped.`);

@@ -155,7 +155,7 @@ export async function main(opts: { limit?: number } = {}): Promise<void> {
   const bf = await backfillMemberCommittees();
   console.log(`  ${bf.filled}/${bf.total} member-committee rows updated.\n`);
 
-  if (!CONGRESS_KEY) throw new Error('CONGRESS_API_KEY missing — set in ~/.hermes/.env');
+  if (!CONGRESS_KEY) throw new Error('CONGRESS_API_KEY missing — set in the CivicLens .env');
   const r = await loadBillCommittees({ limit: opts.limit });
   console.log(`\nDone: ${r.fetched} bills fetched (${r.rowsWritten} committee rows), ${r.cached} already cached, ${r.skipped} skipped.`);
 }

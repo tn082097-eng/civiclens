@@ -14,9 +14,7 @@
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { applySchema, getDb } from './init.js';
-
-const HOME           = process.env.HOME!;
-const SENATE_CACHE   = resolve(HOME, '.hermes/civiclens/senate-ptr-cache');
+import { SENATE_CACHE } from '../lib/paths.js';
 
 // ─── Member resolution ────────────────────────────────────────────────────────
 // Senate filings have first + last name. Match by last name against members table

@@ -21,7 +21,8 @@ console.log('Returned:', ok);
 
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-const outPath = join(process.env.HOME!, '.hermes/civiclens/pipeline', task.taskId, 'revolving-door.json');
+import { PIPE_DIR } from './lib/paths.js';
+const outPath = join(PIPE_DIR, task.taskId, 'revolving-door.json');
 try {
   const out = JSON.parse(readFileSync(outPath, 'utf-8'));
   console.log('---OUTPUT---');

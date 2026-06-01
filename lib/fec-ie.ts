@@ -16,9 +16,8 @@
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { ENV_PATH, PFD_CACHE } from './paths.js';
 import type {
   IEFiling,
   SuperPacFunder,
@@ -32,9 +31,8 @@ const UA = 'CivicLens/1.0 (research; civiclens.org)';
 const REQUEST_DELAY_MS = 250;          // ~4 req/sec; key ceiling is 1000/hour
 const PAGE_SIZE = 100;                 // FEC max for most endpoints
 
-// pfd-cache lives at <repo-root>/pfd-cache. This file is at <root>/lib/fec-ie.ts.
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const CACHE_ROOT = join(__dirname, '..', 'pfd-cache', 'fec-ie');
+// FEC-IE responses cache under the shared PFD cache root (data/caches/pfd-cache).
+const CACHE_ROOT = join(PFD_CACHE, 'fec-ie');
 
 // Mirror of researcher/fetch.ts loadEnvOnce — required for callers that don't
 // boot through the pipeline (e.g. render/build.ts, smoke tests).
@@ -44,7 +42,7 @@ function loadEnvOnce() {
   envLoaded = true;
   if (process.env.OPENFEC_API_KEY) return;
   try {
-    const raw = readFileSync(join(homedir(), '.hermes', '.env'), 'utf-8');
+    const raw = readFileSync(ENV_PATH, 'utf-8');
     for (const line of raw.split('\n')) {
       const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/);
       if (!m) continue;

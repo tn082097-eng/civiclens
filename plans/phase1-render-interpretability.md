@@ -92,7 +92,7 @@ Update the section lede to describe the new card structure. Delete the old `rigo
 ## Verification (run after edits)
 
 ```bash
-cd ~/.hermes/civiclens
+cd ~/Developer/civiclens
 grep -rn "anomalyVerdict" render/        # expect: no matches
 npx tsx render/build.ts                  # expect: clean build, all member pages + index
 ```

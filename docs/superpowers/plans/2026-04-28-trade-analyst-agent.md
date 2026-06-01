@@ -69,7 +69,7 @@ export type PipelineStatus =
 - [ ] **Step 2: Verify TypeScript compiles**
 
 ```bash
-cd ~/.hermes/civiclens && ./node_modules/.bin/tsc --noEmit 2>&1 | head -20
+cd ~/Developer/civiclens && ./node_modules/.bin/tsc --noEmit 2>&1 | head -20
 ```
 
 Expected: errors only about `'trade-analyst'` missing from `initTask`'s `agents` record (fixed in Task 3). No other errors.
@@ -77,7 +77,7 @@ Expected: errors only about `'trade-analyst'` missing from `initTask`'s `agents`
 - [ ] **Step 3: Commit**
 
 ```bash
-cd ~/.hermes/civiclens && git add lib/types.ts && git commit -m "feat(types): add trade-analyst agent and analyzing-trades pipeline status"
+cd ~/Developer/civiclens && git add lib/types.ts && git commit -m "feat(types): add trade-analyst agent and analyzing-trades pipeline status"
 ```
 
 ---
@@ -114,15 +114,15 @@ CREATE TABLE IF NOT EXISTS members (
 - [ ] **Step 2: Apply schema to the live DB**
 
 ```bash
-cd ~/.hermes/civiclens && ./node_modules/.bin/tsx db/init.ts 2>&1
+cd ~/Developer/civiclens && ./node_modules/.bin/tsx db/init.ts 2>&1
 ```
 
-Expected: `schema applied: /home/captainanime/.hermes/civiclens/civiclens.duckdb`
+Expected: `schema applied: /home/captainanime/Developer/civiclens/civiclens.duckdb`
 
 - [ ] **Step 3: Verify column exists**
 
 ```bash
-cd ~/.hermes/civiclens && cat > /tmp/check-col.ts << 'EOF'
+cd ~/Developer/civiclens && cat > /tmp/check-col.ts << 'EOF'
 import { getDb } from './db/init.js';
 const db = await getDb();
 const r = await db.run(`DESCRIBE members`);
@@ -136,7 +136,7 @@ Expected: a row with `column_name: 'trade_activity'` and `column_type: 'VARCHAR'
 - [ ] **Step 4: Commit**
 
 ```bash
-cd ~/.hermes/civiclens && git add db/schema.sql && git commit -m "feat(schema): add trade_activity column to members table"
+cd ~/Developer/civiclens && git add db/schema.sql && git commit -m "feat(schema): add trade_activity column to members table"
 ```
 
 ---
@@ -148,7 +148,7 @@ cd ~/.hermes/civiclens && git add db/schema.sql && git commit -m "feat(schema): 
 
 - [ ] **Step 1: Write the full agent file**
 
-Create `~/.hermes/civiclens/agents/trade-analyst.ts`:
+Create `~/Developer/civiclens/agents/trade-analyst.ts`:
 
 ```typescript
 import type { PipelineTask } from '../lib/types.js';
@@ -383,7 +383,7 @@ function writeEmpty(
 - [ ] **Step 2: Verify it type-checks**
 
 ```bash
-cd ~/.hermes/civiclens && ./node_modules/.bin/tsc --noEmit 2>&1 | grep "trade-analyst" | head -10
+cd ~/Developer/civiclens && ./node_modules/.bin/tsc --noEmit 2>&1 | grep "trade-analyst" | head -10
 ```
 
 Expected: no errors referencing `trade-analyst.ts` (there will be errors in `pipeline.ts` and `shared.ts` about the missing agent key until Task 4).
@@ -391,7 +391,7 @@ Expected: no errors referencing `trade-analyst.ts` (there will be errors in `pip
 - [ ] **Step 3: Commit**
 
 ```bash
-cd ~/.hermes/civiclens && git add agents/trade-analyst.ts && git commit -m "feat(agents): add trade-analyst agent with weighted suspicion scoring"
+cd ~/Developer/civiclens && git add agents/trade-analyst.ts && git commit -m "feat(agents): add trade-analyst agent with weighted suspicion scoring"
 ```
 
 ---
@@ -475,7 +475,7 @@ export function initTask(taskId: string, targetName: string): PipelineTask {
 - [ ] **Step 4: Verify TypeScript compiles cleanly**
 
 ```bash
-cd ~/.hermes/civiclens && ./node_modules/.bin/tsc --noEmit 2>&1 | head -20
+cd ~/Developer/civiclens && ./node_modules/.bin/tsc --noEmit 2>&1 | head -20
 ```
 
 Expected: no errors.
@@ -483,7 +483,7 @@ Expected: no errors.
 - [ ] **Step 5: Commit**
 
 ```bash
-cd ~/.hermes/civiclens && git add agents/pipeline.ts agents/shared.ts && git commit -m "feat(pipeline): wire trade-analyst between connection-mapper and summarizer"
+cd ~/Developer/civiclens && git add agents/pipeline.ts agents/shared.ts && git commit -m "feat(pipeline): wire trade-analyst between connection-mapper and summarizer"
 ```
 
 ---
@@ -523,7 +523,7 @@ Then append `${tradeContext}` at the end of `userPrompt`, just before the closin
 - [ ] **Step 3: Verify TypeScript compiles**
 
 ```bash
-cd ~/.hermes/civiclens && ./node_modules/.bin/tsc --noEmit 2>&1 | head -10
+cd ~/Developer/civiclens && ./node_modules/.bin/tsc --noEmit 2>&1 | head -10
 ```
 
 Expected: no errors.
@@ -531,7 +531,7 @@ Expected: no errors.
 - [ ] **Step 4: Commit**
 
 ```bash
-cd ~/.hermes/civiclens && git add agents/summarizer.ts && git commit -m "feat(summarizer): add trade-vote top findings to LLM context"
+cd ~/Developer/civiclens && git add agents/summarizer.ts && git commit -m "feat(summarizer): add trade-vote top findings to LLM context"
 ```
 
 ---
@@ -580,7 +580,7 @@ Replace with:
 - [ ] **Step 3: Verify TypeScript compiles**
 
 ```bash
-cd ~/.hermes/civiclens && ./node_modules/.bin/tsc --noEmit 2>&1 | head -10
+cd ~/Developer/civiclens && ./node_modules/.bin/tsc --noEmit 2>&1 | head -10
 ```
 
 Expected: no errors.
@@ -588,7 +588,7 @@ Expected: no errors.
 - [ ] **Step 4: Commit**
 
 ```bash
-cd ~/.hermes/civiclens && git add agents/code-checker.ts && git commit -m "feat(code-checker): include tradeNarrative in neutrality scan"
+cd ~/Developer/civiclens && git add agents/code-checker.ts && git commit -m "feat(code-checker): include tradeNarrative in neutrality scan"
 ```
 
 ---
@@ -622,7 +622,7 @@ In `db/load-from-tasks.ts`, find the `loadOne` function. After the `pipeline_run
 - [ ] **Step 2: Verify TypeScript compiles**
 
 ```bash
-cd ~/.hermes/civiclens && ./node_modules/.bin/tsc --noEmit 2>&1 | head -10
+cd ~/Developer/civiclens && ./node_modules/.bin/tsc --noEmit 2>&1 | head -10
 ```
 
 Expected: no errors.
@@ -630,7 +630,7 @@ Expected: no errors.
 - [ ] **Step 3: Commit**
 
 ```bash
-cd ~/.hermes/civiclens && git add db/load-from-tasks.ts && git commit -m "feat(loader): persist trade_activity from trade-analyst pipe to members table"
+cd ~/Developer/civiclens && git add db/load-from-tasks.ts && git commit -m "feat(loader): persist trade_activity from trade-analyst pipe to members table"
 ```
 
 ---
@@ -753,13 +753,13 @@ ${tradeActivityBlock}
 - [ ] **Step 6: Rebuild site and verify MTG page shows the section**
 
 ```bash
-cd ~/.hermes/civiclens && ./node_modules/.bin/tsx render/build.ts 2>&1 | grep -E "✓|Done"
+cd ~/Developer/civiclens && ./node_modules/.bin/tsx render/build.ts 2>&1 | grep -E "✓|Done"
 ```
 
 Then check:
 
 ```bash
-grep -c "Trade activity" ~/.hermes/civiclens/site/members/marjorie-taylor-greene.html
+grep -c "Trade activity" ~/Developer/civiclens/site/members/marjorie-taylor-greene.html
 ```
 
 Expected: `1` (the section heading appears once).
@@ -767,7 +767,7 @@ Expected: `1` (the section heading appears once).
 - [ ] **Step 7: Commit**
 
 ```bash
-cd ~/.hermes/civiclens && git add render/build.ts && git commit -m "feat(render): add trade activity section to member profile page"
+cd ~/Developer/civiclens && git add render/build.ts && git commit -m "feat(render): add trade activity section to member profile page"
 ```
 
 ---
@@ -777,7 +777,7 @@ cd ~/.hermes/civiclens && git add render/build.ts && git commit -m "feat(render)
 - [ ] **Step 1: Run MTG pipeline with `--force` and verify full output**
 
 ```bash
-cd ~/.hermes/civiclens && source ~/.hermes/.env && npx tsx agents/pipeline.ts "Marjorie Taylor Greene" --force 2>&1
+cd ~/Developer/civiclens && source ~/.hermes/.env && npx tsx agents/pipeline.ts "Marjorie Taylor Greene" --force 2>&1
 ```
 
 Expected output includes:
@@ -794,7 +794,7 @@ Expected output includes:
 python3 -c "
 import json
 import glob, os
-tasks = sorted(glob.glob(os.path.expanduser('~/.hermes/civiclens/pipeline/task-*/trade-analyst.json')))
+tasks = sorted(glob.glob(os.path.expanduser('~/Developer/civiclens/pipeline/task-*/trade-analyst.json')))
 with open(tasks[-1]) as f: d = json.load(f)
 print('suspicionLevel:', d['suspicionLevel'])
 print('totalSuspiciousTrades:', d['totalSuspiciousTrades'])
@@ -810,8 +810,8 @@ Expected: `suspicionLevel: 'high'`, `findings: 5`, non-empty narrative citing PL
 - [ ] **Step 3: Sync to DB and rebuild**
 
 ```bash
-cd ~/.hermes/civiclens && source ~/.hermes/.env
-LATEST=$(ls -td ~/.hermes/civiclens/pipeline/task-* | head -1 | xargs basename)
+cd ~/Developer/civiclens && source ~/.hermes/.env
+LATEST=$(ls -td ~/Developer/civiclens/pipeline/task-* | head -1 | xargs basename)
 npx tsx db/sync-task.ts $LATEST 2>&1
 npx tsx render/build.ts 2>&1 | grep "marjorie"
 ```
@@ -821,7 +821,7 @@ Expected: `✓ site/members/marjorie-taylor-greene.html`
 - [ ] **Step 4: Verify trade_activity in DB**
 
 ```bash
-cd ~/.hermes/civiclens && cat > /tmp/verify-ta.ts << 'EOF'
+cd ~/Developer/civiclens && cat > /tmp/verify-ta.ts << 'EOF'
 import { getDb } from './db/init.js';
 const db = await getDb();
 const r = await db.run(`SELECT member_id, trade_activity FROM members WHERE trade_activity IS NOT NULL`);
@@ -838,7 +838,7 @@ Expected: at least `marjorie-taylor-greene` with a non-empty narrative.
 - [ ] **Step 5: Commit**
 
 ```bash
-cd ~/.hermes/civiclens && git add -A && git commit -m "test: verify trade-analyst end-to-end smoke test passes"
+cd ~/Developer/civiclens && git add -A && git commit -m "test: verify trade-analyst end-to-end smoke test passes"
 ```
 
 ---

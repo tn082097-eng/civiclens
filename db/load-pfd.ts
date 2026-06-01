@@ -16,9 +16,7 @@
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { applySchema, getDb } from './init.js';
-
-const HOME = process.env.HOME!;
-const PFD_CACHE_ROOT = resolve(HOME, '.hermes/civiclens/pfd-cache');
+import { PFD_CACHE as PFD_CACHE_ROOT } from '../lib/paths.js';
 
 // ─── Filer-to-member resolution ─────────────────────────────────────────────
 

@@ -11,14 +11,13 @@
  * Usage: npx tsx db/load-cosponsored.ts [member-id]   (no arg = all members)
  */
 import { readFileSync } from 'node:fs';
-import { homedir } from 'node:os';
-import { join } from 'node:path';
 import { getDb } from './init.js';
+import { ENV_PATH } from '../lib/paths.js';
 
 function loadEnvOnce() {
   if (process.env.CONGRESS_API_KEY) return;
   try {
-    const raw = readFileSync(join(homedir(), '.hermes', '.env'), 'utf-8');
+    const raw = readFileSync(ENV_PATH, 'utf-8');
     for (const line of raw.split('\n')) {
       const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/);
       if (!m) continue;
@@ -30,7 +29,7 @@ loadEnvOnce();
 
 const CONGRESS_KEY = process.env.CONGRESS_API_KEY;
 if (!CONGRESS_KEY) {
-  console.error('CONGRESS_API_KEY missing from ~/.hermes/.env');
+  console.error('CONGRESS_API_KEY missing from CivicLens .env (' + ENV_PATH + ')');
   process.exit(1);
 }
 

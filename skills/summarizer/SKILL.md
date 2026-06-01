@@ -11,9 +11,9 @@ Write a neutral, factual summary from validated researcher output. See [guidelin
 ## Step 1: Read inputs
 
 ```bash
-cat ~/.hermes/civiclens/pipeline/<task-id>/researcher.json
-cat ~/.hermes/civiclens/pipeline/<task-id>/data-checker.json
-cat ~/.hermes/civiclens/pipeline/<task-id>/connection-mapper.json
+cat ~/Developer/civiclens/pipeline/<task-id>/researcher.json
+cat ~/Developer/civiclens/pipeline/<task-id>/data-checker.json
+cat ~/Developer/civiclens/pipeline/<task-id>/connection-mapper.json
 ```
 
 ## Step 2: Generate summary
@@ -34,7 +34,7 @@ If connection-mapper found notable hidden connections, include a brief neutral m
 
 ## Step 3: Write output
 
-Write to `~/.hermes/civiclens/pipeline/<task-id>/summarizer.json`:
+Write to `~/Developer/civiclens/pipeline/<task-id>/summarizer.json`:
 ```json
 {
   "taskId": "<task-id>",

@@ -11,8 +11,8 @@ Generate a TypeScript seed block from summarized politician data. Do not validat
 ## Step 1: Read inputs
 
 ```bash
-cat ~/.hermes/civiclens/pipeline/<task-id>/summarizer.json
-cat ~/.hermes/civiclens/pipeline/<task-id>/researcher.json
+cat ~/Developer/civiclens/pipeline/<task-id>/summarizer.json
+cat ~/Developer/civiclens/pipeline/<task-id>/researcher.json
 ```
 
 ## Step 2: Generate seed block
@@ -42,7 +42,7 @@ grep -n "<politician-id>" ~/civiclens/src/db/seed.ts
 
 ## Step 3: Write output
 
-Write to `~/.hermes/civiclens/pipeline/<task-id>/coder.json`:
+Write to `~/Developer/civiclens/pipeline/<task-id>/coder.json`:
 ```json
 {
   "taskId": "<task-id>",

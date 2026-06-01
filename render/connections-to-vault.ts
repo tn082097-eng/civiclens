@@ -7,7 +7,7 @@
  *
  * Supersedes render/connections-to-vault.py, which only rendered #1.
  *
- * Source : ~/.hermes/civiclens/pipeline/task-* /connection-mapper.json (newest per member)
+ * Source : ~/Developer/civiclens/pipeline/task-* /connection-mapper.json (newest per member)
  * Output : ~/NoService/Projects/CivicLens/Connections/<member-id>.md
  * Also   : ~/NoService/Projects/CivicLens/Members/<Display Name>.md (graph stub)
  *
@@ -18,8 +18,8 @@ import { getDb } from '../db/init.ts';
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync, rmSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
+import { PIPE_DIR as PIPELINE } from '../lib/paths.js';
 const HOME = process.env.HOME!;
-const PIPELINE = resolve(HOME, '.hermes/civiclens/pipeline');
 const VAULT = resolve(HOME, 'NoService/Projects/CivicLens');
 const CONN_DIR = join(VAULT, 'Connections');
 const MEM_DIR = join(VAULT, 'Members');

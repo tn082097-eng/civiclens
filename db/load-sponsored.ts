@@ -22,14 +22,13 @@
  *   npx tsx agents/pipeline.ts --load-sponsored [member-id]
  */
 import { readFileSync } from 'node:fs';
-import { homedir } from 'node:os';
-import { join } from 'node:path';
 import { applySchema, getDb } from './init.js';
+import { ENV_PATH } from '../lib/paths.js';
 
 function loadEnvOnce() {
   if (process.env.CONGRESS_API_KEY) return;
   try {
-    const raw = readFileSync(join(homedir(), '.hermes', '.env'), 'utf-8');
+    const raw = readFileSync(ENV_PATH, 'utf-8');
     for (const line of raw.split('\n')) {
       const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/);
       if (!m) continue;
@@ -98,7 +97,7 @@ export async function loadSponsored(
 ): Promise<{ members: number; billsUpserted: number; subjectsWritten: number }> {
   loadEnvOnce();
   const key = process.env.CONGRESS_API_KEY;
-  if (!key) throw new Error('CONGRESS_API_KEY missing from ~/.hermes/.env');
+  if (!key) throw new Error('CONGRESS_API_KEY missing from CivicLens .env (' + ENV_PATH + ')');
 
   await applySchema();
   const conn = await getDb();

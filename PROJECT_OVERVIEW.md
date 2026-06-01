@@ -4,7 +4,7 @@ CivicLens is a political transparency research tool. It fetches live data from p
 
 ---
 
-## Root: `~/.hermes/civiclens/`
+## Root: `~/Developer/civiclens/`
 
 | Path | Purpose |
 |------|---------|

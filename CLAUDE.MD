@@ -37,15 +37,15 @@ Core principles:
 
 ## Project Locations
 
-- Pipeline code: ~/.hermes/civiclens/
+- Pipeline code: ~/Developer/civiclens/
 - Hermes config: ~/.hermes/
 - Hermes env vars: ~/.hermes/.env
 - Voteview data: ~/code/CivicLens/
-- Backup of pipeline: ~/.hermes/civiclens-backup-2026-04-18/
+- Backup of pipeline: ~/Developer/civiclens-backup-2026-04-18/
 
-## Pipeline Structure (~/.hermes/civiclens/)
+## Pipeline Structure (~/Developer/civiclens/)
 
-~/.hermes/civiclens/
+~/Developer/civiclens/
 ├── agents/
 │   ├── pipeline.ts        # Main pipeline runner (63KB)
 │   ├── run-batch.ts       # Batch processing
@@ -148,7 +148,7 @@ These are critical. The user has been burned by hallucinated model names, made-u
 
 - DONE: Hardware verified, models installed
 - DONE: Hermes Agent installed and running
-- DONE: OpenClaw pipeline scaffolding exists at ~/.hermes/civiclens/
+- DONE: OpenClaw pipeline scaffolding exists at ~/Developer/civiclens/
 - DONE: Telegram bot configured for remote access
 - DONE: Initial CivicLens website running at http://localhost:3000 (Influence Network graph rendering)
 - TODO: Pipeline currently has 6-7 agents, not the planned 9

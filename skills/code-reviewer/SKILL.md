@@ -11,7 +11,7 @@ Review the Coder's TypeScript output. Report issues — do not fix them.
 ## Step 1: Read Coder output
 
 ```bash
-cat ~/.hermes/civiclens/pipeline/<task-id>/coder.json
+cat ~/Developer/civiclens/pipeline/<task-id>/coder.json
 ```
 
 If the file is missing or invalid JSON, write `passed: false, score: 0` and stop.
@@ -37,7 +37,7 @@ ollama run deepseek-coder-v2:16b "Review this TypeScript for bugs, type errors, 
 Score: start 1.0, subtract 0.3 per critical, 0.1 per warning.
 `passed: true` if no critical issues.
 
-Write to `~/.hermes/civiclens/pipeline/<task-id>/code-reviewer.json`:
+Write to `~/Developer/civiclens/pipeline/<task-id>/code-reviewer.json`:
 ```json
 {
   "taskId": "<task-id>",

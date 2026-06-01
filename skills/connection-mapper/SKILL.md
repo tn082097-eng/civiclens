@@ -11,13 +11,13 @@ Cross-reference the subject politician against all others in the dataset. Surfac
 ## Step 1: Load data
 
 ```bash
-cat ~/.hermes/civiclens/pipeline/<task-id>/researcher.json
-cat ~/.hermes/civiclens/skills/researcher/stub-data.json
+cat ~/Developer/civiclens/pipeline/<task-id>/researcher.json
+cat ~/Developer/civiclens/skills/researcher/stub-data.json
 ```
 
 Also load any other researcher outputs already written in this pipeline run:
 ```bash
-for dir in ~/.hermes/civiclens/pipeline/*/; do
+for dir in ~/Developer/civiclens/pipeline/*/; do
   [ -f "$dir/researcher.json" ] && cat "$dir/researcher.json"
 done
 ```
@@ -33,8 +33,8 @@ import json, urllib.request, os
 TASK_ID = "<task-id>"
 HOME    = os.path.expanduser("~")
 
-subject = json.load(open(f"{HOME}/.hermes/civiclens/pipeline/{TASK_ID}/researcher.json"))
-stub    = json.load(open(f"{HOME}/.hermes/civiclens/skills/researcher/stub-data.json"))
+subject = json.load(open(f"{HOME}/Developer/civiclens/pipeline/{TASK_ID}/researcher.json"))
+stub    = json.load(open(f"{HOME}/Developer/civiclens/skills/researcher/stub-data.json"))
 
 SYSTEM = (
     "You are an expert Connection Mapper. Your job is to find hidden and indirect "
@@ -119,7 +119,7 @@ Strip any markdown fences from the output, then parse the JSON.
 
 ## Step 3: Write output
 
-Write to `~/.hermes/civiclens/pipeline/<task-id>/connection-mapper.json`:
+Write to `~/Developer/civiclens/pipeline/<task-id>/connection-mapper.json`:
 ```json
 {
   "taskId": "<task-id>",

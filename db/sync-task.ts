@@ -12,9 +12,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { applySchema, getDb } from './init.js';
 import { loadOne } from './load-from-tasks.js';
 import { resolveFecCandidateId } from './backfill-fec-candidate.js';
-
-const HOME = process.env.HOME!;
-const PIPE_DIR = resolve(HOME, '.hermes/civiclens/pipeline');
+import { PIPE_DIR } from '../lib/paths.js';
 
 export interface SyncResult {
   ok: boolean;
