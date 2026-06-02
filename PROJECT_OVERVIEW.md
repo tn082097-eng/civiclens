@@ -1,6 +1,6 @@
 # CivicLens — Project Overview
 
-CivicLens is a political transparency research tool. It fetches live data from primary sources (Congress.gov, OpenFEC, GovTrack, House Clerk), runs it through an 11-agent pipeline, and publishes a static site showing trade-vote proximity, donor networks, and co-sponsorship patterns for US politicians.
+CivicLens is a political transparency research tool. It fetches live data from primary sources (Congress.gov, OpenFEC, GovTrack, House Clerk), runs it through a mostly-deterministic pipeline with a thin semantic layer, and publishes a static site showing trade-vote proximity, donor networks, and co-sponsorship patterns for US politicians. The site is built entirely by `render/build.ts` reading DuckDB views — the analytical logic lives in SQL, not in agents.
 
 ---
 
@@ -14,12 +14,11 @@ CivicLens is a political transparency research tool. It fetches live data from p
 | `agents/data-checker.ts` | Data Checker agent (Zod validation + auto-correct). |
 | `agents/predictor.ts` | Predictor agent (delegates to `skills/predictor/predict.ts`). |
 | `agents/connection-mapper.ts` | Connection Mapper + `computeSharedDonors` + `computeSharedCommittees`. |
-| `agents/summarizer.ts` | Summarizer agent (3-stage: deterministic → LLM → post-process). |
-| `agents/coder.ts` | Coder agent (action classification, no LLM). |
-| `agents/code-checker.ts` | Code Checker agent (neutrality + type gate, no LLM). |
-| `agents/visualizer.ts` | Visualizer agent (Sigma.js graph JSON, no LLM). |
-| `agents/final-reviewer.ts` | Final Reviewer agent (10-point QC gate + LLM narrative check). |
-| `agents/publisher.ts` | `applySeedBlock` — applies approved task to seed.ts. |
+| `agents/summarizer.ts` | Summarizer agent (3-stage: deterministic → LLM → post-process). The site's semantic layer. |
+| `agents/trade-analyst.ts` | Trade Analyst — `members.trade_activity` (deterministic) + optional LLM narrative. |
+| `agents/revolving-door.ts` | Revolving-Door matcher (LDA × member); narrative (Phase 2: not yet rendered). |
+| `agents/code-checker.ts` | Neutrality + date gate (deterministic, no LLM). |
+| `agents/final-reviewer.ts` | Final Reviewer — **deterministic** QC gate; sets `readyToApply` from Data Checker + neutrality + completeness. |
 | `db/schema.sql` | Single source of truth for DuckDB schema (10 tables, 6 views). |
 | `db/init.ts` | DuckDB singleton. DB file: `data/civiclens.duckdb` (path via `lib/paths.ts`). |
 | `db/queries.ts` | Public typed query API (findTradesNearVotes, findSharedDonors, etc.). |
@@ -37,27 +36,33 @@ CivicLens is a political transparency research tool. It fetches live data from p
 
 ---
 
-## The 11-Agent Pipeline
+## The Pipeline (actual, post-Phase-1)
 
-Agents run sequentially. Each writes JSON to `pipeline/<task-id>/<agent>.json`.
+Stages run sequentially, each writing JSON to `pipeline/<task-id>/<agent>.json`. The
+publish path is **agents → JSON → `sync-task`/`load-from-tasks` → DuckDB → `render/build.ts`**.
+There is no `seed.ts` and no LLM "brain" — orchestration is the deterministic `runPipeline()`
+in `pipeline.ts`.
 
 ```
-Researcher → Data Checker → Predictor → Connection Mapper → Summarizer
-  → Coder → Code Checker → Visualizer → Final Reviewer → [Publisher]
+Researcher → Data Checker → [Predictor] → Connection Mapper → [Trade Analyst]
+  → [Revolving-Door] → Summarizer → Code Checker → Final Reviewer
+  → sync-task (→ DuckDB) → render/build
 ```
 
-| Agent | Type | Model |
-|-------|------|-------|
-| Researcher | data-fetch | code + Congress.gov / OpenFEC / GovTrack APIs |
-| Data Checker | Zod validation + auto-correct | code |
-| Predictor | voting-pattern baseline models | code |
-| Connection Mapper | shared donors/committees (stage 1 code, stage 2 LLM) | Haiku 4.5 |
-| Summarizer | bio + narrative (stage 1 code, stage 2 LLM, stage 3 code) | Sonnet 4.6 |
-| Coder | action classification | code |
-| Code Checker | neutrality + type gate | code |
-| Visualizer | Sigma.js graph JSON | code |
-| Final Reviewer | 10-point QC gate | Haiku 4.5 |
-| Publisher | applies seed block to seed.ts | code |
+| Stage | Type | LLM |
+|-------|------|-----|
+| Researcher | data-fetch (Congress.gov / OpenFEC / GovTrack APIs) | no |
+| Data Checker | Zod validation + auto-correct | no |
+| Predictor | voting-pattern baseline models (skipped by default) | no |
+| Connection Mapper | shared donors/committees (SQL) + stage-2 narration (vault only) | Haiku 4.5 — Phase 2: → SQL |
+| Trade Analyst | `trade_activity` deterministic; narrative optional | optional |
+| Revolving-Door | LDA × member match; narrative | optional |
+| Summarizer | bio + neutral narrative — **the semantic layer** | Sonnet 4.6 |
+| Code Checker | neutrality + date gate | no |
+| Final Reviewer | deterministic QC gate → `readyToApply` | **no (Phase 1)** |
+
+Removed in Phase 1 (legacy `seed.ts` plumbing, no longer fed the site): **Coder,
+Visualizer, Publisher**, and the stale `lib/state.ts`. See `plans/pipeline-simplification-agile-quasar.md`.
 
 ---
 
