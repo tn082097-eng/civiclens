@@ -14,7 +14,7 @@ can enter here without corrupting everything after.
 ## INPUTS
 
 1. A politician's name as a string (e.g., `"Ted Cruz"`).
-2. API keys from `~/.hermes/.env`:
+2. API keys from the repo-local `.env` (`~/Developer/civiclens/.env`, read via `ENV_PATH`):
    - `CONGRESS_API_KEY` — Congress.gov
    - `OPENFEC_API_KEY` — OpenFEC
 3. No other inputs. Not user-provided facts. Not cached stub data.

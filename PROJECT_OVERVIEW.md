@@ -21,7 +21,7 @@ CivicLens is a political transparency research tool. It fetches live data from p
 | `agents/final-reviewer.ts` | Final Reviewer agent (10-point QC gate + LLM narrative check). |
 | `agents/publisher.ts` | `applySeedBlock` — applies approved task to seed.ts. |
 | `db/schema.sql` | Single source of truth for DuckDB schema (10 tables, 6 views). |
-| `db/init.ts` | DuckDB singleton. DB file: `civiclens.duckdb`. |
+| `db/init.ts` | DuckDB singleton. DB file: `data/civiclens.duckdb` (path via `lib/paths.ts`). |
 | `db/queries.ts` | Public typed query API (findTradesNearVotes, findSharedDonors, etc.). |
 | `db/load-from-tasks.ts` | Bulk-loads pipeline task dirs → DuckDB. |
 | `db/load-pfd.ts` | Ingests House Clerk PTR PDFs → `pfd_transactions`. |
@@ -89,7 +89,7 @@ npx tsx agents/pipeline.ts --apply <task-id>
 
 ---
 
-## Data Sources & Env Vars (`~/.hermes/.env`)
+## Data Sources & Env Vars (`~/Developer/civiclens/.env`, repo-local)
 
 | Var | Source |
 |-----|--------|

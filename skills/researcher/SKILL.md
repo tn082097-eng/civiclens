@@ -22,7 +22,7 @@ Fetch real, primary-source data for the target politician. Write results to `~/D
 | Donors, campaign totals | OpenFEC `/schedules/schedule_a`, `/committee/{id}/totals` | `OPENFEC_API_KEY` |
 | Bio | Congress.gov member record (deterministic construction — role, state[-district], party, first-elected year, Nth Congress) | `CONGRESS_API_KEY` |
 
-API keys live in `~/.hermes/.env`. The `fetch.ts` loader reads them automatically.
+API keys live in the repo-local `.env` (`~/Developer/civiclens/.env`, read via `ENV_PATH`). The `fetch.ts` loader reads them automatically.
 
 ## Invocation
 

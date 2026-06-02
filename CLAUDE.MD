@@ -37,11 +37,14 @@ Core principles:
 
 ## Project Locations
 
-- Pipeline code: ~/Developer/civiclens/
-- Hermes config: ~/.hermes/
-- Hermes env vars: ~/.hermes/.env
+> Updated 2026-06-01 — repo relocated out of Hermes and made standalone. See Projects/CivicLens/Migrations/2026-06-01-relocation.md in the vault.
+
+- Pipeline code: ~/Developer/civiclens/ (standalone repo, no remote)
+- Env vars: ~/Developer/civiclens/.env (repo-local, 8 CivicLens keys; read via `ENV_PATH`)
+- DuckDB: ~/Developer/civiclens/data/civiclens.duckdb
+- Hermes config: ~/.hermes/ (Hermes app dir — still exists; only the civiclens/ subtree was removed)
 - Voteview data: ~/code/CivicLens/
-- Backup of pipeline: ~/Developer/civiclens-backup-2026-04-18/
+- Backup: ~/backups/civiclens-2026-06-01.tar.zst
 
 ## Pipeline Structure (~/Developer/civiclens/)
 
@@ -110,7 +113,7 @@ Researcher → Data Checker → Connection Mapper → Summarizer → Coder → C
 | ProPublica Congress | Free, 1-2 day approval | propublica.org/datastore/api |
 | OpenSecrets | Free 200 req/day limit | opensecrets.org/api |
 
-API keys go in: ~/.hermes/.env
+API keys go in: ~/Developer/civiclens/.env (repo-local; read via `ENV_PATH`)
 
 ## Target Politicians (Roster)
 
@@ -164,7 +167,7 @@ These are critical. The user has been burned by hallucinated model names, made-u
 2. Update crewai_config.py with all 9 agent model assignments
 3. Create SKILL.md for missing agents: code-reviewer, visualizer
 4. Update Brain pipeline order to include new agents
-5. Get Congress.gov + FEC.gov API keys, add to ~/.hermes/.env
+5. Get Congress.gov + FEC.gov API keys, add to ~/Developer/civiclens/.env
 6. Switch Researcher from stub data to real API/Voteview CSV reads
 7. Expand graph data model to include donors, orgs, PACs as node types
 
