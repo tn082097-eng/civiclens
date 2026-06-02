@@ -16,7 +16,6 @@ export const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const HOME       = process.env.HOME!;
 export const PIPE_DIR   = process.env.CIVICLENS_PIPE_DIR ?? paths.PIPE_DIR;
 export const STUB_PATH  = paths.STUB_PATH;
-export const SEED_PATH  = path.join(HOME, 'civiclens', 'src', 'db', 'seed.ts');
 export const SKILLS_DIR = paths.SKILLS_DIR;
 
 // ─── ANSI helpers ─────────────────────────────────────────────────────────────
@@ -120,11 +119,8 @@ export function initTask(taskId: string, targetName: string): PipelineTask {
       'trade-analyst':     { ...def },
       'revolving-door':    { ...def },
       summarizer:          { ...def },
-      coder:               { ...def },
       'code-checker':      { ...def },
-      'visualizer':        { ...def },
       'final-reviewer':    { ...def },
-      publisher:           { ...def },
     },
     brainLog: [],
   };

@@ -1,23 +1,22 @@
 import type { PipelineTask } from '../lib/types.js';
 import {
-  ok, fail, warn, spin,
+  ok, fail, warn,
   readPipe, writePipe, markAgent, setStatus,
-  llm,
 } from './shared.js';
 
 export async function runFinalReviewer(task: PipelineTask): Promise<boolean> {
   markAgent(task, 'final-reviewer', 'running');
 
-  // Final Reviewer always uses Claude — it's the QC gate and must be consistent.
-  // Override via LLM_REVIEWER_MODEL if needed, but default pins to Haiku.
-  const REVIEWER_MODEL = process.env.LLM_REVIEWER_MODEL ?? 'claude-sonnet-4-6';
-
   const researcher  = readPipe<any>(task.taskId, 'researcher');
   const dataChecker = readPipe<any>(task.taskId, 'data-checker');
   const summarizer  = readPipe<any>(task.taskId, 'summarizer');
-  const coder       = readPipe<any>(task.taskId, 'coder');
   const codeChecker = readPipe<any>(task.taskId, 'code-checker');
 
+  // Deterministic QC gate — no LLM. readyToApply derives purely from the
+  // upstream validators (Data Checker), the neutrality gate (Code Checker), and
+  // completeness of the rendered narrative fields. The old narrative LLM check
+  // could only ever downgrade approved→approved_with_warnings, never reject, so
+  // it added a nondeterministic call with no gate-changing power.
   const checklist: Record<string, boolean> = {
     dataCheckerPassed:       !!dataChecker.passed,
     dataCheckerScore:        (dataChecker.score ?? 0) >= 0.70,
@@ -28,48 +27,9 @@ export async function runFinalReviewer(task: PipelineTask): Promise<boolean> {
     codeCheckerPassed:       !!codeChecker.passed,
     codeCheckerScore:        (codeChecker.score ?? 0) >= 0.70,
     neutralityCheckPass:     codeChecker.neutralityCheck === 'pass',
-    coderClassified:         !!coder.action && !!coder.politicianId,
   };
 
   const failedChecks = Object.entries(checklist).filter(([,v]) => !v).map(([k]) => k);
-
-  spin('Final Reviewer', `narrative review via ${REVIEWER_MODEL}…`);
-  let narrativeOk = true;
-  let narrativeNotes = '';
-  try {
-    const narrativePrompt = `You are a QC reviewer for a non-partisan political reference site.
-Read this politician summary and answer:
-1. Is the tone neutral and factual? (YES/NO)
-2. Is anything misleading or biased? (YES/NO + brief reason if yes)
-3. Suitable for publication? (YES/NO)
-
-Headline: ${summarizer.headline}
-Bio: ${summarizer.bio}
-Key Facts: ${(summarizer.keyFacts ?? []).join(' | ')}
-Narrative: ${summarizer.neutralNarrative}`;
-
-    const review = await llm(
-      [{ role: 'user', content: narrativePrompt }],
-      { maxTokens: 400, timeoutMs: 30_000, model: REVIEWER_MODEL },
-    );
-    process.stdout.write('\n');
-    narrativeNotes = review.slice(0, 300);
-    const lines = review.toLowerCase();
-    if (lines.includes('1. no') || lines.includes('3. no') ||
-        (lines.includes('2. yes') && lines.includes('biased'))) {
-      narrativeOk = false;
-    }
-  } catch (e: any) {
-    process.stdout.write('\n');
-    warn('Final Reviewer', `narrative check skipped: ${e.message}`);
-  }
-
-  if (!narrativeOk) {
-    failedChecks.push('narrativeQuality');
-    checklist['narrativeQuality'] = false;
-  } else {
-    checklist['narrativeQuality'] = true;
-  }
 
   const hasCritical = failedChecks.some(k =>
     ['dataCheckerPassed','codeCheckerPassed','neutralityCheckPass'].includes(k)
@@ -80,7 +40,6 @@ Narrative: ${summarizer.neutralNarrative}`;
 
   const decision = hasCritical ? 'rejected'
     : warnCount >= 3           ? 'approved_with_warnings'
-    : !narrativeOk             ? 'approved_with_warnings'
     :                            'approved';
 
   const report = {
@@ -90,20 +49,15 @@ Narrative: ${summarizer.neutralNarrative}`;
     politicianId:  researcher.data?.id,
     politicianName: researcher.data?.name,
     checklist,
-    narrativeReview: {
-      model: REVIEWER_MODEL,
-      passed: narrativeOk,
-      notes: narrativeNotes,
-    },
     issues: failedChecks.map(k => ({
       category: 'checklist',
       severity: ['dataCheckerPassed','codeCheckerPassed'].includes(k) ? 'critical' : 'warning',
       message: `Failed check: ${k}`,
     })),
     summary: decision === 'approved'
-      ? `All checks passed. Ready to apply to seed.ts.`
+      ? `All checks passed. Ready to load into DuckDB.`
       : decision === 'approved_with_warnings'
-      ? `Approved with ${warnCount} warning(s). Review before applying.`
+      ? `Approved with ${warnCount} warning(s). Review before loading.`
       : `REJECTED: ${failedChecks.join(', ')}`,
     readyToApply: decision !== 'rejected',
   };

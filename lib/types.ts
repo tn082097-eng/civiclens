@@ -9,11 +9,8 @@ export type AgentName =
   | 'trade-analyst'
   | 'revolving-door'
   | 'summarizer'
-  | 'coder'
   | 'code-checker'
-  | 'visualizer'
-  | 'final-reviewer'
-  | 'publisher';
+  | 'final-reviewer';
 
 export type AgentStatus = 'pending' | 'running' | 'complete' | 'failed' | 'skipped';
 
@@ -26,11 +23,8 @@ export type PipelineStatus =
   | 'analyzing-trades'
   | 'detecting-revolving-door'
   | 'summarizing'
-  | 'coding'
   | 'reviewing-code'
-  | 'visualizing'
   | 'final-review'
-  | 'publishing'
   | 'complete'
   | 'failed';
 

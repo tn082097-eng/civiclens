@@ -4,7 +4,6 @@
   "type": "module",
   "description": "CivicLens multi-agent data pipeline",
   "scripts": {
-    "state": "tsx lib/state.ts",
     "test": "tsx --test pipeline/patterns/*.test.ts"
   },
   "dependencies": {

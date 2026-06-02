@@ -32,11 +32,8 @@ import { runConnectionMapper } from './connection-mapper.js';
 import { runTradeAnalyst } from './trade-analyst.js';
 import { runRevolvingDoor } from './revolving-door.js';
 import { runSummarizer } from './summarizer.js';
-import { runCoder } from './coder.js';
 import { runCodeChecker } from './code-checker.js';
-import { runVisualizer } from './visualizer.js';
 import { runFinalReviewer } from './final-reviewer.js';
-import { applySeedBlock } from './publisher.js';
 
 loadHermesEnv();
 
@@ -207,24 +204,10 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
     }
   }
 
-  setStatus(task, 'coding');
-  const coderOk = await runCoder(task);
-  if (!coderOk) {
-    fail('Pipeline', 'Coder failed — aborting');
-    setStatus(task, 'failed');
-    return;
-  }
-
   setStatus(task, 'reviewing-code');
   const codeCheckOk = await runCodeChecker(task);
   if (!codeCheckOk) {
-    warn('Brain', 'Code check failed — continuing to Final Reviewer with warnings');
-  }
-
-  setStatus(task, 'visualizing');
-  const vizOk = await runVisualizer(task);
-  if (!vizOk) {
-    warn('Brain', 'Visualizer failed — continuing without graph data');
+    warn('Brain', 'Neutrality check failed — continuing to Final Reviewer with warnings');
   }
 
   setStatus(task, 'final-review');
@@ -237,7 +220,7 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
   const allFiles = [
     'researcher','data-checker','predictor','connection-mapper',
     'trade-analyst','revolving-door',
-    'summarizer','coder','code-checker','visualizer','final-review',
+    'summarizer','code-checker','final-review',
   ].map(n => pipeFile(taskId, n));
 
   console.log(`\n${c.cyan}${'─'.repeat(58)}${c.reset}`);
@@ -333,11 +316,12 @@ async function appendAndRun(name: string) {
 
   const taskId = findFreshTask(name);
   if (!taskId) {
-    warn('append', 'no approved task for this name — skipping auto-apply');
+    warn('append', 'no approved task for this name');
     return;
   }
-  console.log(`\n  ${cyan('›')}  ${bold('Auto-applying to seed.ts…')}`);
-  applySeedBlock(taskId);
+  // The member is already in DuckDB via syncTask (inside runPipeline). The
+  // legacy seed.ts apply step is gone — rebuild the static site to publish.
+  console.log(`\n  ${cyan('›')}  ${bold('In DuckDB.')} ${dim('Rebuild site: npx tsx render/build.ts')}`);
 }
 
 // ─── Entry point ──────────────────────────────────────────────────────────────
@@ -348,12 +332,11 @@ if (!arg || arg === '--help') {
 ${bold('CivicLens Pipeline Runner')}
 
   ${cyan('npx tsx agents/pipeline.ts "Politician Name" [--force]')} run full pipeline (--force bypasses 24h cache)
-  ${cyan('npx tsx agents/pipeline.ts --append "Name"')}        append to names.txt, run, auto-apply
+  ${cyan('npx tsx agents/pipeline.ts --append "Name"')}        append to names.txt and run (syncs to DuckDB)
   ${cyan('npx tsx agents/pipeline.ts --batch "A,B,C"')}        run multiple in parallel
   ${cyan('npx tsx agents/pipeline.ts --batch names.txt [n]')} batch from file (concurrency n, default 3)
   ${cyan('npx tsx agents/pipeline.ts --list')}                 list recent tasks
   ${cyan('npx tsx agents/pipeline.ts --status <task-id>')}     show task details
-  ${cyan('npx tsx agents/pipeline.ts --apply <task-id>')}      apply approved seed block
   ${cyan('npx tsx agents/pipeline.ts --rerun-mapper <task-id>')} re-run Connection Mapper against current corpus
   ${cyan('npx tsx agents/pipeline.ts --load-pfd <year> [--dry-run]')} load House Clerk PFDs for year into DuckDB
   ${cyan('npx tsx agents/pipeline.ts --load-senate-ptr [--dry-run]')} load Senate EFDS PTRs into DuckDB
@@ -369,9 +352,6 @@ ${bold('CivicLens Pipeline Runner')}
 } else if (arg === '--status') {
   if (!arg2) { console.error('Usage: --status <task-id>'); process.exit(1); }
   showStatus(arg2);
-} else if (arg === '--apply') {
-  if (!arg2) { console.error('Usage: --apply <task-id>'); process.exit(1); }
-  applySeedBlock(arg2);
 } else if (arg === '--refresh-research') {
   if (!arg2) { console.error('Usage: --refresh-research "Politician Name"'); process.exit(1); }
   (async () => {
