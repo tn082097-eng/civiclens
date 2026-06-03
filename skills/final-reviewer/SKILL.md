@@ -1,68 +1,53 @@
 ---
 name: final-reviewer
-description: QC gate powered by Qwen3.6-35B-A3B. Reviews all prior agent outputs for the pipeline task. Approves or rejects the full run. Produces a human-readable audit report. Called by the Brain as the last step before Publisher.
+description: Deterministic QC gate (no LLM). Reads prior agent outputs, runs a fixed checklist, and sets readyToApply. Called by the pipeline as the last step before sync-task loads the run into DuckDB.
 tools: Read, Write, Bash
 ---
 
 # Final Reviewer Agent
 
-QC gate. Read all pipeline outputs, run the checklist, approve or reject using your own analysis. Do not generate data or fix issues.
+Deterministic QC gate — **no model call**. The decision derives purely from the
+upstream validators (Data Checker), the neutrality gate (Code Checker), and the
+completeness of the rendered narrative fields. Implemented in
+`agents/final-reviewer.ts` (`runFinalReviewer`). Do not generate data or fix issues.
 
-## Step 1: Read all outputs
+> History: an earlier version ran an LLM narrative review. It could only ever
+> downgrade `approved`→`approved_with_warnings`, never reject, so it added a
+> nondeterministic call with no gate-changing power. Removed in Phase 1.
 
-```bash
-for f in state researcher data-checker connection-mapper summarizer coder; do
-  cat ~/Developer/civiclens/pipeline/<task-id>/$f.json
-done
-```
+## Step 1: Read upstream outputs
+
+Reads (via `readPipe`) from `pipeline/<task-id>/`:
+`researcher`, `data-checker`, `summarizer`, `code-checker`.
+(No `coder` read — the Coder agent was deleted in Phase 1.)
 
 ## Step 2: Checklist
 
 | Check | Gate |
 |---|---|
 | `data-checker.passed` = true | critical |
-| `data-checker.score` ≥ 0.70 | critical |
-| `connection-mapper.hiddenConnections` array exists | warning |
-| `summarizer.bio` ≥ 2 sentences | warning |
-| `summarizer.keyFacts` ≥ 2 items | warning |
-| `coder.seedBlock` non-empty | critical |
-| `coder.action` is "insert" or "update" | critical |
-| Politician name consistent across all files | warning |
+| `data-checker.score` ≥ 0.70 | warning |
+| `summarizer.bio.length` ≥ 60 | warning |
+| `summarizer.neutralNarrative.length` ≥ 100 | warning |
+| `summarizer.keyFacts.length` ≥ 2 | warning |
+| `summarizer.neutralityViolations` empty | warning |
+| `code-checker.passed` = true | critical |
+| `code-checker.score` ≥ 0.70 | warning |
+| `code-checker.neutralityCheck` = "pass" | critical |
 
-## Step 3: Narrative review
+## Step 3: Decision
 
-Using your own analysis (no external call needed — you are Claude Opus 4.6):
+- **rejected** — any critical check fails (`dataCheckerPassed`, `codeCheckerPassed`, `neutralityCheckPass`)
+- **approved_with_warnings** — no critical failures, but 3+ warning checks fail
+- **approved** — otherwise
 
-Review `summarizer.headline`, `summarizer.bio`, and `summarizer.neutralNarrative` for:
-- **Tone neutrality** — no loaded language, no partisan framing
-- **Factual consistency** — bio matches researcher data
-- **Publication suitability** — appropriate for a non-partisan public-facing site
+`readyToApply = decision !== 'rejected'`.
 
-Flag any forbidden words: extreme, radical, corrupt, hero, champion, maverick, pushed through, rammed through.
+## Step 4: Output
 
-## Step 4: Decision
-
-- **approved** — all critical checks pass, narrative review clean
-- **approved_with_warnings** — no critical failures, 3+ warnings or minor narrative concerns
-- **rejected** — any critical check fails or narrative review flags bias
-
-## Step 5: Write output
-
-Write to `~/Developer/civiclens/pipeline/<task-id>/final-review.json`:
-```json
-{
-  "taskId": "<task-id>",
-  "reviewedAt": "<ISO>",
-  "decision": "approved|approved_with_warnings|rejected",
-  "politicianId": "<slug>",
-  "politicianName": "<name>",
-  "readyToApply": true,
-  "summary": "...",
-  "issues": [{ "severity": "critical|warning", "message": "..." }]
-}
-```
-
-Update state:
-```bash
-npx --prefix ~/Developer/civiclens tsx ~/Developer/civiclens/lib/state.ts update <task-id> final-reviewer '{"status":"complete"}'
-```
+Writes `pipeline/<task-id>/final-review.json` (`taskId`, `reviewedAt`, `decision`,
+`politicianId`, `politicianName`, `checklist`, `issues`, `summary`, `readyToApply`)
+and updates pipeline state via `setStatus`/`markAgent` (state lives in
+`agents/shared.ts` / `pipeline_runs`, not the deleted `lib/state.ts`).
+On approval the run is loaded into DuckDB by `sync-task` — there is no separate
+`--apply`/`seed.ts` step.

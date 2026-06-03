@@ -38,7 +38,7 @@ Show all output as it arrives. Do not summarize.
 When done, report:
 - The final decision (APPROVED / APPROVED WITH WARNINGS / REJECTED)
 - The task ID
-- If approved, remind the user they can apply with:
-  `npx tsx ~/Developer/civiclens/agents/pipeline.ts --apply <task-id>`
+
+The run publishes to DuckDB automatically via sync-task — there is no separate `--apply` step (the old `seed.ts` apply path was removed in Phase 1).
 
 If no name was provided, ask: "Which politician should I run the pipeline for?"

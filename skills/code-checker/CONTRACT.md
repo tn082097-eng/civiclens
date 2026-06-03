@@ -5,31 +5,30 @@ runs both follow this file. If code or SKILL.md contradicts, this document wins.
 
 ## Purpose
 
-Last neutrality + integrity gate before the Publisher writes to `seed.ts`.
-Runs against the exact text that will land in the seed file — the
-Summarizer's bio plus the Researcher's `bills`, `votes`, `donors` strings.
-The surface under review is whatever `applySeedBlock` will actually embed
-in seed.ts, not a separate LLM-generated artifact.
+Last neutrality + integrity gate before the run is loaded into DuckDB by
+`sync-task`/`load-from-tasks` and rendered by `render/build.ts`. Runs against
+the exact text that will land on the public site — the Summarizer's bio plus
+the Researcher's `bills`, `votes`, `donors` strings. The surface under review is
+whatever reaches DuckDB, not a separate LLM-generated artifact.
 
 ## Architecture — pure code, no model
 
-No model calls. The Coder no longer emits a `seedBlock`, so the LLM stage
-that previously reviewed it is gone. Everything this agent checks is
-deterministic:
+No model calls. Everything this agent checks is deterministic:
 - FORBIDDEN-word neutrality scan
 - Boolean-type check on `inOffice`
 - Minimum bio length
 - Future-date rejection on bills and votes
 
-A prior version ran deepseek-coder-v2 as a stage-2 TS linter on the dead
-seedBlock. Removed with the seedBlock itself.
+> History: a prior version ran deepseek-coder-v2 as a stage-2 TS linter on a
+> `seedBlock` emitted by the Coder. Both the Coder and the `seed.ts` apply path
+> were dead `seed.ts`-era topology, removed in Phase 1.
 
 ## INPUTS
 
 1. `pipeline/<task-id>/researcher.json` — source of ship-bound strings
    (`bills`, `votes`, `donors`, `role`) and the `inOffice` boolean.
 2. `pipeline/<task-id>/summarizer.json` — source of the bio that will
-   actually land in seed.ts.
+   actually land in DuckDB and on the site.
 3. No other inputs.
 
 ## OUTPUTS
@@ -53,7 +52,7 @@ Write `pipeline/<task-id>/code-checker.json`:
 
 1. **Build the ship surface** as the concatenation of: `summarizer.bio`,
    `researcher.data.role`, and every string in `bills`/`votes`/`donors` that
-   applySeedBlock will embed in a string literal.
+   `sync-task` will load into DuckDB.
 2. **Run the FORBIDDEN-word check** on the full ship surface. Any hit is a
    critical issue — the pipeline cannot ship charged language.
 3. **Verify `inOffice` is a boolean literal** on `researcher.data`.
@@ -65,7 +64,7 @@ Write `pipeline/<task-id>/code-checker.json`:
 1. Do not call any model.
 2. Do not check a `seedBlock` field — it's gone.
 3. Do not skip the neutrality check — it's the load-bearing gate.
-4. Do not fail on warnings — only criticals block the Publisher.
+4. Do not fail on warnings — only criticals block the load into DuckDB.
 
 ## INHERITS
 
