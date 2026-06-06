@@ -25,4 +25,4 @@ JOIN bills b
 JOIN members ms ON ms.member_id = a.member_id
 JOIN members mt ON mt.member_id = b.member_id
 GROUP BY a.member_id, ms.name, ms.party, b.member_id, mt.name, mt.party
-ORDER BY shared_bills DESC;
+ORDER BY shared_bills DESC, source_id ASC, target_id ASC;

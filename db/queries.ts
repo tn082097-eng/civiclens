@@ -43,7 +43,7 @@ export async function findSharedDonors(memberId: string): Promise<SharedDonorPee
 
 export async function listMembers(): Promise<{ member_id: string; name: string }[]> {
   const conn = await getDb();
-  const r = await conn.run(`SELECT member_id, name FROM members ORDER BY name`);
+  const r = await conn.run(`SELECT member_id, name FROM members ORDER BY name, member_id`);
   const rows = await r.getRowObjects();
   return rows.map((row: any) => ({ member_id: String(row.member_id), name: String(row.name) }));
 }
@@ -141,7 +141,8 @@ export async function findSuspiciousTrades(memberId: string, windowDays = 90): P
   const r    = await conn.run(
     `SELECT * FROM v_suspicious_trades
      WHERE member_id = ? AND days_before_vote <= ?
-     ORDER BY days_before_vote ASC, tx_date DESC`,
+     ORDER BY days_before_vote ASC, tx_date DESC,
+              trade_filing_id ASC, vote_id ASC, ticker ASC, asset ASC`,
     [memberId, windowDays],
   );
   return rowsToTradeNearVote(await r.getRowObjects() as any[]);
@@ -156,7 +157,8 @@ export async function suspiciousTradesCorpus(windowDays = 30, limit = 2000): Pro
      ORDER BY
        member_on_bill_committee DESC,
        days_before_vote ASC,
-       tx_date DESC
+       tx_date DESC,
+       trade_filing_id ASC, vote_id ASC, ticker ASC, asset ASC
      LIMIT ?`,
     [windowDays, limit],
   );
@@ -184,7 +186,7 @@ export interface MemberTradeSummary {
 
 export async function memberTradeSummary(): Promise<MemberTradeSummary[]> {
   const conn = await getDb();
-  const r = await conn.run(`SELECT * FROM v_member_trade_summary ORDER BY total_trades DESC`);
+  const r = await conn.run(`SELECT * FROM v_member_trade_summary ORDER BY total_trades DESC, member_id ASC`);
   const rows = await r.getRowObjects() as any[];
   return rows.map(row => ({
     member_id: String(row.member_id),

@@ -19,4 +19,4 @@ JOIN donors b
 JOIN members m ON m.member_id = b.member_id
 WHERE a.member_id = ?
 GROUP BY b.member_id, m.name
-ORDER BY shared_count DESC, combined_amount DESC;
+ORDER BY shared_count DESC, combined_amount DESC, peer_id ASC;
