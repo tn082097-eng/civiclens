@@ -1,7 +1,6 @@
 // Shared types across all CivicLens pipeline agents
 
 export type AgentName =
-  | 'brain'
   | 'researcher'
   | 'data-checker'
   | 'predictor'
@@ -46,14 +45,6 @@ export interface PipelineTask {
     id?: string;
   };
   agents: Record<AgentName, AgentResult>;
-  brainLog: BrainLogEntry[];
-}
-
-export interface BrainLogEntry {
-  timestamp: string;
-  decision: string;
-  reasoning: string;
-  nextStep?: AgentName;
 }
 
 // Researcher output schema

@@ -111,7 +111,6 @@ export function initTask(taskId: string, targetName: string): PipelineTask {
     status: 'initializing',
     target: { name: targetName, type: 'politician' },
     agents: {
-      brain:               { ...def },
       researcher:          { ...def },
       'data-checker':      { ...def },
       predictor:           { ...def },
@@ -121,7 +120,6 @@ export function initTask(taskId: string, targetName: string): PipelineTask {
       'code-checker':      { ...def },
       'final-reviewer':    { ...def },
     },
-    brainLog: [],
   };
   fs.mkdirSync(taskDir(taskId), { recursive: true });
   writeTask(task);

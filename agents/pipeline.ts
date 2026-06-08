@@ -107,12 +107,6 @@ function showStatus(taskId: string) {
       : result.status === 'skipped'  ? dim('—') : dim('·');
     console.log(`    ${icon}  ${name.padEnd(16)} ${dim(result.status)}`);
   }
-  if (task.brainLog.length > 0) {
-    console.log(`\n  ${bold('Brain Log:')}`);
-    for (const entry of task.brainLog.slice(-5)) {
-      console.log(`    ${dim(entry.timestamp.slice(11, 19))} ${entry.decision}`);
-    }
-  }
   console.log();
 }
 
