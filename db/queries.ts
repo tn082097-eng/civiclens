@@ -281,6 +281,168 @@ export async function tradeBillNexus(): Promise<NexusRow[]> {
   }));
 }
 
+// ─── Revolving door (LDA former-staff → lobbyist) ───────────────────────────
+// Deterministic matcher, ported verbatim from the former agents/revolving-door.ts.
+// Recomputed at render time from the LDA corpus — no agent run, no LLM, no stored
+// state. "recencyTier" is filing recency only (NOT a judgment): active = filed this
+// year or last, recent = within 3 years, historical = older.
+
+export type RevolvingMatchType = 'direct' | 'committee';
+export type RevolvingRecencyTier = 'active' | 'recent' | 'historical';
+
+export interface RevolvingConnection {
+  lobbyistId:         number;
+  lobbyistName:       string;
+  formerRole:         string;          // verbatim covered_position excerpt
+  currentEmployer:    string | null;   // registrant_name
+  latestClient:       string | null;
+  generalIssues:      string | null;
+  governmentEntities: string | null;
+  latestFilingYear:   number;
+  latestFilingPeriod: string | null;
+  matchType:          RevolvingMatchType;
+  recencyTier:        RevolvingRecencyTier;
+  sourceUrl:          string | null;
+}
+
+function recencyTier(latestFilingYear: number): RevolvingRecencyTier {
+  const yearsAgo = new Date().getUTCFullYear() - latestFilingYear;
+  if (yearsAgo <= 1) return 'active';
+  if (yearsAgo <= 3) return 'recent';
+  return 'historical';
+}
+
+// Last token of "First Middle Last [Suffix]" → surname (skips JR/SR/II…).
+function extractLastName(fullName: string): string {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '';
+  const last = parts[parts.length - 1].replace(/[.,]/g, '');
+  if (/^(JR|SR|II|III|IV|ESQ|PHD|MD)$/i.test(last) && parts.length >= 2) {
+    return parts[parts.length - 2].replace(/[.,]/g, '');
+  }
+  return last;
+}
+
+function escapeRe(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Require a chamber-aware title before the surname. Crucially, when name tokens
+// appear between the title and the surname they must START with this member's own
+// first name — otherwise "Rep. Adam Smith" wrongly matches member "Jason Smith"
+// (surname collision). So we accept bare "Rep. Smith" or "Rep. Jason [A.] Smith",
+// but reject "Rep. <other-first> Smith". RE2-compatible (DuckDB regexp_matches).
+function buildDirectMatchPattern(memberName: string, chamber: string | null): string {
+  const last = escapeRe(extractLastName(memberName));
+  if (!last) return '';
+  const first = escapeRe(memberName.trim().split(/\s+/).filter(Boolean)[0] ?? '');
+  const titles = chamber === 'senate'
+    ? ['Sen\\.?', 'Senator']
+    : chamber === 'house'
+      ? ['Rep\\.?', 'Congressman', 'Congresswoman']
+      : ['Sen\\.?', 'Senator', 'Rep\\.?', 'Congressman', 'Congresswoman'];
+  // After the title: either the surname directly, or the member's first name
+  // followed by up to two middle/initial tokens, then the surname.
+  const namePart = first
+    ? `(?:${last}|${first}(?:\\s+[A-Z][\\w\\.\\-]*){0,2}\\s+${last})`
+    : last;
+  return `(?i)(${titles.join('|')})\\s+${namePart}\\b`;
+}
+
+function mapConnection(row: any, matchType: RevolvingMatchType): RevolvingConnection {
+  const year = Number(row.latest_year);
+  return {
+    lobbyistId:         Number(row.lobbyist_id),
+    lobbyistName:       String(row.full_name ?? ''),
+    formerRole:         String(row.covered_position ?? ''),
+    currentEmployer:    row.registrant_name ? String(row.registrant_name) : null,
+    latestClient:       row.client_name ? String(row.client_name) : null,
+    generalIssues:      row.general_issues ? String(row.general_issues) : null,
+    governmentEntities: row.government_entities ? String(row.government_entities) : null,
+    latestFilingYear:   year,
+    latestFilingPeriod: row.latest_period ? String(row.latest_period) : null,
+    matchType,
+    recencyTier:        recencyTier(year),
+    sourceUrl:          row.source_url ? String(row.source_url) : null,
+  };
+}
+
+const RD_SELECT = `
+  l.lobbyist_id,
+  ANY_VALUE(l.full_name)            AS full_name,
+  ANY_VALUE(l.covered_position)     AS covered_position,
+  ANY_VALUE(l.general_issues)       AS general_issues,
+  ANY_VALUE(l.government_entities)  AS government_entities,
+  MAX(f.filing_year)                AS latest_year,
+  ANY_VALUE(f.filing_period)        AS latest_period,
+  ANY_VALUE(f.registrant_name)      AS registrant_name,
+  ANY_VALUE(f.client_name)          AS client_name,
+  ANY_VALUE(f.source_url)           AS source_url`;
+
+const COMMITTEE_STOP = new Set(['committee', 'subcommittee', 'on', 'and', 'the', 'of', 'house', 'senate', 'select', 'joint']);
+
+/**
+ * Registered lobbyists whose disclosed former role (covered_position) names this
+ * member (direct) or one of their committees (committee). Direct leads; committee
+ * de-duped against direct. Returns [] when LDA tables are absent or no matches.
+ */
+export async function revolvingDoorConnections(
+  memberId: string,
+  name: string,
+  chamber: string | null,
+): Promise<RevolvingConnection[]> {
+  const conn = await getDb();
+
+  // Graceful degrade if LDA not ingested.
+  try { await conn.run(`SELECT 1 FROM lda_lobbyists LIMIT 1`); }
+  catch { return []; }
+
+  // ── Direct: covered_position names this specific member ──
+  let direct: RevolvingConnection[] = [];
+  const pattern = buildDirectMatchPattern(name, chamber);
+  if (pattern) {
+    const r = await conn.run(
+      `SELECT ${RD_SELECT}
+         FROM lda_lobbyists l JOIN lda_filings f USING (filing_uuid)
+        WHERE regexp_matches(l.covered_position, ?)
+        GROUP BY l.lobbyist_id
+        ORDER BY latest_year DESC, l.lobbyist_id`,
+      [pattern],
+    );
+    direct = (await r.getRowObjects() as any[]).map(row => mapConnection(row, 'direct'));
+  }
+
+  // ── Committee: ex-committee staff (distinctive committee keyword in covered_position) ──
+  let committee: RevolvingConnection[] = [];
+  const cR = await conn.run(`SELECT DISTINCT committee_name FROM committees WHERE member_id = ?`, [memberId]);
+  const committees = (await cR.getRowObjects() as any[]).map(r => String(r.committee_name ?? '')).filter(Boolean);
+  const keywords = new Set<string>();
+  for (const cn of committees) {
+    for (const tok of cn.split(/[\s,]+/)) {
+      const w = tok.toLowerCase().replace(/[^a-z]/g, '');
+      if (w.length >= 5 && !COMMITTEE_STOP.has(w)) keywords.add(w);
+    }
+  }
+  if (keywords.size > 0) {
+    const kws = [...keywords].slice(0, 8);
+    const clause = kws.map(() => 'l.covered_position ILIKE ?').join(' OR ');
+    const r = await conn.run(
+      `SELECT ${RD_SELECT}
+         FROM lda_lobbyists l JOIN lda_filings f USING (filing_uuid)
+        WHERE (${clause}) AND l.covered_position ILIKE '%cmte%'
+        GROUP BY l.lobbyist_id
+        ORDER BY latest_year DESC, l.lobbyist_id`,
+      kws.map(k => `%${k}%`),
+    );
+    const directIds = new Set(direct.map(c => c.lobbyistId));
+    committee = (await r.getRowObjects() as any[])
+      .map(row => mapConnection(row, 'committee'))
+      .filter(c => !directIds.has(c.lobbyistId));
+  }
+
+  return [...direct, ...committee];
+}
+
 // ─── CLI smoke ──────────────────────────────────────────────────────────────
 
 function fmtTrade(t: TradeNearVote): string {
