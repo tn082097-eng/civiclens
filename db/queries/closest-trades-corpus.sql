@@ -5,5 +5,6 @@
 SELECT * FROM v_trades_near_votes
 WHERE days_abs <= ?
   AND match_confidence >= 0.95
-ORDER BY days_abs ASC, tx_date DESC
+ORDER BY days_abs ASC, tx_date DESC,
+         trade_filing_id ASC, vote_id ASC, ticker ASC, asset ASC
 LIMIT ?;

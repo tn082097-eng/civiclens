@@ -13,4 +13,5 @@ SELECT
   vote_question, vote_position, days_before_vote,
   trade_source_url, vote_source_url, bill_source_url
 FROM v_trade_bill_nexus
-ORDER BY days_before_vote ASC, member_name ASC, tx_date DESC;
+ORDER BY days_before_vote ASC, member_name ASC, tx_date DESC,
+         member_id ASC, vote_id ASC, ticker ASC, asset ASC, bill_id ASC;

@@ -3,4 +3,5 @@
 SELECT * FROM v_trades_near_votes
 WHERE member_id = ?
   AND days_abs <= ?
-ORDER BY days_abs ASC, tx_date DESC;
+ORDER BY days_abs ASC, tx_date DESC,
+         trade_filing_id ASC, vote_id ASC, ticker ASC, asset ASC;

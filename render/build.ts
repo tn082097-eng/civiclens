@@ -341,7 +341,7 @@ async function fetchOverview(): Promise<MemberOverview[]> {
       (SELECT COUNT(*) FROM votes v WHERE v.member_id = m.member_id) AS vote_count,
       (SELECT COUNT(*) FROM pfd_transactions t WHERE t.member_id = m.member_id) AS trade_count
     FROM members m
-    ORDER BY m.name
+    ORDER BY m.name, m.member_id
   `);
   const rows = await r.getRowObjects() as any[];
   return rows.map(r => ({
@@ -378,7 +378,8 @@ async function fetchStrongestFlags(limit = 12): Promise<StrongestFlag[]> {
             ph.null_model, ph.observed, ph.expected, ph.p_value, ph.n_perm
        FROM pattern_hits ph
        JOIN members m ON m.member_id = ph.member
-      ORDER BY ph.z_score DESC NULLS LAST, ph.intensity DESC, ph.detected_at DESC
+      ORDER BY ph.z_score DESC NULLS LAST, ph.intensity DESC, ph.detected_at DESC,
+               ph.pattern ASC, ph.member ASC
       LIMIT ?`,
     [limit],
   );
@@ -654,7 +655,9 @@ async function fetchTopDonors(memberId: string, limit = 15): Promise<any[]> {
   const conn = await getDb();
   const r = await conn.run(
     `SELECT donor_name, donor_type, amount, latest_date, source_url
-     FROM donors WHERE member_id = ? ORDER BY amount DESC LIMIT ?`,
+     FROM donors WHERE member_id = ?
+     ORDER BY amount DESC, donor_name ASC, donor_type ASC, latest_date DESC, source_url ASC
+     LIMIT ?`,
     [memberId, limit],
   );
   return await r.getRowObjects() as any[];
@@ -666,7 +669,9 @@ async function fetchAllTrades(memberId: string, limit = 500): Promise<any[]> {
     `SELECT filing_id, tx_date, tx_type, asset, ticker, asset_type, amount_band, holder,
             sub_account, source_url
      FROM pfd_transactions WHERE member_id = ?
-     ORDER BY tx_date DESC LIMIT ?`,
+     ORDER BY tx_date DESC, filing_id ASC, ticker ASC, asset ASC, tx_type ASC,
+              amount_band ASC, holder ASC, sub_account ASC, source_url ASC
+     LIMIT ?`,
     [memberId, limit],
   );
   return await r.getRowObjects() as any[];
@@ -698,7 +703,7 @@ async function fetchTimelineData(memberId: string): Promise<{ votes: TimelineVot
      FROM votes v
      LEFT JOIN bill_summaries bs ON bs.bill_id = v.bill_id
      WHERE v.member_id = ? AND v.date IS NOT NULL
-     ORDER BY v.date ASC
+     ORDER BY v.date ASC, v.question ASC, v.position ASC, bs.title ASC, v.source_url ASC
      LIMIT 2000`,
     [memberId],
   );
@@ -716,7 +721,7 @@ async function fetchTimelineData(memberId: string): Promise<{ votes: TimelineVot
     `SELECT tx_date AS date, tx_type, asset, ticker, amount_band, source_url
      FROM pfd_transactions
      WHERE member_id = ? AND tx_date IS NOT NULL
-     ORDER BY tx_date ASC`,
+     ORDER BY tx_date ASC, ticker ASC, asset ASC, tx_type ASC, amount_band ASC, source_url ASC`,
     [memberId],
   );
   const trows = await tr.getRowObjects() as any[];
@@ -961,7 +966,7 @@ async function fetchActivityGlance(memberId: string): Promise<ActivityGlance> {
     FROM donors
     WHERE member_id = ? AND donor_type IS NOT NULL
     GROUP BY donor_type
-    ORDER BY total DESC
+    ORDER BY total DESC, donor_type ASC
     LIMIT 1
   `, [memberId]);
   const dtRow = (await dtR.getRowObjects())[0] as any;
@@ -1038,7 +1043,7 @@ async function fetchCosponsorEdgesForMember(memberId: string, limit = 5): Promis
     SELECT p.peer_id, m.name AS peer_name, m.party AS peer_party, p.shared_bills
     FROM pairs p
     JOIN members m ON m.member_id = p.peer_id
-    ORDER BY p.shared_bills DESC
+    ORDER BY p.shared_bills DESC, m.name ASC, p.peer_id ASC
     LIMIT ?
   `, [memberId, limit]);
   const rows = await r.getRowObjects() as any[];
@@ -1172,7 +1177,7 @@ async function renderPatterns(memberSlug: string): Promise<string> {
     `SELECT pattern, finding, intensity, citing_json, dates_json,
             null_model, observed, expected, p_value, z_score, n_perm
        FROM pattern_hits WHERE member = ?
-      ORDER BY z_score DESC NULLS LAST, intensity DESC, detected_at DESC`,
+      ORDER BY z_score DESC NULLS LAST, intensity DESC, detected_at DESC, pattern ASC`,
     [memberSlug],
   );
   const rows = (await res.getRowObjects()) as any[];
@@ -1829,7 +1834,7 @@ async function buildNexus(): Promise<void> {
   for (const [id, m] of byMember) nexusObj[id] = { name: m.name, loops: m.loops };
   const nexusJson = JSON.stringify(nexusObj);
   const memberOpts = [...byMember.entries()]
-    .sort((a, b) => b[1].loops.length - a[1].loops.length)
+    .sort((a, b) => b[1].loops.length - a[1].loops.length || a[0].localeCompare(b[0]))
     .map(([id, m]) => ({ id, name: m.name, n: m.loops.length }));
   const defaultMember = byMember.has('nancy-pelosi') ? 'nancy-pelosi' : (memberOpts[0]?.id ?? '');
 
