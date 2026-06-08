@@ -7,7 +7,6 @@ export type AgentName =
   | 'predictor'
   | 'connection-mapper'
   | 'trade-analyst'
-  | 'revolving-door'
   | 'summarizer'
   | 'code-checker'
   | 'final-reviewer';
@@ -21,7 +20,6 @@ export type PipelineStatus =
   | 'predicting'
   | 'connecting'
   | 'analyzing-trades'
-  | 'detecting-revolving-door'
   | 'summarizing'
   | 'reviewing-code'
   | 'final-review'

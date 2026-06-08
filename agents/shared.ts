@@ -117,7 +117,6 @@ export function initTask(taskId: string, targetName: string): PipelineTask {
       predictor:           { ...def },
       'connection-mapper': { ...def },
       'trade-analyst':     { ...def },
-      'revolving-door':    { ...def },
       summarizer:          { ...def },
       'code-checker':      { ...def },
       'final-reviewer':    { ...def },

@@ -27,8 +27,10 @@ import {
   memberTradeSummary,
   cosponsorNetwork,
   tradeBillNexus,
+  revolvingDoorConnections,
   type TradeNearVote,
   type NexusRow,
+  type RevolvingConnection,
 } from '../db/queries.js';
 import { fetchSuperPacIE } from '../lib/fec-ie.js';
 import type { SuperPacIEReport, SuperPacIE, SuperPacFunder } from '../lib/types.js';
@@ -1317,7 +1319,7 @@ ${opposingBlock}
 }
 
 export async function buildMemberPage(m: MemberDetail): Promise<void> {
-  const [donors, trades, peers, suspiciousPairs, allTradePairs, timeline, cosponsorEdges] = await Promise.all([
+  const [donors, trades, peers, suspiciousPairs, allTradePairs, timeline, cosponsorEdges, revolving] = await Promise.all([
     fetchTopDonors(m.member_id),
     fetchAllTrades(m.member_id),
     findSharedDonors(m.member_id),
@@ -1325,6 +1327,7 @@ export async function buildMemberPage(m: MemberDetail): Promise<void> {
     findTradesNearVotes(m.member_id, 30),     // all trades for raw count
     fetchTimelineData(m.member_id),
     fetchCosponsorEdgesForMember(m.member_id, 5),
+    revolvingDoorConnections(m.member_id, m.name, m.chamber ?? null),
   ]);
   const collapsedSuspicious = collapseTrades(suspiciousPairs);
   const collapsedTrades = collapseTrades(allTradePairs);
@@ -1359,6 +1362,38 @@ export async function buildMemberPage(m: MemberDetail): Promise<void> {
     <td><a class="row-link" href="${esc(d.source_url ?? '#')}" target="_blank" rel="noopener">FEC</a></td>
   </tr>`).join('')}</tbody>
 </table>`;
+
+  // Revolving door — former staff / committee staff now registered to lobby.
+  // Deterministic (db/queries.ts). Recency tier drives weight only; never "risk".
+  const revolvingTierLabel: Record<RevolvingConnection['recencyTier'], string> = {
+    active: 'Active', recent: 'Recent', historical: 'Historical',
+  };
+  const revolvingIntensity: Record<RevolvingConnection['recencyTier'], string> = {
+    active: 'intensity-high', recent: 'intensity-medium', historical: 'intensity-low',
+  };
+  const revolvingBlock = revolving.length === 0 ? '' : `
+<h2 id="sec-revolving">Revolving door — former staff now lobbying (${revolving.length})</h2>
+<p class="lede">Registered federal lobbyists whose disclosed former government role names ${esc(m.name)} or a committee they sit on. Recency reflects each lobbyist's most recent disclosure filing — not a judgment.</p>
+${revolving.map(c => {
+  const role = c.formerRole.length > 220 ? c.formerRole.slice(0, 217) + '…' : c.formerRole;
+  const tieTag = c.matchType === 'direct' ? 'former staff' : 'committee staff';
+  const issues = c.generalIssues && c.generalIssues.length > 80 ? c.generalIssues.slice(0, 77) + '…' : c.generalIssues;
+  const sub = [
+    c.currentEmployer ? `now at <strong>${esc(c.currentEmployer)}</strong>` : '',
+    c.latestClient ? `for ${esc(c.latestClient)}` : '',
+    issues ? `· ${esc(issues)}` : '',
+  ].filter(Boolean).join(' ');
+  const src = c.sourceUrl ? `<a class="row-link" href="${esc(c.sourceUrl)}" target="_blank" rel="noopener">filing ↗</a>` : '';
+  return `<div class="trade-card ${revolvingIntensity[c.recencyTier]}">
+  <div class="tc-header">
+    <div class="tc-asset">${esc(c.lobbyistName)}</div>
+    <div class="tc-meta"><span class="tag">${tieTag}</span><span class="muted">${revolvingTierLabel[c.recencyTier]} · last filed ${esc(c.latestFilingYear)}${c.latestFilingPeriod ? ` (${esc(c.latestFilingPeriod)})` : ''}</span></div>
+  </div>
+  <div style="font-size:13px;">${esc(role)}</div>
+  ${sub ? `<div class="muted" style="font-size:12px;margin-top:6px;">${sub}</div>` : ''}
+  ${src ? `<div style="margin-top:6px;">${src}</div>` : ''}
+</div>`;
+}).join('')}`;
 
   const peersBlock = peers.length === 0
     ? '<p class="muted">No shared-donor peers in corpus.</p>'
@@ -1524,6 +1559,7 @@ function showTab(tabGroupId, panelName) {
 
 <h2 id="sec-donors">Top donors (lifetime, 4-cycle FEC union)</h2>
 ${donorsBlock}
+${revolvingBlock}
 
 <h2>Shared-donor peers in corpus</h2>
 ${peersBlock}

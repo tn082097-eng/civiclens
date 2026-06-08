@@ -30,7 +30,6 @@ import { runDataChecker } from './data-checker.js';
 import { runPredictor } from './predictor.js';
 import { runConnectionMapper } from './connection-mapper.js';
 import { runTradeAnalyst } from './trade-analyst.js';
-import { runRevolvingDoor } from './revolving-door.js';
 import { runSummarizer } from './summarizer.js';
 import { runCodeChecker } from './code-checker.js';
 import { runFinalReviewer } from './final-reviewer.js';
@@ -185,12 +184,6 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
     warn('Brain', 'Trade Analyst failed — continuing without trade section');
   }
 
-  setStatus(task, 'detecting-revolving-door');
-  const revolvingOk = await runRevolvingDoor(task);
-  if (!revolvingOk) {
-    warn('Brain', 'Revolving Door failed — continuing without revolving-door section');
-  }
-
   setStatus(task, 'summarizing');
   let sumOk = await runSummarizer(task);
   if (!sumOk) {
@@ -219,7 +212,7 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
   const finalReview = readPipe<any>(taskId, 'final-review');
   const allFiles = [
     'researcher','data-checker','predictor','connection-mapper',
-    'trade-analyst','revolving-door',
+    'trade-analyst',
     'summarizer','code-checker','final-review',
   ].map(n => pipeFile(taskId, n));
 
