@@ -372,24 +372,39 @@ function mapConnection(row: any, matchType: RevolvingMatchType): RevolvingConnec
   };
 }
 
-const RD_SELECT = `
-  l.lobbyist_id,
-  ANY_VALUE(l.full_name)            AS full_name,
-  ANY_VALUE(l.covered_position)     AS covered_position,
-  ANY_VALUE(l.general_issues)       AS general_issues,
-  ANY_VALUE(l.government_entities)  AS government_entities,
-  MAX(f.filing_year)                AS latest_year,
-  ANY_VALUE(f.filing_period)        AS latest_period,
-  ANY_VALUE(f.registrant_name)      AS registrant_name,
-  ANY_VALUE(f.client_name)          AS client_name,
-  ANY_VALUE(f.source_url)           AS source_url`;
-
 const COMMITTEE_STOP = new Set(['committee', 'subcommittee', 'on', 'and', 'the', 'of', 'house', 'senate', 'select', 'joint']);
+
+// Pick each matched lobbyist's LATEST MATCHING filing and take every field from that
+// one filing. Fully deterministic: the ROW_NUMBER window breaks ties on filing_uuid
+// (PRIMARY KEY, unique), and the outer sort is a total order. This replaces an earlier
+// ANY_VALUE/GROUP BY form that mixed fields across a lobbyist's filings and reordered
+// run-to-run — breaking the reproducible-build guarantee. The WHERE runs inside the
+// window so rn=1 is the most recent filing that actually matched.
+function rdQuery(whereClause: string): string {
+  return `
+    SELECT lobbyist_id, full_name, covered_position, general_issues, government_entities,
+           filing_year AS latest_year, filing_period AS latest_period,
+           registrant_name, client_name, source_url
+      FROM (
+        SELECT l.lobbyist_id, l.full_name, l.covered_position, l.general_issues,
+               l.government_entities, f.filing_year, f.filing_period,
+               f.registrant_name, f.client_name, f.source_url,
+               ROW_NUMBER() OVER (
+                 PARTITION BY l.lobbyist_id
+                 ORDER BY f.filing_year DESC, f.posted_at DESC, f.filing_uuid
+               ) AS rn
+          FROM lda_lobbyists l JOIN lda_filings f USING (filing_uuid)
+         WHERE ${whereClause}
+      )
+     WHERE rn = 1
+     ORDER BY latest_year DESC, lobbyist_id`;
+}
 
 /**
  * Registered lobbyists whose disclosed former role (covered_position) names this
  * member (direct) or one of their committees (committee). Direct leads; committee
- * de-duped against direct. Returns [] when LDA tables are absent or no matches.
+ * de-duped against direct. Deterministic. Returns [] when LDA tables are absent or no
+ * matches.
  */
 export async function revolvingDoorConnections(
   memberId: string,
@@ -406,20 +421,14 @@ export async function revolvingDoorConnections(
   let direct: RevolvingConnection[] = [];
   const pattern = buildDirectMatchPattern(name, chamber);
   if (pattern) {
-    const r = await conn.run(
-      `SELECT ${RD_SELECT}
-         FROM lda_lobbyists l JOIN lda_filings f USING (filing_uuid)
-        WHERE regexp_matches(l.covered_position, ?)
-        GROUP BY l.lobbyist_id
-        ORDER BY latest_year DESC, l.lobbyist_id`,
-      [pattern],
-    );
+    const r = await conn.run(rdQuery(`regexp_matches(l.covered_position, ?)`), [pattern]);
     direct = (await r.getRowObjects() as any[]).map(row => mapConnection(row, 'direct'));
   }
 
   // ── Committee: ex-committee staff (distinctive committee keyword in covered_position) ──
+  // ORDER BY committee_name so the keyword set (and the slice below) is stable run-to-run.
   let committee: RevolvingConnection[] = [];
-  const cR = await conn.run(`SELECT DISTINCT committee_name FROM committees WHERE member_id = ?`, [memberId]);
+  const cR = await conn.run(`SELECT DISTINCT committee_name FROM committees WHERE member_id = ? ORDER BY committee_name`, [memberId]);
   const committees = (await cR.getRowObjects() as any[]).map(r => String(r.committee_name ?? '')).filter(Boolean);
   const keywords = new Set<string>();
   for (const cn of committees) {
@@ -432,11 +441,7 @@ export async function revolvingDoorConnections(
     const kws = [...keywords].slice(0, 8);
     const clause = kws.map(() => 'l.covered_position ILIKE ?').join(' OR ');
     const r = await conn.run(
-      `SELECT ${RD_SELECT}
-         FROM lda_lobbyists l JOIN lda_filings f USING (filing_uuid)
-        WHERE (${clause}) AND l.covered_position ILIKE '%cmte%'
-        GROUP BY l.lobbyist_id
-        ORDER BY latest_year DESC, l.lobbyist_id`,
+      rdQuery(`(${clause}) AND l.covered_position ILIKE '%cmte%'`),
       kws.map(k => `%${k}%`),
     );
     const directIds = new Set(direct.map(c => c.lobbyistId));
