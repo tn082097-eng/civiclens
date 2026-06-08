@@ -16,12 +16,11 @@ CivicLens is a political transparency research tool. It fetches live data from p
 | `agents/connection-mapper.ts` | Connection Mapper + `computeSharedDonors` + `computeSharedCommittees`. |
 | `agents/summarizer.ts` | Summarizer agent (3-stage: deterministic → LLM → post-process). The site's semantic layer. |
 | `agents/trade-analyst.ts` | Trade Analyst — `members.trade_activity` (deterministic) + optional LLM narrative. |
-| `agents/revolving-door.ts` | Revolving-Door matcher (LDA × member); narrative (Phase 2: not yet rendered). |
 | `agents/code-checker.ts` | Neutrality + date gate (deterministic, no LLM). |
 | `agents/final-reviewer.ts` | Final Reviewer — **deterministic** QC gate; sets `readyToApply` from Data Checker + neutrality + completeness. |
 | `db/schema.sql` | Single source of truth for DuckDB schema (10 tables, 6 views). |
 | `db/init.ts` | DuckDB singleton. DB file: `data/civiclens.duckdb` (path via `lib/paths.ts`). |
-| `db/queries.ts` | Public typed query API (findTradesNearVotes, findSharedDonors, etc.). |
+| `db/queries.ts` | Public typed query API (findTradesNearVotes, findSharedDonors, `revolvingDoorConnections`, etc.). |
 | `db/load-from-tasks.ts` | Bulk-loads pipeline task dirs → DuckDB. |
 | `db/load-pfd.ts` | Ingests House Clerk PTR PDFs → `pfd_transactions`. |
 | `db/load-bill-summaries.ts` | Backfills `votes.bill_id` + fetches Congress.gov summaries. |
@@ -45,9 +44,14 @@ in `pipeline.ts`.
 
 ```
 Researcher → Data Checker → [Predictor] → Connection Mapper → [Trade Analyst]
-  → [Revolving-Door] → Summarizer → Code Checker → Final Reviewer
+  → Summarizer → Code Checker → Final Reviewer
   → sync-task (→ DuckDB) → render/build
 ```
+
+Revolving-door is no longer a pipeline stage. The match (LDA × member) was always
+deterministic SQL; it now lives in `db/queries.ts` (`revolvingDoorConnections`) and is
+recomputed at render time into the member-page "Revolving door" section. The agent (and
+its LLM narrative) was deleted in Phase 2.
 
 | Stage | Type | LLM |
 |-------|------|-----|
@@ -56,13 +60,15 @@ Researcher → Data Checker → [Predictor] → Connection Mapper → [Trade Ana
 | Predictor | voting-pattern baseline models (skipped by default) | no |
 | Connection Mapper | shared donors/committees (SQL) + stage-2 narration (vault only) | Haiku 4.5 — Phase 2: → SQL |
 | Trade Analyst | `trade_activity` deterministic; narrative optional | optional |
-| Revolving-Door | LDA × member match; narrative | optional |
 | Summarizer | bio + neutral narrative — **the semantic layer** | Sonnet 4.6 |
 | Code Checker | neutrality + date gate | no |
 | Final Reviewer | deterministic QC gate → `readyToApply` | **no (Phase 1)** |
 
 Removed in Phase 1 (legacy `seed.ts` plumbing, no longer fed the site): **Coder,
-Visualizer, Publisher**, and the stale `lib/state.ts`. See `plans/pipeline-simplification-agile-quasar.md`.
+Visualizer, Publisher**, and the stale `lib/state.ts`. Removed in Phase 2 (slice 1):
+**Revolving-Door** — its deterministic match moved to `db/queries.ts` and now renders;
+the LLM narrative was dropped. See `plans/pipeline-simplification-agile-quasar.md` and
+`docs/superpowers/specs/2026-06-08-revolving-door-wiring-design.md`.
 
 ---
 
