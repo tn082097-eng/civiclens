@@ -1,13 +1,16 @@
 #!/usr/bin/env -S npx tsx
 /**
- * Regenerate Obsidian member notes by MERGING two sources:
- *   1. connection-mapper.json (latest per member)  → network EDGES (wikilinks)
- *   2. civiclens.duckdb                              → per-member FACTS
+ * Regenerate Obsidian member notes from DETERMINISTIC sources only:
+ *   1. findSharedDonors() SQL  → shared-donor network EDGES (wikilinks)
+ *   2. civiclens.duckdb        → per-member FACTS
  *      (bio, donors, super-PAC IE, voting record, PFD trades, pattern hits)
  *
- * Supersedes render/connections-to-vault.py, which only rendered #1.
+ * No longer reads connection-mapper.json. The agent's LLM-narrated
+ * direct/hidden/indirect edges were inferred, not sourced — they violated the
+ * truth-over-narrative / no-fabrication rule. Shared-donor edges are now
+ * computed straight from filings via db/queries/shared-donors.sql, the same
+ * deterministic query the public site renders (findSharedDonors).
  *
- * Source : ~/Developer/civiclens/pipeline/task-* /connection-mapper.json (newest per member)
  * Output : ~/NoService/Projects/CivicLens/Connections/<member-id>.md
  * Also   : ~/NoService/Projects/CivicLens/Members/<Display Name>.md (graph stub)
  *
@@ -15,10 +18,10 @@
  * Run: npx tsx render/connections-to-vault.ts
  */
 import { getDb } from '../db/init.ts';
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync, rmSync, statSync } from 'node:fs';
+import { findSharedDonors, listMembers, type SharedDonorPeer } from '../db/queries.ts';
+import { writeFileSync, mkdirSync, existsSync, rmSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
-import { PIPE_DIR as PIPELINE } from '../lib/paths.js';
 const HOME = process.env.HOME!;
 const VAULT = resolve(HOME, 'NoService/Projects/CivicLens');
 const CONN_DIR = join(VAULT, 'Connections');
@@ -31,40 +34,6 @@ const canonName = (n: string) => ALIAS_NAME[n] ?? n;
 
 const fmtUsd = (n: number) => '$' + Math.round(n).toLocaleString('en-US');
 const num = (v: any) => Number(v);
-
-type CM = any;
-
-/** Newest connection-mapper.json per member (dirs walked newest-first, first hit wins). */
-function latestPerMember(): Map<string, CM> {
-  const best = new Map<string, CM>();
-  const dirs = readdirSync(PIPELINE)
-    .map(d => join(PIPELINE, d))
-    .filter(d => { try { return statSync(d).isDirectory(); } catch { return false; } })
-    .map(d => ({ d, m: statSync(d).mtimeMs }))
-    .sort((a, b) => b.m - a.m);
-  for (const { d } of dirs) {
-    const cm = join(d, 'connection-mapper.json');
-    if (!existsSync(cm)) continue;
-    let data: CM;
-    try { data = JSON.parse(readFileSync(cm, 'utf-8')); } catch { continue; }
-    const sid = canonId(data.subjectId ?? '');
-    if (!sid || best.has(sid)) continue;
-    best.set(sid, data);
-  }
-  return best;
-}
-
-function fmtLinks(items: any[], kind: 'direct' | 'hidden' | 'indirect'): string[] {
-  const out: string[] = [];
-  for (const x of items ?? []) {
-    const name = canonName(x.toName ?? x.to ?? '?');
-    const s = typeof x.strength === 'number' ? ` (${x.strength.toFixed(2)})` : '';
-    if (kind === 'hidden') out.push(`- [[${name}]]${s} — via **${x.via ?? ''}**. ${x.evidence ?? ''}`);
-    else if (kind === 'indirect') out.push(`- [[${name}]]${s} — *${x.linkType ?? ''}* via ${x.via ?? ''}`);
-    else out.push(`- [[${name}]]${s} — ${x.evidence ?? ''}`);
-  }
-  return out.length ? out : ['- _(none)_'];
-}
 
 async function dbFacts(conn: any, memberId: string): Promise<string[]> {
   const q = async (sql: string) => { const r = await conn.run(sql); return (await r.getRowObjects()) as any[]; };
@@ -129,34 +98,27 @@ async function dbFacts(conn: any, memberId: string): Promise<string[]> {
   return L;
 }
 
-function networkSection(memberId: string, data: CM): { lines: string[]; name: string; comp: string[] } {
-  const name = canonName(data.subjectName ?? memberId);
-  const compared: any[] = data.comparedAgainst ?? [];
-  const seen = new Set<string>();
-  const comp: string[] = [];
-  for (const c of compared) {
-    const cid = canonId(c.id ?? '');
-    if (cid && cid !== memberId && !seen.has(cid)) { seen.add(cid); comp.push(canonName(c.name ?? cid)); }
+/** Deterministic shared-donor edges (wikilinks), in the SQL's own ranked order. */
+function sharedDonorSection(peers: SharedDonorPeer[]): { lines: string[]; peerNames: Map<string, string> } {
+  const peerNames = new Map<string, string>();
+  const L: string[] = ['## Shared-donor connections', ''];
+  if (!peers.length) {
+    L.push('- _(no shared donors with other tracked members)_', '');
+    return { lines: L, peerNames };
   }
-
-  const L: string[] = [];
-  if (data.networkSummary) L.push('## Network summary', '', data.networkSummary as string, '');
-  L.push('## Direct links', '', ...fmtLinks(data.directLinks, 'direct'), '');
-  L.push('## Hidden connections', '', ...fmtLinks(data.hiddenConnections, 'hidden'), '');
-  L.push('## Indirect links', '', ...fmtLinks(data.indirectLinks, 'indirect'), '');
-
-  L.push('## Shared donors', '');
-  const sd: any[] = data.sharedDonors ?? [];
-  if (sd.length) for (const d of sd) {
-    // sharedWith holds member IDs, not display names → canonId folds the Sanders alias.
-    const who = (d.sharedWith ?? []).map((w: string) => `[[${canonId(w)}]]`).join(', ');
-    const url = d.sourceUrl ?? '';
-    L.push(`- **${d.donorName ?? '?'}** — shared with: ${who}` + (url ? ` ([source](${url}))` : ''));
-  } else L.push('- _(none)_');
+  for (const p of peers) {
+    const pid = canonId(p.peer_id);
+    const pname = canonName(p.peer_name);
+    peerNames.set(pname, pid);
+    const donors = p.donor_canonicals.slice(0, 5).join(', ');
+    L.push(
+      `- [[${pid}]] — **${p.shared_count}** shared donor${p.shared_count === 1 ? '' : 's'}` +
+      `, ${fmtUsd(p.combined_amount)} combined` +
+      (donors ? ` · ${donors}` : '')
+    );
+  }
   L.push('');
-
-  L.push('## Compared against', '', ...comp.slice().sort().map(n => `- [[${n}]]`), '');
-  return { lines: L, name, comp };
+  return { lines: L, peerNames };
 }
 
 function memberStub(name: string, memberId: string): string {
@@ -172,25 +134,37 @@ async function main() {
   mkdirSync(CONN_DIR, { recursive: true });
   mkdirSync(MEM_DIR, { recursive: true });
   const conn = await getDb();
-  const best = latestPerMember();
 
   const stale = join(CONN_DIR, 'bernard-sanders.md');
   if (existsSync(stale)) rmSync(stale);
 
-  const allNames = new Map<string, string | null>();
-  for (const [mid, data] of best) {
-    const net = networkSection(mid, data);
+  const today = new Date().toISOString().slice(0, 10);
+  const allNames = new Map<string, string | null>();  // display name -> member_id
+  const seen = new Set<string>();
+  let connCount = 0;
+
+  for (const m of await listMembers()) {
+    const mid = canonId(m.member_id);
+    if (seen.has(mid)) continue;          // fold the Sanders alias
+    seen.add(mid);
+    const name = canonName(m.name);
+
+    const peers = await findSharedDonors(mid);
+    const { lines: edgeLines, peerNames } = sharedDonorSection(peers);
     const facts = await dbFacts(conn, mid);
+
     const header = [
-      '---', `member: ${net.name}`, `member_id: ${mid}`,
-      `analyzed_at: ${data.analyzedAt ?? ''}`, `corpus_size: ${net.comp.length}`,
+      '---', `member: ${name}`, `member_id: ${mid}`,
+      `generated_at: ${today}`, `shared_donor_peers: ${peers.length}`,
       'tags: [civiclens, member, db-backed]', '---', '',
-      `# ${net.name}`, '', `Profile for [[${net.name}]] · ID \`${mid}\` · Hub: [[CivicLens]]`, '',
+      `# ${name}`, '', `Profile for [[${name}]] · ID \`${mid}\` · Hub: [[CivicLens]]`, '',
     ];
-    const body = [...header, ...facts, ...net.lines].join('\n') + '\n';
+    const body = [...header, ...facts, ...edgeLines].join('\n') + '\n';
     writeFileSync(join(CONN_DIR, `${mid}.md`), body);
-    allNames.set(net.name, mid);
-    for (const cn of net.comp) if (!allNames.has(cn)) allNames.set(cn, null);
+    connCount++;
+
+    allNames.set(name, mid);
+    for (const [pn, pid] of peerNames) if (!allNames.has(pn)) allNames.set(pn, pid);
   }
 
   let memCount = 0;
@@ -200,9 +174,9 @@ async function main() {
     memCount++;
   }
 
-  console.log(`connections: ${best.size} notes -> ${CONN_DIR}`);
+  console.log(`connections: ${connCount} notes -> ${CONN_DIR}`);
   console.log(`members:     ${memCount} notes -> ${MEM_DIR}`);
-  console.log(`generated:   ${new Date().toISOString().slice(0, 10)}`);
+  console.log(`generated:   ${today}`);
   process.exit(0);
 }
 
