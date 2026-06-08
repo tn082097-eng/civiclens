@@ -117,8 +117,17 @@ Run from `~/Developer/civiclens`:
 
 ## Risks
 
-- **Regex false positives** (surname collisions). Mitigated by the existing chamber-aware
-  title-before-surname pattern, ported verbatim — no new matching risk introduced.
+- **Regex false positives** (surname collisions). The ported pattern was *tightened* over the
+  original: intervening name tokens between title and surname must start with the member's own
+  first name, so an explicit wrong first name ("Rep. Adam Smith" → member "Jason Smith") no longer
+  matches. **Known residual limitation (accepted):** bare-surname references ("Rep. Smith",
+  "Rep. Rogers") with no first name still match. For distinctive surnames (Thune, Cruz, Schumer)
+  this is unambiguous and correct; for surnames shared across Congress (Smith, Rogers) a bare
+  reference *could* still misattribute. This is inherent ambiguity in the free-text
+  `covered_position` field — the source often just says "Rep. Rogers." The section is framed as
+  leads ("not a judgment") with a source link to the filing so readers can verify. Not hardened
+  further by choice; a stricter fix would require a full member-of-Congress surname list to drop
+  bare matches on collision-prone surnames.
 - **Committee ILIKE noise.** Mitigated by labeling committee matches as the weaker tie and
   leading with direct.
 - **Render output changes** for the 24 members with matches (expected — that's the feature).

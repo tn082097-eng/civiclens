@@ -332,6 +332,9 @@ function escapeRe(s: string): string {
 // first name — otherwise "Rep. Adam Smith" wrongly matches member "Jason Smith"
 // (surname collision). So we accept bare "Rep. Smith" or "Rep. Jason [A.] Smith",
 // but reject "Rep. <other-first> Smith". RE2-compatible (DuckDB regexp_matches).
+// Known residual (accepted): bare "Rep. Smith" with no first name still matches; for
+// surnames shared across Congress this can misattribute. Inherent to the free-text
+// covered_position field — see docs/superpowers/specs/2026-06-08-revolving-door-wiring-design.md.
 function buildDirectMatchPattern(memberName: string, chamber: string | null): string {
   const last = escapeRe(extractLastName(memberName));
   if (!last) return '';
