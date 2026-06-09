@@ -20,7 +20,7 @@ import {
   c, bold, dim, red, green, yellow, cyan,
   header, ok, fail, warn,
   loadHermesEnv,
-  initTask, readTask, writeTask, readPipe, pipeFile, setStatus,
+  initTask, readTask, readPipe, pipeFile, setStatus,
 } from './shared.js';
 import { ROOT, NAMES_PATH } from '../lib/paths.js';
 import { syncTask } from '../db/sync-task.js';
@@ -28,7 +28,6 @@ import { closeDb } from '../db/init.js';
 import { runResearcher } from './researcher.js';
 import { runDataChecker } from './data-checker.js';
 import { runPredictor } from './predictor.js';
-import { runConnectionMapper } from './connection-mapper.js';
 import { runTradeAnalyst } from './trade-analyst.js';
 import { runSummarizer } from './summarizer.js';
 import { runCodeChecker } from './code-checker.js';
@@ -56,7 +55,7 @@ function findFreshTask(name: string, maxAgeMs = 24 * 60 * 60 * 1000): string | n
 
 // ─── Obsidian vault regen ─────────────────────────────────────────────────────
 // Keep the NoService vault's Connections/Members notes in sync with the latest
-// connection-mapper output so the vault never drifts after a pipeline run.
+// DuckDB facts + shared-donor edges so the vault never drifts after a pipeline run.
 function regenerateVault() {
   const script = path.join(ROOT, 'render', 'connections-to-vault.ts');
   if (!fs.existsSync(script)) { warn('Vault', `regenerator missing: ${script}`); return; }
@@ -166,12 +165,6 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
     warn('Brain', 'Predictor failed — continuing without calibration data');
   }
 
-  setStatus(task, 'connecting');
-  const mapOk = await runConnectionMapper(task);
-  if (!mapOk) {
-    warn('Brain', 'Connection Mapper failed — continuing without network data');
-  }
-
   setStatus(task, 'analyzing-trades');
   const tradeOk = await runTradeAnalyst(task);
   if (!tradeOk) {
@@ -205,7 +198,7 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
 
   const finalReview = readPipe<any>(taskId, 'final-review');
   const allFiles = [
-    'researcher','data-checker','predictor','connection-mapper',
+    'researcher','data-checker','predictor',
     'trade-analyst',
     'summarizer','code-checker','final-review',
   ].map(n => pipeFile(taskId, n));
@@ -324,7 +317,6 @@ ${bold('CivicLens Pipeline Runner')}
   ${cyan('npx tsx agents/pipeline.ts --batch names.txt [n]')} batch from file (concurrency n, default 3)
   ${cyan('npx tsx agents/pipeline.ts --list')}                 list recent tasks
   ${cyan('npx tsx agents/pipeline.ts --status <task-id>')}     show task details
-  ${cyan('npx tsx agents/pipeline.ts --rerun-mapper <task-id>')} re-run Connection Mapper against current corpus
   ${cyan('npx tsx agents/pipeline.ts --load-pfd <year> [--dry-run]')} load House Clerk PFDs for year into DuckDB
   ${cyan('npx tsx agents/pipeline.ts --load-senate-ptr [--dry-run]')} load Senate EFDS PTRs into DuckDB
   ${cyan('npx tsx agents/pipeline.ts --load-fec-ie <cycle[,cycle]> [--dry-run]')} load FEC Super PAC IE into DuckDB
@@ -455,17 +447,6 @@ ${bold('CivicLens Pipeline Runner')}
     console.log(`Total: ${filers.length} filer(s), ${totalTx} transactions, ${unmatched} unmatched`);
     process.exit(unmatched > 0 ? 1 : 0);
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
-} else if (arg === '--rerun-mapper') {
-  if (!arg2) { console.error('Usage: --rerun-mapper <task-id>'); process.exit(1); }
-  (async () => {
-    const task = readTask(arg2);
-    const mapOk = await runConnectionMapper(task);
-    writeTask(task);
-    process.exit(mapOk ? 0 : 1);
-  })().catch(e => {
-    console.error(red(`\nFatal: ${e.message}`));
-    process.exit(1);
-  });
 } else if (arg === '--append') {
   if (!arg2) { console.error('Usage: --append "Politician Name"'); process.exit(1); }
   appendAndRun(arg2).catch(e => {
