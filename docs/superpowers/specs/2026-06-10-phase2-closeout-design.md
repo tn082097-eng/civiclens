@@ -12,15 +12,17 @@ opt-in sidecar). This spec closes out what remains, plus the oldest queued safet
 item (XSS hardening, flagged 2026-05-30, still unshipped — verified zero
 `safeJson`/`safeUrl` hits in `render/build.ts`).
 
-Three risk-ordered PRs off `main`, merged in sequence. Each is independently
+Four risk-ordered PRs off `main`, merged in sequence. Each is independently
 revertable with its own verification gate. PR 3 builds on PR 2's validated stage
-boundaries.
+boundaries; PR 4 builds on PR 3's stage table.
 
 **Constraints honored throughout:**
-- The deterministic spine never depends on LLM sidecars.
-- Grok access has ended; the Grok-dependent `devils-advocate.ts` stays dormant
-  (kept, paused — not deleted, not wired). Other LLM providers remain usable for
-  the opt-in Summarizer / trade-narrative paths.
+- The deterministic spine never depends on LLM sidecars. Sidecars may run by
+  default, but their failure or output must never block or alter the publish
+  path.
+- Grok subscription renewed 2026-06-10. `devils-advocate.ts` (Grok-backed) gets
+  wired in PR 4 as an **advisory-only** sidecar, enabled by default, opt-out
+  via env flag. It never gates.
 
 ## PR 1 — XSS hardening in `render/build.ts`
 
@@ -50,7 +52,7 @@ single-file pattern:
    expected for the existing (clean) corpus.
 3. `npm test` stays green.
 
-## PR 2 — Typed artifact reads + devils-advocate pause
+## PR 2 — Typed artifact reads
 
 - Extend `lib/schemas.ts` with output schemas for live producers that lack one:
   data-checker, trade-analyst, summarizer, predictor, final-reviewer.
@@ -66,10 +68,8 @@ single-file pattern:
   `final-reviewer.ts`, summarizer-related reads) **and** the raw `JSON.parse`
   artifact reads in `db/load-from-tasks.ts` / `db/sync-task.ts` — the DB loader
   is the real publish path and gets the same validation.
-- **Devils-advocate:** header block only —
-  `PAUSED 2026-06-10: Grok subscription ended; not wired into pipeline.ts;
-  excluded from the typed-reads pass. Revisit if Grok access returns or it is
-  reworked onto another provider.` No other changes; stays dormant and untyped.
+- **Devils-advocate:** untouched in this PR — PR 4 wires it and adds its schema
+  there, keeping this PR a pure no-behavior-change conversion of live readers.
 
 **Verification:**
 1. `npx tsc --noEmit` clean.
@@ -110,6 +110,47 @@ specified, kept linear.
 2. `site/` render byte-diff unchanged.
 3. `npm test` green; `--help` output and CLI flags unchanged.
 
+## PR 4 — Devils-advocate as advisory sidecar (wired, on by default)
+
+Wire the dormant `agents/devils-advocate.ts` into the pipeline as a stage-table
+row (trivial after PR 3), advisory-only, running by default:
+
+- **Slot:** after Summarizer, before Code Checker —
+  `{ name: 'devils-advocate', status: 'adversarial-review', required: false,
+  enabled: () => !devilsAdvocateOptedOut }`. Add `'adversarial-review'` to
+  `PipelineStatus` and `'devils-advocate'` to `AgentName` in `lib/types.ts`;
+  add the agent slot back to `initTask` in `agents/shared.ts`.
+- **Default on, opt-out flag:** `CIVICLENS_NO_DEVILS_ADVOCATE=1` disables it
+  (inverse of the trade-narrative pattern, because this one defaults on). Any
+  LLM error or schema violation logs a warning and the run continues —
+  identical semantics to the other optional sidecars.
+- **Input fix:** replace the dead `readPipe(... 'connection-mapper')` read
+  (`devils-advocate.ts:84`) with `findSharedDonors()` from `db/queries.ts` —
+  the same migration the Summarizer went through in the Connection Mapper
+  removal. If the Summarizer didn't run (it's opt-in), the stage critiques the
+  deterministic trade narrative + key facts instead of skipping.
+- **Output:** `devils-advocate.json` — adversarial critique of the narrative
+  (overclaims, missing caveats, alternative readings of the same evidence).
+  Add `DevilsAdvocateOutputSchema` to `lib/schemas.ts`; written and read
+  through the PR 2 validated path.
+- **Consumer:** the QC review workflow, not the site. A small
+  `render/qc-to-vault.ts` writes the critique as a vault note
+  (`~/NoService/Projects/CivicLens/QC/<member>-devils-advocate.md`) so it lands
+  where manual tone/bias/suitability review happens. Nothing in
+  `render/build.ts` or `db/load-from-tasks.ts` reads it.
+- **Never gating:** Final Reviewer and Code Checker do not read it. Its
+  presence, absence, or content cannot change the publish decision.
+
+**Verification:**
+1. Default run, one member: `adversarial-review` status appears, artifact
+   validates against the schema, vault note written, Final Reviewer decision
+   identical to a `CIVICLENS_NO_DEVILS_ADVOCATE=1` run of the same member.
+2. `site/` render byte-diff: identical with the stage on vs off (proves
+   nothing on the publish path reads it).
+3. Simulated Grok failure (bad API key): warning logged, run completes,
+   pipeline status never lands on `failed` because of this stage.
+4. `npx tsc --noEmit` and `npm test` green.
+
 ## After this arc — next goal
 
 1. **Fix the vote→bill linkage regression (78% → 71.6%).** Blocking
@@ -127,6 +168,7 @@ arc strengthens the claims already on it. Rigor before reach.
 
 ## Estimate
 
-PRs 1–3: ~5–6 hours total (one long session or two comfortable ones).
+PRs 1–4: ~7–8 hours total (two sessions).
 PR 1 ≈ 1–1.5h, PR 2 ≈ 2h (schema-vs-reality reconciliation is the slow part),
-PR 3 ≈ 1.5–2h.
+PR 3 ≈ 1.5–2h, PR 4 ≈ 1.5–2h (prompt contract + vault-note format are the
+design-sensitive parts).
