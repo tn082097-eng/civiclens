@@ -15,7 +15,6 @@ import * as paths from '../lib/paths.js';
 export const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const HOME       = process.env.HOME!;
 export const PIPE_DIR   = process.env.CIVICLENS_PIPE_DIR ?? paths.PIPE_DIR;
-export const STUB_PATH  = paths.STUB_PATH;
 export const SKILLS_DIR = paths.SKILLS_DIR;
 
 // ─── ANSI helpers ─────────────────────────────────────────────────────────────

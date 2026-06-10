@@ -32,11 +32,8 @@ export const OPENSECRETS_CACHE = join(PFD_CACHE, 'opensecrets');
 // ─── Repo-relative working dirs (unchanged by the data/ move) ───────────────
 export const PIPE_DIR   = join(ROOT, 'pipeline');
 export const SKILLS_DIR = join(ROOT, 'skills');
-export const STUB_PATH  = join(SKILLS_DIR, 'researcher', 'stub-data.json');
 export const SITE_DIR   = join(ROOT, 'site');
 export const NAMES_PATH = join(ROOT, 'names.txt');
-export const BATCH_LOG  = join(ROOT, 'batch-log.json');
-export const AUTH_DIR   = join(ROOT, '.baileys_auth');
 
 // ─── Secrets (Phase 3c: dedicated repo-local .env, was ~/.hermes/.env) ──────
 export const ENV_PATH = join(ROOT, '.env');
@@ -45,8 +42,8 @@ export const ENV_PATH = join(ROOT, '.env');
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const entries: Record<string, string> = {
     ROOT, DATA_DIR, CACHE_DIR, DB_PATH, PFD_CACHE, SENATE_CACHE,
-    LEGISLATORS_CACHE, OPENSECRETS_CACHE, PIPE_DIR, SKILLS_DIR, STUB_PATH,
-    SITE_DIR, NAMES_PATH, BATCH_LOG, AUTH_DIR, ENV_PATH,
+    LEGISLATORS_CACHE, OPENSECRETS_CACHE, PIPE_DIR, SKILLS_DIR,
+    SITE_DIR, NAMES_PATH, ENV_PATH,
   };
   for (const [k, v] of Object.entries(entries)) console.log(`${k.padEnd(18)} ${v}`);
 }
