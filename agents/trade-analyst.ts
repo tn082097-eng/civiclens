@@ -72,7 +72,7 @@ function findingsToText(findings: TradeFinding[]): string {
 // rows — no inference, no pattern claims beyond what the rows contain. This is
 // the default ship surface; the LLM paragraph is an opt-in sidecar
 // (CIVICLENS_TRADE_NARRATIVE=1) because prose paraphrase can blur timing facts.
-function buildDeterministicNarrative(
+export function buildDeterministicNarrative(
   findings: TradeFinding[],
   allDiscretionaryTrades: TradeTickerSummary[],
   totalDiscretionaryTrades: number,
@@ -81,9 +81,11 @@ function buildDeterministicNarrative(
   const onCmte    = findings.filter(f => f.member_on_bill_committee).length;
   const sentences: string[] = [];
 
+  // findings is the deduplicated top set (LIMIT 5), not a total — say so.
   sentences.push(
-    `${findings.length} discretionary trade${findings.length === 1 ? '' : 's'} ` +
-    `occurred within 30 days before a vote by this member` +
+    `The ${findings.length === 1 ? 'strongest trade-to-vote pairing' : `${findings.length} strongest trade-to-vote pairings`} ` +
+    `for this member (ranked by proximity and committee overlap) ` +
+    `${findings.length === 1 ? 'occurred' : 'each occurred'} within 30 days before a vote` +
     (onCmte > 0
       ? `; in ${onCmte === findings.length ? (findings.length === 1 ? 'this case' : 'every case') : `${onCmte} of them`} ` +
         `the member sat on a committee that handled the bill`
@@ -95,8 +97,10 @@ function buildDeterministicNarrative(
     ? 'the same day as'
     : `${top.days_before_vote} day${top.days_before_vote === 1 ? '' : 's'} before`;
   const bill = top.bill_title ?? top.vote_question ?? '(unknown bill)';
+  // findings[0] is top-RANKED (committee overlap can outrank raw proximity),
+  // so don't call it "closest".
   sentences.push(
-    `The closest: a ${top.tx_type.toLowerCase()} of ${top.ticker ?? top.asset} ` +
+    `Top-ranked: a ${top.tx_type.toLowerCase()} of ${top.ticker ?? top.asset} ` +
     `(${top.amount_band}) on ${top.tx_date}, ${timing} the vote on "${bill}"` +
     (top.member_on_bill_committee
       ? `, a bill handled by a committee the member sits on` +
@@ -106,7 +110,10 @@ function buildDeterministicNarrative(
   );
 
   if (sameDay > 1 || (sameDay === 1 && top.days_before_vote !== 0)) {
-    sentences.push(`${sameDay} trade${sameDay === 1 ? ' fell' : 's fell'} on the same day as a vote.`);
+    sentences.push(
+      `${sameDay === findings.length ? `All ${sameDay}` : `${sameDay} of the ${findings.length}`} ` +
+      `fell on the same day as a vote.`
+    );
   }
 
   if (totalDiscretionaryTrades > 0 && allDiscretionaryTrades.length > 0) {
@@ -214,7 +221,10 @@ export async function runTradeAnalyst(task: PipelineTask): Promise<boolean> {
                  WHEN vote_question ILIKE 'On Motion to%'                      THEN 2
                  WHEN vote_question ILIKE 'H.Res.%'                            THEN 2
                  ELSE 1
-               END ASC
+               END ASC,
+               -- total order: without these, equal-score ties resolve
+               -- arbitrarily and the "top finding" flips run-to-run
+               vote_source_url ASC NULLS LAST, bill_title ASC NULLS LAST
            ) AS rn,
            CASE
              WHEN days_before_vote = 0 AND member_on_bill_committee THEN 100
@@ -232,7 +242,8 @@ export async function runTradeAnalyst(task: PipelineTask): Promise<boolean> {
          SELECT *,
            ROW_NUMBER() OVER (
              PARTITION BY tx_date
-             ORDER BY score DESC, days_before_vote ASC
+             ORDER BY score DESC, days_before_vote ASC,
+                      ticker ASC NULLS LAST, asset ASC
            ) AS rn2
          FROM ranked
          WHERE rn = 1
@@ -242,7 +253,8 @@ export async function runTradeAnalyst(task: PipelineTask): Promise<boolean> {
               member_committee_role, bill_source_url, vote_source_url
        FROM by_date
        WHERE rn2 = 1
-       ORDER BY score DESC, days_before_vote ASC
+       ORDER BY score DESC, days_before_vote ASC,
+                tx_date DESC, ticker ASC NULLS LAST, asset ASC
        LIMIT 5`,
       [memberId],
     );
