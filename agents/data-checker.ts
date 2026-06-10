@@ -22,11 +22,10 @@ export async function runDataChecker(task: PipelineTask): Promise<boolean> {
   if (data.inOffice === 1 || data.inOffice === 'true')  { data.inOffice = true;  corrections.push('inOffice: coerced to boolean true'); }
   if (data.inOffice === 0 || data.inOffice === 'false') { data.inOffice = false; corrections.push('inOffice: coerced to boolean false'); }
 
+  // NOTE: future dates are deliberately NOT auto-corrected. Clamping a bad
+  // date to "today" fabricates a fact (and used to mask the critical
+  // future-date checks below, which never fired). Bad dates now fail loudly.
   for (const bill of data.bills ?? []) {
-    if (bill.introducedAt > today) {
-      corrections.push(`bill "${bill.title?.slice(0,40)}": future date ${bill.introducedAt} → clamped to ${today}`);
-      bill.introducedAt = today;
-    }
     if (!bill.summary || bill.summary.length < 20) {
       bill.summary = bill.title.length >= 20
         ? bill.title
@@ -36,10 +35,6 @@ export async function runDataChecker(task: PipelineTask): Promise<boolean> {
   }
 
   for (const vote of data.votes ?? []) {
-    if (vote.date > today) {
-      corrections.push(`vote "${vote.billTitle?.slice(0,40)}": future date ${vote.date} → clamped to ${today}`);
-      vote.date = today;
-    }
     const raw_vote = (vote.vote ?? '').toLowerCase();
     if (['yes','aye'].includes(raw_vote)) { vote.vote = 'yea'; corrections.push(`vote: normalized "${raw_vote}" → "yea"`); }
     if (['no'].includes(raw_vote))        { vote.vote = 'nay'; corrections.push(`vote: normalized "no" → "nay"`); }

@@ -1,4 +1,5 @@
 import type { PipelineTask } from '../lib/types.js';
+import { findSharedDonors } from '../db/queries.js';
 import {
   ok, fail, warn, spin,
   readPipe, writePipe, markAgent,
@@ -15,9 +16,6 @@ export async function runSummarizer(task: PipelineTask): Promise<boolean> {
   const researcher = readPipe<any>(task.taskId, 'researcher');
   const checker    = readPipe<any>(task.taskId, 'data-checker');
   const d = researcher.data;
-
-  let mapper: any = null;
-  try { mapper = readPipe<any>(task.taskId, 'connection-mapper'); } catch { /* optional */ }
 
   let tradeAnalyst: any = null;
   try { tradeAnalyst = readPipe<any>(task.taskId, 'trade-analyst'); } catch { /* optional */ }
@@ -37,9 +35,15 @@ export async function runSummarizer(task: PipelineTask): Promise<boolean> {
     `- ${c.title}: ${c.description?.slice(0, 120)}${c.flagged ? ' [DISPUTED]' : ''}`
   ).join('\n') || 'None on record.';
 
-  const sharedDonorText = (mapper?.sharedDonors ?? []).length > 0
-    ? (mapper.sharedDonors as any[]).map(s =>
-        `- ${s.donorName} (shared with ${(s.sharedWith ?? []).join(', ')})`
+  // Shared-donor peers from the deterministic SQL layer (db/queries.ts) — the same
+  // query the public site renders. Replaces the deleted Connection Mapper agent.
+  // syncTask() loads this member into DuckDB earlier in the pipeline, so findSharedDonors
+  // sees their donors here. Peer-oriented (one row per member sharing ≥1 donor).
+  const sharedPeers = await findSharedDonors(d.id);
+  const sharedDonorText = sharedPeers.length > 0
+    ? sharedPeers.map(p =>
+        `- ${p.peer_name}: ${p.shared_count} shared donor${p.shared_count === 1 ? '' : 's'}` +
+        (p.donor_canonicals.length ? ` (${p.donor_canonicals.slice(0, 5).join(', ')})` : '')
       ).join('\n')
     : 'None identified.';
 
@@ -88,7 +92,7 @@ ${billText}
 Top donors:
 ${donorText}
 Controversies: ${controversyText}
-Verified shared donors (from Connection Mapper, if any):
+Verified shared-donor peers (deterministic SQL match):
 ${sharedDonorText}${tradeContext}`;
 
   const messages = skill.source !== 'none'

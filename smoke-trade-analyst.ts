@@ -11,7 +11,6 @@ async function main() {
     agents: {
       'trade-analyst': { status: 'pending', startedAt: new Date().toISOString() }
     } as any,
-    brainLog: [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };

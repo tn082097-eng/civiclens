@@ -215,7 +215,9 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
   let summary: string | null = null;
   try {
     const s = JSON.parse(readFileSync(resolve(pick.taskDir, 'summarizer.json'), 'utf-8'));
-    summary = s.summary ?? s.text ?? null;
+    // Summarizer writes bio/keyFacts/neutralNarrative — there is no `summary`
+    // field, so the old `s.summary ?? s.text` read left this column NULL forever.
+    summary = s.neutralNarrative ?? s.bio ?? null;
   } catch {}
   await conn.run(
     `INSERT OR REPLACE INTO pipeline_runs
@@ -230,10 +232,14 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
     ]
   );
 
-  // trade_activity — from trade-analyst.json if present
+  // trade_activity — from trade-analyst.json, but ONLY for approved runs.
+  // The narrative is the one pipeline-authored text the site renders; writing it
+  // before the Final Reviewer gate (or for rejected runs) would let text that
+  // failed the neutrality check ship anyway. Deterministic facts (members,
+  // votes, donors, bills above) are gated by the Data Checker, not this.
   try {
     const taPath = resolve(pick.taskDir, 'trade-analyst.json');
-    if (existsSync(taPath)) {
+    if (existsSync(taPath) && final?.readyToApply === true) {
       const ta = JSON.parse(readFileSync(taPath, 'utf-8'));
       const narrative: string | null = ta?.tradeNarrative ?? null;
       if (narrative && narrative !== 'N/A') {

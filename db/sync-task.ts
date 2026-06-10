@@ -65,91 +65,16 @@ export async function syncTask(taskId: string): Promise<SyncResult> {
   return { ok: true, fecResolved, fecReason };
 }
 
-/**
- * Returns the latest fetched-at researcher snapshot per member, excluding the
- * caller's own member_id (or task). Drop-in replacement for
- * loadOtherResearchers() in agents/pipeline.ts — same shape, but sourced from
- * the DB instead of scanning task dirs.
- */
-export interface CorpusEntry {
-  taskId: string;
-  data: any;
-  mtime: number;
-}
-
-export async function loadCorpus(excludeMemberId?: string): Promise<CorpusEntry[]> {
-  const conn = await getDb();
-  const r = await conn.run(`
-    SELECT m.member_id, m.name, m.party, m.chamber, m.state, m.district, m.role,
-           m.in_office, m.first_elected_year, m.bioguide_id, m.fec_candidate_id,
-           m.bio_summary, m.fetched_at,
-           (SELECT MAX(p.task_id) FROM pipeline_runs p WHERE p.member_id = m.member_id AND p.approved) AS task_id
-    FROM members m
-    WHERE m.member_id <> COALESCE(?, '')
-  `, [excludeMemberId ?? null]);
-  const memberRows = await r.getRowObjects() as any[];
-  const out: CorpusEntry[] = [];
-  for (const row of memberRows) {
-    const memberId = String(row.member_id);
-    // Pull related arrays in parallel.
-    const [donorsR, votesR, billsR, committeesR] = await Promise.all([
-      conn.run(`SELECT donor_name AS name, donor_type AS type, amount, latest_date AS date,
-                       source, source_url AS sourceUrl, confidence
-                FROM donors WHERE member_id = ?`, [memberId]),
-      conn.run(`SELECT question AS billTitle, position AS vote, date,
-                       source_url AS sourceUrl, category
-                FROM votes WHERE member_id = ?`, [memberId]),
-      conn.run(`SELECT title, status, introduced_at AS introducedAt,
-                       source_url AS sourceUrl
-                FROM bills WHERE member_id = ?`, [memberId]),
-      conn.run(`SELECT committee_name AS name, role, source_url AS sourceUrl
-                FROM committees WHERE member_id = ?`, [memberId]),
-    ]);
-    const data = {
-      id:        memberId,
-      name:      row.name,
-      party:     row.party,
-      chamber:   row.chamber,
-      state:     row.state,
-      district:  row.district,
-      role:      row.role,
-      inOffice:  row.in_office,
-      firstElectedYear: row.first_elected_year,
-      bioguideId: row.bioguide_id,
-      fecCandidateId: row.fec_candidate_id,
-      bio:       row.bio_summary,
-      donors:     await donorsR.getRowObjects(),
-      votes:      await votesR.getRowObjects(),
-      bills:      await billsR.getRowObjects(),
-      committees: await committeesR.getRowObjects(),
-    };
-    out.push({
-      taskId: row.task_id ? String(row.task_id) : 'db',
-      data,
-      mtime: new Date(row.fetched_at).getTime(),
-    });
-  }
-  return out;
-}
-
 // CLI smoke
 if (import.meta.url === `file://${process.argv[1]}`) {
   const taskId = process.argv[2];
-  if (taskId === '--corpus') {
-    loadCorpus(process.argv[3]).then(c => {
-      console.log(`corpus: ${c.length} member(s)`);
-      for (const e of c) {
-        console.log(`  ${e.data.id.padEnd(28)} donors=${e.data.donors.length} votes=${e.data.votes.length}`);
-      }
-      process.exit(0);
-    }).catch(e => { console.error(e); process.exit(1); });
-  } else if (taskId) {
+  if (taskId) {
     syncTask(taskId).then(r => {
       console.log(JSON.stringify(r));
       process.exit(r.ok ? 0 : 1);
     });
   } else {
-    console.error('Usage: sync-task.ts <task-id>   |   sync-task.ts --corpus [excludeId]');
+    console.error('Usage: sync-task.ts <task-id>');
     process.exit(1);
   }
 }

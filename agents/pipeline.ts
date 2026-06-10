@@ -20,7 +20,7 @@ import {
   c, bold, dim, red, green, yellow, cyan,
   header, ok, fail, warn,
   loadHermesEnv,
-  initTask, readTask, writeTask, readPipe, pipeFile, setStatus,
+  initTask, readTask, readPipe, pipeFile, setStatus, markAgent,
 } from './shared.js';
 import { ROOT, NAMES_PATH } from '../lib/paths.js';
 import { syncTask } from '../db/sync-task.js';
@@ -28,7 +28,6 @@ import { closeDb } from '../db/init.js';
 import { runResearcher } from './researcher.js';
 import { runDataChecker } from './data-checker.js';
 import { runPredictor } from './predictor.js';
-import { runConnectionMapper } from './connection-mapper.js';
 import { runTradeAnalyst } from './trade-analyst.js';
 import { runSummarizer } from './summarizer.js';
 import { runCodeChecker } from './code-checker.js';
@@ -56,7 +55,7 @@ function findFreshTask(name: string, maxAgeMs = 24 * 60 * 60 * 1000): string | n
 
 // ─── Obsidian vault regen ─────────────────────────────────────────────────────
 // Keep the NoService vault's Connections/Members notes in sync with the latest
-// connection-mapper output so the vault never drifts after a pipeline run.
+// DuckDB facts + shared-donor edges so the vault never drifts after a pipeline run.
 function regenerateVault() {
   const script = path.join(ROOT, 'render', 'connections-to-vault.ts');
   if (!fs.existsSync(script)) { warn('Vault', `regenerator missing: ${script}`); return; }
@@ -107,18 +106,11 @@ function showStatus(taskId: string) {
       : result.status === 'skipped'  ? dim('—') : dim('·');
     console.log(`    ${icon}  ${name.padEnd(16)} ${dim(result.status)}`);
   }
-  if (task.brainLog.length > 0) {
-    console.log(`\n  ${bold('Brain Log:')}`);
-    for (const entry of task.brainLog.slice(-5)) {
-      console.log(`    ${dim(entry.timestamp.slice(11, 19))} ${entry.decision}`);
-    }
-  }
   console.log();
 }
 
 // ─── Main pipeline orchestrator ───────────────────────────────────────────────
 async function runPipeline(targetName: string, opts: { force?: boolean; skipVaultRegen?: boolean } = {}) {
-  const LLM_MODEL = process.env.LLM_MODEL ?? 'claude-haiku-4-5-20251001';
   const cached = !opts.force && findFreshTask(targetName);
   if (cached) {
     header(`CivicLens Pipeline — ${targetName}`);
@@ -139,9 +131,10 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
   const taskId = `task-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`;
   const task = initTask(taskId, targetName);
 
+  const SUMMARIZER_MODEL = process.env.LLM_SUMMARIZER_MODEL ?? process.env.SUMMARIZER_MODEL ?? 'claude-sonnet-4-6';
   header(`CivicLens Pipeline — ${targetName}`);
   console.log(`  ${dim('Task ID:')} ${taskId}`);
-  console.log(`  ${dim('Model:')} ${LLM_MODEL}\n`);
+  console.log(`  ${dim('Summarizer model:')} ${process.env.CIVICLENS_SUMMARIZER === '0' ? 'skipped' : SUMMARIZER_MODEL}\n`);
 
   setStatus(task, 'researching');
   const researchOk = await runResearcher(task);
@@ -172,28 +165,28 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
     warn('Brain', 'Predictor failed — continuing without calibration data');
   }
 
-  setStatus(task, 'connecting');
-  const mapOk = await runConnectionMapper(task);
-  if (!mapOk) {
-    warn('Brain', 'Connection Mapper failed — continuing without network data');
-  }
-
   setStatus(task, 'analyzing-trades');
   const tradeOk = await runTradeAnalyst(task);
   if (!tradeOk) {
     warn('Brain', 'Trade Analyst failed — continuing without trade section');
   }
 
-  setStatus(task, 'summarizing');
-  let sumOk = await runSummarizer(task);
-  if (!sumOk) {
-    warn('Brain', 'Summarizer failed — retrying (1/2)…');
-    task.agents.summarizer.retries++;
-    sumOk = await runSummarizer(task);
+  // Summarizer is a semantic sidecar: its narrative ships nowhere on the public
+  // site (facts render from DuckDB), so it must never block deterministic facts
+  // from publishing. Soft like the Trade Analyst; skippable via env.
+  if (process.env.CIVICLENS_SUMMARIZER === '0') {
+    markAgent(task, 'summarizer', 'skipped');
+    warn('Brain', 'Summarizer skipped (CIVICLENS_SUMMARIZER=0)');
+  } else {
+    setStatus(task, 'summarizing');
+    let sumOk = await runSummarizer(task);
     if (!sumOk) {
-      fail('Pipeline', 'Summarizer failed after retry — aborting');
-      setStatus(task, 'failed');
-      return;
+      warn('Brain', 'Summarizer failed — retrying (1/2)…');
+      task.agents.summarizer.retries++;
+      sumOk = await runSummarizer(task);
+      if (!sumOk) {
+        warn('Brain', 'Summarizer failed after retry — continuing without summary');
+      }
     }
   }
 
@@ -211,7 +204,7 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
 
   const finalReview = readPipe<any>(taskId, 'final-review');
   const allFiles = [
-    'researcher','data-checker','predictor','connection-mapper',
+    'researcher','data-checker','predictor',
     'trade-analyst',
     'summarizer','code-checker','final-review',
   ].map(n => pipeFile(taskId, n));
@@ -330,7 +323,6 @@ ${bold('CivicLens Pipeline Runner')}
   ${cyan('npx tsx agents/pipeline.ts --batch names.txt [n]')} batch from file (concurrency n, default 3)
   ${cyan('npx tsx agents/pipeline.ts --list')}                 list recent tasks
   ${cyan('npx tsx agents/pipeline.ts --status <task-id>')}     show task details
-  ${cyan('npx tsx agents/pipeline.ts --rerun-mapper <task-id>')} re-run Connection Mapper against current corpus
   ${cyan('npx tsx agents/pipeline.ts --load-pfd <year> [--dry-run]')} load House Clerk PFDs for year into DuckDB
   ${cyan('npx tsx agents/pipeline.ts --load-senate-ptr [--dry-run]')} load Senate EFDS PTRs into DuckDB
   ${cyan('npx tsx agents/pipeline.ts --load-fec-ie <cycle[,cycle]> [--dry-run]')} load FEC Super PAC IE into DuckDB
@@ -461,17 +453,6 @@ ${bold('CivicLens Pipeline Runner')}
     console.log(`Total: ${filers.length} filer(s), ${totalTx} transactions, ${unmatched} unmatched`);
     process.exit(unmatched > 0 ? 1 : 0);
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
-} else if (arg === '--rerun-mapper') {
-  if (!arg2) { console.error('Usage: --rerun-mapper <task-id>'); process.exit(1); }
-  (async () => {
-    const task = readTask(arg2);
-    const mapOk = await runConnectionMapper(task);
-    writeTask(task);
-    process.exit(mapOk ? 0 : 1);
-  })().catch(e => {
-    console.error(red(`\nFatal: ${e.message}`));
-    process.exit(1);
-  });
 } else if (arg === '--append') {
   if (!arg2) { console.error('Usage: --append "Politician Name"'); process.exit(1); }
   appendAndRun(arg2).catch(e => {

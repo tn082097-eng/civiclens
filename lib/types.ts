@@ -1,11 +1,9 @@
 // Shared types across all CivicLens pipeline agents
 
 export type AgentName =
-  | 'brain'
   | 'researcher'
   | 'data-checker'
   | 'predictor'
-  | 'connection-mapper'
   | 'trade-analyst'
   | 'summarizer'
   | 'code-checker'
@@ -18,7 +16,6 @@ export type PipelineStatus =
   | 'researching'
   | 'validating'
   | 'predicting'
-  | 'connecting'
   | 'analyzing-trades'
   | 'summarizing'
   | 'reviewing-code'
@@ -46,14 +43,6 @@ export interface PipelineTask {
     id?: string;
   };
   agents: Record<AgentName, AgentResult>;
-  brainLog: BrainLogEntry[];
-}
-
-export interface BrainLogEntry {
-  timestamp: string;
-  decision: string;
-  reasoning: string;
-  nextStep?: AgentName;
 }
 
 // Researcher output schema

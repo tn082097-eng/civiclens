@@ -35,6 +35,7 @@ export interface TradeAnalystOutput {
   hasData: boolean;
   suspicionLevel: SuspicionLevel;
   tradeNarrative: string;
+  narrativeSource: 'deterministic' | 'llm' | 'none';
   topFindings: TradeFinding[];
   totalSuspiciousTrades: number;
   allDiscretionaryTrades: TradeTickerSummary[];
@@ -67,6 +68,68 @@ function findingsToText(findings: TradeFinding[]): string {
   }).join('\n');
 }
 
+// Deterministic narrative: every sentence is a direct restatement of finding
+// rows — no inference, no pattern claims beyond what the rows contain. This is
+// the default ship surface; the LLM paragraph is an opt-in sidecar
+// (CIVICLENS_TRADE_NARRATIVE=1) because prose paraphrase can blur timing facts.
+export function buildDeterministicNarrative(
+  findings: TradeFinding[],
+  allDiscretionaryTrades: TradeTickerSummary[],
+  totalDiscretionaryTrades: number,
+): string {
+  const sameDay   = findings.filter(f => f.days_before_vote === 0).length;
+  const onCmte    = findings.filter(f => f.member_on_bill_committee).length;
+  const sentences: string[] = [];
+
+  // findings is the deduplicated top set (LIMIT 5), not a total — say so.
+  sentences.push(
+    `The ${findings.length === 1 ? 'strongest trade-to-vote pairing' : `${findings.length} strongest trade-to-vote pairings`} ` +
+    `for this member (ranked by proximity and committee overlap) ` +
+    `${findings.length === 1 ? 'occurred' : 'each occurred'} within 30 days before a vote` +
+    (onCmte > 0
+      ? `; in ${onCmte === findings.length ? (findings.length === 1 ? 'this case' : 'every case') : `${onCmte} of them`} ` +
+        `the member sat on a committee that handled the bill`
+      : '') + '.'
+  );
+
+  const top = findings[0];
+  const timing = top.days_before_vote === 0
+    ? 'the same day as'
+    : `${top.days_before_vote} day${top.days_before_vote === 1 ? '' : 's'} before`;
+  const bill = top.bill_title ?? top.vote_question ?? '(unknown bill)';
+  // findings[0] is top-RANKED (committee overlap can outrank raw proximity),
+  // so don't call it "closest".
+  sentences.push(
+    `Top-ranked: a ${top.tx_type.toLowerCase()} of ${top.ticker ?? top.asset} ` +
+    `(${top.amount_band}) on ${top.tx_date}, ${timing} the vote on "${bill}"` +
+    (top.member_on_bill_committee
+      ? `, a bill handled by a committee the member sits on` +
+        (top.member_committee_role && top.member_committee_role !== 'member'
+          ? ` as ${top.member_committee_role}` : '')
+      : '') + '.'
+  );
+
+  if (sameDay > 1 || (sameDay === 1 && top.days_before_vote !== 0)) {
+    sentences.push(
+      `${sameDay === findings.length ? `All ${sameDay}` : `${sameDay} of the ${findings.length}`} ` +
+      `fell on the same day as a vote.`
+    );
+  }
+
+  if (totalDiscretionaryTrades > 0 && allDiscretionaryTrades.length > 0) {
+    const topTickers = allDiscretionaryTrades.slice(0, 3)
+      .map(t => `${t.ticker} (×${t.count})`).join(', ');
+    sentences.push(
+      `The full discretionary record spans ${totalDiscretionaryTrades} ` +
+      `transaction${totalDiscretionaryTrades === 1 ? '' : 's'} across ` +
+      `${allDiscretionaryTrades.length} position${allDiscretionaryTrades.length === 1 ? '' : 's'}; ` +
+      `most-traded: ${topTickers}.`
+    );
+  }
+
+  return sentences.join(' ');
+}
+
 function writeEmpty(
   task: PipelineTask,
   suspicionLevel: SuspicionLevel,
@@ -80,6 +143,7 @@ function writeEmpty(
     hasData:              false,
     suspicionLevel,
     tradeNarrative:       'N/A',
+    narrativeSource:      'none',
     topFindings:          [],
     totalSuspiciousTrades,
     allDiscretionaryTrades,
@@ -157,7 +221,10 @@ export async function runTradeAnalyst(task: PipelineTask): Promise<boolean> {
                  WHEN vote_question ILIKE 'On Motion to%'                      THEN 2
                  WHEN vote_question ILIKE 'H.Res.%'                            THEN 2
                  ELSE 1
-               END ASC
+               END ASC,
+               -- total order: without these, equal-score ties resolve
+               -- arbitrarily and the "top finding" flips run-to-run
+               vote_source_url ASC NULLS LAST, bill_title ASC NULLS LAST
            ) AS rn,
            CASE
              WHEN days_before_vote = 0 AND member_on_bill_committee THEN 100
@@ -175,7 +242,8 @@ export async function runTradeAnalyst(task: PipelineTask): Promise<boolean> {
          SELECT *,
            ROW_NUMBER() OVER (
              PARTITION BY tx_date
-             ORDER BY score DESC, days_before_vote ASC
+             ORDER BY score DESC, days_before_vote ASC,
+                      ticker ASC NULLS LAST, asset ASC
            ) AS rn2
          FROM ranked
          WHERE rn = 1
@@ -185,7 +253,8 @@ export async function runTradeAnalyst(task: PipelineTask): Promise<boolean> {
               member_committee_role, bill_source_url, vote_source_url
        FROM by_date
        WHERE rn2 = 1
-       ORDER BY score DESC, days_before_vote ASC
+       ORDER BY score DESC, days_before_vote ASC,
+                tx_date DESC, ticker ASC NULLS LAST, asset ASC
        LIMIT 5`,
       [memberId],
     );
@@ -262,7 +331,16 @@ export async function runTradeAnalyst(task: PipelineTask): Promise<boolean> {
 
   // ── 3. Compute suspicion level (deterministic) ─────────────────────────────
   const suspicionLevel = computeSuspicionLevel(findings);
-  // ── 4. LLM narrative ────────────────────────────────────────────────────────
+
+  // ── 4. Narrative ────────────────────────────────────────────────────────────
+  // Deterministic by default — a template over the finding rows, so every
+  // shipped sentence traces to a row. The LLM paragraph is an opt-in sidecar.
+  let tradeNarrative = buildDeterministicNarrative(
+    findings, allDiscretionaryTrades, totalDiscretionaryTrades,
+  );
+  let narrativeSource: TradeAnalystOutput['narrativeSource'] = 'deterministic';
+
+  if (process.env.CIVICLENS_TRADE_NARRATIVE === '1') {
   spin('Trade Analyst', `generating ${suspicionLevel} suspicion narrative via ${ANALYST_MODEL}…`);
 
   const systemPrompt = `You are a sharp, neutral financial transparency analyst specializing in congressional trading patterns.
@@ -307,7 +385,6 @@ ${allTradesSummary}
 
 Member: ${memberName}`;
 
-  let tradeNarrative: string;
   try {
     tradeNarrative = await llm(
       [
@@ -316,13 +393,13 @@ Member: ${memberName}`;
       ],
       { maxTokens: 700, timeoutMs: 120_000, model: ANALYST_MODEL },
     );
+    narrativeSource = 'llm';
     process.stdout.write('\n');
   } catch (e: any) {
     process.stdout.write('\n');
-    warn('Trade Analyst', `LLM failed: ${e.message} — skipping trade section`);
-    writeEmpty(task, suspicionLevel, totalSuspiciousTrades);
-    return true;
+    warn('Trade Analyst', `LLM failed: ${e.message} — using deterministic narrative`);
   }
+  } // end CIVICLENS_TRADE_NARRATIVE sidecar
 
   // ── 5. Write output ─────────────────────────────────────────────────────────
   const output: TradeAnalystOutput = {
@@ -331,6 +408,7 @@ Member: ${memberName}`;
     hasData:              true,
     suspicionLevel,
     tradeNarrative,
+    narrativeSource,
     topFindings:          findings,
     totalSuspiciousTrades,
     allDiscretionaryTrades,
@@ -338,7 +416,7 @@ Member: ${memberName}`;
   };
 
   writePipe(task.taskId, 'trade-analyst', output);
-  markAgent(task, 'trade-analyst', 'complete', { suspicionLevel, findings: findings.length });
-  ok('Trade Analyst', `${findings.length} findings → ${suspicionLevel} suspicion`);
+  markAgent(task, 'trade-analyst', 'complete', { suspicionLevel, findings: findings.length, narrativeSource });
+  ok('Trade Analyst', `${findings.length} findings → ${suspicionLevel} suspicion (${narrativeSource} narrative)`);
   return true;
 }
