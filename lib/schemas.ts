@@ -97,7 +97,9 @@ export const ResearcherOutputSchema = z.object({
   fetchedAt:  z.string().datetime(),
   target:     z.object({ name: z.string(), type: z.string() }),
   data:       PoliticianDataSchema,
-  confidence: z.number().min(0).max(1),
+  // No top-level confidence: it was a hardcoded constant, not a measurement.
+  // Tolerated on old artifacts for back-compat.
+  confidence: z.number().min(0).max(1).optional(),
   warnings:   z.array(z.string()),
 });
 

@@ -87,11 +87,12 @@ export async function runResearcher(task: PipelineTask): Promise<boolean> {
 
   ok('Researcher', `${live.source}: ${live.bills.length} bills, ${live.votes.length} votes, ${live.donors.length} donors`);
 
+  // No top-level confidence number: the old 0.97/0.95 constants were
+  // pseudo-precision, not computed from anything. `source` is the provenance.
   const output = {
     source: live.source,
     fetchedAt: new Date().toISOString(),
     target: { name, type: 'politician' },
-    confidence: live.source === 'congress.gov' ? 0.97 : 0.95,
     warnings: live.warnings,
     data: politicianData,
   };
