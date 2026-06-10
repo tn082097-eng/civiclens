@@ -20,7 +20,7 @@ import {
   c, bold, dim, red, green, yellow, cyan,
   header, ok, fail, warn,
   loadHermesEnv,
-  initTask, readTask, readPipe, pipeFile, setStatus,
+  initTask, readTask, readPipe, pipeFile, setStatus, markAgent,
 } from './shared.js';
 import { ROOT, NAMES_PATH } from '../lib/paths.js';
 import { syncTask } from '../db/sync-task.js';
@@ -111,7 +111,6 @@ function showStatus(taskId: string) {
 
 // ─── Main pipeline orchestrator ───────────────────────────────────────────────
 async function runPipeline(targetName: string, opts: { force?: boolean; skipVaultRegen?: boolean } = {}) {
-  const LLM_MODEL = process.env.LLM_MODEL ?? 'claude-haiku-4-5-20251001';
   const cached = !opts.force && findFreshTask(targetName);
   if (cached) {
     header(`CivicLens Pipeline — ${targetName}`);
@@ -132,9 +131,10 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
   const taskId = `task-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`;
   const task = initTask(taskId, targetName);
 
+  const SUMMARIZER_MODEL = process.env.LLM_SUMMARIZER_MODEL ?? process.env.SUMMARIZER_MODEL ?? 'claude-sonnet-4-6';
   header(`CivicLens Pipeline — ${targetName}`);
   console.log(`  ${dim('Task ID:')} ${taskId}`);
-  console.log(`  ${dim('Model:')} ${LLM_MODEL}\n`);
+  console.log(`  ${dim('Summarizer model:')} ${process.env.CIVICLENS_SUMMARIZER === '0' ? 'skipped' : SUMMARIZER_MODEL}\n`);
 
   setStatus(task, 'researching');
   const researchOk = await runResearcher(task);
@@ -171,16 +171,22 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
     warn('Brain', 'Trade Analyst failed — continuing without trade section');
   }
 
-  setStatus(task, 'summarizing');
-  let sumOk = await runSummarizer(task);
-  if (!sumOk) {
-    warn('Brain', 'Summarizer failed — retrying (1/2)…');
-    task.agents.summarizer.retries++;
-    sumOk = await runSummarizer(task);
+  // Summarizer is a semantic sidecar: its narrative ships nowhere on the public
+  // site (facts render from DuckDB), so it must never block deterministic facts
+  // from publishing. Soft like the Trade Analyst; skippable via env.
+  if (process.env.CIVICLENS_SUMMARIZER === '0') {
+    markAgent(task, 'summarizer', 'skipped');
+    warn('Brain', 'Summarizer skipped (CIVICLENS_SUMMARIZER=0)');
+  } else {
+    setStatus(task, 'summarizing');
+    let sumOk = await runSummarizer(task);
     if (!sumOk) {
-      fail('Pipeline', 'Summarizer failed after retry — aborting');
-      setStatus(task, 'failed');
-      return;
+      warn('Brain', 'Summarizer failed — retrying (1/2)…');
+      task.agents.summarizer.retries++;
+      sumOk = await runSummarizer(task);
+      if (!sumOk) {
+        warn('Brain', 'Summarizer failed after retry — continuing without summary');
+      }
     }
   }
 

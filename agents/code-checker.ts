@@ -10,7 +10,10 @@ export async function runCodeChecker(task: PipelineTask): Promise<boolean> {
   markAgent(task, 'code-checker', 'running');
 
   const researcher = readPipe<any>(task.taskId, 'researcher');
-  const summarizer = readPipe<any>(task.taskId, 'summarizer');
+  // Summarizer is an optional sidecar — when skipped/failed there is no
+  // narrative to police, so its checks simply don't apply.
+  let summarizer: any = null;
+  try { summarizer = readPipe<any>(task.taskId, 'summarizer'); } catch { /* optional */ }
   let tradeAnalyst: any = null;
   try { tradeAnalyst = readPipe<any>(task.taskId, 'trade-analyst'); } catch { /* optional */ }
   const d = researcher.data;
@@ -22,9 +25,9 @@ export async function runCodeChecker(task: PipelineTask): Promise<boolean> {
   // OpenFEC) and may legitimately contain words that would be editorial bias
   // if written by the pipeline itself.
   const shipSurface = [
-    summarizer.bio ?? '',
-    summarizer.neutralNarrative ?? '',
-    ...((summarizer.keyFacts ?? []) as string[]),
+    summarizer?.bio ?? '',
+    summarizer?.neutralNarrative ?? '',
+    ...((summarizer?.keyFacts ?? []) as string[]),
     d.role ?? '',
     tradeAnalyst?.tradeNarrative ?? '',
   ].join(' ');
@@ -40,7 +43,7 @@ export async function runCodeChecker(task: PipelineTask): Promise<boolean> {
     issues.push({ field: 'researcher.inOffice', severity: 'critical',
       message: `inOffice must be boolean, got ${typeof d.inOffice}` });
   }
-  if ((summarizer.bio ?? '').length < 60) {
+  if (summarizer && (summarizer.bio ?? '').length < 60) {
     issues.push({ field: 'summarizer.bio', severity: 'critical',
       message: `bio too short: ${summarizer.bio?.length ?? 0} chars (min 60)` });
   }

@@ -9,25 +9,29 @@ export async function runFinalReviewer(task: PipelineTask): Promise<boolean> {
 
   const researcher  = readPipe<any>(task.taskId, 'researcher');
   const dataChecker = readPipe<any>(task.taskId, 'data-checker');
-  const summarizer  = readPipe<any>(task.taskId, 'summarizer');
   const codeChecker = readPipe<any>(task.taskId, 'code-checker');
+  // Optional sidecar — absent when skipped (CIVICLENS_SUMMARIZER=0) or failed.
+  let summarizer: any = null;
+  try { summarizer = readPipe<any>(task.taskId, 'summarizer'); } catch { /* optional */ }
 
   // Deterministic QC gate — no LLM. readyToApply derives purely from the
   // upstream validators (Data Checker), the neutrality gate (Code Checker), and
-  // completeness of the rendered narrative fields. The old narrative LLM check
-  // could only ever downgrade approved→approved_with_warnings, never reject, so
-  // it added a nondeterministic call with no gate-changing power.
+  // — when a narrative was produced — completeness of its fields. Narrative
+  // completeness must never block deterministic facts: those checks only exist
+  // when the sidecar ran, and they are warnings, not critical.
   const checklist: Record<string, boolean> = {
     dataCheckerPassed:       !!dataChecker.passed,
     dataCheckerScore:        (dataChecker.score ?? 0) >= 0.70,
-    bioLength:               (summarizer.bio?.length ?? 0) >= 60,
-    narrativeLength:         (summarizer.neutralNarrative?.length ?? 0) >= 100,
-    keyFactsPresent:         (summarizer.keyFacts?.length ?? 0) >= 2,
-    noNeutralityViolations:  (summarizer.neutralityViolations?.length ?? 0) === 0,
     codeCheckerPassed:       !!codeChecker.passed,
     codeCheckerScore:        (codeChecker.score ?? 0) >= 0.70,
     neutralityCheckPass:     codeChecker.neutralityCheck === 'pass',
   };
+  if (summarizer) {
+    checklist.bioLength              = (summarizer.bio?.length ?? 0) >= 60;
+    checklist.narrativeLength        = (summarizer.neutralNarrative?.length ?? 0) >= 100;
+    checklist.keyFactsPresent        = (summarizer.keyFacts?.length ?? 0) >= 2;
+    checklist.noNeutralityViolations = (summarizer.neutralityViolations?.length ?? 0) === 0;
+  }
 
   const failedChecks = Object.entries(checklist).filter(([,v]) => !v).map(([k]) => k);
 
