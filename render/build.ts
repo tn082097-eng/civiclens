@@ -777,10 +777,8 @@ function buildTimelineBlock(_memberId: string, votes: TimelineVote[], trades: Ti
     return '<p class="muted">No dated records to display on timeline.</p>';
   }
 
-  // All values going into the JSON originate from DB rows passed through the
-  // typed TimelineVote / TimelineTrade mappers above; escaping is redundant
-  // but applied defensively by the client-side escHtml() before any DOM write.
-  const dataJson = JSON.stringify({ votes, trades });
+  // safeJson prevents </script> breakout; client-side escHtml() still guards DOM writes.
+  const dataJson = safeJson({ votes, trades });
 
   return `<div id="tl-wrap" style="position:relative;width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:4px;margin-bottom:8px;background:#080a0d;">
   <svg id="tl-svg" style="display:block;min-width:900px;"></svg>
@@ -1631,7 +1629,7 @@ async function buildNetwork(): Promise<void> {
   const nodes = [...nodeMap.values()];
 
   // Serialize to JSON — all string values from DB, safe for embedding in <script>
-  const graphJson = JSON.stringify({ nodes, edges });
+  const graphJson = safeJson({ nodes, edges });
 
   // All client-side dynamic HTML is assembled via an esc() helper that
   // entity-encodes every interpolated value before it reaches innerHTML.
@@ -1867,7 +1865,7 @@ async function buildNexus(): Promise<void> {
   }
   const nexusObj: Record<string, { name: string; loops: Loop[] }> = {};
   for (const [id, m] of byMember) nexusObj[id] = { name: m.name, loops: m.loops };
-  const nexusJson = JSON.stringify(nexusObj);
+  const nexusJson = safeJson(nexusObj);
   const memberOpts = [...byMember.entries()]
     .sort((a, b) => b[1].loops.length - a[1].loops.length || a[0].localeCompare(b[0]))
     .map(([id, m]) => ({ id, name: m.name, n: m.loops.length }));
@@ -1883,7 +1881,7 @@ async function buildNexus(): Promise<void> {
   const graphScript = `
 (function() {
   const NEXUS = ${nexusJson};
-  const THEME = ${JSON.stringify(themeColors)};
+  const THEME = ${safeJson(themeColors)};
   const MEMBER_COLOR = '#e8c45a', BILL_COLOR = '#7d8794';
   let sim = null;
 
