@@ -1,7 +1,7 @@
 # Phase-2 close-out — design
 
 **Date:** 2026-06-10
-**Status:** approved (design), spec under review
+**Status:** approved; PR 1 implemented (fix/render-xss-hardening), PRs 2–4 pending
 **Predecessor:** `~/.claude/plans/pipeline-simplification-agile-quasar.md` (Phases 1–2), PR #1 (`fix/deterministic-gates`, merged 2026-06-10)
 
 ## Context
