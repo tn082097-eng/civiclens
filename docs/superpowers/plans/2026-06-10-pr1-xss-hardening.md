@@ -25,19 +25,49 @@ cd ~/Developer/civiclens
 git checkout -b fix/render-xss-hardening
 ```
 
-- [ ] **Step 2: Build twice on unchanged code and confirm self-identical hashes**
+- [ ] **Step 2 (amended 2026-06-10): Fix the nexus ORDER BY tie**
+
+Execution found two pre-existing nondeterminism sources on `main`:
+1. `layout()` embeds a minute-precision `generated YYYY-MM-DD HH:MMZ` footer timestamp in every page — builds straddling a minute boundary differ. Product-intentional; the gate normalizes it (see hash function below).
+2. `db/queries/trade-bill-nexus.sql` ORDER BY is not total: same-day duplicate trades (same member/ticker/asset/bill, e.g. Pelosi's two 2022-05-24 MSFT trades) tie on all eight sort keys and swap arbitrarily, reordering `nexus.html` rows run-to-run.
+
+Fix the SQL (the footer timestamp is NOT changed in this PR):
+
+```sql
+ORDER BY days_before_vote ASC, member_name ASC, tx_date DESC,
+         member_id ASC, vote_id ASC, ticker ASC, asset ASC, bill_id ASC,
+         tx_type ASC, amount_band ASC, trade_source_url ASC;
+```
+
+(`tx_type`/`amount_band`/`trade_source_url` are the trade-level distinguishers; every other rendered column is functionally determined by keys already in the sort.)
+
+Commit:
+```bash
+git add db/queries/trade-bill-nexus.sql
+git commit -m "fix(queries): total ordering in trade-bill-nexus (same-day duplicate trades tied)"
+```
+
+- [ ] **Step 3: Build twice across a minute boundary and confirm timestamp-normalized hashes match**
+
+All hashing in this plan uses this normalization (define it as a shell function per session):
 
 ```bash
+hashsite() {
+  for f in $(find site -name '*.html' | sort); do
+    sed 's/generated [0-9-]* [0-9:]*Z/generated TIMESTAMP/' "$f" | sha256sum | sed "s|-|$f|"
+  done
+}
 npx tsx render/build.ts
-find site -name '*.html' | sort | xargs sha256sum > /tmp/site-run1.txt
+hashsite > /tmp/site-run1.txt
+sleep 61   # force a minute-boundary crossing so the normalization is actually exercised
 npx tsx render/build.ts
-find site -name '*.html' | sort | xargs sha256sum > /tmp/site-run2.txt
+hashsite > /tmp/site-run2.txt
 diff /tmp/site-run1.txt /tmp/site-run2.txt && echo DETERMINISTIC
 ```
 
-Expected: `DETERMINISTIC`. If the diff is non-empty, **stop** — the byte-diff gate is invalid and the nondeterminism must be reported to the user before proceeding (it would be a regression of the 2026-05-30 reproducible-build work).
+Expected: `DETERMINISTIC`. If the diff is non-empty, **stop** and report — there is a further nondeterminism source beyond the two identified above.
 
-- [ ] **Step 3: Keep run1 as the baseline**
+- [ ] **Step 4: Keep run1 as the baseline**
 
 ```bash
 cp /tmp/site-run1.txt /tmp/site-before.txt
@@ -392,11 +422,16 @@ git commit -m "fix(render): slug-guard internal member links via memberHref"
 
 **Files:** none modified.
 
-- [ ] **Step 1: Rebuild and hash**
+- [ ] **Step 1: Rebuild and hash (timestamp-normalized, same `hashsite` function as Task 0)**
 
 ```bash
+hashsite() {
+  for f in $(find site -name '*.html' | sort); do
+    sed 's/generated [0-9-]* [0-9:]*Z/generated TIMESTAMP/' "$f" | sha256sum | sed "s|-|$f|"
+  done
+}
 npx tsx render/build.ts
-find site -name '*.html' | sort | xargs sha256sum > /tmp/site-after.txt
+hashsite > /tmp/site-after.txt
 diff /tmp/site-before.txt /tmp/site-after.txt
 ```
 
