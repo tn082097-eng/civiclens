@@ -41,7 +41,7 @@ const MEMBERS_DIR = resolve(OUT_DIR, 'members');
 
 // ─── HTML helpers (XSS-safe) ────────────────────────────────────────────────
 
-function esc(s: unknown): string {
+export function esc(s: unknown): string {
   if (s === null || s === undefined) return '';
   return String(s)
     .replace(/&/g, '&amp;')
@@ -63,6 +63,27 @@ export function safeJson(value: unknown): string {
     .replace(/>/g, '\\u003e')
     .replace(/\u2028/g, '\\u2028')
     .replace(/\u2029/g, '\\u2029');
+}
+
+/**
+ * URL allowlist for href attributes fed by external data (source_url etc.).
+ * Permits absolute http/https and same-page #anchors; everything else
+ * (javascript:, data:, vbscript:, protocol-relative //, garbage) collapses
+ * to the fallback. esc() at the call site still handles attribute quoting:
+ * the pattern is always href="${esc(safeUrl(x))}".
+ */
+export function safeUrl(url: unknown, fallback = '#'): string {
+  if (url === null || url === undefined) return fallback;
+  const s = String(url);
+  if (/^#[\w-]*$/.test(s)) return s;
+  if (/^https?:\/\//i.test(s)) return s;
+  return fallback;
+}
+
+/** Internal member-page link from a DB slug. Anything but [a-z0-9-] collapses to '#'. */
+export function memberHref(id: unknown, prefix = ''): string {
+  const s = String(id ?? '');
+  return /^[a-z0-9-]+$/.test(s) ? `${prefix}${s}.html` : '#';
 }
 
 function partyClass(party: string | null): string {
