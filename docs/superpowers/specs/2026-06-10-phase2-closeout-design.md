@@ -56,9 +56,19 @@ single-file pattern:
 
 - Extend `lib/schemas.ts` with output schemas for live producers that lack one:
   data-checker, trade-analyst, summarizer, predictor, final-reviewer.
-  (`ResearcherOutputSchema` exists.) Schemas must match what agents *actually
-  emit* — derive by validating against existing task artifacts on disk, loosen
-  where reality demands, never tighten beyond observed shape in this PR.
+  (`ResearcherOutputSchema` exists.)
+- **Schema derivation is mandatory and artifact-first.** Required procedure,
+  per agent, before any schema is written:
+  1. Collect all existing task artifacts on disk (every `<agent>.json` under
+     the task dirs — the corpus is the spec).
+  2. Measure observed shapes: field presence, types, nullability, string-vs-
+     number drift (e.g. `"confidence": "0.83"`), empty-array vs missing.
+  3. Generate the schema from observed reality (`.nullable()`, `.optional()`,
+     unions where drift exists). Acceptance bar: **the generated schema
+     validates 100% of existing artifacts** before the PR merges.
+  4. Tightening beyond observed shape is **out of scope** — deferred to a
+     dedicated cleanup PR with its own migration plan. PR 2 must not silently
+     become a data-migration project.
 - `readPipe` in `agents/shared.ts` gains an optional Zod schema parameter:
   `readPipe(taskId, name, schema?)`. Validates on read; throws with a message
   naming taskId, agent, and offending field. Optional-sidecar reads keep their
@@ -107,8 +117,13 @@ specified, kept linear.
 **Verification:**
 1. Full pipeline smoke (`--force` on an existing member); stage-by-stage status
    sequence matches pre-refactor behavior.
-2. `site/` render byte-diff unchanged.
-3. `npm test` green; `--help` output and CLI flags unchanged.
+2. **`pipeline_runs` recording parity:** dump the row(s) written for the same
+   member before and after the refactor; diff all columns (modulo timestamps
+   and run ids) — recording behavior must be unchanged. This table becomes
+   provenance infrastructure in Phase 3; the refactor must not subtly alter
+   what gets recorded.
+3. `site/` render byte-diff unchanged.
+4. `npm test` green; `--help` output and CLI flags unchanged.
 
 ## PR 4 — Devils-advocate as advisory sidecar (wired, on by default)
 
@@ -160,6 +175,11 @@ row (trivial after PR 3), advisory-only, running by default:
 2. **Then Phase 3 — provenance & lineage**, on stabilized topology and trusted
    data. Needs its own design pass; `pipeline_runs` as job-graph state source
    (PR 3) is the substrate it builds on.
+
+**Feature freeze until linkage is fixed:** no donor-sector ingestion, no new
+members, no new narratives, no new agents until vote→bill linkage is back at
+≥78%. A 71.6% linkage rate is a factual-quality defect; every feature built on
+top of it inherits the defect.
 
 **Explicitly deferred (stay queued in STATUS.md, untouched by this plan):**
 roster finish (Turner + McCarthy), crosswalk tuning, donor-sector ingestion,
