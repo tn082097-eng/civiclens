@@ -166,6 +166,21 @@ row (trivial after PR 3), advisory-only, running by default:
    pipeline status never lands on `failed` because of this stage.
 4. `npx tsc --noEmit` and `npm test` green.
 
+## Follow-ups discovered during PR 1 execution (tracked, not blocking)
+
+1. **Client-side href slots in inline scripts use `escHtml` without URL
+   allowlisting** (`render/build.ts` timeline tooltip ×2, nexus `showLoop` ×3).
+   Entity-encoding alone would let a `javascript:` URL in `source_url` data
+   survive to a clickable href. Pre-existing; needs a client-side `safeUrl`
+   equivalent inside the emitted scripts. Good candidate to fold into PR 2 or
+   a small PR 1.5.
+2. **`npx tsc --noEmit` is a no-op in this repo — there is no `tsconfig.json`**
+   (it prints tsc help and exits 0). Every prior "tsc clean" claim was vacuous.
+   PR 2 should add a minimal `tsconfig.json` so its type-gate is real.
+3. Pre-existing nondeterminism found and fixed on the PR 1 branch: footer
+   timestamp (minute precision — gate now normalizes it) and the
+   trade-bill-nexus ORDER BY tie (fixed in `86535ce`).
+
 ## After this arc — next goal
 
 1. **Fix the vote→bill linkage regression (78% → 71.6%).** Blocking
