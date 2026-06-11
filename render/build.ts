@@ -51,6 +51,20 @@ function esc(s: unknown): string {
     .replace(/'/g, '&#39;');
 }
 
+/**
+ * JSON.stringify for embedding inside an inline <script> block.
+ * Escapes <, >, and U+2028/U+2029 so the payload can never close the
+ * script element, open an HTML comment, or break JS string parsing.
+ * Output remains valid JSON (JSON.parse round-trips).
+ */
+export function safeJson(value: unknown): string {
+  return JSON.stringify(value)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
+}
+
 function partyClass(party: string | null): string {
   if (!party) return 'p-none';
   if (party.startsWith('D')) return 'p-d';
