@@ -492,7 +492,7 @@ async function buildIndex(): Promise<void> {
     return `
     <tr data-member="${esc(t.member_name.toLowerCase())}" data-ticker="${esc((t.ticker ?? '').toLowerCase())}" data-asset="${esc((t.asset ?? '').toLowerCase())}" data-type="${esc(t.tx_type ?? '')}" data-jurisdiction="${t.closestJurisdiction ? '1' : '0'}">
       <td>${esc(t.tx_date ?? '')}</td>
-      <td><a class="member" href="members/${esc(t.member_id)}.html">${esc(t.member_name)}</a>${t.holder && t.holder !== 'self' ? ` <span class="tag holder-${esc(t.holder)}">${esc(t.holder)}</span>` : ''}</td>
+      <td><a class="member" href="${memberHref(t.member_id, 'members/')}">${esc(t.member_name)}</a>${t.holder && t.holder !== 'self' ? ` <span class="tag holder-${esc(t.holder)}">${esc(t.holder)}</span>` : ''}</td>
       <td style="color:${(t.tx_type ?? '').includes('sale') ? '#e07840' : '#4caf7d'};">${esc(t.tx_type ?? '')}</td>
       <td>${t.ticker ? `<strong>${esc(t.ticker)}</strong> <span class="dim">—</span> ` : ''}${esc((t.asset ?? '').slice(0, 48))}</td>
       <td><span class="muted">${esc(t.amount_band ?? '')}</span></td>
@@ -1097,7 +1097,7 @@ function renderCosponsorEmbed(edges: CosponsorEdgeForMember[]): string {
   }
   const rows = edges.map(e => `
     <tr>
-      <td><a class="member" href="${esc(e.peer_id)}.html">${esc(e.peer_name)}</a> ${e.peer_party ? `<span class="tag ${partyClass(e.peer_party)}" style="margin-left:4px;">${esc(e.peer_party)}</span>` : ''}</td>
+      <td><a class="member" href="${memberHref(e.peer_id)}">${esc(e.peer_name)}</a> ${e.peer_party ? `<span class="tag ${partyClass(e.peer_party)}" style="margin-left:4px;">${esc(e.peer_party)}</span>` : ''}</td>
       <td class="num">${e.shared_bills}</td>
     </tr>`).join('');
   return `
@@ -1440,7 +1440,7 @@ ${revolving.map(c => {
 <thead><tr><th>Peer</th><th class="num">Shared donors</th><th class="num">Combined amount</th></tr></thead>
 <tbody>${peers.map(p => `
   <tr>
-    <td><a class="member" href="${esc(p.peer_id)}.html">${esc(p.peer_name)}</a></td>
+    <td><a class="member" href="${memberHref(p.peer_id)}">${esc(p.peer_name)}</a></td>
     <td class="num">${p.shared_count}</td>
     <td class="num">${fmtMoney(p.combined_amount)}</td>
   </tr>`).join('')}</tbody>
