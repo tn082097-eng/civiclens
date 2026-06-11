@@ -458,7 +458,7 @@ async function buildIndex(): Promise<void> {
 
   const overviewRows = overview.map(m => `
     <tr data-name="${esc(m.name.toLowerCase())}" data-party="${esc(m.party.toLowerCase())}" data-state="${esc(m.state.toLowerCase())}" data-chamber="${esc(m.chamber.toLowerCase())}">
-      <td><a class="member" href="members/${esc(m.member_id)}.html">${esc(m.name)}</a></td>
+      <td><a class="member" href="${memberHref(m.member_id, 'members/')}">${esc(m.name)}</a></td>
       <td><span class="tag ${partyClass(m.party)}">${esc(m.party.charAt(0) || '?')}</span> <span class="dim">${esc(m.chamber)}</span> <span class="muted">${esc(m.state)}</span></td>
       <td class="num">${m.donor_count}</td>
       <td class="num">${m.vote_count}</td>
@@ -517,7 +517,7 @@ async function buildIndex(): Promise<void> {
     });
     return `
     <tr>
-      <td><a class="member" href="members/${esc(f.member_id)}.html">${esc(f.member_name)}</a></td>
+      <td><a class="member" href="${memberHref(f.member_id, 'members/')}">${esc(f.member_name)}</a></td>
       <td>${esc(label)}</td>
       <td>${esc(conf.lead)}</td>
     </tr>`;
@@ -1632,10 +1632,11 @@ async function buildNetwork(): Promise<void> {
   // Serialize to JSON — all string values from DB, safe for embedding in <script>
   const graphJson = safeJson({ nodes, edges });
 
-  // All client-side dynamic HTML is assembled via an esc() helper that
-  // entity-encodes every interpolated value before it reaches innerHTML.
-  // The data originates from the DB (already sanitized at ingest) and is
-  // re-escaped here as a second-line defence.
+  // Client-side dynamic HTML is assembled via escHtml(), which entity-encodes
+  // interpolated values before they reach innerHTML. Note: escHtml does NOT
+  // URL-allowlist, so client-assembled href slots rely on the source_url data
+  // being http(s) — server-side hrefs go through safeUrl(); the client-side
+  // equivalents are tracked as follow-up hardening.
   const clientScript = `
 (function() {
   const GRAPH = ${graphJson};
@@ -1831,7 +1832,7 @@ function nexusRowHtml(r: NexusRow): string {
   const links = [srcLink(r.trade_source_url, 'filing'), srcLink(r.vote_source_url, 'vote'), srcLink(r.bill_source_url, 'bill')].filter(Boolean).join(' · ');
   return '<tr>'
     + `<td class="num" style="white-space:nowrap;">${esc(proximityLabel(r.days_before_vote))}</td>`
-    + `<td><a class="member" href="members/${esc(r.member_id)}.html">${esc(r.member_name)}</a></td>`
+    + `<td><a class="member" href="${memberHref(r.member_id, 'members/')}">${esc(r.member_name)}</a></td>`
     + `<td>${trade}</td>`
     + `<td>${sector}</td>`
     + `<td>${billLink}<br><span class="dim" style="font-size:11px;">${esc(r.bill_id)}${votePos}${voteDate}</span></td>`
