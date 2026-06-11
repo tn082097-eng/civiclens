@@ -487,7 +487,7 @@ async function buildIndex(): Promise<void> {
     }
 
     const jurisdictionVote = t.closestJurisdiction && t.closestJurisdiction !== t.closest
-      ? `<div style="margin-top:3px;font-size:11px;" class="dim">Committee vote: <a class="row-link" href="${esc(t.closestJurisdiction.bill_source_url ?? t.closestJurisdiction.vote_source_url ?? '#')}" target="_blank" rel="noopener">${t.closestJurisdiction.bill_title ? `<strong>${esc(t.closestJurisdiction.bill_title)}</strong>` : esc((t.closestJurisdiction.vote_question ?? '').slice(0, 60))}</a> <span class="tag before" style="font-size:10px;">${t.closestJurisdiction.days_before_vote}d</span></div>` : '';
+      ? `<div style="margin-top:3px;font-size:11px;" class="dim">Committee vote: <a class="row-link" href="${esc(safeUrl(t.closestJurisdiction.bill_source_url ?? t.closestJurisdiction.vote_source_url))}" target="_blank" rel="noopener">${t.closestJurisdiction.bill_title ? `<strong>${esc(t.closestJurisdiction.bill_title)}</strong>` : esc((t.closestJurisdiction.vote_question ?? '').slice(0, 60))}</a> <span class="tag before" style="font-size:10px;">${t.closestJurisdiction.days_before_vote}d</span></div>` : '';
 
     return `
     <tr data-member="${esc(t.member_name.toLowerCase())}" data-ticker="${esc((t.ticker ?? '').toLowerCase())}" data-asset="${esc((t.asset ?? '').toLowerCase())}" data-type="${esc(t.tx_type ?? '')}" data-jurisdiction="${t.closestJurisdiction ? '1' : '0'}">
@@ -498,10 +498,10 @@ async function buildIndex(): Promise<void> {
       <td><span class="muted">${esc(t.amount_band ?? '')}</span></td>
       <td>
         <div><span class="${proxClass}">${esc(proxLabel)}</span> <span class="vote-count" title="votes in window">${t.vote_count}</span> ${signals.join(' ')}</div>
-        <div style="margin-top:3px;"><a class="row-link" href="${esc(closestHref)}" target="_blank" rel="noopener">${closestLabel}</a></div>
+        <div style="margin-top:3px;"><a class="row-link" href="${esc(safeUrl(closestHref))}" target="_blank" rel="noopener">${closestLabel}</a></div>
         ${jurisdictionVote}
       </td>
-      <td><a class="row-link" href="${esc(t.trade_source_url ?? '#')}" target="_blank" rel="noopener">PTR</a></td>
+      <td><a class="row-link" href="${esc(safeUrl(t.trade_source_url))}" target="_blank" rel="noopener">PTR</a></td>
     </tr>`;
   }).join('');
 
@@ -1259,6 +1259,7 @@ async function renderPatterns(memberSlug: string): Promise<string> {
       const evidence = [...byKind.entries()]
         .map(([kind, labels]) => {
           const anchor = EVIDENCE_ANCHOR[kind];
+          // anchor is from the EVIDENCE_ANCHOR constant map, not external data — no safeUrl needed.
           const chip = (l: string) =>
             anchor
               ? `<a class="ev-chip" href="${anchor}">${esc(l)}</a>`
@@ -1397,7 +1398,7 @@ export async function buildMemberPage(m: MemberDetail): Promise<void> {
     <td><span class="muted">${esc(d.donor_type ?? '—')}</span></td>
     <td class="num">${fmtMoney(Number(d.amount))}</td>
     <td><span class="muted">${esc(d.latest_date ? String(d.latest_date) : '—')}</span></td>
-    <td><a class="row-link" href="${esc(d.source_url ?? '#')}" target="_blank" rel="noopener">FEC</a></td>
+    <td><a class="row-link" href="${esc(safeUrl(d.source_url))}" target="_blank" rel="noopener">FEC</a></td>
   </tr>`).join('')}</tbody>
 </table>`;
 
@@ -1421,7 +1422,7 @@ ${revolving.map(c => {
     c.latestClient ? `for ${esc(c.latestClient)}` : '',
     issues ? `· ${esc(issues)}` : '',
   ].filter(Boolean).join(' ');
-  const src = c.sourceUrl ? `<a class="row-link" href="${esc(c.sourceUrl)}" target="_blank" rel="noopener">filing ↗</a>` : '';
+  const src = c.sourceUrl ? `<a class="row-link" href="${esc(safeUrl(c.sourceUrl))}" target="_blank" rel="noopener">filing ↗</a>` : '';
   return `<div class="trade-card ${revolvingIntensity[c.recencyTier]}">
   <div class="tc-header">
     <div class="tc-asset">${esc(c.lobbyistName)}</div>
@@ -1464,7 +1465,7 @@ ${revolving.map(c => {
         ${holderTag ? `<span class="muted">·</span> ${holderTag}` : ''}
         <span class="muted">·</span>
         <span class="dim">${esc(t.amount_band ?? '—')}</span>
-        <a class="row-link" href="${esc(t.trade_source_url ?? '#')}" target="_blank" rel="noopener" style="margin-left:6px;">PTR ↗</a>
+        <a class="row-link" href="${esc(safeUrl(t.trade_source_url))}" target="_blank" rel="noopener" style="margin-left:6px;">PTR ↗</a>
       </div>
     </div>`;
 
@@ -1509,7 +1510,7 @@ ${revolving.map(c => {
       voteRows.push(`<div class="tc-vote-row">
         ${proxTag}
         <div>
-          <a class="row-link" href="${esc(billHref)}" target="_blank" rel="noopener">${billLabel}</a>
+          <a class="row-link" href="${esc(safeUrl(billHref))}" target="_blank" rel="noopener">${billLabel}</a>
           ${signalHtml}
           ${summary}
         </div>
@@ -1546,7 +1547,7 @@ ${revolving.map(c => {
     <td><span class="muted">${esc(t.amount_band ?? '')}</span></td>
     <td>${t.holder && t.holder !== 'self' ? `<span class="tag holder-${esc(t.holder)}">${esc(t.holder)}</span>` : '<span class="muted">self</span>'}</td>
     <td><span class="muted">${esc(t.sub_account ?? '')}</span></td>
-    <td><a class="row-link" href="${esc(t.source_url ?? '#')}" target="_blank" rel="noopener">PTR</a></td>
+    <td><a class="row-link" href="${esc(safeUrl(t.source_url))}" target="_blank" rel="noopener">PTR</a></td>
   </tr>`).join('')}</tbody>
 </table>`;
 
@@ -1814,7 +1815,7 @@ function proximityLabel(daysBefore: number): string {
 
 function srcLink(url: string | null, label: string): string {
   if (!url) return '';
-  return `<a class="row-link" href="${esc(url)}" target="_blank" rel="noopener" style="font-size:11px;">${esc(label)}</a>`;
+  return `<a class="row-link" href="${esc(safeUrl(url))}" target="_blank" rel="noopener" style="font-size:11px;">${esc(label)}</a>`;
 }
 
 function nexusRowHtml(r: NexusRow): string {
@@ -1823,7 +1824,7 @@ function nexusRowHtml(r: NexusRow): string {
   const trade = `<strong>${esc((r.tx_type ?? 'trade'))}</strong> ${esc(r.ticker)}${tradeAmt}${tradeDate}`;
   const sector = `${esc(r.theme)}${r.sic_description ? `<br><span class="dim" style="font-size:11px;">${esc(r.sic_description)}</span>` : ''}`;
   const billLink = r.bill_source_url
-    ? `<a class="row-link" href="${esc(r.bill_source_url)}" target="_blank" rel="noopener">${esc(r.bill_title)}</a>`
+    ? `<a class="row-link" href="${esc(safeUrl(r.bill_source_url))}" target="_blank" rel="noopener">${esc(r.bill_title)}</a>`
     : esc(r.bill_title);
   const votePos = r.vote_position ? ` · voted <strong>${esc(r.vote_position)}</strong>` : '';
   const voteDate = r.vote_date ? ` ${esc(r.vote_date)}` : '';
