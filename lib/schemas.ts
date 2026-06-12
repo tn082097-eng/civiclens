@@ -103,6 +103,21 @@ export const ResearcherOutputSchema = z.object({
   warnings:   z.array(z.string()),
 });
 
+// ─── Loose researcher read schema (PR 2 scope decision 7) ───────────────────
+// ResearcherOutputSchema above is the Data Checker's QUALITY GATE and must
+// not be loosened. But 14/184 historical researcher.json artifacts (104 bill
+// items) violate its bills[].summary min-20 constraint — they predate the
+// Data Checker's summary auto-correction (the corpus probe found no other
+// violation). The DB loader reads those historical artifacts, so its
+// read-validation uses this variant: identical except that one constraint.
+export const ResearcherArtifactSchema = ResearcherOutputSchema.extend({
+  data: PoliticianDataSchema.extend({
+    bills: z.array(BillSchema.extend({
+      summary: z.string(), // no .min(20) — observed in corpus 2026-06-12
+    })),
+  }),
+});
+
 // ─── Agent output schemas (PR 2 — typed artifact reads) ─────────────────────
 // Derived artifact-first: drafted from the writer code, then loosened until
 // scripts/validate-artifact-corpus.ts reports 100% pass over pipeline/task-*.
@@ -142,7 +157,8 @@ export const SummarizerOutputSchema = z.object({
   headline:             z.string(),
   bio:                  z.string(),
   keyFacts:             z.array(z.string()),
-  unverifiedFacts:      z.array(z.string()),
+  // 1/124 historical artifact predates fact-grounding — observed in corpus
+  unverifiedFacts:      z.array(z.string()).optional(),
   neutralNarrative:     z.string(),
   dataQualityNote:      z.string(),
   neutralityViolations: z.array(z.string()),
@@ -176,11 +192,13 @@ export const TradeAnalystOutputSchema = z.object({
   hasData:                  z.boolean(),
   suspicionLevel:           z.enum(['none', 'low', 'medium', 'high']),
   tradeNarrative:           z.string(),
-  narrativeSource:          z.enum(['deterministic', 'llm', 'none']),
+  // 62/65 historical artifacts predate the narrativeSource field — observed in corpus
+  narrativeSource:          z.enum(['deterministic', 'llm', 'none']).optional(),
   topFindings:              z.array(TradeFindingSchema),
   totalSuspiciousTrades:    z.number(),
-  allDiscretionaryTrades:   z.array(TradeTickerSummarySchema),
-  totalDiscretionaryTrades: z.number(),
+  // 1/65 historical artifact predates the discretionary-trade fields — observed in corpus
+  allDiscretionaryTrades:   z.array(TradeTickerSummarySchema).optional(),
+  totalDiscretionaryTrades: z.number().optional(),
 });
 
 const ModelScoreSchema = z.object({
