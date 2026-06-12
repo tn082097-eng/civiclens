@@ -17,8 +17,8 @@
  * Sanders dedup: bernard-sanders folds into bernie-sanders (same bioguide S000033).
  * Run: npx tsx render/connections-to-vault.ts
  */
-import { getDb } from '../db/init.ts';
-import { findSharedDonors, listMembers, type SharedDonorPeer } from '../db/queries.ts';
+import { getDb } from '../db/init.js';
+import { findSharedDonors, listMembers, type SharedDonorPeer } from '../db/queries.js';
 import { writeFileSync, mkdirSync, existsSync, rmSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
