@@ -9,6 +9,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
+import type { ZodTypeAny } from 'zod';
 import type { PipelineTask, AgentName, PipelineStatus } from '../lib/types.js';
 import * as paths from '../lib/paths.js';
 
@@ -93,8 +94,31 @@ export function writeTask(task: PipelineTask) {
   fs.writeFileSync(taskFile(task.taskId), JSON.stringify(task, null, 2));
 }
 
-export function readPipe<T>(taskId: string, name: string): T {
-  return JSON.parse(fs.readFileSync(pipeFile(taskId, name), 'utf-8')) as T;
+/**
+ * Thrown when an artifact on disk fails its schema (PR 2 typed reads).
+ * Optional-sidecar readers catch this and log a warning; required readers
+ * let it propagate — a malformed required artifact must kill the run loudly.
+ */
+export class ArtifactValidationError extends Error {
+  constructor(taskId: string, name: string, issues: { path: (string | number)[]; message: string }[]) {
+    const first = issues[0];
+    const field = first && first.path.length ? first.path.join('.') : '(root)';
+    const more = issues.length > 1 ? ` (+${issues.length - 1} more issue${issues.length > 2 ? 's' : ''})` : '';
+    super(`artifact validation failed: task=${taskId} agent=${name} field=${field} — ${first?.message ?? 'unknown'}${more}`);
+    this.name = 'ArtifactValidationError';
+  }
+}
+
+export function readPipe<T>(taskId: string, name: string, schema?: ZodTypeAny): T {
+  const raw = JSON.parse(fs.readFileSync(pipeFile(taskId, name), 'utf-8'));
+  if (schema) {
+    const result = schema.safeParse(raw);
+    if (!result.success) throw new ArtifactValidationError(taskId, name, result.error.issues);
+  }
+  // Raw on purpose, never result.data: Zod strips unknown keys and injects
+  // .default() values; this is validation, not transformation (PR 2 plan,
+  // scope decision 6).
+  return raw as T;
 }
 
 export function writePipe(taskId: string, name: string, data: unknown) {
