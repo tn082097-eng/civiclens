@@ -35,7 +35,7 @@ statistical defensibility + deterministic reproducibility. Reinforce that direct
 | **Matched-peer null models** | **ROADMAP — TOP ITEM** | The one genuinely differentiating upgrade. See spec below. |
 | Incremental detectors | **Later** | Rerun only changed members. Real win once roster is large; not urgent at 48. |
 | Materialize expensive views | **When slow** | Candidate: `v_trade_bill_nexus`. Measure first; premature now. |
-| Provenance graph (claim→detector→rows→filing) | **Gradual** | Formalize what `source_url` already implies. Aligns with the moat. |
+| Provenance graph (claim→detector→rows→filing) | **RESOLVED for prose (ADR 0001, 2026-06-14)** | No LLM prose on the public render — the only unbacked claims were `bio_summary`/`trade_activity`, now quarantined to `pipeline_runs`. Public page is deterministic; structured sections already carry `source_url`. Remaining work is the render-time row-backing assert + PFD confidence gate, not a prose-provenance graph. See `docs/adr/0001-no-llm-on-public-render.md`. |
 | Entity resolution layer | **Medium-term** | Canonical member/donor/PAC/spouse table. Names are ad-hoc now (cf. Sanders dedup). |
 | Immutable raw archives | **Good, cheap** | Append-only store of raw filings/HTML/PDF/JSON for audit + reproducibility. |
 | Confidence surfaces (not binary) | **Gradual** | Represent evidence quality + statistical confidence + source completeness. |
