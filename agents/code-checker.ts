@@ -1,21 +1,27 @@
 import type { PipelineTask } from '../lib/types.js';
 import {
-  ok, fail, red, yellow, gray,
+  ok, fail, warn, red, yellow, gray,
   readPipe, writePipe, markAgent,
-  checkNeutrality,
+  checkNeutrality, ArtifactValidationError,
 } from './shared.js';
+import {
+  ResearcherOutputSchema, SummarizerOutputSchema, TradeAnalystOutputSchema,
+} from '../lib/schemas.js';
 import type { Issue } from './data-checker.js';
 
 export async function runCodeChecker(task: PipelineTask): Promise<boolean> {
   markAgent(task, 'code-checker', 'running');
 
-  const researcher = readPipe<any>(task.taskId, 'researcher');
+  const researcher = readPipe<any>(task.taskId, 'researcher', ResearcherOutputSchema);
   // Summarizer is an optional sidecar — when skipped/failed there is no
   // narrative to police, so its checks simply don't apply.
+  // Missing file stays silent (pre-PR-2 semantics); a malformed artifact warns.
   let summarizer: any = null;
-  try { summarizer = readPipe<any>(task.taskId, 'summarizer'); } catch { /* optional */ }
+  try { summarizer = readPipe<any>(task.taskId, 'summarizer', SummarizerOutputSchema); }
+  catch (e) { if (e instanceof ArtifactValidationError) warn('Code Checker', e.message); }
   let tradeAnalyst: any = null;
-  try { tradeAnalyst = readPipe<any>(task.taskId, 'trade-analyst'); } catch { /* optional */ }
+  try { tradeAnalyst = readPipe<any>(task.taskId, 'trade-analyst', TradeAnalystOutputSchema); }
+  catch (e) { if (e instanceof ArtifactValidationError) warn('Code Checker', e.message); }
   const d = researcher.data;
   const issues: Issue[] = [];
   const today = new Date().toISOString().split('T')[0];

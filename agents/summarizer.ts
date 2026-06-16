@@ -4,7 +4,11 @@ import {
   ok, fail, warn, spin,
   readPipe, writePipe, markAgent,
   loadSkill, llm, extractJson, checkNeutrality,
+  ArtifactValidationError,
 } from './shared.js';
+import {
+  ResearcherOutputSchema, DataCheckerReportSchema, TradeAnalystOutputSchema,
+} from '../lib/schemas.js';
 
 export async function runSummarizer(task: PipelineTask): Promise<boolean> {
   markAgent(task, 'summarizer', 'running');
@@ -13,12 +17,15 @@ export async function runSummarizer(task: PipelineTask): Promise<boolean> {
   const skill = loadSkill('summarizer');
   spin('Summarizer', `drafting summary via ${SUMMARIZER_MODEL} (${skill.source})…`);
 
-  const researcher = readPipe<any>(task.taskId, 'researcher');
-  const checker    = readPipe<any>(task.taskId, 'data-checker');
+  const researcher = readPipe<any>(task.taskId, 'researcher', ResearcherOutputSchema);
+  const checker    = readPipe<any>(task.taskId, 'data-checker', DataCheckerReportSchema);
   const d = researcher.data;
 
+  // Optional sidecar — absent when the trade analyst is skipped/failed.
+  // Missing file stays silent (pre-PR-2 semantics); a malformed artifact warns.
   let tradeAnalyst: any = null;
-  try { tradeAnalyst = readPipe<any>(task.taskId, 'trade-analyst'); } catch { /* optional */ }
+  try { tradeAnalyst = readPipe<any>(task.taskId, 'trade-analyst', TradeAnalystOutputSchema); }
+  catch (e) { if (e instanceof ArtifactValidationError) warn('Summarizer', e.message); }
 
   // ── Stage 1: deterministic ─────────────────────────────────────────────────
   const headline = `${d.name} — ${d.role}, ${d.state} (${d.party})`;

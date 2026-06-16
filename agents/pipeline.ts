@@ -32,6 +32,7 @@ import { runTradeAnalyst } from './trade-analyst.js';
 import { runSummarizer } from './summarizer.js';
 import { runCodeChecker } from './code-checker.js';
 import { runFinalReviewer } from './final-reviewer.js';
+import { FinalReviewReportSchema } from '../lib/schemas.js';
 
 loadHermesEnv();
 
@@ -202,7 +203,7 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
   try { postSync = await syncTask(task.taskId); }
   catch (e: any) { warn('DB', `post-review sync failed: ${e.message}`); }
 
-  const finalReview = readPipe<any>(taskId, 'final-review');
+  const finalReview = readPipe<any>(taskId, 'final-review', FinalReviewReportSchema);
   const allFiles = [
     'researcher','data-checker','predictor',
     'trade-analyst',

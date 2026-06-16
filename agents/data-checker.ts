@@ -11,6 +11,11 @@ export async function runDataChecker(task: PipelineTask): Promise<boolean> {
   markAgent(task, 'data-checker', 'running');
   spin('Data Checker', 'validating schema…');
 
+  // Read RAW on purpose — no throw-on-read schema here. The Data Checker IS the
+  // validation gate: it auto-corrects malformed researcher output (party/chamber/
+  // vote normalization) below, writes the corrected artifact back, and only then
+  // runs ResearcherOutputSchema.safeParse itself. A throw-on-read schema would
+  // kill the auto-correct path (and the retry-researcher loop). PR-2 scope #1.
   const raw = readPipe<any>(task.taskId, 'researcher');
   const issues: Issue[] = [];
   const data = raw.data ?? {};

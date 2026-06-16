@@ -2,17 +2,24 @@ import type { PipelineTask } from '../lib/types.js';
 import {
   ok, fail, warn,
   readPipe, writePipe, markAgent, setStatus,
+  ArtifactValidationError,
 } from './shared.js';
+import {
+  ResearcherOutputSchema, DataCheckerReportSchema, CodeCheckerReportSchema,
+  SummarizerOutputSchema,
+} from '../lib/schemas.js';
 
 export async function runFinalReviewer(task: PipelineTask): Promise<boolean> {
   markAgent(task, 'final-reviewer', 'running');
 
-  const researcher  = readPipe<any>(task.taskId, 'researcher');
-  const dataChecker = readPipe<any>(task.taskId, 'data-checker');
-  const codeChecker = readPipe<any>(task.taskId, 'code-checker');
+  const researcher  = readPipe<any>(task.taskId, 'researcher', ResearcherOutputSchema);
+  const dataChecker = readPipe<any>(task.taskId, 'data-checker', DataCheckerReportSchema);
+  const codeChecker = readPipe<any>(task.taskId, 'code-checker', CodeCheckerReportSchema);
   // Optional sidecar — absent when skipped (CIVICLENS_SUMMARIZER=0) or failed.
+  // Missing file stays silent (pre-PR-2 semantics); a malformed artifact warns.
   let summarizer: any = null;
-  try { summarizer = readPipe<any>(task.taskId, 'summarizer'); } catch { /* optional */ }
+  try { summarizer = readPipe<any>(task.taskId, 'summarizer', SummarizerOutputSchema); }
+  catch (e) { if (e instanceof ArtifactValidationError) warn('Final Reviewer', e.message); }
 
   // Deterministic QC gate — no LLM. readyToApply derives purely from the
   // upstream validators (Data Checker), the neutrality gate (Code Checker), and
