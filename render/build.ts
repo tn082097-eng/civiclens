@@ -34,6 +34,7 @@ import {
 } from '../db/queries.js';
 import { fetchSuperPacIE } from '../lib/fec-ie.js';
 import type { SuperPacIEReport, SuperPacIE, SuperPacFunder } from '../lib/types.js';
+import type { ThemeGapReceipts } from '../lib/schemas.js';
 import { SITE_DIR } from '../lib/paths.js';
 
 const OUT_DIR = SITE_DIR;
@@ -84,6 +85,51 @@ export function safeUrl(url: unknown, fallback = '#'): string {
 export function memberHref(id: unknown, prefix = ''): string {
   const s = String(id ?? '');
   return /^[a-z0-9-]+$/.test(s) ? `${prefix}${s}.html` : '#';
+}
+
+// ─── Theme-gap receipts section (deterministic — ADR 0001, no LLM prose) ──────
+
+const fmtN = (n: number) => n.toLocaleString('en-US');
+
+/**
+ * Render the ThemeGapReceipts artifact as a static HTML section: a coverage
+ * strip stating the linked/total vote split and the disclosed/mappable/matched
+ * trade counts, followed by receipt cards. All four states render explicit
+ * copy — insufficient-data and low-power carry a band banner, zero receipts
+ * renders an empty state, and ranked shows p-values. Never silent omission.
+ * Every interpolated artifact string goes through esc().
+ */
+export function renderReceiptsSection(a: ThemeGapReceipts): string {
+  const cov = `<p class="coverage">` +
+    `${fmtN(a.coverage.votesBillLinked)} of ${fmtN(a.coverage.votesTotal)} roll-call votes are linked to a ` +
+    `specific bill; the rest are procedural and cannot be matched. ` +
+    `${fmtN(a.disclosedTradeCount)} disclosed trades · ${fmtN(a.tradeCount)} theme-mappable · ` +
+    `${fmtN(a.receipts.length)} theme-matched receipts.</p>`;
+
+  if (a.receipts.length === 0) {
+    return `<section class="receipts"><h2>Trade–vote timing</h2>${cov}` +
+      `<p class="empty">No theme-matched trade→vote pairs on record for this member.</p></section>`;
+  }
+  if (a.band === 'insufficient-data') {
+    const banner = `<p class="band">Timing score unavailable — ${a.tradeCount} disclosed trades ` +
+      `(minimum 5). Receipts below are shown for the record, unranked.</p>`;
+    return `<section class="receipts"><h2>Trade–vote timing</h2>${cov}${banner}` +
+      a.receipts.map(receiptCard).join('') + `</section>`;
+  }
+  const banner = a.band === 'low-power'
+    ? `<p class="band">Low statistical power — ${a.tradeCount} disclosed trades. Timing shown but not ranked.</p>`
+    : '';
+  return `<section class="receipts"><h2>Trade–vote timing</h2>${cov}${banner}` +
+    a.receipts.map(receiptCard).join('') + `</section>`;
+}
+
+function receiptCard(r: ThemeGapReceipts['receipts'][number]): string {
+  const p = r.pPair === null ? '' : ` · <span class="p">p = ${r.pPair.toFixed(2)}</span>`;
+  return `<article class="receipt" data-theme="${esc(r.theme)}">` +
+    `<a href="${esc(r.tradeSourceUrl)}">${esc(r.txType)} ${esc(r.ticker)}</a> on ${esc(r.txDate)} — ` +
+    `<b>${r.daysBeforeVote} days later</b> → ` +
+    `<a href="${esc(r.voteSourceUrl)}">voted</a> on ` +
+    `<a href="${esc(r.billSourceUrl)}">${esc(r.billTitle)}</a> (${esc(r.voteDate)})${p}</article>`;
 }
 
 function partyClass(party: string | null): string {
