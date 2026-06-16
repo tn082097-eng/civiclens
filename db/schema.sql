@@ -678,6 +678,8 @@ WHERE t.bill_id IS NOT NULL
 --   * votes has NO bill_title — title comes from bill_summaries.title
 --   * the date column is votes.date, aliased to vote_date
 --   * theme is BILL-anchored (m.theme) — not the ticker-side COALESCE the nexus uses
+-- No days_before_vote / temporal guard (unlike v_trade_bill_nexus): the null population is ALL qualifying votes, not just votes preceded by a same-window trade. Adding one would bias the null.
+-- LEFT JOIN + 'bsum.title IS NOT NULL' is a de-facto inner join: votes whose bill has no bill_summaries title are excluded. Verified (Part A check) that every v_trade_bill_nexus vote still survives here, so the null stays a superset of observed.
 CREATE OR REPLACE VIEW v_theme_eligible_votes AS
 SELECT DISTINCT
   v.member_id,
