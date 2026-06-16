@@ -12,9 +12,14 @@
 
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import type { ZodTypeAny } from 'zod';
 import { applySchema, getDb } from './init.js';
 import { committeeCanonical } from './load-bill-committees.js';
 import { PIPE_DIR } from '../lib/paths.js';
+import {
+  ResearcherArtifactSchema, FinalReviewReportSchema, SummarizerOutputSchema,
+  TradeAnalystOutputSchema, PredictorOutputSchema,
+} from '../lib/schemas.js';
 
 interface TaskPick {
   taskId: string;
@@ -36,8 +41,13 @@ function findLatestApproved(): TaskPick[] {
     let state: any, final: any;
     try {
       state = JSON.parse(readFileSync(stateFile, 'utf-8'));
-      final = JSON.parse(readFileSync(finalFile, 'utf-8'));
-    } catch { continue; }
+      final = parseArtifact(finalFile, FinalReviewReportSchema, 'final-review');
+    } catch (e: any) {
+      if (String(e?.message).startsWith('artifact validation failed')) {
+        console.warn(`skipping ${t}: ${e.message}`);
+      }
+      continue;
+    }
     if (!final.readyToApply) continue;
     const name = state?.target?.name;
     if (!name) continue;
@@ -59,6 +69,22 @@ export function canonicalDonor(raw: string): string {
     .replace(/[.,]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+/**
+ * JSON.parse + schema check for direct artifact reads (PR 2 typed reads).
+ * Validates but returns the RAW object — same rationale as readPipe in
+ * agents/shared.ts: Zod stripping/defaults would change what loaders see.
+ */
+function parseArtifact(path: string, schema: ZodTypeAny, label: string): any {
+  const raw = JSON.parse(readFileSync(path, 'utf-8'));
+  const result = schema.safeParse(raw);
+  if (!result.success) {
+    const first = result.error.issues[0];
+    const field = first && first.path.length ? first.path.join('.') : '(root)';
+    throw new Error(`artifact validation failed: ${label} at ${path} field=${field} — ${first?.message ?? 'unknown'}`);
+  }
+  return raw;
 }
 
 function voteIdFromUrl(url: string | undefined): string | null {
@@ -96,7 +122,7 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
   const conn = await getDb();
   const researcherPath = resolve(pick.taskDir, 'researcher.json');
   if (!existsSync(researcherPath)) return { donors: 0, votes: 0, bills: 0, committees: 0, controversies: 0 };
-  const r = JSON.parse(readFileSync(researcherPath, 'utf-8'));
+  const r = parseArtifact(researcherPath, ResearcherArtifactSchema, 'researcher');
   const d = r.data ?? {};
   const memberId = d.id;
   if (!memberId) return { donors: 0, votes: 0, bills: 0, committees: 0, controversies: 0 };
@@ -211,14 +237,15 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
 
   // pipeline_runs
   let final: any = null;
-  try { final = JSON.parse(readFileSync(resolve(pick.taskDir, 'final-review.json'), 'utf-8')); } catch {}
+  try { final = parseArtifact(resolve(pick.taskDir, 'final-review.json'), FinalReviewReportSchema, 'final-review'); }
+  catch (e: any) { if (String(e?.message).startsWith('artifact validation failed')) console.warn(e.message); }
   let summary: string | null = null;
   try {
-    const s = JSON.parse(readFileSync(resolve(pick.taskDir, 'summarizer.json'), 'utf-8'));
+    const s = parseArtifact(resolve(pick.taskDir, 'summarizer.json'), SummarizerOutputSchema, 'summarizer');
     // Summarizer writes bio/keyFacts/neutralNarrative — there is no `summary`
     // field, so the old `s.summary ?? s.text` read left this column NULL forever.
     summary = s.neutralNarrative ?? s.bio ?? null;
-  } catch {}
+  } catch (e: any) { if (String(e?.message).startsWith('artifact validation failed')) console.warn(e.message); }
   await conn.run(
     `INSERT OR REPLACE INTO pipeline_runs
      (task_id, member_id, started_at, finished_at, approved, reviewer_decision, reviewer_notes, summary_text, report_html_path, errors)
@@ -240,7 +267,7 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
   try {
     const taPath = resolve(pick.taskDir, 'trade-analyst.json');
     if (existsSync(taPath) && final?.readyToApply === true) {
-      const ta = JSON.parse(readFileSync(taPath, 'utf-8'));
+      const ta = parseArtifact(taPath, TradeAnalystOutputSchema, 'trade-analyst');
       const narrative: string | null = ta?.tradeNarrative ?? null;
       if (narrative && narrative !== 'N/A') {
         await conn.run(
@@ -249,11 +276,14 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
         );
       }
     }
-  } catch { /* non-fatal */ }
+  } catch (e: any) {
+    if (String(e?.message).startsWith('artifact validation failed')) console.warn(e.message);
+    /* non-fatal */
+  }
 
   // predictions
   try {
-    const p = JSON.parse(readFileSync(resolve(pick.taskDir, 'predictor.json'), 'utf-8'));
+    const p = parseArtifact(resolve(pick.taskDir, 'predictor.json'), PredictorOutputSchema, 'predictor');
     const models = p.models ?? p.results ?? [];
     if (Array.isArray(models)) {
       await conn.run(`DELETE FROM predictions WHERE task_id = ?`, [pick.taskId]);
@@ -272,7 +302,7 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
         );
       }
     }
-  } catch {}
+  } catch (e: any) { if (String(e?.message).startsWith('artifact validation failed')) console.warn(e.message); }
 
   return { donors: donorCount, votes: voteCount, bills: billCount, committees: committeeCount, controversies: contCount };
 }
