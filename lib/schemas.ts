@@ -249,6 +249,40 @@ export const FinalReviewReportSchema = z.object({
   readyToApply:   z.boolean(),
 });
 
+export const ReceiptBandSchema = z.enum(['insufficient-data', 'low-power', 'ranked']);
+
+export const ThemeGapReceiptSchema = z.object({
+  theme:          z.string(),
+  tradeFilingId:  z.string(),
+  ticker:         z.string(),
+  txType:         z.string(),
+  txDate:         z.string(),
+  voteId:         z.string(),
+  voteDate:       z.string(),
+  billId:         z.string(),
+  billTitle:      z.string(),
+  daysBeforeVote: z.number().int().nonnegative(),
+  pPair:          z.number().min(0).max(1).nullable(), // null in insufficient-data band
+  tradeSourceUrl: z.string(),
+  voteSourceUrl:  z.string(),
+  billSourceUrl:  z.string(),
+});
+
+export const ThemeGapReceiptsSchema = z.object({
+  memberId:            z.string(),
+  tradeCount:          z.number().int().nonnegative(),          // theme-mappable trades = band denominator + null population
+  disclosedTradeCount: z.number().int().nonnegative(),          // raw PTR rows, for the coverage strip's "N disclosed"
+  band:                ReceiptBandSchema,
+  nPerm:               z.number().int().positive(),
+  windowDays:          z.number().int().positive(),
+  coverage:            z.object({
+    votesTotal:      z.number().int().nonnegative(),
+    votesBillLinked: z.number().int().nonnegative(),
+  }),
+  receipts: z.array(ThemeGapReceiptSchema), // ranked band: sorted by pPair asc; others: chronological
+});
+export type ThemeGapReceipts = z.infer<typeof ThemeGapReceiptsSchema>;
+
 // CLI: validate a JSON file
 // Usage: npx tsx ~/Developer/civiclens/lib/schemas.ts <path-to-json>
 const _isMain = !!process.argv[1]?.match(/schemas\.[jt]s$/);
