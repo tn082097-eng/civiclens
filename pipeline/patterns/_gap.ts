@@ -80,7 +80,7 @@ export function minGapsByTrade(
   return out;
 }
 
-const WEEKEND = new Set([0, 6]);
+const WEEKEND = new Set([0, 6]); // 0=Sun, 6=Sat
 function weekdayPoolMs(start: string, end: string): number[] {
   const pool: number[] = [];
   for (let ms = Date.parse(start); ms <= Date.parse(end); ms += MS_PER_DAY) {
@@ -108,6 +108,9 @@ export function perPairLowerTail(opts: {
   windowEnd?: string;
 }): Map<string, number> {
   const { trades, votes, windowDays, observed, nPerm, rng, mode } = opts;
+  if (mode === 'calendar' && (!opts.windowStart || !opts.windowEnd)) {
+    throw new Error('perPairLowerTail: calendar mode requires windowStart and windowEnd');
+  }
   const index = buildThemeVoteIndex(votes);
   const slot: IndexedTrade[] = trades.map(t => ({ id: t.id, theme: t.theme, txMs: 0 }));
   const baseDatesMs = trades.map(t => Date.parse(t.txDate));
