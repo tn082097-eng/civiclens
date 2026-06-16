@@ -120,7 +120,8 @@ async function loadMember(member: string): Promise<{
        JOIN ticker_sectors ts ON ts.ticker = UPPER(p.ticker)
        LEFT JOIN sic_theme st ON st.sic = ts.sic
        LEFT JOIN ticker_theme_override o ON o.ticker = UPPER(p.ticker)
-      WHERE p.member_id = ? AND p.tx_date IS NOT NULL AND COALESCE(o.theme, st.theme) IS NOT NULL`,
+      WHERE p.member_id = ? AND p.tx_date IS NOT NULL AND COALESCE(o.theme, st.theme) IS NOT NULL
+      ORDER BY "txDate", id`,
     [member],
   )).getRowObjects()) as unknown as ThemeTrade[];
 
