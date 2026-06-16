@@ -79,3 +79,62 @@ export function minGapsByTrade(
   }
   return out;
 }
+
+const WEEKEND = new Set([0, 6]);
+function weekdayPoolMs(start: string, end: string): number[] {
+  const pool: number[] = [];
+  for (let ms = Date.parse(start); ms <= Date.parse(end); ms += MS_PER_DAY) {
+    if (!WEEKEND.has(new Date(ms).getUTCDay())) pool.push(ms);
+  }
+  return pool;
+}
+
+/**
+ * Per-pair lower-tail null. For each draw, every trade's date is resampled
+ * (calendar: a random market-open day in [windowStart,windowEnd]; volume: a
+ * Fisher-Yates permutation of the member's own trade dates), theme matching is
+ * re-applied, and each observed trade is credited if its resampled gap <= its
+ * observed gap. p_pair = (1 + hits) / (nPerm + 1), one-sided lower tail.
+ */
+export function perPairLowerTail(opts: {
+  trades: ThemeTrade[];
+  votes: ThemeVote[];
+  windowDays: number;
+  observed: Map<string, number>;
+  nPerm: number;
+  rng: () => number;
+  mode: 'calendar' | 'volume-shuffle';
+  windowStart?: string;
+  windowEnd?: string;
+}): Map<string, number> {
+  const { trades, votes, windowDays, observed, nPerm, rng, mode } = opts;
+  const index = buildThemeVoteIndex(votes);
+  const slot: IndexedTrade[] = trades.map(t => ({ id: t.id, theme: t.theme, txMs: 0 }));
+  const baseDatesMs = trades.map(t => Date.parse(t.txDate));
+  const pool = mode === 'calendar' ? weekdayPoolMs(opts.windowStart!, opts.windowEnd!) : [];
+  const hits = new Map<string, number>();
+  for (const id of observed.keys()) hits.set(id, 0);
+
+  for (let k = 0; k < nPerm; k++) {
+    if (mode === 'calendar') {
+      for (let i = 0; i < slot.length; i++) slot[i].txMs = pool[Math.floor(rng() * pool.length)];
+    } else {
+      const d = baseDatesMs.slice();
+      for (let i = d.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [d[i], d[j]] = [d[j], d[i]];
+      }
+      for (let i = 0; i < slot.length; i++) slot[i].txMs = d[i];
+    }
+    for (const s of slot) {
+      const obs = observed.get(s.id);
+      if (obs === undefined) continue;
+      const g = minGapIndexed(s, index, windowDays);
+      if (g !== undefined && g <= obs) hits.set(s.id, hits.get(s.id)! + 1);
+    }
+  }
+
+  const p = new Map<string, number>();
+  for (const [id, h] of hits) p.set(id, (1 + h) / (nPerm + 1));
+  return p;
+}
