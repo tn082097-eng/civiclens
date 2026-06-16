@@ -669,3 +669,38 @@ WHERE t.bill_id IS NOT NULL
   AND t.bill_title NOT ILIKE '%national defense authorization%'
   AND t.bill_title NOT ILIKE '%rescissions act%'
   AND regexp_extract(t.bill_id, '-(hr|s|hjres|sjres)-', 1) <> '';
+
+-- Trade-independent vote population: ALL bill-linked votes that pass the same
+-- focused-bill/title guards as v_trade_bill_nexus, joined to themes via the
+-- bill's own subjects. No trade join — this is the null model's superset
+-- population from which expected vote counts are drawn.
+-- Column shapes verified against live schema (Grok review, 2026-06-15):
+--   * votes has NO bill_title — title comes from bill_summaries.title
+--   * the date column is votes.date, aliased to vote_date
+--   * theme is BILL-anchored (m.theme) — not the ticker-side COALESCE the nexus uses
+CREATE OR REPLACE VIEW v_theme_eligible_votes AS
+SELECT DISTINCT
+  v.member_id,
+  v.vote_id,
+  v.date AS vote_date,
+  m.theme,
+  v.bill_id
+FROM votes v
+JOIN bill_subjects      bsub ON bsub.bill_id = v.bill_id
+LEFT JOIN bill_summaries bsum ON bsum.bill_id = v.bill_id
+JOIN theme_bill_match    m   ON ( (m.policy_area IS NOT NULL AND bsub.policy_area = m.policy_area)
+                               OR (m.subject_pattern IS NOT NULL AND bsub.subject ILIKE m.subject_pattern
+                                   AND (SELECT COUNT(*) FROM bill_subjects b2 WHERE b2.bill_id = v.bill_id) <= 25) )
+WHERE v.bill_id IS NOT NULL
+  AND bsum.title IS NOT NULL
+  AND LENGTH(bsum.title) >= 6
+  AND bsum.title NOT ILIKE 'Providing for consideration%'
+  AND bsum.title NOT ILIKE '%appropriations%'
+  AND bsum.title NOT ILIKE '%consolidated%'
+  AND bsum.title NOT ILIKE '%continuing%'
+  AND bsum.title NOT ILIKE '%relief act%'
+  AND bsum.title NOT ILIKE '%reconciliation%'
+  AND bsum.title NOT ILIKE '%omnibus%'
+  AND bsum.title NOT ILIKE '%national defense authorization%'
+  AND bsum.title NOT ILIKE '%rescissions act%'
+  AND regexp_extract(v.bill_id, '-(hr|s|hjres|sjres)-', 1) <> '';
