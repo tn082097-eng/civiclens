@@ -425,16 +425,26 @@ async function fetchOverview(): Promise<MemberOverview[]> {
     ORDER BY m.name, m.member_id
   `);
   const rows = await r.getRowObjects() as any[];
-  return rows.map(r => ({
-    member_id: String(r.member_id),
-    name: String(r.name),
-    party: String(r.party ?? ''),
-    chamber: String(r.chamber ?? ''),
-    state: String(r.state ?? ''),
-    donor_count: Number(r.donor_count),
-    vote_count: Number(r.vote_count),
-    trade_count: Number(r.trade_count),
-  }));
+  const seen = new Set<string>();
+  const out: MemberOverview[] = [];
+  for (const r of rows) {
+    const rawId = String(r.member_id);
+    const cid = canonId(rawId);
+    if (cid !== rawId) continue; // skip alias slugs at render layer (e.g. bernard-sanders)
+    if (seen.has(cid)) continue;
+    seen.add(cid);
+    out.push({
+      member_id: cid,
+      name: String(r.name),
+      party: String(r.party ?? ''),
+      chamber: String(r.chamber ?? ''),
+      state: String(r.state ?? ''),
+      donor_count: Number(r.donor_count),
+      vote_count: Number(r.vote_count),
+      trade_count: Number(r.trade_count),
+    });
+  }
+  return out;
 }
 
 interface StrongestFlag {
@@ -986,10 +996,15 @@ function buildTimelineBlock(_memberId: string, votes: TimelineVote[], trades: Ti
 <\/script>`;
 }
 
-// Current Congress + cycle. 118th Congress = 2023-2024. Update when 119th seats.
-const CURRENT_CONGRESS = 118;
-const CYCLE_START = '2023-01-03';
-const CYCLE_END   = '2025-01-03';
+// Current Congress + cycle. 119th Congress = 2025-2026 (Jan 3 2025 – Jan 3 2027).
+const CURRENT_CONGRESS = 119;
+const CYCLE_START = '2025-01-03';
+const CYCLE_END   = '2027-01-03';
+
+// Render-layer dedup for known aliases (e.g. name variants that share a bioguide).
+// Ensures exactly one page per logical member even if members table temporarily has stale rows.
+const MEMBER_ID_ALIASES: Record<string, string> = { 'bernard-sanders': 'bernie-sanders' };
+function canonId(id: string): string { return MEMBER_ID_ALIASES[id] ?? id; }
 
 interface ActivityGlance {
   trades: number;

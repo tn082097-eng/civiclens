@@ -330,6 +330,7 @@ ${bold('CivicLens Pipeline Runner')}
   ${cyan('npx tsx agents/pipeline.ts --load-opensecrets <cycle[,cycle]> [--dry-run]')} parse cached OpenSecrets industry HTML into DuckDB
   ${cyan('npx tsx agents/pipeline.ts --load-bills [--api-pass] [--api-limit N] [--limit N]')} backfill votes.bill_id + fetch summaries
   ${cyan('npx tsx agents/pipeline.ts --load-sponsored [member-id]')} authoritative sponsor rows + inline policyArea (run AFTER load-from-tasks)
+  ${cyan('npx tsx agents/pipeline.ts --load-lda [args...]')}        Senate LDA lobbying (full options in db/load-lda.ts; use --years 2018-2026 etc)
   ${cyan('npx tsx agents/pipeline.ts --render')}                     build static site at ~/Developer/civiclens/site/
   ${cyan('npx tsx agents/pipeline.ts --refresh-research "Name"')}    fetch researcher data only (no LLM agents, no predictor) and sync to DB
 `);
@@ -435,6 +436,14 @@ ${bold('CivicLens Pipeline Runner')}
     const memberId = arg2 && !arg2.startsWith('--') ? arg2 : null;
     await loadSponsored({ memberId });
     process.exit(0);
+  })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
+} else if (arg === '--load-lda') {
+  // Delegate to the standalone LDA loader with all remaining CLI args
+  (async () => {
+    const { spawnSync } = await import('child_process');
+    const rest = process.argv.slice(3); // after --load-lda
+    const res = spawnSync('npx', ['tsx', 'db/load-lda.ts', ...rest], { stdio: 'inherit' });
+    process.exit(res.status ?? 1);
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
 } else if (arg === '--load-senate-ptr') {
   const dryRun = process.argv.includes('--dry-run');
