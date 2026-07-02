@@ -43,6 +43,12 @@ async function get(url: string, timeoutMs = 30_000, maxAttempts = 4): Promise<an
         throw new Error(`HTTP ${r.status} ${url.split('?')[0]}`);
       }
       lastErr = new Error(`HTTP ${r.status}`);
+      // 429 = rate limit window (anonymous access is 15 req/min) — the only
+      // useful wait is long enough for the window to roll over.
+      if (r.status === 429) {
+        await new Promise(res => setTimeout(res, 65_000));
+        continue;
+      }
     } catch (e: any) {
       lastErr = e;
       if (attempt === maxAttempts) break;
@@ -69,6 +75,8 @@ interface CliOpts {
   period: string | null;
   resume: boolean;
   limit: number | null;     // max pages per (year,period) — for dev runs
+  covered: string | null;   // server-side lobbyist_covered_position text search
+  delayMs: number;          // inter-page delay (anonymous rate limit: 15 req/min)
 }
 
 function parseCli(): CliOpts {
@@ -77,6 +85,8 @@ function parseCli(): CliOpts {
   let period: string | null = null;
   let resume = false;
   let limit: number | null = null;
+  let covered: string | null = null;
+  let delayMs = REQUEST_DELAY_MS;
 
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
@@ -93,6 +103,10 @@ function parseCli(): CliOpts {
       resume = true;
     } else if (a === '--limit') {
       limit = parseInt(args[++i], 10);
+    } else if (a === '--covered') {
+      covered = args[++i];
+    } else if (a === '--delay-ms') {
+      delayMs = parseInt(args[++i], 10);
     } else {
       throw new Error(`Unknown arg: ${a}`);
     }
@@ -102,7 +116,7 @@ function parseCli(): CliOpts {
     const now = new Date().getUTCFullYear();
     years = [now, now - 1];
   }
-  return { years, period, resume, limit };
+  return { years, period, resume, limit, covered, delayMs };
 }
 
 // ─── Filter: keep only filings with at least one non-null covered_position ──
@@ -273,6 +287,7 @@ async function ingest(opts: CliOpts): Promise<void> {
         format:       'json',
       });
       if (period) params.set('filing_period', period);
+      if (opts.covered) params.set('lobbyist_covered_position', opts.covered);
       let url: string | null = `${BASE}?${params.toString()}`;
       let pageNum = 0;
       let pageCap: number | null = null;
@@ -287,12 +302,14 @@ async function ingest(opts: CliOpts): Promise<void> {
         try {
           payload = await get(url);
         } catch (e: any) {
-          console.error(`[year=${year} page=${pageNum}] fetch failed: ${e.message} — skipping page`);
+          // Losing one page loses up to PAGE_SIZE filings; say so honestly —
+          // this abandons the rest of the year's pagination (no next-url).
+          console.error(`[year=${year} page=${pageNum}] fetch failed after retries: ${e.message} — abandoning rest of year`);
           break;
         }
         if (pageCap === null) {
           pageCap = Math.ceil((payload.count ?? 0) / PAGE_SIZE);
-          console.log(`[year=${year}${period ? ` period=${period}` : ''}] ${payload.count} filings → ~${pageCap} pages`);
+          console.log(`[year=${year}${period ? ` period=${period}` : ''}${opts.covered ? ` covered~"${opts.covered}"` : ''}] ${payload.count} filings → ~${pageCap} pages`);
         }
 
         const fetchedAt = new Date().toISOString();
@@ -322,7 +339,7 @@ async function ingest(opts: CliOpts): Promise<void> {
         }
 
         url = payload.next ?? null;
-        if (url) await new Promise(res => setTimeout(res, REQUEST_DELAY_MS));
+        if (url) await new Promise(res => setTimeout(res, opts.delayMs));
       }
       process.stdout.write('\n');
     }
