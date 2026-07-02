@@ -28,7 +28,10 @@ interface Resolution {
 
 async function resolveSenator(firstName: string, lastName: string): Promise<Resolution> {
   const conn = await getDb();
-  const last = lastName.replace(/[^a-zA-Z\s]/g, '').trim();
+  // Strip punctuation, then generational suffixes: EFDS filer lastName can be
+  // "McConnell, Jr." which must resolve as "McConnell".
+  const last = lastName.replace(/[^a-zA-Z\s]/g, '').trim()
+    .replace(/\s+(jr|sr|ii|iii|iv|v)$/i, '').trim();
   if (!last) return { memberId: null, confidence: 0, method: 'unmatched' };
 
   const r = await conn.run(
