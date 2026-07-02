@@ -84,6 +84,8 @@ function normalizeBillStatus(raw: string): 'introduced' | 'passed' | 'failed' | 
 const NAME_ALIASES: Record<string, string> = {
   chuck:  'charles',
   bernie: 'bernard',
+  dan:    'daniel',
+  don:    'donald',
   bill:   'william',
   bob:    'robert',
   mike:   'michael',
@@ -132,14 +134,15 @@ async function fetchCurrentMembers(): Promise<Member[] | null> {
 function matchMemberName(members: NonNullable<typeof memberCache>, name: string) {
   const parts = name.trim().toLowerCase().split(/\s+/);
   const first = parts[0];
-  const last  = parts[parts.length - 1];
+  const joined = parts.join(' ');
   // Congress.gov returns "Last, First Middle" — compare both halves.
   // Try the given first name, then its legal-name alias if different (e.g. Chuck → Charles).
+  // Last-name check uses endsWith so multi-word surnames match ("Wasserman Schultz").
   const firstCandidates = new Set([first, NAME_ALIASES[first] ?? first]);
   return members.find(m => {
     const [ln, rest] = m.name.toLowerCase().split(',').map(s => s.trim());
     if (!ln || !rest) return false;
-    if (ln !== last) return false;
+    if (!joined.endsWith(' ' + ln)) return false;
     return firstCandidates.has(rest.split(/\s+/)[0]);
   }) ?? null;
 }
