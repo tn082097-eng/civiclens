@@ -272,6 +272,7 @@ interface LegislatorEntry {
   bioguide: string;
   govtrack: number | null;
   officialFull: string;
+  fec: string[];   // FEC candidate IDs (H*/S*/P* prefix = office), authoritative
 }
 
 let legislatorsIndex: Map<string, LegislatorEntry> | null = null;
@@ -298,6 +299,7 @@ async function fetchLegislatorsIndex(): Promise<Map<string, LegislatorEntry> | n
           bioguide: bio,
           govtrack: p.id.govtrack ?? null,
           officialFull: p.name?.official_full ?? `${p.name?.first ?? ''} ${p.name?.last ?? ''}`.trim(),
+          fec: Array.isArray(p.id.fec) ? p.id.fec : [],
         });
       }
     } catch { /* try next source */ }
@@ -577,16 +579,23 @@ async function fecGet(url: string, timeoutMs = 30_000): Promise<any> {
 async function findFecCandidateId(name: string, office: string, state: string): Promise<string | null> {
   const officeCode = { executive: 'P', senate: 'S', house: 'H', cabinet: 'P', governor: '', state: '' }[office] ?? '';
   if (!officeCode) { fecLastError = `unsupported office: ${office}`; return null; }
-  try {
-    const d = await fecGet(
-      `https://api.open.fec.gov/v1/candidates/search/?q=${encodeURIComponent(name)}` +
-      `&api_key=${FEC_KEY}&office=${officeCode}${state !== 'US' && officeCode !== 'P' ? `&state=${state}` : ''}&per_page=5`
-    );
-    const sorted = (d.results ?? []).sort((a: any, b: any) => (b.active_through ?? 0) - (a.active_through ?? 0));
-    const id = sorted[0]?.candidate_id ?? null;
-    if (!id) fecLastError = `no FEC candidate found for ${name} (${officeCode}/${state})`;
-    return id;
-  } catch (e: any) { fecLastError = `candidate search: ${e.message}`; return null; }
+  // FEC filers often use nicknames ("HIMES, JIM"), so a full legal name can
+  // miss. Try the full name, then last name only (office+state filters keep
+  // the surname query precise).
+  const lastName = name.trim().split(/\s+/).at(-1) ?? name;
+  for (const q of [name, ...(lastName !== name ? [lastName] : [])]) {
+    try {
+      const d = await fecGet(
+        `https://api.open.fec.gov/v1/candidates/search/?q=${encodeURIComponent(q)}` +
+        `&api_key=${FEC_KEY}&office=${officeCode}${state !== 'US' && officeCode !== 'P' ? `&state=${state}` : ''}&per_page=5`
+      );
+      const sorted = (d.results ?? []).sort((a: any, b: any) => (b.active_through ?? 0) - (a.active_through ?? 0));
+      const id = sorted[0]?.candidate_id ?? null;
+      if (id) return id;
+      fecLastError = `no FEC candidate found for ${name} (${officeCode}/${state})`;
+    } catch (e: any) { fecLastError = `candidate search: ${e.message}`; return null; }
+  }
+  return null;
 }
 
 async function findFecCommitteeId(candidateId: string, cycle: number): Promise<string | null> {
@@ -780,7 +789,12 @@ export async function fetchPolitician(name: string): Promise<LiveFetchResult | n
   let donors: LiveFetchResult['donors'] = [];
   const currentCycle = currentFecCycle();
   const cyclesToPull = [currentCycle, currentCycle - 2, currentCycle - 4, currentCycle - 6];
-  const fecCandidateId = await findFecCandidateId(canonicalName, chamber, state);
+  // Prefer the authoritative FEC ID from legislators-current (id.fec) — FEC's
+  // name search misses nickname filers ("HIMES, JIM" vs "James A. Himes").
+  // Prefix encodes office (H/S/P); pick the newest ID matching this chamber.
+  const officePrefix = chamber === 'senate' ? 'S' : 'H';
+  const yamlFecId = (leg?.fec ?? []).filter(id => id.startsWith(officePrefix)).at(-1) ?? null;
+  const fecCandidateId = yamlFecId ?? await findFecCandidateId(canonicalName, chamber, state);
   if (fecCandidateId) {
     type DonorAgg = {
       amount: number;
