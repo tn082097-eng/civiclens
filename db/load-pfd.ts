@@ -43,6 +43,10 @@ function lastNameOf(filerName: string): string | null {
   const stripped = stripTitles(filerName);
   if (!stripped) return null;
   const parts = stripped.split(/\s+/).filter(Boolean);
+  // Drop generational suffixes so "Donald Sternoff Beyer Jr" → "Beyer".
+  while (parts.length > 1 && /^(jr|sr|ii|iii|iv|v)\.?,?$/i.test(parts[parts.length - 1])) {
+    parts.pop();
+  }
   if (parts.length === 0) return null;
   return parts[parts.length - 1];
 }
