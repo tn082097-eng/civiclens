@@ -16,11 +16,12 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { PFD_CACHE } from '../../lib/paths.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT      = resolve(__dirname, '..', '..');
-const CACHE_DIR = resolve(ROOT, 'pfd-cache');
+// Canonical cache location (data/caches/pfd-cache) — must match db/load-pfd.ts,
+// which ingests from PFD_CACHE. The old repo-root pfd-cache/ predates the
+// data/ restructure and nothing reads it.
+const CACHE_DIR = PFD_CACHE;
 const UA        = 'CivicLens/1.0 (research; civiclens.org)';
 
 interface FilingRecord {

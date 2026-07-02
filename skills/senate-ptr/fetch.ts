@@ -18,11 +18,11 @@
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { SENATE_CACHE } from '../../lib/paths.js';
 
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
-const ROOT      = resolve(__dirname, '..', '..');
-const CACHE_DIR = resolve(ROOT, 'senate-ptr-cache');
+// Canonical cache location (data/caches/senate-ptr-cache) — must match the
+// loader side. The old repo-root senate-ptr-cache/ predates the data/ restructure.
+const CACHE_DIR = SENATE_CACHE;
 const UA        = 'CivicLens/1.0 (public interest research; civiclens.org)';
 const BASE      = 'https://efdsearch.senate.gov';
 const DELAY_MS  = 1500;
