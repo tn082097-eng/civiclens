@@ -13,6 +13,8 @@ import { readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { load as parseYaml } from 'js-yaml';
+import { resolveMember } from '../../lib/resolve-member.js';
+import { LEGISLATORS_CACHE } from '../../lib/paths.js';
 
 // ─── Env loader: read ~/.hermes/.env if keys aren't already exported ─────────
 function loadEnvOnce() {
@@ -280,18 +282,18 @@ let legislatorsIndex: Map<string, LegislatorEntry> | null = null;
 async function fetchLegislatorsIndex(): Promise<Map<string, LegislatorEntry> | null> {
   if (legislatorsIndex) return legislatorsIndex;
   const map = new Map<string, LegislatorEntry>();
-  // Load historical first, then current. Current wins on conflict (a member
-  // might appear in both if they just moved back from historical to current).
-  const sources = [
-    'https://raw.githubusercontent.com/unitedstates/congress-legislators/main/legislators-historical.yaml',
-    'https://raw.githubusercontent.com/unitedstates/congress-legislators/main/legislators-current.yaml',
+
+  // Prefer local cache for determinism (no network). Fall back to net only if cache missing.
+  const localFiles = [
+    join(LEGISLATORS_CACHE || '', 'legislators-historical.yaml'),
+    join(LEGISLATORS_CACHE || '', 'legislators-current.yaml'),
   ];
-  for (const url of sources) {
+
+  let loadedFromLocal = false;
+  for (const f of localFiles) {
     try {
-      const r = await fetch(url, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(60_000) });
-      if (!r.ok) continue;
-      const text = await r.text();
-      const data = parseYaml(text) as Array<any>;
+      const text = readFileSync(f, 'utf-8');
+      const data = parseYaml(text) as any[];
       for (const p of data ?? []) {
         const bio = p?.id?.bioguide;
         if (!bio) continue;
@@ -302,8 +304,36 @@ async function fetchLegislatorsIndex(): Promise<Map<string, LegislatorEntry> | n
           fec: Array.isArray(p.id.fec) ? p.id.fec : [],
         });
       }
-    } catch { /* try next source */ }
+      loadedFromLocal = true;
+    } catch {}
   }
+
+  if (!loadedFromLocal) {
+    // last resort network (non-deterministic but keeps old behavior)
+    const sources = [
+      'https://raw.githubusercontent.com/unitedstates/congress-legislators/main/legislators-historical.yaml',
+      'https://raw.githubusercontent.com/unitedstates/congress-legislators/main/legislators-current.yaml',
+    ];
+    for (const url of sources) {
+      try {
+        const r = await fetch(url, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(60_000) });
+        if (!r.ok) continue;
+        const text = await r.text();
+        const data = parseYaml(text) as Array<any>;
+        for (const p of data ?? []) {
+          const bio = p?.id?.bioguide;
+          if (!bio) continue;
+          map.set(bio, {
+            bioguide: bio,
+            govtrack: p.id.govtrack ?? null,
+            officialFull: p.name?.official_full ?? `${p.name?.first ?? ''} ${p.name?.last ?? ''}`.trim(),
+            fec: Array.isArray(p.id.fec) ? p.id.fec : [],
+          });
+        }
+      } catch {}
+    }
+  }
+
   if (map.size === 0) return null;
   legislatorsIndex = map;
   return map;
@@ -685,6 +715,7 @@ export interface LiveFetchResult {
   fetchedAt: string;
   warnings: string[];
   bioguideId: string | null;
+  resolvedSlug: string;
   govtrackId: number | null;
   bio: string;
   bioSourceUrl: string;
@@ -703,12 +734,18 @@ export interface LiveFetchResult {
 export async function fetchPolitician(name: string): Promise<LiveFetchResult | null> {
   const warnings: string[] = [];
 
-  // ── 1. Identity: Congress.gov bioguide lookup ──
-  const bioguideId = await fetchBioguideByName(name);
-  if (!bioguideId) {
-    warnings.push(`Congress.gov: no bioguide ID for "${name}"`);
-    return null;  // primary-sources-only: no identity = no data
+  // ── 1. Identity: deterministic from local YAML (bioguide is truth) ──
+  const resolved = await resolveMember(name);
+  if (!resolved.ok) {
+    if (resolved.reason === 'ambiguous') {
+      warnings.push(`Identity ambiguous for "${name}": candidates=${resolved.candidates?.join(',')}`);
+    } else {
+      warnings.push(`No deterministic identity for "${name}" (unresolved)`);
+    }
+    return null;  // fail loud — no inference, no stubs
   }
+  const bioguideId = resolved.bioguide;
+  const resolvedSlug = resolved.slug;
 
   // ── 2. Member details ──
   const member = await fetchCongressMember(bioguideId);
@@ -870,6 +907,7 @@ export async function fetchPolitician(name: string): Promise<LiveFetchResult | n
     fetchedAt: new Date().toISOString(),
     warnings,
     bioguideId,
+    resolvedSlug,
     govtrackId,
     bio,
     bioSourceUrl,

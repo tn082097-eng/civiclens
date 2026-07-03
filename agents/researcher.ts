@@ -30,10 +30,8 @@ export async function runResearcher(task: PipelineTask): Promise<boolean> {
   process.stdout.write('\n');
   for (const w of live.warnings) warn('Researcher', w);
 
-  const id = name.toLowerCase()
-    .replace(/['']/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
+  // Deterministic resolver owns the slug (preserves existing DB member_id).
+  const id = live.resolvedSlug;
 
   const politicianData = {
     id,
