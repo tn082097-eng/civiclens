@@ -1,0 +1,29 @@
+- id:
+    bioguide: S000033
+    fec: [H8VT01016, S4VT00033]
+  name:
+    first: Bernard
+    last: Sanders
+    nickname: Bernie
+    official_full: Bernard Sanders
+  terms:
+    - { type: rep, start: '1991-01-03', end: '1993-01-03', state: VT, district: 0 }
+    - { type: sen, start: '2025-01-03', end: '2031-01-03', state: VT }
+- id:
+    bioguide: R000001
+    fec: [H0AA00001]
+  name:
+    first: Robert
+    last: Smith
+    official_full: Robert Smith
+  terms:
+    - { type: rep, start: '2015-01-03', end: '2027-01-03', state: CA, district: 12 }
+- id:
+    bioguide: R000002
+    fec: [H0BB00002]
+  name:
+    first: Robert
+    last: Smith
+    official_full: Robert Smith
+  terms:
+    - { type: rep, start: '2015-01-03', end: '2027-01-03', state: TX, district: 4 }
