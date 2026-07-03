@@ -236,3 +236,71 @@ No network in any test.
 - Vote→bill linkage becomes a deterministic join, not identity repair.
 - The money-vote detector becomes feature extraction, not identity repair.
 - All downstream signal work rests on a stable identity spine.
+
+---
+
+## Reconciliation addendum (2026-07-03, post-audit)
+
+Before execution, the working tree was found to already contain an uncommitted
+prior implementation of this feature. This section reconciles that reality with
+the design above; where it differs from earlier sections, **this addendum
+governs**.
+
+### Verified live-DB state
+
+- `members`: 57 rows, **57/57 have `bioguide_id`** (0 null), **0 duplicate
+  bioguides**.
+- `bernie-sanders → S000033` is the **only** Sanders row — `bernard-sanders` is
+  already merged away; the dedup holds.
+- Schema already applied on disk + DB: `members.term_start`/`term_end` present;
+  `idx_members_bioguide_id` **UNIQUE index present and holding**; `member_aliases`
+  table exists but is **empty (0 rows — never seeded)**.
+
+### Slug policy (decided): preserve the existing DB slug
+
+The earlier "canonical slug = `first-last`" rule is **wrong for existing members**
+— it would rename `bernie-sanders` back to `bernard-sanders` and undo the S000033
+merge. **Corrected rule:** for a bioguide already present in `members`, the
+resolver returns that row's existing `member_id`; `first-last` is derived **only
+when creating a brand-new member**. The prior `resolve-member.ts` already
+implements this (prefer DB slug, derive as fallback) — it is kept.
+
+### Five reconciled decisions
+
+1. **`member_aliases` keyed on `bioguide_id`** (not `member_id`+FK), seeded by a
+   **standalone full-YAML seeder** (current + historical). Rationale: identity
+   keyed on identity, load-order-independent, and a member-only table cannot
+   reveal a collision with an *unloaded* member — which is the core purpose of
+   this work. The per-member `seedAliasesForMember` path (member_id-keyed) is
+   **removed** as superseded, and its call in `db/load-from-tasks.ts` reverted.
+2. **`bioguide_id UNIQUE` stays immediate** (already live and holding). The
+   deferred-reconcile / FK-abort machinery from §"Constraint ordering" is
+   **dropped** — it solved a duplicate that no longer exists. The seeder keeps a
+   **fail-loud assert**: if a duplicate bioguide is ever detected during
+   backfill, abort rather than corrupt identity.
+3. **`normalizeName` drops single-letter middle initials and has no last-only
+   fallback alias.** Dropping initials makes "Bernard I. Sanders" resolve; a
+   surname-only alias is an ambiguity hazard that violates "never guess."
+4. **Resolver = async wrapper over a pure core.** Slug preservation requires the
+   DB, so `resolveMember` stays async, but the YAML→bioguide resolution is
+   extracted into a pure, injectable core (`resolveIdentity`) that tests exercise
+   deterministically without a DB.
+5. **File layout kept as built:** `lib/legislators.ts` (index + alias
+   generation), `lib/resolve-member.ts` (kebab). No separate `member-aliases.ts`.
+
+### The bug this audit surfaced (must fix)
+
+The resolver computes the preserved slug, but it is **discarded**:
+`agents/researcher.ts` reads `live.resolvedSlug ?? slugify(name)` while
+`resolvedSlug` is never set on `LiveFetchResult` — so it always re-slugifies the
+raw name and slug preservation never takes effect. Fix: add `resolvedSlug` to
+`LiveFetchResult`, set it from `resolved.slug` in `fetchPolitician`, and consume
+it (typed) in `researcher.ts`.
+
+### Reconciled scope (what execution actually does)
+
+Close five gaps against the existing code: **G1** tests + fixture (none exist);
+**G2** thread the resolved slug (the bug above); **G3** standalone bioguide-keyed
+alias seeder + members backfill (table is empty); **G4** `normalizeName` fix (drop
+initials, drop last-only); **G5** consume `resolved.slug` in `fetch.ts`. No new
+loaders, no votes/money-vote/renderer changes, no FK dedup.

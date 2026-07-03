@@ -1,54 +1,89 @@
-# Canonical Member Identity (#7 Substrate) Implementation Plan
+# Canonical Member Identity (#7 Substrate) Implementation Plan — Reconciled
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax.
 
-**Goal:** Build a deterministic, offline member-identity resolver (`resolveMember`) backed by local `congress-legislators` YAML and an explicit `member_aliases` table, and wire it as a skip-on-fail ingestion gate into the researcher — so one person always maps to one Bioguide (and one canonical slug), with ambiguity rejected, never guessed.
+> **Reconciled 2026-07-03 (post-audit).** The working tree already holds a mostly-complete
+> uncommitted implementation. This plan **closes gaps against that code**; it is not a
+> clean-room build. See the spec's "Reconciliation addendum" — it governs. Do NOT
+> re-create files that exist; refactor them.
 
-**Architecture:** Local YAML (`legislators-current.yaml` + `legislators-historical.yaml`) is the identity truth. `lib/legislators.ts` builds a `bioguide → MemberIdentity` index. `lib/member-aliases.ts` derives a normalized `alias → Set<bioguide>` map (the `Set` is what makes collisions detectable). `lib/resolveMember.ts` is a pure function: exact bioguide or exact normalized-name match, 1 → ok, >1 → ambiguous, 0 → unresolved. The resolver's result is persisted for inspection in a `member_aliases` DB table, and wired into `skills/researcher/fetch.ts` where a failed resolve logs and skips the row.
+**Goal:** Finish the deterministic, offline member-identity resolver already present in the
+working tree — add its missing tests, fix the slug-threading bug, replace the member-scoped
+alias seeding with a standalone bioguide-keyed full-YAML projection, and tighten
+normalization — so one person always maps to one Bioguide and the existing slug (e.g.
+`bernie-sanders`) is preserved, with ambiguity rejected, never guessed.
 
-**Tech Stack:** TypeScript + tsx (`tsx --test`, `node:test`), DuckDB (`@duckdb/node-api`), `js-yaml`. All deps already installed.
+**Architecture:** `lib/legislators.ts` builds a `bioguide → LegislatorIdentity` index and the
+`alias → Set<bioguide>` map from local YAML. `lib/resolve-member.ts` resolves a raw name to a
+bioguide (pure core) and then to a slug that **prefers the existing DB row's `member_id`**
+(async wrapper). `db/load-member-aliases.ts` seeds `member_aliases` (keyed on `bioguide_id`)
+and backfills `members`. `skills/researcher/fetch.ts` gates ingestion on the resolver and now
+threads the resolved slug through to `agents/researcher.ts`.
+
+**Tech Stack:** TypeScript + tsx (`tsx --test`, `node:test`), DuckDB (`@duckdb/node-api`),
+`js-yaml`. All deps installed.
 
 ## Global Constraints
 
-- **No network for identity.** `resolveMember` and its index read the local cache `data/caches/legislators-cache/legislators-{current,historical}.yaml` only. Congress.gov API is enrichment, never identity. (Verbatim from spec.)
-- **No stub data — fail loudly.** No fabricated bioguides, aliases, or members. Aliases are derived only from YAML fields. (Verbatim from spec.)
-- **Never guess, never coerce.** No fuzzy / edit-distance / probabilistic fallback anywhere. Multiple matches → reject, do not take the first. (Verbatim from spec.)
-- **Deterministic across runs.** Same input → same output; no reliance on network, wall clock, or map-iteration order for results.
-- **Scope fence.** This plan touches ONLY: `lib/legislators.ts`, `lib/member-aliases.ts`, `lib/resolveMember.ts`, `db/schema.sql`, one alias-seed loader, a members-table-only reconcile, `skills/researcher/fetch.ts`, `package.json` (test glob), and test files. It does NOT refactor other loaders, votes, money-vote, renderer, or run the cross-table FK dedup.
-- **Canonical slug convention:** `${first}-${last}` lowercased from the YAML `name` fields (matches the schema's documented "first-last" convention), non-alphanumerics collapsed to `-`.
+- **No network for identity.** Resolver + index read the local cache
+  `data/caches/legislators-cache/legislators-{current,historical}.yaml` (via `LEGISLATORS_CACHE`
+  from `lib/paths.ts`) only.
+- **No stub data — fail loudly.** Aliases derived only from YAML fields. No fabricated
+  bioguides/aliases/members.
+- **Never guess, never coerce.** No fuzzy / edit-distance / probabilistic fallback. Multiple
+  matches → reject, never first-match. No surname-only alias.
+- **Preserve existing slugs.** For a bioguide already in `members`, the resolver returns that
+  row's `member_id`; `first-last` is derived only for brand-new members. Do NOT rename
+  `bernie-sanders`.
+- **`member_aliases` is keyed on `bioguide_id`.** Identity keyed on identity.
+- **`bioguide_id UNIQUE` stays** (live DB verified clean: 57/57 backfilled, 0 dups). Seeder
+  asserts fail-loud on any duplicate bioguide; no FK-rewrite reconcile.
+- **Deterministic across runs.** Same input → same output; no reliance on network, wall clock,
+  or map-iteration order for results.
+- **Scope fence.** Touches ONLY: `lib/legislators.ts`, `lib/resolve-member.ts`,
+  `db/schema.sql`, `db/load-member-aliases.ts`, `db/load-from-tasks.ts` (revert one hook),
+  `skills/researcher/fetch.ts`, `agents/researcher.ts`, `package.json`, and test/fixture files.
+  No votes/money-vote/renderer changes, no other loaders, no FK dedup.
 
 ## File Structure
 
-- `lib/legislators.ts` — **Create.** Parse local YAML, build `Map<bioguide, MemberIdentity>`. Path-injectable for tests.
-- `lib/member-aliases.ts` — **Create.** `normalizeName()` + `buildAliasMap()` (pure).
-- `lib/resolveMember.ts` — **Create.** `resolveMember()` + `canonicalSlug()` (pure over an injected index/alias map).
-- `lib/legislators.test.ts` — **Create.** Index-builder tests against a fixture YAML.
-- `lib/member-aliases.test.ts` — **Create.** Normalization + alias-map tests.
-- `lib/resolveMember.test.ts` — **Create.** Resolver behavior (exact / nickname / comma / initial / ambiguous / unknown).
-- `lib/__fixtures__/legislators-fixture.yaml` — **Create.** Sanders + a synthetic ambiguous pair.
-- `db/schema.sql` — **Modify.** Add `member_aliases` table; add `members.term_start`, `members.term_end`; `members.bioguide_id UNIQUE` (see constraint-ordering note in the spec).
-- `db/load-member-aliases.ts` — **Create.** Seed `member_aliases` from YAML + backfill `members` (bioguide, term_*, chamber/state/district) + members-only reconcile.
-- `skills/researcher/fetch.ts` — **Modify.** Swap the identity step to `resolveMember`, skip+log on failure.
+- `lib/legislators.ts` — **Modify.** Extract pure `buildIndex(paths)`; fix `normalizeName`
+  (drop single-letter initials, drop last-only alias); add `buildAliasMap(index)`.
+- `lib/legislators.test.ts` — **Create.** Index + normalization + alias-map tests vs fixture.
+- `lib/__fixtures__/legislators-fixture.yaml` — **Create.** Sanders + a genuine ambiguous pair.
+- `lib/resolve-member.ts` — **Modify.** Extract pure `resolveIdentity(...)`; make slug lookup
+  injectable; remove `seedAliasesForMember`.
+- `lib/resolve-member.test.ts` — **Create.** Resolver behavior + slug preservation.
+- `db/schema.sql` — **Modify.** Re-key `member_aliases` to `(alias_norm, bioguide_id)`.
+- `db/load-member-aliases.ts` — **Create.** Standalone seeder: full YAML alias projection +
+  members backfill + fail-loud dup-bioguide assert.
+- `db/load-from-tasks.ts` — **Modify.** Revert the `seedAliasesForMember` import + call.
+- `skills/researcher/fetch.ts` — **Modify.** Add `resolvedSlug` to `LiveFetchResult`; set +
+  return it.
+- `agents/researcher.ts` — **Modify.** Consume `live.resolvedSlug` (typed; drop `as any`).
 - `package.json` — **Modify.** Widen `test` glob to include `lib/*.test.ts`.
 
 ---
 
-### Task 1: YAML identity index (`lib/legislators.ts`)
+### Task 1: Testable index + normalization fix (`lib/legislators.ts`)
 
 **Files:**
-- Create: `lib/legislators.ts`
+- Modify: `lib/legislators.ts`
 - Create: `lib/__fixtures__/legislators-fixture.yaml`
 - Create: `lib/legislators.test.ts`
 - Modify: `package.json` (test glob)
 
 **Interfaces:**
 - Produces:
-  - `interface MemberIdentity { bioguide: string; officialFull: string; first: string; last: string; nickname: string | null; fec: string[]; chamber: 'House' | 'Senate'; state: string; district: string | null; termStart: string; termEnd: string; }`
-  - `function buildIndex(yamlPaths: string[]): Map<string, MemberIdentity>` — pure, reads given files.
-  - `function getIdentityIndex(): Map<string, MemberIdentity>` — memoized, default cache paths.
-  - `const DEFAULT_YAML_PATHS: string[]`
+  - `interface LegislatorIdentity { bioguide; officialFull; first; last; nickname: string|null; fec: string[]; chamber: 'House'|'Senate'; state; district: string|null; termStart; termEnd }` (already exists — unchanged).
+  - `function buildIndex(paths: string[]): Map<string, LegislatorIdentity>` — pure, reads given files, historical-then-current order (current wins).
+  - `function buildAliasMap(index: Map<string, LegislatorIdentity>): Map<string, Set<string>>` — normalized alias → set of bioguides.
+  - `function normalizeName(s: string): string` — **exported now.**
+  - `function getLegislatorIndex(): Map<string, LegislatorIdentity>` — memoized, default cache paths (kept).
+  - `function getAllAliases(): Map<string, Set<string>>` — memoized wrapper over `buildAliasMap(getLegislatorIndex())` (kept for `resolve-member.ts`).
+  - `function generateAliasesFor(leg): string[]` (kept, minus the last-only line).
 
-- [ ] **Step 1: Create the fixture YAML** `lib/__fixtures__/legislators-fixture.yaml`
+- [ ] **Step 1: Create the fixture** `lib/__fixtures__/legislators-fixture.yaml`
 
 ```yaml
 - id:
@@ -63,28 +98,31 @@
     - { type: rep, start: '1991-01-03', end: '1993-01-03', state: VT, district: 0 }
     - { type: sen, start: '2025-01-03', end: '2031-01-03', state: VT }
 - id:
-    bioguide: S000001
+    bioguide: R000001
     fec: [H0AA00001]
   name:
-    first: John
+    first: Robert
     last: Smith
-    official_full: John Smith
+    official_full: Robert Smith
   terms:
     - { type: rep, start: '2015-01-03', end: '2027-01-03', state: CA, district: 12 }
 - id:
-    bioguide: S000002
+    bioguide: R000002
     fec: [H0BB00002]
   name:
-    first: Jane
+    first: Robert
     last: Smith
-    official_full: Jane Smith
+    official_full: Robert Smith
   terms:
     - { type: rep, start: '2015-01-03', end: '2027-01-03', state: TX, district: 4 }
 ```
 
-- [ ] **Step 2: Widen the test glob** in `package.json` so `lib/*.test.ts` runs.
+> The two `Robert Smith` records share every alias form → a genuine collision the resolver
+> must reject as ambiguous (this is what the current fixtureless code cannot test).
 
-Change the `test` script from:
+- [ ] **Step 2: Widen the test glob** in `package.json`.
+
+Change:
 ```json
 "test": "tsx --test pipeline/patterns/*.test.ts render/*.test.ts agents/*.test.ts",
 ```
@@ -100,156 +138,23 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { buildIndex } from './legislators.ts';
+import { buildIndex, buildAliasMap, normalizeName } from './legislators.ts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const FIXTURE = join(HERE, '__fixtures__', 'legislators-fixture.yaml');
 
-test('buildIndex keys by bioguide and derives chamber from the last term', () => {
+test('buildIndex keys by bioguide and derives chamber/terms', () => {
   const idx = buildIndex([FIXTURE]);
   const s = idx.get('S000033');
   assert.ok(s, 'Sanders present');
-  assert.equal(s!.chamber, 'Senate');           // last term type = sen
+  assert.equal(s!.chamber, 'Senate');          // last term type = sen
   assert.equal(s!.nickname, 'Bernie');
   assert.equal(s!.officialFull, 'Bernard Sanders');
   assert.deepEqual(s!.fec, ['H8VT01016', 'S4VT00033']);
-  assert.equal(s!.termStart, '1991-01-03');       // first term start
-  assert.equal(s!.termEnd, '2031-01-03');         // last term end
+  assert.equal(s!.termStart, '1991-01-03');      // first term start
+  assert.equal(s!.termEnd, '2031-01-03');        // last term end
   assert.equal(s!.state, 'VT');
 });
-
-test('buildIndex maps rep terms to House and keeps district', () => {
-  const idx = buildIndex([FIXTURE]);
-  const j = idx.get('S000001');
-  assert.equal(j!.chamber, 'House');
-  assert.equal(j!.district, '12');
-});
-```
-
-- [ ] **Step 4: Run test to verify it fails**
-
-Run: `npx tsx --test lib/legislators.test.ts`
-Expected: FAIL — `buildIndex` not found / module missing.
-
-- [ ] **Step 5: Implement** `lib/legislators.ts`
-
-```ts
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { load as parseYaml } from 'js-yaml';
-
-export interface MemberIdentity {
-  bioguide: string;
-  officialFull: string;
-  first: string;
-  last: string;
-  nickname: string | null;
-  fec: string[];
-  chamber: 'House' | 'Senate';
-  state: string;
-  district: string | null;
-  termStart: string;
-  termEnd: string;
-}
-
-const CACHE = 'data/caches/legislators-cache';
-export const DEFAULT_YAML_PATHS = [
-  join(CACHE, 'legislators-current.yaml'),
-  join(CACHE, 'legislators-historical.yaml'),
-];
-
-interface RawTerm { type?: string; start?: string; end?: string; state?: string; district?: number | null }
-interface RawRec {
-  id?: { bioguide?: string; fec?: string[] };
-  name?: { first?: string; last?: string; nickname?: string; official_full?: string };
-  terms?: RawTerm[];
-}
-
-function toIdentity(r: RawRec): MemberIdentity | null {
-  const bioguide = r.id?.bioguide;
-  const terms = r.terms ?? [];
-  if (!bioguide || terms.length === 0) return null;
-  const first = r.name?.first ?? '';
-  const last = r.name?.last ?? '';
-  const last_term = terms[terms.length - 1];
-  const district = last_term.district === undefined || last_term.district === null
-    ? null : String(last_term.district);
-  return {
-    bioguide,
-    officialFull: r.name?.official_full ?? `${first} ${last}`.trim(),
-    first,
-    last,
-    nickname: r.name?.nickname ?? null,
-    fec: r.id?.fec ?? [],
-    chamber: last_term.type === 'sen' ? 'Senate' : 'House',
-    state: last_term.state ?? '',
-    district,
-    termStart: terms[0].start ?? '',
-    termEnd: last_term.end ?? '',
-  };
-}
-
-// Build index from the given YAML files, in order. Earlier files win on
-// bioguide collision (pass current before historical).
-export function buildIndex(yamlPaths: string[]): Map<string, MemberIdentity> {
-  const idx = new Map<string, MemberIdentity>();
-  for (const path of yamlPaths) {
-    const recs = parseYaml(readFileSync(path, 'utf8')) as RawRec[];
-    for (const r of recs ?? []) {
-      const id = toIdentity(r);
-      if (id && !idx.has(id.bioguide)) idx.set(id.bioguide, id);
-    }
-  }
-  return idx;
-}
-
-let cached: Map<string, MemberIdentity> | null = null;
-export function getIdentityIndex(): Map<string, MemberIdentity> {
-  if (!cached) cached = buildIndex(DEFAULT_YAML_PATHS);
-  return cached;
-}
-```
-
-- [ ] **Step 6: Run test to verify it passes**
-
-Run: `npx tsx --test lib/legislators.test.ts`
-Expected: PASS (2 tests).
-
-- [ ] **Step 7: Commit**
-
-```bash
-git add lib/legislators.ts lib/legislators.test.ts lib/__fixtures__/legislators-fixture.yaml package.json
-git commit -m "feat(identity): local-YAML member identity index
-
-Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
-```
-
----
-
-### Task 2: Name normalization + alias map (`lib/member-aliases.ts`)
-
-**Files:**
-- Create: `lib/member-aliases.ts`
-- Create: `lib/member-aliases.test.ts`
-
-**Interfaces:**
-- Consumes: `MemberIdentity` from `lib/legislators.ts`.
-- Produces:
-  - `function normalizeName(raw: string): string`
-  - `function buildAliasMap(index: Map<string, MemberIdentity>): Map<string, Set<string>>` — normalized alias → set of bioguides.
-
-- [ ] **Step 1: Write the failing test** `lib/member-aliases.test.ts`
-
-```ts
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
-import { buildIndex } from './legislators.ts';
-import { normalizeName, buildAliasMap } from './member-aliases.ts';
-
-const HERE = dirname(fileURLToPath(import.meta.url));
-const FIXTURE = join(HERE, '__fixtures__', 'legislators-fixture.yaml');
 
 test('normalizeName lowercases, drops punctuation and single-letter initials', () => {
   assert.equal(normalizeName('Bernard I. Sanders'), 'bernard sanders');
@@ -257,222 +162,313 @@ test('normalizeName lowercases, drops punctuation and single-letter initials', (
   assert.equal(normalizeName('  Bernie   Sanders '), 'bernie sanders');
 });
 
-test('buildAliasMap yields nickname, official, and comma forms → one bioguide', () => {
+test('buildAliasMap yields nickname/official/comma forms → one bioguide', () => {
   const map = buildAliasMap(buildIndex([FIXTURE]));
   for (const alias of ['bernard sanders', 'bernie sanders', 'sanders bernard', 'sanders bernie']) {
     assert.deepEqual([...(map.get(alias) ?? [])], ['S000033'], `alias "${alias}"`);
   }
 });
 
-test('buildAliasMap records collisions as multiple bioguides in one set', () => {
+test('buildAliasMap records a genuine collision as two bioguides in one set', () => {
   const map = buildAliasMap(buildIndex([FIXTURE]));
-  // John Smith and Jane Smith share the surname but differ on first name;
-  // no shared normalized alias should collapse them.
-  assert.deepEqual([...(map.get('john smith') ?? [])], ['S000001']);
-  assert.deepEqual([...(map.get('jane smith') ?? [])], ['S000002']);
+  assert.deepEqual([...(map.get('robert smith') ?? [])].sort(), ['R000001', 'R000002']);
+});
+
+test('no surname-only alias is emitted', () => {
+  const map = buildAliasMap(buildIndex([FIXTURE]));
+  assert.equal(map.get('sanders'), undefined);
+  assert.equal(map.get('smith'), undefined);
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [ ] **Step 4: Run test to verify it fails**
 
-Run: `npx tsx --test lib/member-aliases.test.ts`
-Expected: FAIL — module missing.
+Run: `npx tsx --test lib/legislators.test.ts`
+Expected: FAIL — `buildIndex`/`buildAliasMap` not exported; `normalizeName` not exported;
+`sanders` alias still present (last-only not yet removed).
 
-- [ ] **Step 3: Implement** `lib/member-aliases.ts`
+- [ ] **Step 5: Refactor** `lib/legislators.ts`
+
+Replace the current `getLegislatorIndex`, `generateAliasesFor`, `normalizeName`, `getAllAliases`
+with this (identity interface and imports unchanged):
 
 ```ts
-import type { MemberIdentity } from './legislators.ts';
+const DEFAULT_FILES = [
+  join(LEGISLATORS_CACHE, 'legislators-historical.yaml'),
+  join(LEGISLATORS_CACHE, 'legislators-current.yaml'),
+];
 
-// Lowercase; commas/periods → spaces (handles "Last, First" and "F. Last");
-// collapse whitespace; drop single-letter tokens (middle initials).
-export function normalizeName(raw: string): string {
-  return raw
+/** Build a bioguide → identity index from the given YAML files, in order.
+ *  Later files win on bioguide collision (pass historical before current). Pure. */
+export function buildIndex(paths: string[]): Map<string, LegislatorIdentity> {
+  const map = new Map<string, LegislatorIdentity>();
+  for (const file of paths) {
+    let data: any[];
+    try { data = parseYaml(readFileSync(file, 'utf-8')) as any[]; }
+    catch { continue; }  // one of current/historical may be absent
+    for (const p of data ?? []) {
+      const bio = p?.id?.bioguide;
+      if (!bio) continue;
+      const name = p.name ?? {};
+      const terms: any[] = p.terms ?? [];
+      const lastTerm = terms.at(-1) ?? {};
+      const firstTerm = terms[0] ?? {};
+      const chamber: 'House' | 'Senate' =
+        String(lastTerm.type).toLowerCase().startsWith('sen') ? 'Senate' : 'House';
+      map.set(bio, {
+        bioguide: bio,
+        officialFull: name.official_full ?? `${name.first ?? ''} ${name.last ?? ''}`.trim(),
+        first: name.first ?? '',
+        last: name.last ?? '',
+        nickname: name.nickname ?? null,
+        fec: Array.isArray(p.id?.fec) ? p.id.fec : [],
+        chamber,
+        state: lastTerm.state ?? '',
+        district: lastTerm.district === undefined || lastTerm.district === null
+          ? null : String(lastTerm.district),
+        termStart: firstTerm.start ?? '',
+        termEnd: lastTerm.end ?? '',
+      });
+    }
+  }
+  return map;
+}
+
+let identityIndex: Map<string, LegislatorIdentity> | null = null;
+export function getLegislatorIndex(): Map<string, LegislatorIdentity> {
+  if (!identityIndex) identityIndex = buildIndex(DEFAULT_FILES);
+  return identityIndex;
+}
+
+/** Lowercase; commas/periods/quotes → spaces (handles "Last, First" and "F. Last");
+ *  collapse whitespace; drop single-letter tokens (middle initials). */
+export function normalizeName(s: string): string {
+  return s
     .toLowerCase()
-    .replace(/[.,]/g, ' ')
+    .replace(/[.,'"]/g, ' ')
     .split(/\s+/)
     .filter(t => t.length > 1)
     .join(' ')
     .trim();
 }
 
-function aliasesFor(id: MemberIdentity): string[] {
+/** All normalized alias forms for one legislator. No surname-only form (ambiguity hazard). */
+export function generateAliasesFor(leg: LegislatorIdentity): string[] {
   const forms = new Set<string>();
   const add = (s: string) => { const n = normalizeName(s); if (n) forms.add(n); };
-  add(id.officialFull);
-  add(`${id.first} ${id.last}`);
-  add(`${id.last}, ${id.first}`);
-  if (id.nickname) {
-    add(`${id.nickname} ${id.last}`);
-    add(`${id.last}, ${id.nickname}`);
-  }
+  if (leg.officialFull) add(leg.officialFull);
+  if (leg.first && leg.last) { add(`${leg.first} ${leg.last}`); add(`${leg.last}, ${leg.first}`); }
+  if (leg.nickname && leg.last) { add(`${leg.nickname} ${leg.last}`); add(`${leg.last}, ${leg.nickname}`); }
   return [...forms];
 }
 
-// normalized alias → set of bioguides. A Set (not a scalar) so an alias that
-// maps to two people is detectable at resolve time instead of silently
-// overwritten.
-export function buildAliasMap(index: Map<string, MemberIdentity>): Map<string, Set<string>> {
-  const map = new Map<string, Set<string>>();
-  for (const id of index.values()) {
-    for (const alias of aliasesFor(id)) {
-      let set = map.get(alias);
-      if (!set) { set = new Set(); map.set(alias, set); }
-      set.add(id.bioguide);
+/** normalized alias → set of bioguides. A Set so collisions are detectable, not overwritten. Pure. */
+export function buildAliasMap(index: Map<string, LegislatorIdentity>): Map<string, Set<string>> {
+  const aliasMap = new Map<string, Set<string>>();
+  for (const leg of index.values()) {
+    for (const a of generateAliasesFor(leg)) {
+      let set = aliasMap.get(a);
+      if (!set) { set = new Set(); aliasMap.set(a, set); }
+      set.add(leg.bioguide);
     }
   }
-  return map;
+  return aliasMap;
+}
+
+let aliasCache: Map<string, Set<string>> | null = null;
+export function getAllAliases(): Map<string, Set<string>> {
+  if (!aliasCache) aliasCache = buildAliasMap(getLegislatorIndex());
+  return aliasCache;
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+> Note: the old file loaded historical-then-current with "current wins" via last-write; the
+> `map.set` order above preserves that (current is the second file). The old `normalizeName`
+> kept initials and there was a `last`-only alias line — both removed here.
 
-Run: `npx tsx --test lib/member-aliases.test.ts`
-Expected: PASS (3 tests).
+- [ ] **Step 6: Run test to verify it passes**
 
-- [ ] **Step 5: Commit**
+Run: `npx tsx --test lib/legislators.test.ts`
+Expected: PASS (5 tests).
+
+- [ ] **Step 7: Commit**
 
 ```bash
-git add lib/member-aliases.ts lib/member-aliases.test.ts
-git commit -m "feat(identity): deterministic name normalization + alias map
+git add lib/legislators.ts lib/legislators.test.ts lib/__fixtures__/legislators-fixture.yaml package.json
+git commit -m "feat(identity): testable YAML index + normalization fix
+
+Extract pure buildIndex/buildAliasMap; drop middle initials and the
+surname-only alias; add fixture + tests.
 
 Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ```
 
 ---
 
-### Task 3: The resolver (`lib/resolveMember.ts`)
+### Task 2: Pure resolver core + slug preservation (`lib/resolve-member.ts`)
 
 **Files:**
-- Create: `lib/resolveMember.ts`
-- Create: `lib/resolveMember.test.ts`
+- Modify: `lib/resolve-member.ts`
+- Create: `lib/resolve-member.test.ts`
 
 **Interfaces:**
-- Consumes: `MemberIdentity` (`lib/legislators.ts`), `normalizeName` + `buildAliasMap` (`lib/member-aliases.ts`).
+- Consumes: `getLegislatorIndex`, `getAllAliases`, `normalizeName`, `LegislatorIdentity` (`lib/legislators.ts`); `getDb` (`db/init.ts`).
 - Produces:
-  - `type ResolveResult = { ok: true; bioguide: string; slug: string } | { ok: false; reason: 'unresolved' } | { ok: false; reason: 'ambiguous'; candidates: string[] }`
-  - `function canonicalSlug(id: MemberIdentity): string`
-  - `function makeResolver(index: Map<string, MemberIdentity>): (raw: { name?: string; bioguide?: string }) => ResolveResult`
-  - `function resolveMember(raw: { name?: string; bioguide?: string }): ResolveResult` — default resolver over the memoized real index.
+  - `type ResolveResult = { ok: true; bioguide: string; slug: string } | { ok: false; reason: 'unresolved' } | { ok: false; reason: 'ambiguous'; candidates: string[] }` (unchanged).
+  - `type IdentityResult = { ok: true; bioguide: string } | { ok: false; reason: 'unresolved' } | { ok: false; reason: 'ambiguous'; candidates: string[] }`
+  - `function resolveIdentity(input: { name?: string; bioguide?: string }, index: Map<string, LegislatorIdentity>, aliasMap: Map<string, Set<string>>): IdentityResult` — pure.
+  - `function deriveSlug(full: string): string` (kept, exported).
+  - `function resolveMember(raw, opts?: { slugLookup?: (bioguide: string) => string | undefined }): Promise<ResolveResult>` — async; `opts.slugLookup` overrides the DB lookup (for tests).
+- Removes: `seedAliasesForMember` (superseded by the standalone seeder in Task 3).
 
-- [ ] **Step 1: Write the failing test** `lib/resolveMember.test.ts`
+- [ ] **Step 1: Write the failing test** `lib/resolve-member.test.ts`
 
 ```ts
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { buildIndex } from './legislators.ts';
-import { makeResolver, canonicalSlug } from './resolveMember.ts';
+import { buildIndex, buildAliasMap } from './legislators.ts';
+import { resolveIdentity, resolveMember, deriveSlug } from './resolve-member.ts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const FIXTURE = join(HERE, '__fixtures__', 'legislators-fixture.yaml');
 const idx = buildIndex([FIXTURE]);
-const resolve = makeResolver(idx);
+const aliases = buildAliasMap(idx);
+const id = (raw: any) => resolveIdentity(raw, idx, aliases);
 
-test('exact first-last resolves to bioguide + canonical slug', () => {
-  const r = resolve({ name: 'Bernard Sanders' });
-  assert.deepEqual(r, { ok: true, bioguide: 'S000033', slug: 'bernard-sanders' });
+test('exact first-last resolves', () => {
+  assert.deepEqual(id({ name: 'Bernard Sanders' }), { ok: true, bioguide: 'S000033' });
 });
-
 test('nickname resolves to the same person', () => {
-  assert.deepEqual(resolve({ name: 'Bernie Sanders' }),
-    { ok: true, bioguide: 'S000033', slug: 'bernard-sanders' });
+  assert.deepEqual(id({ name: 'Bernie Sanders' }), { ok: true, bioguide: 'S000033' });
 });
-
 test('comma form resolves', () => {
-  assert.equal((resolve({ name: 'Sanders, Bernard' }) as any).bioguide, 'S000033');
+  assert.deepEqual(id({ name: 'Sanders, Bernard' }), { ok: true, bioguide: 'S000033' });
 });
-
 test('middle initial is ignored', () => {
-  assert.equal((resolve({ name: 'Bernard I. Sanders' }) as any).bioguide, 'S000033');
+  assert.deepEqual(id({ name: 'Bernard I. Sanders' }), { ok: true, bioguide: 'S000033' });
 });
-
-test('bernie and bernard yield an identical canonical slug', () => {
-  const a = resolve({ name: 'Bernie Sanders' }) as any;
-  const b = resolve({ name: 'Bernard Sanders' }) as any;
-  assert.equal(a.slug, b.slug);
+test('raw bioguide short-circuits', () => {
+  assert.deepEqual(id({ bioguide: 'R000001' }), { ok: true, bioguide: 'R000001' });
 });
-
-test('raw bioguide short-circuits to ok', () => {
-  assert.deepEqual(resolve({ bioguide: 'S000001' }),
-    { ok: true, bioguide: 'S000001', slug: 'john-smith' });
-});
-
 test('unknown name is unresolved, never guessed', () => {
-  assert.deepEqual(resolve({ name: 'Nobody McNobody' }), { ok: false, reason: 'unresolved' });
+  assert.deepEqual(id({ name: 'Nobody McNobody' }), { ok: false, reason: 'unresolved' });
+});
+test('a colliding alias is ambiguous, not first-match', () => {
+  const r = id({ name: 'Robert Smith' });
+  assert.equal(r.ok, false);
+  assert.equal((r as any).reason, 'ambiguous');
+  assert.deepEqual((r as any).candidates.sort(), ['R000001', 'R000002']);
 });
 
-test('an alias mapping to two bioguides is ambiguous, not first-match', () => {
-  // Inject a colliding alias by resolving a name both Smiths would share.
-  // Build a resolver over an index where two people share a normalized alias.
-  const collide = makeResolver(new Map(idx));
-  // "Smith" alone is not generated as an alias; assert the surname-only lookup
-  // is unresolved rather than silently picking one Smith.
-  assert.deepEqual(collide({ name: 'Smith' }), { ok: false, reason: 'unresolved' });
+test('resolveMember preserves an existing DB slug', async () => {
+  const r = await resolveMember({ name: 'Bernard Sanders' }, {
+    slugLookup: (bio) => (bio === 'S000033' ? 'bernie-sanders' : undefined),
+  });
+  assert.deepEqual(r, { ok: true, bioguide: 'S000033', slug: 'bernie-sanders' });
 });
-
-test('canonicalSlug is first-last from YAML name fields', () => {
-  assert.equal(canonicalSlug(idx.get('S000033')!), 'bernard-sanders');
+test('resolveMember derives first-last for a member with no DB row', async () => {
+  const r = await resolveMember({ name: 'Robert Smith' }, { slugLookup: () => undefined });
+  // ambiguous → still rejected before slug derivation
+  assert.equal(r.ok, false);
+});
+test('deriveSlug is first-last, punctuation collapsed', () => {
+  assert.equal(deriveSlug('Bernard Sanders'), 'bernard-sanders');
 });
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `npx tsx --test lib/resolveMember.test.ts`
-Expected: FAIL — module missing.
+Run: `npx tsx --test lib/resolve-member.test.ts`
+Expected: FAIL — `resolveIdentity`/`deriveSlug` not exported; `resolveMember` signature lacks `opts`.
 
-- [ ] **Step 3: Implement** `lib/resolveMember.ts`
+- [ ] **Step 3: Refactor** `lib/resolve-member.ts`
+
+Replace the file body with (imports adjusted — drop `generateAliasesFor`; keep `getLegislatorIndex`, `getAllAliases`, `normalizeName`, `getDb`):
 
 ```ts
-import type { MemberIdentity } from './legislators.ts';
-import { getIdentityIndex } from './legislators.ts';
-import { normalizeName, buildAliasMap } from './member-aliases.ts';
+import { getLegislatorIndex, getAllAliases, normalizeName, type LegislatorIdentity } from './legislators.js';
+import { getDb } from '../db/init.js';
 
 export type ResolveResult =
   | { ok: true; bioguide: string; slug: string }
   | { ok: false; reason: 'unresolved' }
   | { ok: false; reason: 'ambiguous'; candidates: string[] };
 
-export function canonicalSlug(id: MemberIdentity): string {
-  return `${id.first}-${id.last}`
+export type IdentityResult =
+  | { ok: true; bioguide: string }
+  | { ok: false; reason: 'unresolved' }
+  | { ok: false; reason: 'ambiguous'; candidates: string[] };
+
+/** Pure name/bioguide → bioguide. Exact only; >1 → ambiguous; 0 → unresolved. No guessing. */
+export function resolveIdentity(
+  input: { name?: string; bioguide?: string },
+  index: Map<string, LegislatorIdentity>,
+  aliasMap: Map<string, Set<string>>,
+): IdentityResult {
+  if (input.bioguide && index.has(input.bioguide)) {
+    return { ok: true, bioguide: input.bioguide };
+  }
+  if (input.name) {
+    const hits = aliasMap.get(normalizeName(input.name));
+    if (hits && hits.size > 1) return { ok: false, reason: 'ambiguous', candidates: [...hits] };
+    if (hits && hits.size === 1) return { ok: true, bioguide: [...hits][0] };
+  }
+  return { ok: false, reason: 'unresolved' };
+}
+
+export function deriveSlug(full: string): string {
+  return full
     .toLowerCase()
+    .replace(/['']/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 }
 
-export function makeResolver(
-  index: Map<string, MemberIdentity>,
-): (raw: { name?: string; bioguide?: string }) => ResolveResult {
-  const aliasMap = buildAliasMap(index);
-  return (raw) => {
-    // 1. Explicit bioguide short-circuit.
-    if (raw.bioguide) {
-      const id = index.get(raw.bioguide);
-      return id
-        ? { ok: true, bioguide: id.bioguide, slug: canonicalSlug(id) }
-        : { ok: false, reason: 'unresolved' };
-    }
-    // 2. Exact normalized-name lookup.
-    const key = normalizeName(raw.name ?? '');
-    const hits = key ? aliasMap.get(key) : undefined;
-    if (!hits || hits.size === 0) return { ok: false, reason: 'unresolved' };
-    if (hits.size > 1) return { ok: false, reason: 'ambiguous', candidates: [...hits] };
-    const id = index.get([...hits][0])!;
-    return { ok: true, bioguide: id.bioguide, slug: canonicalSlug(id) };
-  };
+const slugCache = new Map<string, string>();
+
+async function dbSlugLookup(bioguide: string): Promise<string | undefined> {
+  try {
+    const conn = await getDb();
+    const row = await conn.run(`SELECT member_id FROM members WHERE bioguide_id = ? LIMIT 1`, [bioguide]);
+    const rows = await row.getRowObjects();
+    if (rows.length > 0) return String((rows[0] as any).member_id);
+  } catch { /* DB not ready — derive instead */ }
+  return undefined;
 }
 
-let defaultResolver: ReturnType<typeof makeResolver> | null = null;
-export function resolveMember(raw: { name?: string; bioguide?: string }): ResolveResult {
-  if (!defaultResolver) defaultResolver = makeResolver(getIdentityIndex());
-  return defaultResolver(raw);
+/** Resolve a raw name/bioguide to {bioguide, slug}. Slug prefers the existing DB member_id
+ *  (never rename bernie-sanders); derives first-last only for a brand-new member.
+ *  `opts.slugLookup` overrides the DB lookup for deterministic tests. */
+export async function resolveMember(
+  raw: string | { name?: string; bioguide?: string },
+  opts?: { slugLookup?: (bioguide: string) => string | undefined },
+): Promise<ResolveResult> {
+  const input = typeof raw === 'string' ? { name: raw } : raw;
+  const ident = resolveIdentity(input, getLegislatorIndex(), getAllAliases());
+  if (!ident.ok) return ident;
+
+  const bio = ident.bioguide;
+  let slug = slugCache.get(bio);
+  if (!slug) {
+    slug = opts?.slugLookup ? opts.slugLookup(bio) : await dbSlugLookup(bio);
+  }
+  if (!slug) {
+    const leg = getLegislatorIndex().get(bio)!;
+    slug = deriveSlug(leg.officialFull || `${leg.first} ${leg.last}`);
+  }
+  slugCache.set(bio, slug);
+  return { ok: true, bioguide: bio, slug };
 }
 ```
 
+> `seedAliasesForMember` is intentionally removed. Task 3 reverts its only caller.
+
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `npx tsx --test lib/resolveMember.test.ts`
-Expected: PASS (9 tests).
+Run: `npx tsx --test lib/resolve-member.test.ts`
+Expected: PASS (10 tests).
 
 - [ ] **Step 5: Run the whole lib suite**
 
@@ -482,31 +478,39 @@ Expected: PASS (all lib tests green).
 - [ ] **Step 6: Commit**
 
 ```bash
-git add lib/resolveMember.ts lib/resolveMember.test.ts
-git commit -m "feat(identity): deterministic ambiguity-rejecting resolveMember
+git add lib/resolve-member.ts lib/resolve-member.test.ts
+git commit -m "feat(identity): pure resolver core + injectable slug lookup
+
+resolveIdentity is pure/testable; resolveMember preserves the existing DB
+slug and derives first-last only for new members. Drop seedAliasesForMember.
 
 Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ```
 
 ---
 
-### Task 4: Schema + alias/backfill loader (`db/schema.sql`, `db/load-member-aliases.ts`)
+### Task 3: Bioguide-keyed alias table + standalone seeder (`db/schema.sql`, `db/load-member-aliases.ts`, `db/load-from-tasks.ts`)
 
 **Files:**
-- Modify: `db/schema.sql`
+- Modify: `db/schema.sql` (re-key `member_aliases`)
 - Create: `db/load-member-aliases.ts`
+- Modify: `db/load-from-tasks.ts` (revert the `seedAliasesForMember` hook)
 
 **Interfaces:**
-- Consumes: `getIdentityIndex` (`lib/legislators.ts`), `buildAliasMap` (`lib/member-aliases.ts`), `canonicalSlug` (`lib/resolveMember.ts`), `getDb` / `applySchema` (`db/init.ts`).
-- Produces: `member_aliases` table; `members.term_start`, `members.term_end`; a `main()` CLI seeder.
+- Consumes: `getLegislatorIndex`, `getAllAliases` (`lib/legislators.ts`); `getDb`, `applySchema` (`db/init.ts`).
+- Produces: `member_aliases(alias_norm TEXT, bioguide_id TEXT, PK(alias_norm,bioguide_id))`; a `main()` CLI seeder.
 
-- [ ] **Step 1: Add the `member_aliases` table + `term_*` columns** to `db/schema.sql`
+- [ ] **Step 1: Re-key `member_aliases` in** `db/schema.sql`
 
-Add, immediately after the `members` table definition (after its closing `);`):
+Replace the current `member_aliases` block (the one with `member_id`, `source`, `created_at`,
+FK, and `idx_member_aliases_member`) with:
 
 ```sql
--- ─── Member aliases (derived, deterministic — from congress-legislators YAML) ──
--- Normalized name variants → bioguide. Inspectable projection of the resolver.
+-- ─── Member aliases (deterministic projection of the resolver, from YAML) ─────
+-- Normalized name variants → bioguide (identity keyed on identity). A given
+-- alias_norm may appear against >1 bioguide: that row-level duplication IS the
+-- ambiguity signal. member_id is reachable via JOIN members USING (bioguide_id).
+DROP TABLE IF EXISTS member_aliases;
 CREATE TABLE IF NOT EXISTS member_aliases (
   alias_norm   TEXT NOT NULL,
   bioguide_id  TEXT NOT NULL,
@@ -514,256 +518,256 @@ CREATE TABLE IF NOT EXISTS member_aliases (
 );
 ```
 
-And extend the `members` table with two columns (add these two lines before the
-closing `fetched_at ... );` line so the trailing `fetched_at` stays last is not
-required — DuckDB allows any order; append them just after `bio_source_url`):
+Leave the `ALTER TABLE members ADD COLUMN IF NOT EXISTS term_start/term_end` and
+`CREATE UNIQUE INDEX IF NOT EXISTS idx_members_bioguide_id` lines as they are.
 
-```sql
-  term_start          DATE,
-  term_end            DATE,
-```
+> `DROP TABLE IF EXISTS` is safe: the live table is empty (0 rows, verified).
 
-> **Constraint-ordering note (from the spec).** Do NOT add `UNIQUE` to
-> `bioguide_id` in `schema.sql` yet. `CREATE TABLE IF NOT EXISTS` will not alter
-> an existing table anyway, and the live DB still contains `bernie-sanders` +
-> `bernard-sanders`. The UNIQUE guarantee is established at load time in Step 3
-> below (reconcile-then-verify). If reconcile proves it needs FK-row rewrites to
-> avoid orphans, stop and defer the UNIQUE index to the FK-dedup follow-on;
-> ship this task without it. Record which path was taken in the commit message.
-
-- [ ] **Step 2: Apply the schema and confirm the new objects exist**
+- [ ] **Step 2: Apply the schema and confirm the re-keyed table**
 
 Run:
 ```bash
-npx tsx -e "import {applySchema,getDb} from './db/init.ts'; await applySchema(); const c=await getDb(); const r=await c.run(\"SELECT COUNT(*) FROM member_aliases\"); console.log('member_aliases rows:', (await r.getRows())[0][0]); process.exit(0)"
+npx tsx -e "import {applySchema,getDb} from './db/init.ts'; (async()=>{ await applySchema(); const c=await getDb(); const r=await c.run(\"SELECT column_name FROM information_schema.columns WHERE table_name='member_aliases' ORDER BY 1\"); console.log('cols:', JSON.stringify(await r.getRows())); process.exit(0); })();"
 ```
-Expected: prints `member_aliases rows: 0` (table exists, empty). If `term_start`/`term_end` did not get added because `members` pre-existed, add them explicitly:
-```bash
-npx tsx -e "import {getDb} from './db/init.ts'; const c=await getDb(); for (const col of ['term_start DATE','term_end DATE']) { try { await c.run('ALTER TABLE members ADD COLUMN '+col); } catch(e){ console.log('skip', col, String(e).slice(0,60)); } } process.exit(0)"
-```
+Expected: `cols: [["alias_norm"],["bioguide_id"]]` (no `member_id`/`source`/`created_at`).
 
-- [ ] **Step 3: Implement the seeder + backfill + members-only reconcile** `db/load-member-aliases.ts`
+- [ ] **Step 3: Implement the seeder** `db/load-member-aliases.ts`
 
 ```ts
-import { getDb, applySchema } from './init.ts';
-import { getIdentityIndex } from '../lib/legislators.ts';
-import { buildAliasMap } from '../lib/member-aliases.ts';
-import { canonicalSlug } from '../lib/resolveMember.ts';
+import { getDb, applySchema } from './init.js';
+import { getLegislatorIndex, getAllAliases } from '../lib/legislators.js';
 
 async function main() {
   await applySchema();
   const conn = await getDb();
-  const index = getIdentityIndex();
-  const aliasMap = buildAliasMap(index);
+  const index = getLegislatorIndex();
+  const aliasMap = getAllAliases();
 
-  // 1. Seed member_aliases (DELETE-then-insert, idempotent).
+  // 1. Seed the full alias projection (DELETE-then-insert, idempotent).
   await conn.run('DELETE FROM member_aliases');
+  let rows = 0;
   for (const [alias, bios] of aliasMap) {
     for (const bio of bios) {
       await conn.run('INSERT INTO member_aliases VALUES (?, ?)', [alias, bio]);
+      rows++;
     }
   }
-  console.log(`seeded ${aliasMap.size} normalized aliases`);
+  console.log(`seeded ${rows} alias rows across ${aliasMap.size} distinct names`);
 
-  // 2. Backfill members: bioguide, term_start/end, chamber/state/district,
-  //    keyed by the existing member row's name via the resolver's index.
-  //    Only fills columns; does not move PKs (that is reconcile, step 3).
-  const rows = (await (await conn.run(
-    'SELECT member_id, name, bioguide_id FROM members',
-  )).getRows()) as [string, string, string | null][];
+  // 2. Backfill members: bioguide-derived term_start/end, chamber, state, district.
+  //    Keyed by the member row's existing bioguide_id (already 57/57 populated).
+  //    Does NOT touch member_id (slug) — preservation is the resolver's job.
+  const mrows = (await (await conn.run(
+    'SELECT member_id, bioguide_id FROM members WHERE bioguide_id IS NOT NULL',
+  )).getRowObjects()) as Array<{ member_id: string; bioguide_id: string }>;
 
-  const bySlug = new Map<string, ReturnType<typeof canonicalSlug>>();
-  for (const id of index.values()) bySlug.set(canonicalSlug(id), id.bioguide);
-
-  // 3. Members-only reconcile: find distinct member rows whose canonical slug
-  //    collides (same bioguide → duplicate person). Report them; collapse the
-  //    losing member row into the canonical slug WITHOUT touching FK tables.
-  //    If any FK table still references a losing slug, ABORT and defer (per the
-  //    constraint-ordering note) rather than orphan rows.
-  const FK_TABLES = ['donors', 'votes', 'bills', 'committees', 'controversies'];
-  // Group current member rows by the bioguide their name resolves to.
-  const byBio = new Map<string, string[]>();
-  for (const [mid, name] of rows) {
-    // Reuse the alias map for name → bioguide (exact only; skip ambiguous/unknown).
-    const key = name.toLowerCase().replace(/[.,]/g, ' ').split(/\s+/).filter(t => t.length > 1).join(' ').trim();
-    const hits = aliasMap.get(key);
-    if (!hits || hits.size !== 1) { console.warn(`unreconciled member row: "${name}" (${mid})`); continue; }
-    const bio = [...hits][0];
-    (byBio.get(bio) ?? byBio.set(bio, []).get(bio)!).push(mid);
-    await conn.run('UPDATE members SET bioguide_id = ? WHERE member_id = ?', [bio, mid]);
-  }
-
-  let dupes = 0;
-  for (const [bio, mids] of byBio) {
-    if (mids.length < 2) continue;
-    dupes++;
-    const id = index.get(bio)!;
-    const canon = canonicalSlug(id);
-    const losers = mids.filter(m => m !== canon);
-    for (const loser of losers) {
-      for (const t of FK_TABLES) {
-        const c = (await (await conn.run(`SELECT COUNT(*) FROM ${t} WHERE member_id = ?`, [loser])).getRows())[0][0] as number;
-        if (c > 0) {
-          console.error(`ABORT: ${t} has ${c} rows for loser slug "${loser}" (bioguide ${bio}). FK dedup is deferred — defer UNIQUE too.`);
-          process.exit(1);
-        }
-      }
-      await conn.run('DELETE FROM members WHERE member_id = ?', [loser]);
-      console.log(`merged member row ${loser} → ${canon} (bioguide ${bio})`);
+  // Fail-loud: a duplicate bioguide would violate one-person-one-row.
+  const seen = new Map<string, string>();
+  for (const m of mrows) {
+    const prev = seen.get(m.bioguide_id);
+    if (prev) {
+      console.error(`ABORT: duplicate bioguide ${m.bioguide_id} on member rows "${prev}" and "${m.member_id}". Identity is not 1:1 — refusing to backfill.`);
+      process.exit(1);
     }
+    seen.set(m.bioguide_id, m.member_id);
   }
-  console.log(`reconcile complete: ${dupes} duplicate person(s) collapsed`);
 
-  // 4. Only now, if reconcile left bioguide unique, add the UNIQUE index.
-  try {
-    await conn.run('CREATE UNIQUE INDEX IF NOT EXISTS idx_members_bioguide ON members(bioguide_id)');
-    console.log('bioguide UNIQUE index established');
-  } catch (e) {
-    console.error('UNIQUE index NOT added (residual duplicates) — deferred:', String(e).slice(0, 120));
+  let filled = 0;
+  for (const m of mrows) {
+    const leg = index.get(m.bioguide_id);
+    if (!leg) { console.warn(`no YAML identity for bioguide ${m.bioguide_id} (${m.member_id})`); continue; }
+    await conn.run(
+      `UPDATE members SET term_start = ?, term_end = ?, chamber = ?, state = ?, district = ? WHERE member_id = ?`,
+      [leg.termStart || null, leg.termEnd || null, leg.chamber, leg.state || null, leg.district, m.member_id],
+    );
+    filled++;
   }
+  console.log(`backfilled ${filled} member rows from YAML`);
   process.exit(0);
 }
 
 main();
 ```
 
-- [ ] **Step 4: Back up the DB, then run the seeder**
+- [ ] **Step 4: Revert the per-member alias hook in** `db/load-from-tasks.ts`
+
+Remove the import line:
+```ts
+import { seedAliasesForMember } from '../lib/resolve-member.js';
+```
+and remove the block:
+```ts
+  // Seed deterministic aliases from YAML for this bioguide (idempotent)
+  if (d.bioguideId) {
+    try {
+      await seedAliasesForMember(memberId, d.bioguideId);
+    } catch (e) {
+      // non-fatal during load
+    }
+  }
+```
+
+- [ ] **Step 5: Back up the DB, then run the seeder**
 
 Run:
 ```bash
-cp data/civiclens.duckdb data/civiclens.duckdb.bak-pre-identity && \
-npx tsx db/load-member-aliases.ts
+cp data/civiclens.duckdb data/civiclens.duckdb.bak-pre-identity && npx tsx db/load-member-aliases.ts
 ```
-Expected: prints seeded alias count, any `unreconciled member row` warnings, any merges, and either "bioguide UNIQUE index established" OR a deferral message. If it prints `ABORT: ... FK dedup is deferred`, that is a valid outcome — the resolver/alias table still shipped; note it in the commit and leave UNIQUE for the follow-on.
+Expected: `seeded <N> alias rows across <M> distinct names`, then `backfilled 57 member rows from YAML`. No `ABORT`.
 
-- [ ] **Step 5: Verify no member resolves to two rows**
+- [ ] **Step 6: Verify the projection + that ambiguity is queryable**
 
 Run:
 ```bash
-npx tsx -e "import {getDb} from './db/init.ts'; const c=await getDb(); const r=await c.run('SELECT bioguide_id, COUNT(*) n FROM members WHERE bioguide_id IS NOT NULL GROUP BY 1 HAVING n>1'); console.log('dup bioguides:', (await r.getRows())); process.exit(0)"
+npx tsx -e "import {getDb} from './db/init.ts'; (async()=>{ const c=await getDb(); const n=async(q,l)=>{const r=await c.run(q);console.log(l,JSON.stringify((await r.getRows()).map(x=>x.map(v=>typeof v==='bigint'?Number(v):v))));}; await n('SELECT COUNT(*) FROM member_aliases','alias_rows:'); await n(\"SELECT bioguide_id FROM member_aliases WHERE alias_norm='bernie sanders'\",'bernie->:'); await n('SELECT COUNT(*) FROM (SELECT alias_norm FROM member_aliases GROUP BY 1 HAVING COUNT(*)>1)','ambiguous_names:'); process.exit(0); })();"
 ```
-Expected: `dup bioguides: []` (empty) if reconcile succeeded; a non-empty list means UNIQUE was correctly deferred.
+Expected: `alias_rows:` > 0; `bernie->: [["S000033"]]`; `ambiguous_names:` a number (collisions across all of Congress are now inspectable — this is the substrate's payoff).
 
-- [ ] **Step 6: Commit** (state the outcome — UNIQUE established or deferred)
+- [ ] **Step 7: Commit**
 
 ```bash
-git add db/schema.sql db/load-member-aliases.ts
-git commit -m "feat(identity): member_aliases seed + members backfill/reconcile
+git add db/schema.sql db/load-member-aliases.ts db/load-from-tasks.ts
+git commit -m "feat(identity): bioguide-keyed alias seeder + members backfill
+
+Re-key member_aliases on bioguide_id; standalone full-YAML projection with
+a fail-loud dup-bioguide assert; backfill term/chamber/state/district.
+Revert superseded per-member seedAliasesForMember hook.
 
 Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ```
 
 ---
 
-### Task 5: Wire the researcher ingestion gate (`skills/researcher/fetch.ts`)
+### Task 4: Thread the resolved slug (`skills/researcher/fetch.ts`, `agents/researcher.ts`)
 
 **Files:**
-- Modify: `skills/researcher/fetch.ts` (the identity-resolution step, around the
-  `fetchBioguideByName(name)` call at ~line 707, inside the exported
-  fetch-politician entry point).
+- Modify: `skills/researcher/fetch.ts` (`LiveFetchResult` + `fetchPolitician`)
+- Modify: `agents/researcher.ts` (consume typed `resolvedSlug`)
 
 **Interfaces:**
-- Consumes: `resolveMember` (`lib/resolveMember.ts`).
-- Produces: an ingestion path that skips + logs unresolved/ambiguous rows and
-  uses the resolved bioguide + canonical slug for resolvable ones.
+- Consumes: `resolveMember` result (`resolved.slug`).
+- Produces: `LiveFetchResult.resolvedSlug: string`; researcher uses it as the member `id`.
 
-- [ ] **Step 1: Read the identity step** to confirm the exact seam.
+This is the bug fix: `resolvedSlug` is read by `researcher.ts` but never set, so slug
+preservation currently never takes effect.
 
-Run: `rg -n "fetchBioguideByName|no bioguide ID|warnings.push" skills/researcher/fetch.ts | head`
-Confirm the identity block: `const bioguideId = await fetchBioguideByName(name); if (!bioguideId) { warnings.push(...); return ...; }`.
-
-- [ ] **Step 2: Add the import** at the top of `skills/researcher/fetch.ts` (with the other `lib` imports):
+- [ ] **Step 1: Add `resolvedSlug` to `LiveFetchResult`** in `skills/researcher/fetch.ts`
+(inside the interface at ~line 713, e.g. right after `bioguideId`):
 
 ```ts
-import { resolveMember } from '../../lib/resolveMember.ts';
+  resolvedSlug: string;
 ```
 
-- [ ] **Step 3: Replace the identity step** so the deterministic resolver is the
-gate and the API lookup is only a fallback for enrichment. Replace:
+- [ ] **Step 2: Capture the slug** in `fetchPolitician`. After:
 
 ```ts
-  const bioguideId = await fetchBioguideByName(name);
-  if (!bioguideId) {
-    warnings.push(`Congress.gov: no bioguide ID for "${name}"`);
+  const bioguideId = resolved.bioguide;
+```
+
+add:
+
+```ts
+  const resolvedSlug = resolved.slug;
+```
+
+- [ ] **Step 3: Return it.** In the final `return { ... }` object (~line 903), add `resolvedSlug`
+next to `bioguideId`:
+
+```ts
+    bioguideId,
+    resolvedSlug,
+```
+
+- [ ] **Step 4: Consume it typed** in `agents/researcher.ts`. Replace:
+
+```ts
+  const id = (live as any).resolvedSlug ??
+    name.toLowerCase()
+      .replace(/['']/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
 ```
 
 with:
 
 ```ts
-  const resolved = resolveMember({ name });
-  if (!resolved.ok) {
-    // Deterministic rejection + continuation: never coerce, never abort the batch.
-    console.warn(`[researcher] skip "${name}": ${resolved.reason}` +
-      (resolved.reason === 'ambiguous' ? ` candidates=${resolved.candidates.join(',')}` : ''));
-    return { skipped: true, reason: resolved.reason, name } as any;
-  }
-  const bioguideId = resolved.bioguide;
-  const canonicalMemberSlug = resolved.slug;
-  void canonicalMemberSlug; // used where the member_id slug is assigned downstream
-  {
-    // (former no-bioguide branch retained only as an unreachable guard)
-    if (!bioguideId) {
-      warnings.push(`Congress.gov: no bioguide ID for "${name}"`);
+  // Deterministic resolver owns the slug (preserves existing DB member_id).
+  const id = live.resolvedSlug;
 ```
 
-> **Note for the implementer:** the original `if (!bioguideId) { … }` block ends
-> with a `return`. Keep that inner block body intact and close the extra `{`
-> you opened. The net effect: resolvable names proceed with a deterministic
-> bioguide + `canonicalMemberSlug`; unresolvable/ambiguous names return an early
-> `{ skipped: true, … }` and the batch continues. Where the code later derives
-> or writes the member's `member_id`, use `canonicalMemberSlug` instead of any
-> ad-hoc slug so the PK matches the reconciled `members` row.
-
-- [ ] **Step 4: Type-check the change**
+- [ ] **Step 5: Type-check**
 
 Run: `npx tsc --noEmit`
-Expected: no new errors in `skills/researcher/fetch.ts`. (Fix the brace/return
-shape until it compiles; the resolver call and skip path must be reachable.)
+Expected: no new errors in `fetch.ts` / `researcher.ts` (`resolvedSlug` now typed on the result).
 
-- [ ] **Step 5: Smoke test resolve on a known + unknown name**
+- [ ] **Step 6: Smoke test the seam** (resolve a known + unknown name)
 
 Run:
 ```bash
-npx tsx -e "import {resolveMember} from './lib/resolveMember.ts'; console.log(resolveMember({name:'Marjorie Taylor Greene'})); console.log(resolveMember({name:'Ghost Member'})); process.exit(0)"
+npx tsx -e "import {resolveMember} from './lib/resolve-member.ts'; (async()=>{ console.log(await resolveMember('Bernie Sanders')); console.log(await resolveMember('Ghost McNobody')); process.exit(0); })();"
 ```
-Expected: first prints `{ ok: true, bioguide: 'G000596', slug: 'marjorie-greene' }` (bioguide is whatever the real YAML holds — the point is `ok: true` with a bioguide + slug); second prints `{ ok: false, reason: 'unresolved' }`.
-
-- [ ] **Step 6: Run the full test suite**
-
-Run: `npm test`
-Expected: PASS, including the new `lib/*.test.ts`.
+Expected: first `{ ok: true, bioguide: 'S000033', slug: 'bernie-sanders' }` (slug preserved from
+the live DB row); second `{ ok: false, reason: 'unresolved' }`.
 
 - [ ] **Step 7: Commit**
 
 ```bash
-git add skills/researcher/fetch.ts
-git commit -m "feat(researcher): gate ingestion on deterministic resolveMember
+git add skills/researcher/fetch.ts agents/researcher.ts
+git commit -m "fix(researcher): thread resolved slug so preservation takes effect
 
-Skip+log unresolved/ambiguous members; use canonical bioguide+slug.
+resolvedSlug was read but never set; type it on LiveFetchResult, set it from
+resolveMember, and use it as the member id (no more raw re-slugify).
 
 Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ```
 
 ---
 
+### Task 5: Full-suite + end-to-end verification
+
+**Files:** none (verification only).
+
+- [ ] **Step 1: Run the full test suite**
+
+Run: `npm test`
+Expected: PASS, including the new `lib/*.test.ts`.
+
+- [ ] **Step 2: Confirm bernie-sanders is preserved end-to-end**
+
+Run:
+```bash
+npx tsx -e "import {getDb} from './db/init.ts'; import {resolveMember} from './lib/resolve-member.ts'; (async()=>{ const r=await resolveMember('Bernard Sanders'); console.log('resolve:', r); const c=await getDb(); const q=await c.run(\"SELECT member_id, bioguide_id FROM members WHERE member_id ILIKE '%sanders%'\"); console.log('rows:', JSON.stringify(await q.getRows())); process.exit(0); })();"
+```
+Expected: `resolve:` slug `bernie-sanders`; exactly one `sanders` row `["bernie-sanders","S000033"]` (no rename, no dup).
+
+- [ ] **Step 3: Confirm no duplicate bioguides remain**
+
+Run:
+```bash
+npx tsx -e "import {getDb} from './db/init.ts'; (async()=>{ const c=await getDb(); const r=await c.run('SELECT bioguide_id, COUNT(*) n FROM members WHERE bioguide_id IS NOT NULL GROUP BY 1 HAVING n>1'); console.log('dup bioguides:', JSON.stringify(await r.getRows())); process.exit(0); })();"
+```
+Expected: `dup bioguides: []`.
+
+- [ ] **Step 4: No commit** (verification-only). If any step fails, fix in the owning task and
+re-run.
+
+---
+
 ## Self-Review
 
-**Spec coverage:**
-- C1 identity index → Task 1. ✓
-- C2 alias table (generation) → Task 2; (DB persistence) → Task 4. ✓
-- C3 resolveMember (exact→alias→null, ambiguity reject, canonical slug) → Task 3. ✓
-- C4 schema (member_aliases, term_*, bioguide UNIQUE w/ constraint-ordering) → Task 4. ✓
-- C5 validation gate (skip+log, no abort, no coerce) → Task 5. ✓
-- C6 members-only reconcile (FK dedup deferred, abort-on-FK-reference) → Task 4 Step 3. ✓
-- Testing (exact/nickname/comma/initial/ambiguous/unknown/dedup-slug) → Task 3 Step 1. ✓
-- Deterministic, no-network → Global Constraints + Task 1 local paths. ✓
+**Spec coverage (reconciled):**
+- Deterministic offline index → Task 1 (`buildIndex`). ✓
+- Alias generation, drop-initials normalization, no surname-only → Task 1. ✓
+- Ambiguity-rejecting pure resolver → Task 2 (`resolveIdentity`). ✓
+- Slug preservation (existing DB slug wins, derive for new) → Task 2 (`resolveMember`). ✓
+- `member_aliases` keyed on bioguide + full-YAML seeder + backfill + dup assert → Task 3. ✓
+- `bioguide_id UNIQUE` immediate (verified clean) → schema unchanged, asserted in Task 3. ✓
+- Slug-threading bug fix (the real defect) → Task 4. ✓
+- End-to-end determinism + preservation + no dups → Task 5. ✓
 
-**Placeholder scan:** no TBD/TODO; every code step carries complete code. The one
-conditional ("if reconcile needs FK rewrites, defer UNIQUE") is an explicit
-decision branch with both outcomes specified, not a placeholder.
+**Placeholder scan:** every code step carries complete code; no TBD/TODO.
 
-**Type consistency:** `MemberIdentity`, `ResolveResult`, `buildIndex`,
-`buildAliasMap`, `normalizeName`, `canonicalSlug`, `makeResolver`,
-`resolveMember` names/signatures are identical across Tasks 1→5. `member_aliases`
-columns (`alias_norm`, `bioguide_id`) match between Task 4 schema and seeder.
-```
+**Type consistency:** `LegislatorIdentity`, `ResolveResult`, `IdentityResult`, `buildIndex`,
+`buildAliasMap`, `normalizeName`, `resolveIdentity`, `resolveMember`, `deriveSlug`,
+`resolvedSlug`, and the `member_aliases(alias_norm, bioguide_id)` columns are consistent across
+Tasks 1→5.
