@@ -30,6 +30,28 @@ CREATE TABLE IF NOT EXISTS members (
   fetched_at          TIMESTAMP NOT NULL
 );
 
+-- bioguide_id is the stable federal identity (S000033 etc).
+-- Enforce 1:1 mapping from bioguide to member row.
+-- member_id (slug) remains the PK for minimal blast radius on existing joins.
+ALTER TABLE members ADD COLUMN IF NOT EXISTS term_start DATE;
+ALTER TABLE members ADD COLUMN IF NOT EXISTS term_end DATE;
+
+-- One bioguide maps to exactly one member row (nulls allowed during transition).
+CREATE UNIQUE INDEX IF NOT EXISTS idx_members_bioguide_id
+  ON members(bioguide_id);
+
+-- ─── Member aliases (deterministic projection of the resolver, from YAML) ─────
+-- Normalized name variants → bioguide (identity keyed on identity). A given
+-- alias_norm may appear against >1 bioguide: that row-level duplication IS the
+-- ambiguity signal. member_id is reachable via JOIN members USING (bioguide_id).
+DROP TABLE IF EXISTS member_aliases;
+CREATE TABLE IF NOT EXISTS member_aliases (
+  alias_norm   TEXT NOT NULL,
+  bioguide_id  TEXT NOT NULL,
+  PRIMARY KEY (alias_norm, bioguide_id)
+);
+
+
 -- ─── Donors (lifetime cumulative across cycles) ─────────────────────────────
 CREATE TABLE IF NOT EXISTS donors (
   member_id           TEXT NOT NULL,
