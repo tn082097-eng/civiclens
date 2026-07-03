@@ -1,15 +1,17 @@
 import { getLegislatorIndex, getAllAliases, normalizeName, type LegislatorIdentity } from './legislators.js';
 import { getDb } from '../db/init.js';
 
-export type ResolveResult =
-  | { ok: true; bioguide: string; slug: string }
+type ResolveReject =
   | { ok: false; reason: 'unresolved' }
   | { ok: false; reason: 'ambiguous'; candidates: string[] };
 
+export type ResolveResult =
+  | { ok: true; bioguide: string; slug: string }
+  | ResolveReject;
+
 export type IdentityResult =
   | { ok: true; bioguide: string }
-  | { ok: false; reason: 'unresolved' }
-  | { ok: false; reason: 'ambiguous'; candidates: string[] };
+  | ResolveReject;
 
 /** Pure name/bioguide → bioguide. Exact only; >1 → ambiguous; 0 → unresolved. No guessing. */
 export function resolveIdentity(
@@ -57,7 +59,7 @@ export async function resolveMember(
 ): Promise<ResolveResult> {
   const input = typeof raw === 'string' ? { name: raw } : raw;
   const ident = resolveIdentity(input, getLegislatorIndex(), getAllAliases());
-  if (!ident.ok) return ident;
+  if (ident.ok === false) return ident;
 
   const bio = ident.bioguide;
   let slug = slugCache.get(bio);

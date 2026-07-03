@@ -736,7 +736,7 @@ export async function fetchPolitician(name: string): Promise<LiveFetchResult | n
 
   // ── 1. Identity: deterministic from local YAML (bioguide is truth) ──
   const resolved = await resolveMember(name);
-  if (!resolved.ok) {
+  if (resolved.ok === false) {
     if (resolved.reason === 'ambiguous') {
       warnings.push(`Identity ambiguous for "${name}": candidates=${resolved.candidates?.join(',')}`);
     } else {
