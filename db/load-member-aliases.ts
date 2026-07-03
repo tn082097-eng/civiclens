@@ -18,9 +18,11 @@ async function main() {
   }
   console.log(`seeded ${rows} alias rows across ${aliasMap.size} distinct names`);
 
-  // 2. Backfill members: bioguide-derived term_start/end, chamber, state, district.
+  // 2. Backfill members: bioguide-derived term_start/end only.
   //    Keyed by the member row's existing bioguide_id (already 57/57 populated).
-  //    Does NOT touch member_id (slug) — preservation is the resolver's job.
+  //    Does NOT touch member_id (slug), chamber, state, or district — those are
+  //    owned by the normal loader (db/load-from-tasks.ts via fetchCongressMember);
+  //    this seeder must not overwrite them (was splitting chamber casing).
   const mrows = (await (await conn.run(
     'SELECT member_id, bioguide_id FROM members WHERE bioguide_id IS NOT NULL',
   )).getRowObjects()) as Array<{ member_id: string; bioguide_id: string }>;
@@ -41,8 +43,8 @@ async function main() {
     const leg = index.get(m.bioguide_id);
     if (!leg) { console.warn(`no YAML identity for bioguide ${m.bioguide_id} (${m.member_id})`); continue; }
     await conn.run(
-      `UPDATE members SET term_start = ?, term_end = ?, chamber = ?, state = ?, district = ? WHERE member_id = ?`,
-      [leg.termStart || null, leg.termEnd || null, leg.chamber, leg.state || null, leg.district, m.member_id],
+      `UPDATE members SET term_start = ?, term_end = ? WHERE member_id = ?`,
+      [leg.termStart || null, leg.termEnd || null, m.member_id],
     );
     filled++;
   }

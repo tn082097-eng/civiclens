@@ -44,7 +44,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_members_bioguide_id
 -- Normalized name variants → bioguide (identity keyed on identity). A given
 -- alias_norm may appear against >1 bioguide: that row-level duplication IS the
 -- ambiguity signal. member_id is reachable via JOIN members USING (bioguide_id).
-DROP TABLE IF EXISTS member_aliases;
 CREATE TABLE IF NOT EXISTS member_aliases (
   alias_norm   TEXT NOT NULL,
   bioguide_id  TEXT NOT NULL,
