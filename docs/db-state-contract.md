@@ -53,8 +53,10 @@ approximates; it does not restore.
 ### Out-of-band mutations (HAZARD — currently exist only in the DB)
 Transformations applied to existing rows with a backup but **no committed script**:
 
-- `UPDATE members SET chamber = LOWER(chamber)` — 2026-07-03, this session. Not in any
-  file. **Should be a loader invariant** (normalize on insert) or a `backfill-*.ts`.
+- ~~`UPDATE members SET chamber = LOWER(chamber)` — 2026-07-03, this session.~~
+  **RESOLVED:** now an ingestion-time invariant — `db/load-from-tasks.ts` normalizes
+  `chamber` to lowercase at the sole `members` write boundary, so the repair can never
+  be needed again. (Live rows were already lowercased once; the invariant keeps them so.)
 - Sanders `bernard-sanders`→`bernie-sanders` merge (per STATUS; `.bak-pre-sanders-merge`).
 - Committee recanonicalization (strip leading "the ") — *may* be codified in
   `db/backfill-committees.ts` (verify) vs the manual op STATUS describes.

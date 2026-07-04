@@ -132,13 +132,18 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
   const bioSourceUrl = typeof d.bio === 'object' ? (d.bio?.sourceUrl ?? null) : null;
 
   // members
+  // Invariant (see docs/db-state-contract.md): members.chamber is canonical
+  // lowercase 'senate'|'house'. Normalize here at the sole write boundary so no
+  // upstream fetcher can reintroduce Title-case (which silently breaks the
+  // case-sensitive chamber comparisons in queries.ts / load-senate-ptr.ts).
+  const chamber = d.chamber ? String(d.chamber).toLowerCase() : null;
   await conn.run(
     `INSERT OR REPLACE INTO members
      (member_id, name, party, chamber, state, district, role, in_office,
       first_elected_year, bioguide_id, fec_candidate_id, bio_summary, bio_source_url, fetched_at)
      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     [
-      memberId, d.name, d.party ?? null, d.chamber ?? null, d.state ?? null,
+      memberId, d.name, d.party ?? null, chamber, d.state ?? null,
       d.district ?? null, d.role ?? null, d.inOffice ?? null,
       asInt(d.firstElectedYear), d.bioguideId ?? null, d.fecCandidateId ?? null,
       bioSummary, bioSourceUrl, fetchedAt,
