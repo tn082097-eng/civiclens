@@ -1,5 +1,7 @@
 # Money↔Vote Juxtaposition Detector (Issue #6) Implementation Plan
 
+> **Rev 2026-06-19 — 3 blockers patched after a second Grok design review** (`~/grok-workspace/reviews/20260619-180944-design-...md`): **(#1)** `filing_id` now `COALESCE(transaction_id, image_number)` in the Task 4 view + `filingId: z.string().min(1)` in Task 2 (image-only rows no longer throw at parse). **(#2)** Task 9 no longer races Issue #7 — it fills #7's reserved `sec-money-votes` slot and never touches `buildMemberPage`/receipts wiring. **(#3)** Task 9 render path collapsed to a single source (`pipeline/artifacts/{member}.money-votes.json`) behind a `loadMoneyVotesOrSentinel` sentinel; `db/load-from-tasks.ts` modify removed. Non-blocking concerns (temporal SQL bound, fec_candidate_id skip behavior, source_url permalink, pipeline.ts wiring, theme enum) remain as filed — fold in opportunistically.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** A deterministic, row-cited detector that surfaces dated juxtapositions between a member's *industry-PAC contributions* and their *theme-matched votes* within N days — the money→vote analogue of the existing trade→vote nexus.
@@ -102,7 +104,9 @@ export const MoneyVoteFlagSchema = z.object({
   theme:          z.string(),
   committeeName:  z.string(),
   supportOppose:  z.enum(['S', 'O']),   // direct contributions are 'S'; kept for symmetry w/ IE
-  filingId:       z.string(),           // FEC transaction_id — the dated filing cite
+  filingId:       z.string().min(1),    // COALESCE(transaction_id, image_number) — the dated
+                                         // filing cite. Non-empty: the loader drops rows where
+                                         // BOTH are null (Task 6), so this is always citable.
   amount:         z.number().nonnegative(),
   moneyDate:      z.string(),           // contribution_receipt_date (YYYY-MM-DD)
   voteId:         z.string(),
@@ -302,7 +306,13 @@ SELECT DISTINCT
   pt.theme,
   c.contributor_name        AS committee_name,
   'S'                       AS support_oppose,   -- direct receipts support the member
-  c.transaction_id          AS filing_id,
+  COALESCE(c.transaction_id, c.image_number) AS filing_id,  -- BLOCKER FIX (#1): image-only
+                                                            -- rows are kept by the loader
+                                                            -- (Task 6 drops only when BOTH are
+                                                            -- null), so transaction_id alone
+                                                            -- would NULL out filing_id and make
+                                                            -- MoneyVoteFlagSchema.parse throw.
+                                                            -- COALESCE is guaranteed non-null.
   c.amount,
   c.contribution_date       AS money_date,
   v.vote_id, v.date         AS vote_date, v.position AS vote_position,
@@ -781,19 +791,23 @@ git commit -m "feat(render): deterministic money-vote section + widen test glob"
 ## Task 9: Wire into the member page + end-to-end smoke
 
 **Files:**
-- Modify: `render/build.ts` (call `renderMoneyVotesSection` in the member-page assembly, next to the receipts section; read `pipeline/artifacts/{member}.money-votes.json` or the DB-synced artifact the same way receipts are read)
-- Modify: `db/load-from-tasks.ts` *(only if money-votes artifacts are synced through the loader; otherwise render reads the view directly via `detectMember`)*
+- Modify: `render/build.ts` (add `loadMoneyVotesOrSentinel` + fill the #7-reserved `sec-money-votes` slot with `renderMoneyVotesSection`; reads `pipeline/artifacts/{member}.money-votes.json` only — see blocker fix #3)
+- ~~Modify: `db/load-from-tasks.ts`~~ — **removed (blocker fix #3):** render reads the artifact file directly via the sentinel loader; no DB-sync path.
 
 **Interfaces:**
 - Consumes: `renderMoneyVotesSection` (Task 8), `MoneyVoteFlagsSchema` for typed reads (parity with the typed-artifact-reads work).
 
-> **Grok review finding (confirmed gap):** `renderReceiptsSection` is currently **defined and tested but NOT wired into `buildMemberPage` on main** — Lane 1 receipts don't actually render on member pages yet. This task therefore wires **both** receipts and money-votes through the same artifact-read path (this overlaps #7's uniform-skeleton seam — coordinate so the two don't double-wire receipts; if #7 lands first, only add money-votes here).
+> **BLOCKER FIXES (post-Grok 2026-06-19) — read before implementing this task:**
+>
+> **(#2) Sequencing — #7 lands first.** Issue #7 (`2026-06-18-uniform-member-skeleton.md`) owns `buildMemberPage` and reserves a `sec-money-votes` slot. This task does **NOT** patch `buildMemberPage` ad-hoc and does **NOT** touch receipts wiring. It only fills the reserved `sec-money-votes` slot with `renderMoneyVotesSection`. If #7 has not landed when starting this task, **stop and land #7 first** (or its skeleton seam) — do not race it. Confirm the seam exists before Step 1: `rg -n 'sec-money-votes' render/build.ts` must return the reserved slot.
+>
+> **(#3) Single render path + sentinel contract.** The render reads exactly ONE source: the artifact file `pipeline/artifacts/{member}.money-votes.json`. No `load-from-tasks` sync, no "read the view directly" path. Mirror #7's `loadThemeGapsOrSentinel`: add `loadMoneyVotesOrSentinel(member): MoneyVoteFlags` that, when the file is missing or unparseable, returns a **valid empty artifact** (`{ memberId, windowDays: WINDOW_DAYS, coverage: {pacReceiptsThemed:0,pacReceiptsTotal:0}, flags: [] }`) so the section always renders its explicit empty state (uniform-skeleton rule) — never crashes, never omits. Present artifacts are parsed with `MoneyVoteFlagsSchema.parse` (typed-read parity, PR2).
 
-- [ ] **Step 1: Confirm the gap and find the member-page assembly point**
+- [ ] **Step 1: Confirm the #7 seam exists, then locate the slot**
 ```bash
-rg -n 'renderReceiptsSection|buildMemberPage|sec-receipts' render/build.ts
+rg -n 'sec-money-votes|loadThemeGapsOrSentinel|buildMemberPage' render/build.ts
 ```
-Expected: `renderReceiptsSection` is defined (~L102) but has **no call site** inside the page builder. Identify the function that assembles member-page section HTML (where revolving-door / IE sections are concatenated). Add the money-votes section there, and wire receipts too if #7 hasn't. Read+validate each artifact with its `*Schema.parse` (typed-read parity with PR2).
+Expected: the reserved `sec-money-votes` slot from #7 is present. If it is NOT, land #7 first (blocker #2). Add `loadMoneyVotesOrSentinel` next to #7's loader and call `renderMoneyVotesSection(loadMoneyVotesOrSentinel(member))` into the reserved slot only. Do not add or move the receipts section here.
 
 - [ ] **Step 2: End-to-end on one member**
 ```bash
@@ -812,7 +826,7 @@ Expected: 60 pass; corpus still valid.
 
 - [ ] **Step 4: Commit**
 ```bash
-git add render/build.ts db/load-from-tasks.ts
+git add render/build.ts
 git commit -m "feat(render): surface money-vote section on the member page (#6)"
 ```
 
