@@ -132,11 +132,16 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
   const bioSourceUrl = typeof d.bio === 'object' ? (d.bio?.sourceUrl ?? null) : null;
 
   // members
-  // Invariant (see docs/db-state-contract.md): members.chamber is canonical
-  // lowercase 'senate'|'house'. Normalize here at the sole write boundary so no
-  // upstream fetcher can reintroduce Title-case (which silently breaks the
-  // case-sensitive chamber comparisons in queries.ts / load-senate-ptr.ts).
+  // Invariant (see docs/db-state-contract.md): members.chamber ∈ {'house','senate'} ∪ {NULL},
+  // canonical lowercase. Normalize + VALIDATE the domain here at the sole write boundary so no
+  // upstream fetcher can reintroduce Title-case (which breaks the case-sensitive comparisons in
+  // queries.ts / load-senate-ptr.ts) or a garbage value. Fail loud, never silently coerce.
   const chamber = d.chamber ? String(d.chamber).toLowerCase() : null;
+  if (chamber !== null && chamber !== 'house' && chamber !== 'senate') {
+    throw new Error(
+      `members.chamber invariant violated for "${memberId}": expected 'house' | 'senate' | null, got ${JSON.stringify(d.chamber)}`,
+    );
+  }
   await conn.run(
     `INSERT OR REPLACE INTO members
      (member_id, name, party, chamber, state, district, role, in_office,
