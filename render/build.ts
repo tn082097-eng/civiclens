@@ -107,19 +107,19 @@ export function renderReceiptsSection(a: ThemeGapReceipts): string {
     `${fmtN(a.receipts.length)} theme-matched receipts.</p>`;
 
   if (a.receipts.length === 0) {
-    return `<section class="receipts"><h2>Trade–vote timing</h2>${cov}` +
+    return `<section class="receipts" id="sec-receipts"><h2>Trade–vote timing</h2>${cov}` +
       `<p class="empty">No theme-matched trade→vote pairs on record for this member.</p></section>`;
   }
   if (a.band === 'insufficient-data') {
     const banner = `<p class="band">Timing score unavailable — ${a.tradeCount} disclosed trades ` +
       `(minimum 5). Receipts below are shown for the record, unranked.</p>`;
-    return `<section class="receipts"><h2>Trade–vote timing</h2>${cov}${banner}` +
+    return `<section class="receipts" id="sec-receipts"><h2>Trade–vote timing</h2>${cov}${banner}` +
       a.receipts.map(receiptCard).join('') + `</section>`;
   }
   const banner = a.band === 'low-power'
     ? `<p class="band">Low statistical power — ${a.tradeCount} disclosed trades. Timing shown but not ranked.</p>`
     : '';
-  return `<section class="receipts"><h2>Trade–vote timing</h2>${cov}${banner}` +
+  return `<section class="receipts" id="sec-receipts"><h2>Trade–vote timing</h2>${cov}${banner}` +
     a.receipts.map(receiptCard).join('') + `</section>`;
 }
 
