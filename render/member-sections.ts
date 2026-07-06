@@ -9,6 +9,9 @@ export const MEMBER_SECTION_IDS = [
 ] as const;
 
 export function sectionShell(id: string, title: string, body: string): string {
+  // id lands unescaped in an HTML attribute — restrict to the registry's
+  // literal shape so no call site can ever smuggle markup through it.
+  if (!/^sec-[a-z][a-z-]*$/.test(id)) throw new Error(`unsafe section id: ${id}`);
   return `<h2 id="${id}">${esc(title)}</h2>\n${body}`;
 }
 

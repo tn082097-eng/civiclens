@@ -28,8 +28,11 @@ export async function getDb(): Promise<DuckDBConnection> {
   // default budget (80% of RAM) lets one heavy query take the process to
   // ~21GB RSS and get SIGKILLed before DuckDB self-limits.
   const memLimit = process.env.CIVICLENS_DUCKDB_MEM ?? '8GB';
+  if (!/^\d+(\.\d+)?\s*[KMGT]i?B$/i.test(memLimit)) {
+    throw new Error(`CIVICLENS_DUCKDB_MEM must look like '8GB'/'512MB', got: ${memLimit}`);
+  }
   await _conn.run(`SET memory_limit='${memLimit}'`);
-  await _conn.run(`SET temp_directory='${DB_PATH}.tmp'`);
+  await _conn.run(`SET temp_directory='${DB_PATH.replaceAll("'", "''")}.tmp'`);
   // Parallel operators buffer per-thread and the accounting runs well past
   // memory_limit (observed ~2x RSS on the default thread count). Four threads
   // keeps peak RSS near the configured limit at little wall-clock cost.
