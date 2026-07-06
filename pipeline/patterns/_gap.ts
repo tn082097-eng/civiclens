@@ -129,11 +129,15 @@ export function perPairLowerTail(opts: {
       }
       for (let i = 0; i < slot.length; i++) slot[i].txMs = d[i];
     }
+    const hitThisPerm = new Set<string>();
     for (const s of slot) {
       const obs = observed.get(s.id);
-      if (obs === undefined) continue;
+      if (obs === undefined || hitThisPerm.has(s.id)) continue;
       const g = minGapIndexed(s, index, windowDays);
-      if (g !== undefined && g <= obs) hits.set(s.id, hits.get(s.id)! + 1);
+      if (g !== undefined && g <= obs) {
+        hitThisPerm.add(s.id);
+        hits.set(s.id, hits.get(s.id)! + 1);
+      }
     }
   }
 

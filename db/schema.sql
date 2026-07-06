@@ -304,7 +304,33 @@ ORDER BY member_count DESC, total_amount DESC;
 -- no scalar "suspicion" score — readers filter on the signals they care about.
 -- Sign convention for days_from_trade_to_vote:
 --   positive = trade BEFORE vote, negative = trade AFTER vote, zero = same day.
+-- Committee lookups are pre-aggregated CTEs joined by (bill_id[, member_id]),
+-- NOT correlated subqueries: DuckDB rewrites correlated subqueries into DELIM
+-- joins that materialize the full trade×vote intermediate (~700k wide rows for
+-- one heavy trader) several times over — OOMs the build. The CTEs aggregate
+-- bill_committees (hundreds of rows) once and hash-join cheaply.
 CREATE OR REPLACE VIEW v_trades_near_votes AS
+WITH bill_committee_agg AS (
+  SELECT bill_id,
+         STRING_AGG(committee_name, ' · ' ORDER BY committee_name) AS bill_committees
+  FROM bill_committees
+  GROUP BY bill_id
+),
+member_bill_committee AS (
+  -- Role matching is case-insensitive (DB stores 'Chair'/'Ranking Member'/
+  -- 'Member'); tie-break on the role string keeps the pick deterministic
+  -- (ADR 0001) — the old correlated ORDER BY … LIMIT 1 was arbitrary.
+  SELECT bc.bill_id, mc.member_id,
+         ARG_MIN(mc.role, (CASE
+           WHEN LOWER(mc.role) LIKE 'chair%'   THEN '1'
+           WHEN LOWER(mc.role) LIKE 'ranking%' THEN '2'
+           WHEN LOWER(mc.role) = 'member'      THEN '3'
+           ELSE '4'
+         END) || '|' || mc.role) AS member_committee_role
+  FROM bill_committees bc
+  JOIN committees mc ON mc.committee_canonical = bc.committee_canonical
+  GROUP BY bc.bill_id, mc.member_id
+)
 SELECT
   t.member_id, m.name AS member_name, t.holder,
   t.tx_date, t.tx_type, t.asset, t.ticker, t.asset_type, t.amount_band,
@@ -316,35 +342,27 @@ SELECT
   bs.title AS bill_title,
   bs.summary_text AS bill_summary,
   bs.source_url AS bill_source_url,
-  -- Bill committees: list of committee names + a flag if the trader
-  -- sits on any of them. Computed once via correlated subquery so each
-  -- bill's committees are aggregated, not exploded into duplicate rows.
-  (SELECT STRING_AGG(bc.committee_name, ' · ')
-     FROM bill_committees bc WHERE bc.bill_id = v.bill_id) AS bill_committees,
-  EXISTS (
-    SELECT 1 FROM bill_committees bc
-    JOIN committees mc ON mc.committee_canonical = bc.committee_canonical
-    WHERE bc.bill_id = v.bill_id AND mc.member_id = t.member_id
-  ) AS member_on_bill_committee,
-  (SELECT mc.role FROM bill_committees bc
-     JOIN committees mc ON mc.committee_canonical = bc.committee_canonical
-     WHERE bc.bill_id = v.bill_id AND mc.member_id = t.member_id
-     ORDER BY CASE mc.role
-       WHEN 'chair' THEN 1
-       WHEN 'ranking' THEN 2
-       WHEN 'member' THEN 3
-       ELSE 4
-     END
-     LIMIT 1) AS member_committee_role,
+  bca.bill_committees,
+  (mbc.bill_id IS NOT NULL) AS member_on_bill_committee,
+  mbc.member_committee_role,
   date_diff('day', t.tx_date, v.date)       AS days_from_trade_to_vote,
   ABS(date_diff('day', t.tx_date, v.date))  AS days_abs,
   GREATEST(0,  date_diff('day', t.tx_date, v.date)) AS days_before_vote,
   GREATEST(0, -date_diff('day', t.tx_date, v.date)) AS days_after_vote,
   t.match_confidence, t.match_method
 FROM pfd_transactions t
+-- The ±180-day bound is load-bearing: without it this join is member_id-only
+-- (trades × votes ≈ 10M rows) and the three correlated subqueries above
+-- materialize against that intermediate — OOMs the build once
+-- bill_committees/bill_summaries are populated. Every consumer uses a
+-- window ≤ 90 days; 180 is 2× headroom.
 JOIN votes v ON v.member_id = t.member_id
+  AND ABS(date_diff('day', t.tx_date, v.date)) <= 180
 JOIN members m ON m.member_id = t.member_id
 LEFT JOIN bill_summaries bs ON bs.bill_id = v.bill_id
+LEFT JOIN bill_committee_agg bca ON bca.bill_id = v.bill_id
+LEFT JOIN member_bill_committee mbc
+  ON mbc.bill_id = v.bill_id AND mbc.member_id = t.member_id
 WHERE t.member_id IS NOT NULL
   AND t.tx_date IS NOT NULL
   AND v.date IS NOT NULL;
