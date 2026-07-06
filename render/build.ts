@@ -36,6 +36,9 @@ import { fetchSuperPacIE } from '../lib/fec-ie.js';
 import type { SuperPacIEReport, SuperPacIE, SuperPacFunder } from '../lib/types.js';
 import type { ThemeGapReceipts } from '../lib/schemas.js';
 import { SITE_DIR } from '../lib/paths.js';
+import { assembleMemberBody, reservedStub, sectionShell } from './member-sections.js';
+import { loadThemeGapsOrSentinel } from './load-artifacts.js';
+import { revolvingEmptyShell, outsideSpendingEmptyShell } from './empty-shells.js';
 
 const OUT_DIR = SITE_DIR;
 const MEMBERS_DIR = resolve(OUT_DIR, 'members');
@@ -216,13 +219,14 @@ function collapseTrades(pairs: TradeNearVote[]): TradeRow[] {
         holder: p.holder,
         trade_filing_id: p.trade_filing_id,
         trade_source_url: p.trade_source_url,
-        vote_count: 1,
+        vote_count: p.window_vote_count ?? 1,
         closest: p,
         closestJurisdiction: p.member_on_bill_committee ? p : null,
         example_votes: [p],
       });
     } else {
-      cur.vote_count++;
+      // Capped queries carry the true pair count; uncapped rows are counted.
+      cur.vote_count = p.window_vote_count ?? (cur.vote_count + 1);
       if (p.days_abs < cur.closest.days_abs) cur.closest = p;
       if (p.member_on_bill_committee && (!cur.closestJurisdiction || p.days_abs < cur.closestJurisdiction.days_abs)) {
         cur.closestJurisdiction = p;
@@ -1103,7 +1107,6 @@ function renderActivityGlance(g: ActivityGlance): string {
   const cell = (label: string, value: string) =>
     `<div class="glance-cell"><div class="glance-value">${value}</div><div class="glance-label">${esc(label)}</div></div>`;
   return `
-<h2>Activity at a glance</h2>
 <p class="lede" style="margin-bottom:8px;">${CURRENT_CONGRESS}th Congress, ${CYCLE_START.slice(0,4)}–${CYCLE_END.slice(0,4)} cycle. Counts only.</p>
 <div class="glance-grid">
   ${cell('Trades',                   g.trades.toLocaleString())}
@@ -1152,7 +1155,6 @@ async function fetchCosponsorEdgesForMember(memberId: string, limit = 5): Promis
 function renderCosponsorEmbed(edges: CosponsorEdgeForMember[]): string {
   if (edges.length === 0) {
     return `
-<h2>Co-sponsorship</h2>
 <p class="muted">No shared-bill peers in corpus.</p>
 `;
   }
@@ -1162,7 +1164,6 @@ function renderCosponsorEmbed(edges: CosponsorEdgeForMember[]): string {
       <td class="num">${e.shared_bills}</td>
     </tr>`).join('');
   return `
-<h2>Co-sponsorship</h2>
 <p class="lede" style="margin-bottom:8px;">Top peers by shared bills in the loaded corpus. <a class="row-link" href="../network.html">→ Full co-sponsorship network</a></p>
 <table>
   <thead><tr><th>Peer</th><th class="num">Shared bills</th></tr></thead>
@@ -1278,7 +1279,6 @@ async function renderPatterns(memberSlug: string): Promise<string> {
 
   if (rows.length === 0) {
     return `
-<h2>Patterns detected</h2>
 <p class="muted">No patterns detected at current thresholds.</p>`;
   }
 
@@ -1352,23 +1352,22 @@ async function renderPatterns(memberSlug: string): Promise<string> {
     .join('\n');
 
   return `
-<h2>Patterns detected</h2>
 <p class="lede" style="margin-bottom:12px;">Named patterns from the deterministic detection pass. Each shows how it was measured, how confident the statistics are, and the records it cites — click an evidence chip to jump to the rows, or verify them in the sections above. Weight reflects the strength of the evidence, not a verdict. <a class="row-link" href="../methodology.html">How patterns are measured →</a></p>
 ${cards}`;
 }
 
 async function renderOutsideSpending(m: MemberDetail, cycle: number): Promise<string> {
-  if (!m.fec_candidate_id) return '';
+  if (!m.fec_candidate_id) return outsideSpendingEmptyShell('no-fec-id');
 
   let report: SuperPacIEReport;
   try {
     report = await fetchSuperPacIE(m.fec_candidate_id, cycle, { topFunders: 3 });
   } catch (e) {
     console.warn(`[outside-spending] fetch failed for ${m.member_id}:`, (e as Error).message);
-    return '';
+    return outsideSpendingEmptyShell('no-ie');
   }
 
-  if (report.supporting.length === 0 && report.opposing.length === 0) return '';
+  if (report.supporting.length === 0 && report.opposing.length === 0) return outsideSpendingEmptyShell('no-ie');
 
   function fmtPac(p: SuperPacIE, funders: SuperPacFunder[] | undefined): string {
     const meta = [p.committeeType, p.designation, p.party].filter(Boolean).join(' · ');
@@ -1401,8 +1400,7 @@ async function renderOutsideSpending(m: MemberDetail, cycle: number): Promise<st
     ? `<p class="muted">No opposing independent expenditure in ${cycle} cycle.</p>`
     : `<div class="pac-list">${opposingTop.map(p => fmtPac(p, funders[p.committeeId])).join('')}</div>`;
 
-  return `
-<h2>Outside spending (Super PACs)</h2>
+  return sectionShell('sec-outside-spending', 'Outside spending (Super PACs)', `
 <p class="lede" style="margin-bottom:8px;">
   Independent expenditure for or against ${esc(m.name)}, ${cycle} cycle.
   Uncapped, not coordinated with the candidate. Funders shown where Schedule A is available.
@@ -1415,7 +1413,7 @@ async function renderOutsideSpending(m: MemberDetail, cycle: number): Promise<st
 ${supportingBlock}
 <h3 style="margin-top:16px;">Opposing Super PACs</h3>
 ${opposingBlock}
-`;
+`);
 }
 
 export async function buildMemberPage(m: MemberDetail): Promise<void> {
@@ -1471,8 +1469,9 @@ export async function buildMemberPage(m: MemberDetail): Promise<void> {
   const revolvingIntensity: Record<RevolvingConnection['recencyTier'], string> = {
     active: 'intensity-high', recent: 'intensity-medium', historical: 'intensity-low',
   };
-  const revolvingBlock = revolving.length === 0 ? '' : `
-<h2 id="sec-revolving">Revolving door — former staff now lobbying (${revolving.length})</h2>
+  const revolvingBlock = revolving.length === 0
+    ? revolvingEmptyShell()
+    : sectionShell('sec-revolving', `Revolving door — former staff now lobbying (${revolving.length})`, `
 <p class="lede">Registered federal lobbyists whose disclosed former government role names ${esc(m.name)} or a committee they sit on. Recency reflects each lobbyist's most recent disclosure filing — not a judgment.</p>
 ${revolving.map(c => {
   const role = c.formerRole.length > 220 ? c.formerRole.slice(0, 217) + '…' : c.formerRole;
@@ -1493,7 +1492,7 @@ ${revolving.map(c => {
   ${sub ? `<div class="muted" style="font-size:12px;margin-top:6px;">${sub}</div>` : ''}
   ${src ? `<div style="margin-top:6px;">${src}</div>` : ''}
 </div>`;
-}).join('')}`;
+}).join('')}`);
 
   const peersBlock = peers.length === 0
     ? '<p class="muted">No shared-donor peers in corpus.</p>'
@@ -1620,17 +1619,7 @@ ${revolving.map(c => {
   const glanceBlock = renderActivityGlance(glance);
   const tabId = `tabs-${m.member_id.replace(/[^a-z0-9]/g, '-')}`;
 
-  const body = `
-<h2>${esc(m.name)}</h2>
-${meta}
-${bio}
-${glanceBlock}
-${tradeActivityBlock}
-<h2 id="sec-timeline">Timeline</h2>
-<p class="lede" style="margin-bottom:8px;">Votes (circles, top row) and trades (diamonds, bottom row) plotted on the same axis. Hover for detail. One dot per month — most significant vote shown (Nay preferred over Yea).</p>
-${timelineBlock}
-
-<h2 id="sec-trades">Trades &amp; bills</h2>
+  const tradesInner = `
 <p class="lede" style="margin-bottom:12px;">
   Showing <strong>${collapsedSuspicious.length}</strong> discretionary equity trade${collapsedSuspicious.length === 1 ? '' : 's'} made <em>before</em> a vote within 90 days.
   T-bills, ETFs, index funds, munis, and bonds excluded — they carry no single-company vote nexus.
@@ -1655,23 +1644,34 @@ function showTab(tabGroupId, panelName) {
     el.classList.toggle('active', el.dataset.panel === panelName);
   });
 }
-</script>
+</script>`;
 
-<h2 id="sec-donors">Top donors (lifetime, 4-cycle FEC union)</h2>
-${donorsBlock}
-${revolvingBlock}
+  const receiptsBlock = renderReceiptsSection(loadThemeGapsOrSentinel(m.member_id));
+  const identityBlock = `<h2 id="sec-identity">${esc(m.name)}</h2>\n${meta}\n${bio}\n${tradeActivityBlock}`;
+  const glanceSection = sectionShell('sec-glance', 'Activity at a glance', glanceBlock);
+  const timelineSection = sectionShell('sec-timeline', 'Timeline',
+    `<p class="lede" style="margin-bottom:8px;">Votes (circles, top row) and trades (diamonds, bottom row) plotted on the same axis. Hover for detail. One dot per month — most significant vote shown (Nay preferred over Yea).</p>\n${timelineBlock}`);
+  const tradesSection = sectionShell('sec-trades', 'Trades & bills', tradesInner);
+  const donorsSection = sectionShell('sec-donors', 'Top donors (lifetime, 4-cycle FEC union)', donorsBlock);
+  const peersSection = sectionShell('sec-peers', 'Shared-donor peers in corpus', peersBlock);
+  const patternsSection = sectionShell('sec-patterns', 'Patterns', patternsBlock);
+  const cosponsorSection = sectionShell('sec-cosponsor', 'Co-sponsorship', cosponsorBlock);
 
-<h2>Shared-donor peers in corpus</h2>
-${peersBlock}
-
-${outsideSpendingBlock}
-
-${cosponsorBlock}
-
-${patternsBlock}
-
-<p style="margin-top: 32px;"><a class="row-link" href="../index.html">← back to corpus</a></p>
-`;
+  const body = assembleMemberBody({
+    'sec-identity': identityBlock,
+    'sec-glance': glanceSection,
+    'sec-receipts': receiptsBlock,
+    'sec-coherence': reservedStub('sec-coherence', 'Per-theme coherence'),
+    'sec-money-votes': reservedStub('sec-money-votes', 'Money & votes'),
+    'sec-timeline': timelineSection,
+    'sec-trades': tradesSection,
+    'sec-donors': donorsSection,
+    'sec-revolving': revolvingBlock,
+    'sec-outside-spending': outsideSpendingBlock,
+    'sec-peers': peersSection,
+    'sec-patterns': patternsSection,
+    'sec-cosponsor': cosponsorSection,
+  }) + '\n<p style="margin-top: 32px;"><a class="row-link" href="../index.html">← back to corpus</a></p>';
 
   const html = layout(`CivicLens — ${m.name}`, `<a href="../index.html">Corpus</a> · ${esc(m.name)}`, body);
   writeFileSync(resolve(MEMBERS_DIR, `${m.member_id}.html`), html);

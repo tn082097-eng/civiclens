@@ -89,6 +89,7 @@ export interface TradeNearVote {
   match_confidence: number | null;
   match_method: string | null;
   bill_mentions_ticker?: boolean;  // only present on v_suspicious_trades rows
+  window_vote_count?: number;      // true per-trade pair count when the query caps rows per trade
 }
 
 function rowsToTradeNearVote(rows: any[]): TradeNearVote[] {
@@ -124,6 +125,7 @@ function rowsToTradeNearVote(rows: any[]): TradeNearVote[] {
     match_confidence: r.match_confidence !== null && r.match_confidence !== undefined ? Number(r.match_confidence) : null,
     match_method: r.match_method ?? null,
     ...(r.bill_mentions_ticker !== undefined ? { bill_mentions_ticker: Boolean(r.bill_mentions_ticker) } : {}),
+    ...(r.window_vote_count !== undefined ? { window_vote_count: Number(r.window_vote_count) } : {}),
   }));
 }
 
@@ -138,9 +140,22 @@ export async function findTradesNearVotes(memberId: string, windowDays = 14): Pr
 // Drops T-bills, ETFs, index funds, munis, bonds.  See schema v_suspicious_trades.
 export async function findSuspiciousTrades(memberId: string, windowDays = 90): Promise<TradeNearVote[]> {
   const conn = await getDb();
+  // Per-trade cap mirrors trades-near-votes.sql: heavy traders otherwise
+  // return 100k+ exploded rows that OOM the JS heap. window_vote_count
+  // carries the true pair count for the collapsed card.
   const r    = await conn.run(
-    `SELECT * FROM v_suspicious_trades
-     WHERE member_id = ? AND days_before_vote <= ?
+    `SELECT * FROM (
+       SELECT v.*,
+         COUNT(*) OVER (PARTITION BY trade_filing_id, tx_date, asset, ticker) AS window_vote_count,
+         ROW_NUMBER() OVER (PARTITION BY trade_filing_id, tx_date, asset, ticker
+           ORDER BY days_before_vote ASC, tx_date DESC, trade_filing_id ASC, vote_id ASC,
+                    ticker ASC, asset ASC) AS rn_close,
+         ROW_NUMBER() OVER (PARTITION BY trade_filing_id, tx_date, asset, ticker
+           ORDER BY member_on_bill_committee DESC, days_before_vote ASC, vote_id ASC) AS rn_cmte
+       FROM v_suspicious_trades v
+       WHERE member_id = ? AND days_before_vote <= ?
+     )
+     WHERE rn_close <= 6 OR (member_on_bill_committee AND rn_cmte = 1)
      ORDER BY days_before_vote ASC, tx_date DESC,
               trade_filing_id ASC, vote_id ASC, ticker ASC, asset ASC`,
     [memberId, windowDays],

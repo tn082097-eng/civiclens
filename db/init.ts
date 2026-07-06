@@ -24,6 +24,16 @@ export async function getDb(): Promise<DuckDBConnection> {
   if (_conn) return _conn;
   _instance = await DuckDBInstance.create(DB_PATH);
   _conn     = await _instance.connect();
+  // Cap DuckDB below the OOM-killer line and spill to disk instead: the
+  // default budget (80% of RAM) lets one heavy query take the process to
+  // ~21GB RSS and get SIGKILLed before DuckDB self-limits.
+  const memLimit = process.env.CIVICLENS_DUCKDB_MEM ?? '8GB';
+  await _conn.run(`SET memory_limit='${memLimit}'`);
+  await _conn.run(`SET temp_directory='${DB_PATH}.tmp'`);
+  // Parallel operators buffer per-thread and the accounting runs well past
+  // memory_limit (observed ~2x RSS on the default thread count). Four threads
+  // keeps peak RSS near the configured limit at little wall-clock cost.
+  await _conn.run(`SET threads=4`);
   return _conn;
 }
 
