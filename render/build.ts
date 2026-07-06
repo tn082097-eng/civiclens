@@ -2221,6 +2221,16 @@ export async function buildAll(): Promise<void> {
   }
 }
 
+// Rebuild a single member page (dev loop) without index/methodology/network/nexus.
+export async function buildOne(memberId: string): Promise<void> {
+  if (!existsSync(MEMBERS_DIR)) mkdirSync(MEMBERS_DIR, { recursive: true });
+  const detail = await fetchMember(memberId);
+  if (!detail) { console.error(`no such member: ${memberId}`); process.exit(1); }
+  await buildMemberPage(detail);
+}
+
 if (import.meta.url === `file://${process.argv[1]}`) {
-  buildAll().then(() => process.exit(0)).catch(e => { console.error(e); process.exit(1); });
+  const mi = process.argv.indexOf('--member');
+  const run = mi >= 0 && process.argv[mi + 1] ? buildOne(process.argv[mi + 1]) : buildAll();
+  run.then(() => process.exit(0)).catch(e => { console.error(e); process.exit(1); });
 }

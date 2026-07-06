@@ -4,9 +4,9 @@
  * PER PAIR (gap, lower tail) instead of a member-level count.
  *   npx tsx pipeline/score-theme-gaps.ts --member nancy-pelosi
  */
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, existsSync, statSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { getDb } from '../db/init.js';
+import { getDb, DB_PATH } from '../db/init.js';
 import { perPairLowerTail, type ThemeTrade, type ThemeVote } from './patterns/_gap.js';
 import { mulberry32, seedFrom } from './patterns/_rng.js';
 import { ThemeGapReceiptsSchema, type ThemeGapReceipts } from '../lib/schemas.js';
@@ -179,14 +179,38 @@ async function scoreMember(member: string): Promise<void> {
   console.log(`${member} [${band}]: trades=${tradeCount} receipts=${art.receipts.length} -> ${out}`);
 }
 
+// Artifact is fresh if it exists and is newer than the DuckDB file (the only input).
+function isFresh(member: string): boolean {
+  const out = `pipeline/artifacts/${member}.theme-gaps.json`;
+  return existsSync(out) && existsSync(DB_PATH) && statSync(out).mtimeMs > statSync(DB_PATH).mtimeMs;
+}
+
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
+  const force = args.includes('--force');
   const i = args.indexOf('--member');
+  if (args.includes('--all')) {
+    const conn = await getDb();
+    const rows = (await (await conn.run(
+      `SELECT member_id FROM members ORDER BY member_id`)).getRowObjects()) as unknown as { member_id: string }[];
+    let skipped = 0;
+    for (const { member_id } of rows) {
+      if (!force && isFresh(member_id)) { skipped++; continue; }
+      await scoreMember(member_id);
+    }
+    console.log(`--all done: ${rows.length - skipped} scored, ${skipped} fresh (skipped; --force to redo)`);
+    return;
+  }
   if (i === -1 || !args[i + 1]) {
-    console.error('usage: score-theme-gaps.ts --member <slug>');
+    console.error('usage: score-theme-gaps.ts --member <slug> [--force] | --all [--force]');
     process.exit(2);
   }
-  await scoreMember(args[i + 1]);
+  const member = args[i + 1];
+  if (!force && isFresh(member)) {
+    console.log(`${member}: artifact fresh (newer than DB); skipping. Use --force to recompute.`);
+    return;
+  }
+  await scoreMember(member);
 }
 
 // Only run main() as a script, not when imported by tests.
