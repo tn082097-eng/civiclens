@@ -143,10 +143,19 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
     );
   }
   await conn.run(
-    `INSERT OR REPLACE INTO members
+    // Explicit conflict target required: members now has a second unique
+    // constraint (idx_members_bioguide_id), so bare INSERT OR REPLACE throws.
+    `INSERT INTO members
      (member_id, name, party, chamber, state, district, role, in_office,
       first_elected_year, bioguide_id, fec_candidate_id, bio_summary, bio_source_url, fetched_at)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+     ON CONFLICT (member_id) DO UPDATE SET
+       name = EXCLUDED.name, party = EXCLUDED.party, chamber = EXCLUDED.chamber,
+       state = EXCLUDED.state, district = EXCLUDED.district, role = EXCLUDED.role,
+       in_office = EXCLUDED.in_office, first_elected_year = EXCLUDED.first_elected_year,
+       bioguide_id = EXCLUDED.bioguide_id, fec_candidate_id = EXCLUDED.fec_candidate_id,
+       bio_summary = EXCLUDED.bio_summary, bio_source_url = EXCLUDED.bio_source_url,
+       fetched_at = EXCLUDED.fetched_at`,
     [
       memberId, d.name, d.party ?? null, chamber, d.state ?? null,
       d.district ?? null, d.role ?? null, d.inOffice ?? null,
