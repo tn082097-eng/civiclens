@@ -94,6 +94,17 @@ async function loadMember(member: string): Promise<{
   coverage: { votesTotal: number; votesBillLinked: number };
 }> {
   const conn = await getDb();
+
+  // Fail loud on unknown slugs: without this, a typo'd --member writes a
+  // plausible-looking insufficient-data artifact instead of erroring.
+  const known = (await (await conn.run(
+    `SELECT count(*)::int AS c FROM members WHERE member_id = ?`,
+    [member],
+  )).getRowObjects())[0] as unknown as { c: number };
+  if (known.c === 0) {
+    throw new Error(`unknown member slug '${member}' — no members row; check the slug (e.g. 'josh-gottheimer', not 'gottheimer')`);
+  }
+
   // v_trade_bill_nexus has no trade_filing_id column; a trade's identity is its
   // (date, type, instrument) tuple (mirrors score-anomaly's assemble() key). We
   // synthesize the same composite key here AND in the disclosed-trade query below

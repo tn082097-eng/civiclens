@@ -33,3 +33,17 @@ batch-log.json
 # Generated reports
 *.html
 artifacts/
+
+# Local IPC/voice experiment (not part of CivicLens)
+.ipc/
+.grok/
+scripts/ipc*.py
+scripts/ipc_*.py
+scripts/grok-reply.sh
+scripts/voice-debate.sh
+scripts/tts_render.py
+*.wav
+names.txt.bak
+
+# Ad-hoc graph/probe output
+graphify-out/
