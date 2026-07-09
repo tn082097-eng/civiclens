@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CivicLens</title>
+<style>
+:root {
+  --bg: #14110d; --fg: #f5f1e8; --fg-dim: #a59f8e; --fg-muted: #6b6557; --line: #2e2a22;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: 'Charter', 'Source Serif 4', 'Iowan Old Style', Georgia, serif;
+  line-height: 1.55;
+}
+main { max-width: 720px; margin: 0 auto; padding: 64px 20px 80px; }
+h1 { font-size: 34px; margin: 0 0 6px; letter-spacing: -0.5px; }
+.tagline { color: var(--fg-dim); margin: 0 0 32px; font-size: 15px; }
+p.lede { color: var(--fg-dim); max-width: 640px; }
+.beta {
+  border: 1px solid var(--line); border-radius: 6px; padding: 12px 16px;
+  color: var(--fg-dim); font-size: 14px; margin: 28px 0;
+}
+ul.links { list-style: none; padding: 0; margin: 32px 0; }
+ul.links li { margin: 14px 0; }
+a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--fg-muted); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--fg); }
+.muted { color: var(--fg-muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>CivicLens</h1>
+  <p class="tagline">Patterns, not verdicts.</p>
+
+  <p class="lede">CivicLens reconstructs what members of Congress did — trades, votes,
+  sponsorships, and donors — from primary sources, and flags where the timing or the
+  money lines up in ways that stand out from chance. Every flag is reproducible and
+  links back to the filing it came from. It reports patterns, not verdicts.</p>
+
+  <div class="beta"><strong>Single-member beta.</strong> One member is published
+  end-to-end while every section of the methodology is validated. The roster expands
+  as each member's data passes the same verification.</div>
+
+  <ul class="links">
+    <li><a href="members/josh-gottheimer.html">Josh Gottheimer</a>
+      <span class="muted">— NJ-5 · trades, votes, donors, patterns</span></li>
+    <li><a href="methodology.html">Methodology</a>
+      <span class="muted">— how flags are scored, sources, what the numbers don't claim</span></li>
+  </ul>
+
+  <p class="muted">Detectors identify reproducible patterns in available data. They do
+  not establish causation or statistical significance.</p>
+</main>
+</body>
+</html>

@@ -34,6 +34,10 @@ batch-log.json
 *.html
 artifacts/
 
+# Launch artifact: verified site bytes, deliberately committed (ADR 0002 §C)
+!public/
+!public/**/*.html
+
 # Local IPC/voice experiment (not part of CivicLens)
 .ipc/
 .grok/

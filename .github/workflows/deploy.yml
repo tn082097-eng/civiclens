@@ -1,17 +1,15 @@
-# Deploy the rendered static site to GitHub Pages.
+# Deploy the committed launch artifact (public/) to GitHub Pages.
 #
 # DORMANT BY DESIGN: manual trigger only (workflow_dispatch). Flipping this
 # live is a deliberate act, not a side effect of a push.
 #
-# Note: a full `render/build.ts` run renders EVERY member in the DB plus the
-# corpus-wide index/network/nexus pages. Scoping a launch to a subset of
-# members is a future decision — do not dispatch this until the roster you'd
-# be publishing is the roster you mean to publish.
-#
-# Requires: repo Settings → Pages → Source = "GitHub Actions", and the DuckDB
-# snapshot available to the runner (data/civiclens.duckdb is not in git; a
-# build in CI needs it supplied — e.g. a release asset or artifact — before
-# this workflow can produce a real site).
+# Verified-artifact deployment (docs/adr/0002 §C): the site is built and
+# byte-diff-verified LOCALLY, packaged into public/ by
+# scripts/package-launch.sh, and committed. This workflow uploads those
+# exact bytes. Rebuilding in CI is deliberately unsupported — it would need
+# the DuckDB (never published: public repo + raw OpenSecrets-derived tables)
+# and would render the full roster, contradicting the single-member launch
+# scope. No Node build, no secrets, no data access.
 
 name: deploy-pages
 
@@ -28,27 +26,15 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - name: Render site
-        run: npx tsx render/build.ts
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: site/
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public/
       - id: deployment
         uses: actions/deploy-pages@v4

@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CivicLens — Methodology</title>
+<style>
+:root {
+  --bg: #14110d;
+  --fg: #f5f1e8;
+  --fg-dim: #a59f8e;
+  --fg-muted: #6b6557;
+  --line: #2e2a22;
+  --accent: #f5f1e8;
+  --p-d: #79b8ff;
+  --p-r: #d65a5a;
+  --p-i: #9aa0a6;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font: 15px/1.5 -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  background: var(--bg); color: var(--fg);
+  font-feature-settings: 'kern' 1;
+}
+header h1, h2 {
+  font-family: 'Charter', 'Source Serif 4', 'Iowan Old Style', Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.num, td.num, .tc-asset, .tc-vote-row, .vote-count, .pac-totals, .kv .v {
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+}
+header { padding: 24px 32px 12px; border-bottom: 1px solid var(--line); }
+header h1 { margin: 0 0 4px; font-size: 20px; letter-spacing: -0.01em; }
+header .sub { color: var(--fg-dim); font-size: 13px; }
+header a { color: var(--accent); text-decoration: none; }
+main { padding: 24px 32px 64px; max-width: 1200px; }
+h2 { font-size: 19px; margin: 48px 0 14px; letter-spacing: -0.01em; }
+h2:first-child { margin-top: 0; }
+.lede { color: var(--fg-dim); margin: 0 0 24px; max-width: 720px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--fg-dim); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+tbody tr:hover { background: rgba(255,255,255,0.02); }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.dim { color: var(--fg-dim); }
+.muted { color: var(--fg-muted); }
+.tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; line-height: 1.5; border: 1px solid var(--line); }
+.tag.p-d { color: var(--p-d); border-color: var(--p-d); }
+.tag.p-r { color: var(--p-r); border-color: var(--p-r); }
+.tag.p-i { color: var(--p-i); border-color: var(--p-i); }
+.tag.same-day { color: var(--accent); border-color: var(--accent); }
+.tag.jurisdiction { color: #f7c948; border-color: #f7c948; background: rgba(247, 201, 72, 0.06); cursor: help; }
+.tag.holder-spouse { color: #c585e0; border-color: #c585e0; }
+.tag.holder-joint  { color: #79b8ff; border-color: #79b8ff; }
+.tag.holder-self   { color: #9aa0a6; }
+a.member { color: var(--fg); text-decoration: none; border-bottom: 1px solid var(--line); }
+a.member:hover { border-bottom-color: var(--accent); color: var(--accent); }
+.kv { display: grid; grid-template-columns: 200px 1fr; gap: 6px 16px; margin: 12px 0 24px; font-size: 13px; }
+.kv .k { color: var(--fg-dim); }
+.notice { padding: 10px 14px; background: rgba(121, 184, 255, 0.06); border: 1px solid rgba(121, 184, 255, 0.2); border-radius: 4px; font-size: 13px; color: var(--fg-dim); margin-bottom: 24px; }
+.trade-activity { margin: 0 0 24px; }
+.suspicion-badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 500; border: 1px solid var(--line); color: var(--fg-dim); }
+.suspicion-badge.medium { border-color: var(--fg-dim); color: var(--fg); font-weight: 600; }
+.suspicion-badge.high   { border-color: var(--fg);     color: var(--fg); font-weight: 700; }
+.bar { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; display: inline-block; vertical-align: middle; width: 80px; margin-right: 6px; }
+.bar > div { height: 100%; background: var(--accent); }
+footer { padding: 24px 32px; color: var(--fg-muted); font-size: 12px; border-top: 1px solid var(--line); }
+footer a { color: var(--fg-dim); }
+.row-link { color: var(--accent); text-decoration: none; font-size: 11px; }
+.row-link:hover { text-decoration: underline; }
+.vote-count { display: inline-block; min-width: 22px; padding: 1px 6px; border-radius: 10px; background: var(--line); font-size: 11px; text-align: center; }
+.same-day .vote-count { background: rgba(121, 184, 255, 0.15); color: var(--accent); }
+.filter-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.filter-input { background: var(--bg); border: 1px solid var(--line); color: var(--fg); border-radius: 4px; padding: 5px 10px; font-size: 13px; width: 280px; outline: none; }
+.filter-input:focus { border-color: var(--accent); }
+.filter-input::placeholder { color: var(--fg-muted); }
+.filter-toggle { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--fg-dim); cursor: pointer; user-select: none; }
+.filter-toggle input { accent-color: var(--accent); cursor: pointer; }
+.filter-count { font-size: 12px; color: var(--fg-muted); margin-left: auto; }
+/* Trade card layout */
+.trade-card { border: 1px solid var(--line); border-radius: 4px; padding: 12px 14px; margin-bottom: 10px; transition: border-color .15s; }
+.trade-card:hover { border-color: #3a3e45; }
+/* Intensity-mapped rendering — weight + density only. No moralizing color.
+   Quiet members render quiet pages; loud members render loud pages.
+   Per docs/superpowers/specs/2026-05-10-visual-identity-design.md. */
+.trade-card.intensity-low    { border-left: 1px solid var(--line);    padding: 6px 12px; }
+.trade-card.intensity-low .tc-asset    { font-weight: 400; font-size: 13px; }
+.trade-card.intensity-medium { border-left: 2px solid var(--fg-dim);  padding: 10px 14px; padding-left: 12px; }
+.trade-card.intensity-medium .tc-asset { font-weight: 500; font-size: 13px; }
+.trade-card.intensity-high   { border-left: 3px solid var(--fg);      padding: 12px 16px; padding-left: 13px; }
+.trade-card.intensity-high .tc-asset   { font-weight: 600; font-size: 14px; }
+.trade-card .tc-header { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.trade-card .tc-asset { font-size: 14px; font-weight: 500; flex: 1; min-width: 180px; }
+.trade-card .tc-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; font-size: 12px; color: var(--fg-dim); }
+.trade-card .tc-votes { margin-top: 6px; border-top: 1px solid var(--line); padding-top: 6px; }
+.trade-card .tc-vote-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; font-size: 12px; }
+.trade-card .tc-vote-row:last-child { margin-bottom: 0; }
+.tag.before { color: #f7c948; border-color: rgba(247,201,72,0.4); background: rgba(247,201,72,0.06); }
+.tag.same-day { color: var(--accent); border-color: var(--accent); }
+.tag.after { color: var(--fg-muted); border-color: var(--fg-muted); opacity: 0.7; }
+.tag.bill-match { color: #4caf7d; border-color: rgba(76,175,125,0.4); background: rgba(76,175,125,0.06); cursor: help; }
+.section-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+.section-tab { padding: 6px 14px; font-size: 13px; color: var(--fg-dim); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; user-select: none; }
+.section-tab.active { color: var(--fg); border-bottom-color: var(--accent); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.pac-totals { display: flex; gap: 16px; margin: 8px 0 4px; font-size: 13px; }
+.pac-side { padding: 4px 10px; border: 1px solid var(--line); border-radius: 3px; }
+.pac-side.support { color: #4caf7d; border-color: rgba(76,175,125,0.4); }
+.pac-side.oppose  { color: #e07840; border-color: rgba(224,120,64,0.4); }
+.pac-list { display: flex; flex-direction: column; gap: 8px; }
+.pac-row { border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; }
+.pac-row .pac-name { margin-bottom: 4px; }
+.pac-row .pac-amount { font-size: 13px; }
+.glance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 4px; margin: 8px 0 16px; overflow: hidden; }
+.glance-cell { background: var(--bg); padding: 12px 14px; }
+.glance-value { font-size: 22px; font-weight: 500; color: var(--fg); line-height: 1.1; }
+.glance-label { font-size: 11px; color: var(--fg-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+/* Flag card (Patterns section) — weight-only, reuses .trade-card intensity tiers. No color affect. */
+.flag-card .fc-why     { font-size: 14px; margin: 6px 0; }
+.flag-card .fc-conf    { font-size: 13px; margin: 6px 0; }
+.flag-card .fc-conf strong { font-weight: 600; }
+.flag-card .fc-mech    { font-size: 12px; color: var(--fg-dim); margin: 4px 0; }
+.flag-card .fc-stats   { font-size: 11px; color: var(--fg-muted); letter-spacing: 0.02em; margin: 2px 0; }
+.flag-card .fc-caveat  { font-size: 12px; color: var(--fg-muted); margin-top: 6px; font-style: italic; }
+.flag-card .fc-evidence{ font-size: 12px; color: var(--fg-dim); margin-top: 6px; }
+.flag-card .fc-evidence .ev-kind { text-transform: uppercase; letter-spacing: 0.04em; color: var(--fg-muted); margin-right: 4px; }
+.flag-card .fc-evidence .ev-chip { display: inline-block; padding: 1px 6px; margin: 1px 2px 1px 0; border: 1px solid var(--line); border-radius: 3px; font-size: 11px; color: var(--fg-dim); text-decoration: none; }
+.flag-card .fc-evidence a.ev-chip:hover { border-color: var(--accent); color: var(--accent); }
+/* Homepage interpretability framing */
+.how-to-read { border: 1px solid var(--line); border-radius: 4px; padding: 14px 16px; margin: 12px 0 28px; }
+.how-to-read ul { margin: 8px 0 0; padding-left: 18px; }
+.how-to-read li { margin-bottom: 4px; font-size: 13px; color: var(--fg-dim); }
+</style>
+</head>
+<body>
+<header>
+  <h1>CivicLens</h1>
+  <div class="sub"><a href="index.html">Corpus</a> · Methodology · generated 2026-07-06 05:59Z</div>
+</header>
+<main>
+
+<h2>Methodology</h2>
+<p class="lede" style="max-width:760px;">CivicLens reconstructs what members of Congress did — trades, votes, sponsorships, and donors — from primary sources, then runs a fixed set of deterministic detectors over that record. This page documents how each detector measures a pattern, how confidence is computed, and what the numbers can and cannot show. It reports patterns, not verdicts.</p>
+
+<h2 id="how-flags-are-scored">How a flag is scored</h2>
+<div class="how-to-read">
+  <ul>
+    <li><strong>A flag is a measured pattern</strong> in the public record — never an accusation or a finding of wrongdoing.</li>
+    <li><strong>Confidence comes from a permutation null model.</strong> For a scored detector, the observed count is compared against many shuffles of the member's <em>own</em> activity, holding their pace fixed. The p-value is the share of shuffles that match or exceed the observed count; a low p-value means the pattern is hard to produce by that member's ordinary behaviour alone.</li>
+    <li><strong>Statistics are shown, never invented.</strong> Detectors that are not scored against a null model say so plainly and show only the count of cited records — no fabricated p-value.</li>
+    <li><strong>Weight reflects evidence strength, not a verdict.</strong> Visual intensity on a flag card maps to the strength of the statistical signal; it carries no moral colour.</li>
+    <li><strong>Everything is reproducible.</strong> The null model is seeded, so the same inputs yield the same scores. Every flag cites real rows you can verify in the sections above it.</li>
+  </ul>
+</div>
+
+<h2 id="detectors">Detectors</h2>
+<p class="lede" style="margin-bottom:12px;">The deterministic detection pass. Each runs over the corpus and only emits a flag when it can cite real underlying rows.</p>
+<div class="trade-card flag-card" style="margin-bottom:14px;">
+  <div class="tc-header"><div class="tc-asset">Trade ↔ vote alignment</div><div class="tc-meta"><span class="muted">trade-vote-alignment</span></div></div>
+  <div class="fc-mech">How measured: Counts discretionary stock trades placed within 14 days before a vote on a bill the member&#39;s committee handled or whose text names the traded company, then compares that count to a seeded permutation null built from the member&#39;s own trading pace.</div>
+  <div class="fc-caveat">What this doesn't show: Timing proximity is not proof of intent or of non-public information. Committee jurisdiction is a proxy for influence, not evidence of a hearing on that company.</div>
+</div>
+<div class="trade-card flag-card" style="margin-bottom:14px;">
+  <div class="tc-header"><div class="tc-asset">Spousal trade timing</div><div class="tc-meta"><span class="muted">spousal-trade-timing</span></div></div>
+  <div class="fc-mech">How measured: Flags trades held by a spouse or jointly, placed within 14 days before a vote on a bill the member&#39;s committee handled.</div>
+  <div class="fc-caveat">What this doesn't show: Spouse or joint accounts may be independently managed. CivicLens has no hearing calendar; committee jurisdiction is the relevance proxy.</div>
+</div>
+<div class="trade-card flag-card" style="margin-bottom:14px;">
+  <div class="tc-header"><div class="tc-asset">Donor sector ↔ sponsorship</div><div class="tc-meta"><span class="muted">donor-sector-vote-alignment</span></div></div>
+  <div class="fc-mech">How measured: Flags economic sectors where the member both draws top campaign money and personally sponsors focused legislation, using a hand-curated, version-controlled industry-to-theme crosswalk.</div>
+  <div class="fc-caveat">What this doesn't show: Drawing donations from, and legislating on, the same sector is expected for members who represent that industry. This is alignment, not a quid pro quo.</div>
+</div>
+
+<h2 id="sources">Primary sources</h2>
+<p class="lede" style="max-width:760px;">Every claim links back to the filing it came from. CivicLens draws only on primary sources: Congress.gov (bills, sponsorship, votes), GovTrack (vote records), OpenFEC (campaign finance), and House Clerk Periodic Transaction Reports (member trades). No claim rests on LLM-generated or stub data.</p>
+
+<p style="margin-top: 32px;"><a class="row-link" href="index.html">← back to corpus</a></p>
+
+</main>
+<footer>
+Built from primary sources: Congress.gov, GovTrack, OpenFEC, House Clerk PFDs.
+Every claim links to its source. Voice rules: evidence before opinion — no editorial scoring.
+</footer>
+</body>
+</html>
