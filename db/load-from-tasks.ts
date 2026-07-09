@@ -188,7 +188,10 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
     donorCount++;
   }
 
-  // votes
+  // votes — snapshot vote→bill linkage before the wipe; it's owned by the
+  // bill loader's api-pass, not by task data, and must survive a re-sync.
+  await conn.run(`CREATE OR REPLACE TEMP TABLE _vote_link AS
+    SELECT vote_id, bill_id FROM votes WHERE member_id = ? AND bill_id IS NOT NULL`, [memberId]);
   await conn.run(`DELETE FROM votes WHERE member_id = ?`, [memberId]);
   let voteCount = 0;
   for (const v of d.votes ?? []) {
@@ -206,9 +209,16 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
     );
     voteCount++;
   }
+  await conn.run(`UPDATE votes SET bill_id = _vote_link.bill_id FROM _vote_link
+    WHERE votes.member_id = ? AND votes.vote_id = _vote_link.vote_id AND votes.bill_id IS NULL`, [memberId]);
+  await conn.run(`DROP TABLE _vote_link`);
 
-  // bills
-  await conn.run(`DELETE FROM bills WHERE member_id = ?`, [memberId]);
+  // bills — task data carries only sponsored bills; cosponsor rows are owned
+  // by db/load-cosponsored.ts and must not be clobbered by a re-sync.
+  await conn.run(
+    `DELETE FROM bills WHERE member_id = ? AND sponsor_role IS DISTINCT FROM 'cosponsor'`,
+    [memberId]
+  );
   let billCount = 0;
   for (const b of d.bills ?? []) {
     const billId = billIdFromUrl(b.sourceUrl) ?? b.billId ?? null;
