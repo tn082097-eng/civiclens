@@ -146,18 +146,20 @@ export async function findSuspiciousTrades(memberId: string, windowDays = 90): P
   const r    = await conn.run(
     `SELECT * FROM (
        SELECT v.*,
-         COUNT(*) OVER (PARTITION BY trade_filing_id, tx_date, asset, ticker) AS window_vote_count,
-         ROW_NUMBER() OVER (PARTITION BY trade_filing_id, tx_date, asset, ticker
+         COUNT(*) OVER (PARTITION BY trade_filing_id, tx_date, tx_type, asset, ticker) AS window_vote_count,
+         ROW_NUMBER() OVER (PARTITION BY trade_filing_id, tx_date, tx_type, asset, ticker
            ORDER BY days_before_vote ASC, tx_date DESC, trade_filing_id ASC, vote_id ASC,
-                    ticker ASC, asset ASC) AS rn_close,
-         ROW_NUMBER() OVER (PARTITION BY trade_filing_id, tx_date, asset, ticker
-           ORDER BY member_on_bill_committee DESC, days_before_vote ASC, vote_id ASC) AS rn_cmte
+                    ticker ASC, asset ASC, tx_type ASC, amount_band ASC, holder ASC) AS rn_close,
+         ROW_NUMBER() OVER (PARTITION BY trade_filing_id, tx_date, tx_type, asset, ticker
+           ORDER BY member_on_bill_committee DESC, days_before_vote ASC, vote_id ASC,
+                    tx_type ASC, amount_band ASC, holder ASC) AS rn_cmte
        FROM v_suspicious_trades v
        WHERE member_id = ? AND days_before_vote <= ?
      )
      WHERE rn_close <= 6 OR (member_on_bill_committee AND rn_cmte = 1)
      ORDER BY days_before_vote ASC, tx_date DESC,
-              trade_filing_id ASC, vote_id ASC, ticker ASC, asset ASC`,
+              trade_filing_id ASC, vote_id ASC, ticker ASC, asset ASC,
+              tx_type ASC, amount_band ASC, holder ASC`,
     [memberId, windowDays],
   );
   return rowsToTradeNearVote(await r.getRowObjects() as any[]);
@@ -173,7 +175,8 @@ export async function suspiciousTradesCorpus(windowDays = 30, limit = 2000): Pro
        member_on_bill_committee DESC,
        days_before_vote ASC,
        tx_date DESC,
-       trade_filing_id ASC, vote_id ASC, ticker ASC, asset ASC
+       trade_filing_id ASC, vote_id ASC, ticker ASC, asset ASC,
+       tx_type ASC, amount_band ASC, holder ASC
      LIMIT ?`,
     [windowDays, limit],
   );

@@ -209,7 +209,9 @@ function rowIntensity(row: TradeRow): Intensity {
 function collapseTrades(pairs: TradeNearVote[]): TradeRow[] {
   const byTrade = new Map<string, TradeRow>();
   for (const p of pairs) {
-    const key = `${p.member_id}|${p.trade_filing_id}|${p.tx_date}|${p.asset}|${p.ticker}`;
+    // Trade identity includes tx_type (repo convention: filing|date|type|
+    // instrument) — a same-day purchase+sale of one ticker is two trades.
+    const key = `${p.member_id}|${p.trade_filing_id}|${p.tx_date}|${p.tx_type}|${p.asset}|${p.ticker}`;
     const cur = byTrade.get(key);
     if (!cur) {
       byTrade.set(key, {
