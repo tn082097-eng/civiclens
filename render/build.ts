@@ -36,7 +36,11 @@ import { fetchSuperPacIE } from '../lib/fec-ie.js';
 import type { SuperPacIEReport, SuperPacIE, SuperPacFunder } from '../lib/types.js';
 import type { ThemeGapReceipts } from '../lib/schemas.js';
 import { SITE_DIR } from '../lib/paths.js';
-import { assembleMemberBody, reservedStub, sectionShell } from './member-sections.js';
+import {
+  assembleMemberBody, reservedStub, sectionShell,
+  renderMoneyVotesSection, type MoneyVotesData, type MoneyVotesTheme,
+} from './member-sections.js';
+import { DONOR_SQL, SPONSORED_SQL } from '../pipeline/patterns/donor-sector-vote-alignment.js';
 import { loadThemeGapsOrSentinel } from './load-artifacts.js';
 import { revolvingEmptyShell, outsideSpendingEmptyShell } from './empty-shells.js';
 
@@ -143,7 +147,7 @@ function partyClass(party: string | null): string {
   return 'p-none';
 }
 
-function fmtMoney(n: number | null | undefined): string {
+export function fmtMoney(n: number | null | undefined): string {
   if (n === null || n === undefined || !Number.isFinite(Number(n))) return '—';
   const v = Math.round(Number(n));
   if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(2)}M`;
@@ -1266,6 +1270,44 @@ function confidencePhrase(r: {
   };
 }
 
+// Money & votes substrate: the same two queries the donor-sector detector
+// reads (imported from it), aggregated per theme. Ordering is total-ordered
+// in JS (dollars DESC, then theme ASC) to keep the build deterministic.
+async function fetchMoneyVotes(memberSlug: string): Promise<MoneyVotesData> {
+  const conn = await getDb();
+
+  const dRes = await conn.run(DONOR_SQL, [memberSlug]);
+  const donorThemes = (await dRes.getRowObjects()) as unknown as Array<{
+    theme: string; theme_total: number; min_cycle: number; max_cycle: number;
+  }>;
+  const mappedTotal = donorThemes.reduce((a, t) => a + Number(t.theme_total), 0);
+  if (donorThemes.length === 0 || mappedTotal <= 0) {
+    return { mappedTotal: 0, themes: [] };
+  }
+
+  const sRes = await conn.run(SPONSORED_SQL, [memberSlug]);
+  const sponsored = (await sRes.getRowObjects()) as unknown as Array<{ bill_id: string; theme: string }>;
+  const billsByTheme = new Map<string, Set<string>>();
+  for (const b of sponsored) {
+    if (!billsByTheme.has(b.theme)) billsByTheme.set(b.theme, new Set());
+    billsByTheme.get(b.theme)!.add(b.bill_id);
+  }
+
+  const themes: MoneyVotesTheme[] = donorThemes
+    .map(t => ({
+      theme: t.theme,
+      total: Number(t.theme_total),
+      share: Number(t.theme_total) / mappedTotal,
+      focusedBills: billsByTheme.get(t.theme)?.size ?? 0,
+      cycles: Number(t.min_cycle) === Number(t.max_cycle)
+        ? String(t.min_cycle)
+        : `${t.min_cycle}–${t.max_cycle}`,
+    }))
+    .sort((a, b) => b.total - a.total || a.theme.localeCompare(b.theme));
+
+  return { mappedTotal, themes };
+}
+
 async function renderPatterns(memberSlug: string): Promise<string> {
   const conn = await getDb();
   const res = await conn.run(
@@ -1354,6 +1396,21 @@ async function renderPatterns(memberSlug: string): Promise<string> {
   return `
 <p class="lede" style="margin-bottom:12px;">Named patterns from the deterministic detection pass. Each shows how it was measured, how confident the statistics are, and the records it cites — click an evidence chip to jump to the rows, or verify them in the sections above. Weight reflects the strength of the evidence, not a verdict. <a class="row-link" href="../methodology.html">How patterns are measured →</a></p>
 ${cards}`;
+}
+
+// FEC election cycle to render for a member: their most recent cycle with IE
+// on record, else the current election cycle (so the empty shell is labeled
+// with the cycle that was actually checked). Derived, never hardcoded — some
+// members have 2026 IE loaded while others stop at 2024.
+const CURRENT_FEC_CYCLE = Number(CYCLE_END.slice(0, 4)) - 1;
+
+async function latestIeCycle(memberId: string): Promise<number | null> {
+  const conn = await getDb();
+  const rows = (await (await conn.run(
+    `SELECT MAX(cycle)::int AS mx FROM super_pac_ie WHERE member_id = ?`,
+    [memberId],
+  )).getRowObjects()) as Array<{ mx: number | null }>;
+  return rows[0]?.mx != null ? Number(rows[0].mx) : null;
 }
 
 async function renderOutsideSpending(m: MemberDetail, cycle: number): Promise<string> {
@@ -1612,7 +1669,8 @@ ${revolving.map(c => {
 </table>`;
 
   const timelineBlock = buildTimelineBlock(m.member_id, timeline.votes, timeline.trades);
-  const outsideSpendingBlock = await renderOutsideSpending(m, 2024);
+  const outsideSpendingBlock = await renderOutsideSpending(
+    m, (await latestIeCycle(m.member_id)) ?? CURRENT_FEC_CYCLE);
   const cosponsorBlock = renderCosponsorEmbed(cosponsorEdges);
   const patternsBlock = await renderPatterns(m.member_id);
   const glance = await fetchActivityGlance(m.member_id);
@@ -1662,7 +1720,7 @@ function showTab(tabGroupId, panelName) {
     'sec-glance': glanceSection,
     'sec-receipts': receiptsBlock,
     'sec-coherence': reservedStub('sec-coherence', 'Per-theme coherence'),
-    'sec-money-votes': reservedStub('sec-money-votes', 'Money & votes'),
+    'sec-money-votes': renderMoneyVotesSection(await fetchMoneyVotes(m.member_id)),
     'sec-timeline': timelineSection,
     'sec-trades': tradesSection,
     'sec-donors': donorsSection,

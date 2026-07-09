@@ -46,7 +46,9 @@ const MIN_SHARE = 0.20;
 const MIN_BILLS = 3;
 
 // Member's donor money rolled up to mapped themes, across all loaded cycles.
-const DONOR_SQL = `
+// Exported so the render layer's Money & votes section shows exactly the
+// substrate this detector reads — one source of truth, no drift.
+export const DONOR_SQL = `
 SELECT theme,
        SUM(theme_total) AS theme_total,
        MIN(cycle)       AS min_cycle,
@@ -64,7 +66,7 @@ ORDER BY theme_total DESC
 // while `bill_subjects`/`votes` use dash ids ("119-hr-3223"). Normalize bills'
 // slashes to dashes for the join, else it silently returns zero. The type guard
 // regex is already separator-agnostic.
-const SPONSORED_SQL = `
+export const SPONSORED_SQL = `
 SELECT DISTINCT b.bill_id, b.title, b.introduced_at::text AS introduced_at, m.theme
 FROM bills b
 JOIN bill_subjects bs ON bs.bill_id = REPLACE(b.bill_id, '/', '-')

@@ -1,0 +1,54 @@
+# Deploy the rendered static site to GitHub Pages.
+#
+# DORMANT BY DESIGN: manual trigger only (workflow_dispatch). Flipping this
+# live is a deliberate act, not a side effect of a push.
+#
+# Note: a full `render/build.ts` run renders EVERY member in the DB plus the
+# corpus-wide index/network/nexus pages. Scoping a launch to a subset of
+# members is a future decision — do not dispatch this until the roster you'd
+# be publishing is the roster you mean to publish.
+#
+# Requires: repo Settings → Pages → Source = "GitHub Actions", and the DuckDB
+# snapshot available to the runner (data/civiclens.duckdb is not in git; a
+# build in CI needs it supplied — e.g. a release asset or artifact — before
+# this workflow can produce a real site).
+
+name: deploy-pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Render site
+        run: npx tsx render/build.ts
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
