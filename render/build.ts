@@ -16,8 +16,9 @@
  *   npx tsx agents/pipeline.ts --render
  */
 
-import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { getDb } from '../db/init.js';
 import {
   findSharedDonors,
@@ -42,6 +43,7 @@ import {
 } from './member-sections.js';
 import { DONOR_SQL, SPONSORED_SQL } from '../pipeline/patterns/donor-sector-vote-alignment.js';
 import { loadThemeGapsOrSentinel } from './load-artifacts.js';
+import { renderLanding, type PublishedManifest } from './landing.js';
 import { revolvingEmptyShell, outsideSpendingEmptyShell } from './empty-shells.js';
 
 const OUT_DIR = SITE_DIR;
@@ -2260,11 +2262,24 @@ ${detectorBlocks}
   console.log('  ✓ site/methodology.html');
 }
 
+// Launch landing (public front door) — a pure function of the committed
+// published-members manifest; no DB access (ADR 0002 §C).
+const MANIFEST_PATH = resolve(
+  fileURLToPath(new URL('.', import.meta.url)), 'published-members.json');
+
+export async function buildLanding(): Promise<void> {
+  const manifest = JSON.parse(readFileSync(MANIFEST_PATH, 'utf8')) as PublishedManifest;
+  if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
+  writeFileSync(resolve(OUT_DIR, 'landing.html'), renderLanding(manifest));
+  console.log(`  ✓ site/landing.html  (${manifest.members.length} published member${manifest.members.length === 1 ? '' : 's'})`);
+}
+
 export async function buildAll(): Promise<void> {
   if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
   if (!existsSync(MEMBERS_DIR)) mkdirSync(MEMBERS_DIR, { recursive: true });
 
   console.log('Building CivicLens site…\n');
+  if (existsSync(MANIFEST_PATH)) await buildLanding();
   await buildIndex();
   await buildMethodology();
   await buildNetwork();
@@ -2291,6 +2306,7 @@ export async function buildOne(memberId: string): Promise<void> {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const mi = process.argv.indexOf('--member');
-  const run = mi >= 0 && process.argv[mi + 1] ? buildOne(process.argv[mi + 1]) : buildAll();
+  const run = process.argv.includes('--landing') ? buildLanding()
+    : mi >= 0 && process.argv[mi + 1] ? buildOne(process.argv[mi + 1]) : buildAll();
   run.then(() => process.exit(0)).catch(e => { console.error(e); process.exit(1); });
 }

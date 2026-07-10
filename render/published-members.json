@@ -1,0 +1,19 @@
+{
+  "members": [
+    {
+      "slug": "josh-gottheimer",
+      "name": "Josh Gottheimer",
+      "party": "Democrat",
+      "chamber": "house",
+      "state": "NJ",
+      "stats": {
+        "trades": 1923,
+        "votes": 2000,
+        "sponsored": 194,
+        "cosponsored": 3243,
+        "donors": 99
+      },
+      "dataThrough": "2026-06-30"
+    }
+  ]
+}
