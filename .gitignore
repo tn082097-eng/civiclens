@@ -51,3 +51,6 @@ names.txt.bak
 
 # Ad-hoc graph/probe output
 graphify-out/
+
+# Local Claude Code project config/skills — personal tooling, not part of CivicLens
+.claude/
