@@ -2,10 +2,9 @@
 
 ## What CivicLens Is
 
-CivicLens is a fully autonomous, fully local political dossier website that displays detailed profiles on federal politicians. It pulls real data from non-partisan sources, validates it for accuracy, and presents it with relationship graphs, voting records, donor histories, and neutral plain-English summaries.
+CivicLens is a fully autonomous political dossier website that displays detailed profiles on federal politicians. It pulls real data from non-partisan sources, validates it for accuracy, and presents it with relationship graphs, voting records, donor histories, and neutral plain-English summaries.
 
 Core principles:
-- 100% local — no cloud dependencies, no runtime API calls
 - Self-validating — agents cross-check data and flag conflicts
 - Fully autonomous — runs nightly with zero human input
 - Non-partisan — neutral framing, multi-source verification, confidence scores on every data point
