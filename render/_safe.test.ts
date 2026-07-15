@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { esc, safeJson, safeUrl, memberHref } from './build.js';
+import { esc, safeJson, safeUrl, memberHref, buildTimelineBlock } from './build.js';
 
 test('safeJson neutralizes </script> breakout', () => {
   const out = safeJson({ x: '</script><script>alert(1)</script>' });
@@ -70,4 +70,18 @@ test('esc(safeUrl(x)) pairing neutralizes attribute breakout in a valid URL', ()
   const out = esc(safeUrl('https://example.com/"><img src=x onerror=alert(1)>'));
   assert.ok(!out.includes('"'), 'no raw double-quote may reach the attribute');
   assert.ok(!out.includes('<') && !out.includes('>'), 'no raw angle brackets');
+});
+
+test('timeline client script guards source_url hrefs with a scheme allowlist', () => {
+  const block = buildTimelineBlock('m',
+    [{ date: '2024-01-04', position: 'Yea', question: 'On Passage', bill_title: 'A Bill',
+       source_url: 'javascript:alert(1)' }],
+    [{ date: '2024-01-01', tx_type: 'purchase', asset: 'NVDA Corp', ticker: 'NVDA',
+       amount_band: '$1,001 - $15,000', source_url: 'javascript:alert(1)' }]);
+  const fn = block.match(/function safeHref\s*\([^)]*\)\s*\{[\s\S]*?\n  \}/);
+  assert.ok(fn, 'client script defines safeHref');
+  const safeHref = new Function(`${fn![0]}; return safeHref;`)();
+  assert.equal(safeHref('javascript:alert(1)'), '#');
+  assert.equal(safeHref('https://efts.sec.gov/x'), 'https://efts.sec.gov/x');
+  assert.ok(block.includes('escHtml(safeHref('), 'source_url hrefs are wired through safeHref');
 });

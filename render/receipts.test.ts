@@ -42,9 +42,24 @@ test('ranked receipt shows the day-gap juxtaposition and p, with all three cite 
     ...base, tradeCount: 40, band: 'ranked',
     receipts: [{ theme: 'tech', tradeFilingId: 'f', ticker: 'NVDA', txType: 'purchase', txDate: '2024-02-01',
       voteId: 'v', voteDate: '2024-02-03', billId: '118-hr-2', billTitle: 'Chips B', daysBeforeVote: 2,
-      pPair: 0.01, tradeSourceUrl: 'TU', voteSourceUrl: 'VU', billSourceUrl: 'BU' }],
+      pPair: 0.01, tradeSourceUrl: 'https://example.com/TU', voteSourceUrl: 'https://example.com/VU',
+      billSourceUrl: 'https://example.com/BU' }],
   });
   assert.match(html, /2 days later/i);
   assert.match(html, /p\s*=\s*0\.01/);
-  for (const u of ['TU', 'VU', 'BU']) assert.ok(html.includes(u), `cite ${u} present`);
+  for (const u of ['TU', 'VU', 'BU']) assert.ok(html.includes(`https://example.com/${u}`), `cite ${u} present`);
+});
+
+test('receipt card collapses non-http(s) source URLs to # (scheme allowlist)', () => {
+  const html = renderReceiptsSection({
+    ...base, tradeCount: 40, band: 'ranked',
+    receipts: [{ theme: 'tech', tradeFilingId: 'f', ticker: 'NVDA', txType: 'purchase', txDate: '2024-02-01',
+      voteId: 'v', voteDate: '2024-02-03', billId: '118-hr-2', billTitle: 'Chips B', daysBeforeVote: 2,
+      pPair: 0.01, tradeSourceUrl: 'javascript:alert(1)', voteSourceUrl: 'data:text/html,x',
+      billSourceUrl: 'https://www.congress.gov/bill/118/hr/2' }],
+  });
+  assert.doesNotMatch(html, /javascript:/);
+  assert.doesNotMatch(html, /data:text/);
+  assert.match(html, /href="#"/);
+  assert.ok(html.includes('https://www.congress.gov/bill/118/hr/2'), 'valid https cite kept');
 });

@@ -135,10 +135,10 @@ export function renderReceiptsSection(a: ThemeGapReceipts): string {
 function receiptCard(r: ThemeGapReceipts['receipts'][number]): string {
   const p = r.pPair === null ? '' : ` · <span class="p">p = ${r.pPair.toFixed(2)}</span>`;
   return `<article class="receipt" data-theme="${esc(r.theme)}">` +
-    `<a href="${esc(r.tradeSourceUrl)}">${esc(r.txType)} ${esc(r.ticker)}</a> on ${esc(r.txDate)} — ` +
+    `<a href="${esc(safeUrl(r.tradeSourceUrl))}">${esc(r.txType)} ${esc(r.ticker)}</a> on ${esc(r.txDate)} — ` +
     `<b>${r.daysBeforeVote} days later</b> → ` +
-    `<a href="${esc(r.voteSourceUrl)}">voted</a> on ` +
-    `<a href="${esc(r.billSourceUrl)}">${esc(r.billTitle)}</a> (${esc(r.voteDate)})${p}</article>`;
+    `<a href="${esc(safeUrl(r.voteSourceUrl))}">voted</a> on ` +
+    `<a href="${esc(safeUrl(r.billSourceUrl))}">${esc(r.billTitle)}</a> (${esc(r.voteDate)})${p}</article>`;
 }
 
 function partyClass(party: string | null): string {
@@ -840,7 +840,7 @@ async function fetchTimelineData(memberId: string): Promise<{ votes: TimelineVot
   return { votes, trades };
 }
 
-function buildTimelineBlock(_memberId: string, votes: TimelineVote[], trades: TimelineTrade[]): string {
+export function buildTimelineBlock(_memberId: string, votes: TimelineVote[], trades: TimelineTrade[]): string {
   if (votes.length === 0 && trades.length === 0) {
     return '<p class="muted">No dated records to display on timeline.</p>';
   }
@@ -868,6 +868,12 @@ function buildTimelineBlock(_memberId: string, votes: TimelineVote[], trades: Ti
 
   function escHtml(s) {
     return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  // Mirrors the server-side safeUrl() allowlist: source_url is external
+  // primary-source data, so only http(s) may reach an href. (\\/ because this
+  // emits through a template literal — a bare \\ would be eaten server-side.)
+  function safeHref(u) {
+    return /^https?:\\/\\//i.test(String(u ?? '')) ? u : '#';
   }
 
   const PAD = { top: 28, bottom: 28, left: 48, right: 24 };
@@ -965,7 +971,7 @@ function buildTimelineBlock(_memberId: string, votes: TimelineVote[], trades: Ti
     const allInMonth = vs.length;
     c.addEventListener('mouseenter', evt => {
       const label = escHtml(rep.bill_title ?? rep.question).slice(0, 120);
-      const href  = rep.source_url ? '<br><a href="' + escHtml(rep.source_url) + '" target="_blank" rel="noopener" style="color:#79b8ff;">source ↗</a>' : '';
+      const href  = rep.source_url ? '<br><a href="' + escHtml(safeHref(rep.source_url)) + '" target="_blank" rel="noopener" style="color:#79b8ff;">source ↗</a>' : '';
       showTip(evt,
         '<strong>' + escHtml(rep.date) + '</strong> · ' + escHtml(rep.position) +
         (allInMonth > 1 ? ' <span style="color:#5f6368;">(+' + (allInMonth-1) + ' more that month)</span>' : '') +
@@ -984,7 +990,7 @@ function buildTimelineBlock(_memberId: string, votes: TimelineVote[], trades: Ti
     const d = el('polygon', { points: pts, fill: tradeColor(t.tx_type), opacity: '0.9', style: 'cursor:default' }, svg);
     d.addEventListener('mouseenter', evt => {
       const asset = escHtml((t.ticker ? t.ticker + ' — ' : '') + t.asset).slice(0, 100);
-      const href  = t.source_url ? '<br><a href="' + escHtml(t.source_url) + '" target="_blank" rel="noopener" style="color:#79b8ff;">PTR ↗</a>' : '';
+      const href  = t.source_url ? '<br><a href="' + escHtml(safeHref(t.source_url)) + '" target="_blank" rel="noopener" style="color:#79b8ff;">PTR ↗</a>' : '';
       showTip(evt,
         '<strong>' + escHtml(t.date) + '</strong> · ' + escHtml(t.tx_type) +
         '<br>' + asset +
