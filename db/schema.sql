@@ -636,7 +636,19 @@ CREATE TABLE IF NOT EXISTS donor_industry_theme (
 -- analogue of theme exposure. Only mapped industries contribute; unmapped money
 -- (Labor/Ideology/etc.) is intentionally excluded so themes are comparable to
 -- the trade/bill theme space.
+--
+-- The mapping is deduped to DISTINCT (industry, theme) pairs before summing:
+-- an industry matching several patterns of the SAME theme counts once (v1
+-- inflated 'Entertainment Industry/…' 3× in Media & Telecom this way). An
+-- industry matching TWO themes would still double-count — that is a crosswalk
+-- bug, kept impossible by lib/donor-crosswalk.test.ts. MIN(source) not
+-- ANY_VALUE: this view feeds the render path, which must stay deterministic.
 CREATE OR REPLACE VIEW v_member_donor_theme AS
+WITH industry_theme AS (
+  SELECT DISTINCT i.industry, t.theme
+  FROM (SELECT DISTINCT industry FROM donor_industry) i
+  JOIN donor_industry_theme t ON i.industry ILIKE t.industry_pattern
+)
 SELECT
   di.member_id,
   di.cycle,
@@ -645,9 +657,9 @@ SELECT
   SUM(di.individuals) AS theme_individuals,
   SUM(di.pacs)        AS theme_pacs,
   COUNT(*)            AS industry_count,
-  ANY_VALUE(di.source) AS source
+  MIN(di.source)      AS source
 FROM donor_industry di
-JOIN donor_industry_theme m ON di.industry ILIKE m.industry_pattern
+JOIN industry_theme m ON m.industry = di.industry
 GROUP BY di.member_id, di.cycle, m.theme;
 
 -- ─── Trade ↔ bill nexus (the credible-loop view) ────────────────────────────

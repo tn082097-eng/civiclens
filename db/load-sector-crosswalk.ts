@@ -137,11 +137,17 @@ const TICKER_OVERRIDE: Array<{ ticker: string; theme: string; note: string }> = 
 // (Labor, Ideology, Lawyers, Retired, Education, public sector, single-issue
 // groups) are deliberately UNMAPPED — they carry no tradable-industry theme.
 //
-// v1 crosswalk — tuned by hand against the OpenSecrets taxonomy; expect
-// eyeball-tuning as more members' breakdowns are loaded. Patterns aim to be
-// mutually exclusive; minor overlaps (a few % of dollars) won't flip a top
-// theme. Order does not matter — every matching pattern contributes.
-const DONOR_INDUSTRY_THEME: Array<{ pattern: string; theme: string; note?: string }> = [
+// v2 crosswalk (2026-07-15) — tuned against the full 45-member 2024 load.
+// Patterns must be mutually exclusive ACROSS themes: v_member_donor_theme
+// dedupes multiple same-theme matches per industry, but an industry matching
+// patterns in two different themes would double-count its dollars in both.
+// lib/donor-crosswalk.test.ts trips on every observed collision case — run it
+// after any pattern edit. v1 lessons baked in: '%mining%' caught 'Mining
+// unions' (Labor money → Materials & Mining) and 'Coal mining' (already
+// Energy via '%coal%'); '%real estate%' caught OpenSecrets' FIRE catch-all
+// row 'Finance, Insurance & Real Estate' (already Banks & Finance via
+// '%insurance%').
+export const DONOR_INDUSTRY_THEME: Array<{ pattern: string; theme: string; note?: string }> = [
   // Energy & Natural Resources
   { pattern: '%oil & gas%', theme: 'Energy' },
   { pattern: '%electric utilit%', theme: 'Energy' },
@@ -163,10 +169,14 @@ const DONOR_INDUSTRY_THEME: Array<{ pattern: string; theme: string; note?: strin
   { pattern: '%medical suppl%', theme: 'Pharma & Health' },
   { pattern: '%physician%', theme: 'Pharma & Health' },
   { pattern: '%health worker%', theme: 'Pharma & Health' },
+  { pattern: 'nurses', theme: 'Pharma & Health', note: 'exact — "Nurses unions" must stay unmapped (Labor)' },
+  { pattern: '%psychiatrists%', theme: 'Pharma & Health' },
   // Banks & Finance
   { pattern: '%commercial bank%', theme: 'Banks & Finance' },
   { pattern: '%securities & invest%', theme: 'Banks & Finance' },
   { pattern: '%insurance%', theme: 'Banks & Finance' },
+  { pattern: '%security brokers%', theme: 'Banks & Finance' },
+  { pattern: 'investors', theme: 'Banks & Finance', note: 'exact — the bare OpenSecrets "Investors" bucket' },
   { pattern: '%finance/credit%', theme: 'Banks & Finance' },
   { pattern: '%hedge fund%', theme: 'Banks & Finance' },
   { pattern: '%private equity%', theme: 'Banks & Finance' },
@@ -221,25 +231,63 @@ const DONOR_INDUSTRY_THEME: Array<{ pattern: string; theme: string; note?: strin
   { pattern: '%sea transport%', theme: 'Transportation' },
   { pattern: '%railroad%', theme: 'Transportation' },
   { pattern: '%trucking%', theme: 'Transportation' },
+  { pattern: '%auto dealers%', theme: 'Transportation', note: 'OpenSecrets files dealers under its Transportation sector' },
   // Industrials & Construction
   { pattern: '%misc manufactur%', theme: 'Industrials' },
   { pattern: '%general contractor%', theme: 'Industrials' },
   { pattern: '%special trade%', theme: 'Industrials' },
-  { pattern: '%construction services%', theme: 'Industrials' },
+  { pattern: '%construction%', theme: 'Industrials', note: 'broad — covers unclassified/public-works/residential/plant construction' },
   { pattern: '%building material%', theme: 'Industrials' },
   { pattern: '%industrial%', theme: 'Industrials' },
   // Materials, Mining & Chemicals
-  { pattern: '%mining%', theme: 'Materials & Mining' },
+  // Deliberately NOT the bare '%mining%': it caught 'Mining unions' (Labor)
+  // and 'Coal mining' (Energy, via '%coal%' — cross-theme double count).
+  { pattern: 'mining', theme: 'Materials & Mining', note: 'exact — the bare OpenSecrets "Mining" bucket' },
+  { pattern: '%metal mining%', theme: 'Materials & Mining' },
+  { pattern: '%non-metallic mining%', theme: 'Materials & Mining' },
+  { pattern: '%mining services%', theme: 'Materials & Mining' },
+  { pattern: '%aluminum mining%', theme: 'Materials & Mining' },
   { pattern: '%steel%', theme: 'Materials & Mining' },
   { pattern: '%chemical%', theme: 'Materials & Mining' },
   { pattern: '%forestry%', theme: 'Materials & Mining' },
   { pattern: '%mineral%', theme: 'Materials & Mining' },
   // Real Estate
-  { pattern: '%real estate%', theme: 'Real Estate' },
+  // Prefix (not '%real estate%'): the FIRE catch-all row 'Finance, Insurance
+  // & Real Estate' belongs to Banks & Finance (via '%insurance%'), not here.
+  { pattern: 'real estate%', theme: 'Real Estate' },
+  { pattern: '%real estate service%', theme: 'Real Estate', note: '"Other real estate services"' },
+  { pattern: '%building operators%', theme: 'Real Estate' },
   { pattern: '%home builder%', theme: 'Real Estate' },
   { pattern: '%mortgage broker%', theme: 'Real Estate' },
   { pattern: '%property management%', theme: 'Real Estate' },
 ];
+
+// Pure mirror of DuckDB's ILIKE so the crosswalk is unit-testable without a
+// database: case-insensitive, % = any sequence, _ = any single character.
+export function ilikeMatch(pattern: string, s: string): boolean {
+  const re = pattern
+    .split(/([%_])/)
+    .map((part) =>
+      part === '%' ? '[\\s\\S]*'
+      : part === '_' ? '[\\s\\S]'
+      : part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+    )
+    .join('');
+  return new RegExp(`^${re}$`, 'i').test(s);
+}
+
+// All distinct themes an industry string maps to. The view dedupes same-theme
+// multi-matches, so >1 entry here means cross-theme double counting — a
+// crosswalk bug (guarded by lib/donor-crosswalk.test.ts).
+export function matchDonorThemes(industry: string): string[] {
+  return [
+    ...new Set(
+      DONOR_INDUSTRY_THEME.filter(({ pattern }) => ilikeMatch(pattern, industry)).map(
+        ({ theme }) => theme,
+      ),
+    ),
+  ].sort();
+}
 
 export async function loadSectorCrosswalk(): Promise<{ sicRows: number; matchRows: number; overrideRows: number; donorThemeRows: number }> {
   await applySchema();
