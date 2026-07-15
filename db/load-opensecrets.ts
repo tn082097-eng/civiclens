@@ -146,16 +146,23 @@ async function loadMemberCycleFile(
 ): Promise<MemberResult> {
   const res: MemberResult = { memberId, cycle, industries: 0, total: 0 };
   let rows: IndustryRow[];
+  let html = '';
   try {
-    const html = readFileSync(filePath, 'utf-8');
+    html = readFileSync(filePath, 'utf-8');
     rows = parseWidgetHtml(html);
   } catch (e: any) {
     res.error = e?.message ?? String(e);
     return res;
   }
   if (rows.length === 0) {
-    res.error = 'no industry rows parsed (empty/challenged page?)';
-    return res;
+    // A member-cycle can be genuinely empty (e.g. resigned mid-cycle): the page
+    // then carries an explicit DataTables empty state. A challenge/corrupt save
+    // has no such marker — only that case is an error.
+    const verifiedEmpty = /class="dt-empty"|No matching records found/.test(html);
+    if (!verifiedEmpty) {
+      res.error = 'no industry rows parsed (empty/challenged page?)';
+      return res;
+    }
   }
 
   res.industries = rows.length;
