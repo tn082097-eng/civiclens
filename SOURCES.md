@@ -420,3 +420,65 @@ so they sit outside the donor↔sponsorship lens and are excluded from
   page saved without it is mislabeled (e.g. 2026 data in a `2024/` file).
 - Domain-scraping mechanics live in
   `~/Developer/browser-harness/agent-workspace/domain-skills/opensecrets/`.
+
+---
+
+## USAspending API — District federal contract awards
+
+**Base URL:** `https://api.usaspending.gov/api/v2`
+**Auth:** none. No documented hard rate limit — still cache every response and page politely.
+**Probe date:** 2026-07-15. Frozen artifacts: `pfd-cache/usaspending-probe-2026-07-15/`
+**Probe target:** NJ-05 (Gottheimer), CY2023, contract award types A/B/C/D.
+
+### Endpoint 1 — Itemized awards for a district
+
+`POST /search/spending_by_award/`
+
+```json
+{
+  "filters": {
+    "award_type_codes": ["A","B","C","D"],
+    "place_of_performance_locations": [{"country":"USA","state":"NJ","district_current":"05"}],
+    "time_period": [{"start_date":"2023-01-01","end_date":"2023-12-31"}]
+  },
+  "fields": ["Award ID","Recipient Name","Award Amount","Awarding Agency",
+             "Start Date","End Date","Description","naics_code","naics_description"],
+  "sort": "Award Amount", "order": "desc", "limit": 25, "page": 1
+}
+```
+
+Sample frozen at `spending_by_award_nj05_2023.json` (25 awards; top = PsychoGenics
+$45.9M HHS R&D, HydroGeoLogic $15.5M DoD Maywood FUSRAP remediation). Response
+carries `page_metadata.hasNext` for pagination and each award a
+`generated_internal_id` (stable key, e.g. `CONT_AWD_75N95019F00088_7529_…`).
+
+### Endpoint 2 — NAICS rollup for a district (detector substrate)
+
+`POST /search/spending_by_category/naics/` — same `filters` object, returns
+aggregated dollars per NAICS code. Sample frozen at
+`spending_by_naics_nj05_2023.json` (NJ-05 2023 top: 423450 medical wholesalers
+$43.0M, 336413 aircraft parts $28.8M, 541715 phys/eng/life R&D $18.8M).
+`spending_level` is `"transactions"` — transaction dollars in the period, not
+award ceilings; do not mix the two levels in one metric.
+
+### Caveats / traps
+- **Two district fields:** `district_current` (today's map) vs
+  `district_original` (map at award time). Redistricting moves awards between
+  them — pick ONE per analysis and state it. For "money into the member's
+  district while they held the seat", `district_original` is the honest filter;
+  the probe used `district_current`.
+- **Place-of-performance is FPDS-recorded, not description-derived:** the NJ-05
+  probe returned an Arcadis superfund award whose description says
+  Camden/Gloucester City (NJ-01 territory). The filter is working off the
+  recorded PoP district; expect a tail of such mismatches — never re-derive
+  location from description text.
+- **Search window floor:** time_period earliest is 2007-10-01 (API message);
+  older data only via bulk download endpoints.
+- **Award Amount ≠ period spend:** `spending_by_award` returns total award
+  obligation (multi-year, e.g. the $45.9M award started 2019); the time_period
+  filter selects awards *active/transacting* in the window, not dollars scoped
+  to it. Use Endpoint 2 for period-scoped dollars.
+- **NAICS ≠ SIC:** the trade side maps tickers via `sic_theme`; a separate
+  NAICS→theme crosswalk (same 12 themes, same collision-exclusivity rule as
+  `donor_industry_theme` — see `lib/donor-crosswalk.test.ts`) is required
+  before the detector can compare district contracts to themes.
