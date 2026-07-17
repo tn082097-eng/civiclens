@@ -151,7 +151,10 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
      ON CONFLICT (member_id) DO UPDATE SET
        name = EXCLUDED.name, party = EXCLUDED.party, chamber = EXCLUDED.chamber,
-       state = EXCLUDED.state, district = EXCLUDED.district, role = EXCLUDED.role,
+       state = EXCLUDED.state,
+       -- A stale task JSON (pre-district researcher output) must not clobber a
+       -- known district back to NULL; legislators YAML is the identity source.
+       district = COALESCE(EXCLUDED.district, members.district), role = EXCLUDED.role,
        in_office = EXCLUDED.in_office, first_elected_year = EXCLUDED.first_elected_year,
        bioguide_id = EXCLUDED.bioguide_id, fec_candidate_id = EXCLUDED.fec_candidate_id,
        bio_summary = EXCLUDED.bio_summary, bio_source_url = EXCLUDED.bio_source_url,
