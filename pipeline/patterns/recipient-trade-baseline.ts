@@ -113,6 +113,14 @@ async function main() {
   const nPerm = parseInt(process.argv[2] ?? '2000', 10);
   const seedStr = process.argv[3] ?? 'recipient-trade-baseline-v1';
   const sub = await loadSubstrate();
+  const districtsWithRows = sub.memberIds.filter((m) => (sub.districtRows.get(m)!.length > 0)).length;
+  console.log(`  districts with substrate rows: ${districtsWithRows}/${sub.memberIds.length}`);
+  if (districtsWithRows < sub.memberIds.length) {
+    throw new Error(
+      `district substrate incomplete (${districtsWithRows}/${sub.memberIds.length} districts have rows) — ` +
+      `finish the harvest before the baseline (no-stub rule)`,
+    );
+  }
   if (sub.confirms.length === 0) {
     throw new Error('recipient_ticker is empty — curate confirms before running the baseline (no-stub rule)');
   }

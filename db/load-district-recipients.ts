@@ -130,6 +130,9 @@ async function fetchParent(recipientId: string): Promise<{ parent_name: string |
   const res = await fetch(`${RECIPIENT_API}/${recipientId}/`);
   if (!res.ok) throw new Error(`recipient profile ${res.status} for ${recipientId}`);
   const prof = await res.json();
+  if (!prof || typeof prof !== 'object' || !('name' in prof)) {
+    throw new Error(`recipient profile ${recipientId}: unexpected payload shape — not caching`);
+  }
   mkdirSync(join(USASPENDING_RECIPIENT_CACHE, 'recipient'), { recursive: true });
   writeFileSync(cachePath, JSON.stringify({
     fetchedAt: new Date().toISOString(),

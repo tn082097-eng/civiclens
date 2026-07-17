@@ -31,8 +31,8 @@ ORDER BY ticker, t.member_id
 
 const RECIPIENTS_SQL = `
 SELECT r.recipient_key,
-       ANY_VALUE(r.recipient_name) AS recipient_name,
-       ANY_VALUE(p.parent_name)    AS parent_name,
+       MIN(r.recipient_name) AS recipient_name,
+       MIN(p.parent_name)    AS parent_name,
        SUM(r.amount)               AS total_dollars,
        LIST(DISTINCT r.member_id ORDER BY r.member_id) AS district_members
 FROM district_contract_recipient r
