@@ -331,6 +331,7 @@ ${bold('CivicLens Pipeline Runner')}
   ${cyan('npx tsx agents/pipeline.ts --load-bills [--api-pass] [--api-limit N] [--limit N]')} backfill votes.bill_id + fetch summaries
   ${cyan('npx tsx agents/pipeline.ts --load-sponsored [member-id]')} authoritative sponsor rows + inline policyArea (run AFTER load-from-tasks)
   ${cyan('npx tsx agents/pipeline.ts --load-lda [args...]')}        Senate LDA lobbying (full options in db/load-lda.ts; use --years 2018-2026 etc)
+  ${cyan('npx tsx agents/pipeline.ts --load-district-contracts [member-id] [--cy 2023,2024,2025] [--force] [--dry-run]')} USAspending NAICS rollups per House district
   ${cyan('npx tsx agents/pipeline.ts --render')}                     build static site at ~/Developer/civiclens/site/
   ${cyan('npx tsx agents/pipeline.ts --refresh-research "Name"')}    fetch researcher data only (no LLM agents, no predictor) and sync to DB
 `);
@@ -421,6 +422,12 @@ ${bold('CivicLens Pipeline Runner')}
     const { loadSectorCrosswalk } = await import('../db/load-sector-crosswalk.js');
     await loadSectorCrosswalk();
     process.exit(0);
+  })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
+} else if (arg === '--load-district-contracts') {
+  (async () => {
+    const { loadDistrictContracts, parseArgs } = await import('../db/load-district-contracts.js');
+    const { errored } = await loadDistrictContracts(parseArgs(process.argv.slice(3)));
+    process.exit(errored > 0 ? 1 : 0);
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
 } else if (arg === '--load-bill-subjects') {
   (async () => {

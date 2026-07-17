@@ -648,6 +648,24 @@ CREATE TABLE IF NOT EXISTS naics_theme (
   note         TEXT
 );
 
+-- Federal contract transaction dollars into a House member's district, rolled
+-- up by NAICS (USAspending spending_by_category/naics). Filtered on
+-- district_original (map at award time — see SOURCES.md §USAspending for the
+-- measured current-vs-original delta). spending_level is recorded and must be
+-- 'transactions': transaction dollars in the period, never multi-year award
+-- ceilings. Loaded by db/load-district-contracts.ts; "latest fetch wins" per
+-- (member, cy).
+CREATE TABLE IF NOT EXISTS district_contract_naics (
+  member_id      TEXT NOT NULL,      -- members.member_id (House only)
+  cy             INTEGER NOT NULL,   -- calendar year of the time_period filter
+  naics          TEXT NOT NULL,      -- 6-digit NAICS code
+  naics_desc     TEXT,
+  amount         DOUBLE NOT NULL,    -- transaction dollars in the CY
+  spending_level TEXT NOT NULL,      -- API's spending_level; asserted 'transactions'
+  fetched_at     TIMESTAMP NOT NULL,
+  PRIMARY KEY (member_id, cy, naics)
+);
+
 -- Per-member donor money rolled up to mapped economic-sector themes. The donor
 -- analogue of theme exposure. Only mapped industries contribute; unmapped money
 -- (Labor/Ideology/etc.) is intentionally excluded so themes are comparable to

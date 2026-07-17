@@ -28,6 +28,7 @@ export const SENATE_CACHE      = join(CACHE_DIR, 'senate-ptr-cache');
 export const LEGISLATORS_CACHE = join(CACHE_DIR, 'legislators-cache');
 /** OpenSecrets responses are cached under the PFD cache root. */
 export const OPENSECRETS_CACHE = join(PFD_CACHE, 'opensecrets');
+export const USASPENDING_CACHE = join(CACHE_DIR, 'usaspending-cache');
 
 // ─── Repo-relative working dirs (unchanged by the data/ move) ───────────────
 export const PIPE_DIR   = join(ROOT, 'pipeline');
@@ -42,7 +43,7 @@ export const ENV_PATH = join(ROOT, '.env');
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const entries: Record<string, string> = {
     ROOT, DATA_DIR, CACHE_DIR, DB_PATH, PFD_CACHE, SENATE_CACHE,
-    LEGISLATORS_CACHE, OPENSECRETS_CACHE, PIPE_DIR, SKILLS_DIR,
+    LEGISLATORS_CACHE, OPENSECRETS_CACHE, USASPENDING_CACHE, PIPE_DIR, SKILLS_DIR,
     SITE_DIR, NAMES_PATH, ENV_PATH,
   };
   for (const [k, v] of Object.entries(entries)) console.log(`${k.padEnd(18)} ${v}`);
