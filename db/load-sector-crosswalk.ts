@@ -262,6 +262,44 @@ export const DONOR_INDUSTRY_THEME: Array<{ pattern: string; theme: string; note?
   { pattern: '%property management%', theme: 'Real Estate' },
 ];
 
+// NAICS prefix → theme (district federal contracts, USAspending rollups).
+// PREFIX-based, longest-prefix-wins — see naics_theme in schema.sql. Seeded
+// from codes observed in frozen probe rollups (NJ-05 + GA-14, SOURCES.md
+// §USAspending), generalized to a prefix only where the whole family is
+// unambiguous. Unmapped-by-construction families (construction 23, food
+// processing 311, rubber/plastics 326, architecture/engineering 5413, R&D
+// services 5417, facilities support 5612, remediation 5629) carry no
+// tradable-theme meaning; findings state "of mapped district contract dollars".
+export const NAICS_THEME: Array<{ prefix: string; theme: string; note?: string }> = [
+  { prefix: '2211',   theme: 'Energy',               note: 'electric power generation/transmission/distribution (SIC 4911/4931 precedent)' },
+  { prefix: '331',    theme: 'Materials & Mining',   note: 'primary metal manufacturing' },
+  { prefix: '33299',  theme: 'Defense & Aerospace',  note: 'ordnance & ammunition — federal awards here are defense procurement' },
+  { prefix: '3344',   theme: 'Tech & Semiconductors', note: 'semiconductors & electronic components' },
+  { prefix: '3345',   theme: 'Tech & Semiconductors', note: 'navigational/measuring/control instruments' },
+  { prefix: '334510', theme: 'Pharma & Health',      note: 'electromedical apparatus — longest-prefix override of 3345 (SIC 3841 precedent)' },
+  { prefix: '335',    theme: 'Industrials',          note: 'electrical equipment & components (SIC 3600 precedent)' },
+  { prefix: '3364',   theme: 'Defense & Aerospace',  note: 'aerospace products & parts' },
+  { prefix: '3391',   theme: 'Pharma & Health',      note: 'medical equipment & supplies (SIC 3841 precedent)' },
+  { prefix: '42345',  theme: 'Pharma & Health',      note: 'medical/dental/hospital equipment wholesalers (SIC 5047 precedent)' },
+  { prefix: '481',    theme: 'Transportation',       note: 'air transportation (SIC 4513 precedent)' },
+  { prefix: '512',    theme: 'Media & Telecom',      note: 'motion picture & sound recording' },
+  { prefix: '622',    theme: 'Pharma & Health',      note: 'hospitals (donor %hospital% precedent)' },
+  { prefix: '6231',   theme: 'Pharma & Health',      note: 'nursing care facilities (donor %nursing home% precedent)' },
+];
+
+// Longest-prefix-wins matcher, the unit-testable mirror of the detector's SQL
+// (WHERE code LIKE naics_prefix || '%' ORDER BY LENGTH(naics_prefix) DESC
+// LIMIT 1). Returns null for unmapped codes — that null is load-bearing.
+export function matchNaicsTheme(code: string): string | null {
+  let best: { prefix: string; theme: string } | null = null;
+  for (const row of NAICS_THEME) {
+    if (code.startsWith(row.prefix) && (!best || row.prefix.length > best.prefix.length)) {
+      best = row;
+    }
+  }
+  return best?.theme ?? null;
+}
+
 // Pure mirror of DuckDB's ILIKE so the crosswalk is unit-testable without a
 // database: case-insensitive, % = any sequence, _ = any single character.
 export function ilikeMatch(pattern: string, s: string): boolean {
@@ -289,7 +327,7 @@ export function matchDonorThemes(industry: string): string[] {
   ].sort();
 }
 
-export async function loadSectorCrosswalk(): Promise<{ sicRows: number; matchRows: number; overrideRows: number; donorThemeRows: number }> {
+export async function loadSectorCrosswalk(): Promise<{ sicRows: number; matchRows: number; overrideRows: number; donorThemeRows: number; naicsRows: number }> {
   await applySchema();
   const conn = await getDb();
 
@@ -330,12 +368,22 @@ export async function loadSectorCrosswalk(): Promise<{ sicRows: number; matchRow
     donorThemeRows++;
   }
 
+  await conn.run(`DELETE FROM naics_theme`);
+  let naicsRows = 0;
+  for (const { prefix, theme, note } of NAICS_THEME) {
+    await conn.run(
+      `INSERT OR REPLACE INTO naics_theme (naics_prefix, theme, note) VALUES (?,?,?)`,
+      [prefix, theme, note ?? null],
+    );
+    naicsRows++;
+  }
+
   console.log(
     `Seeded crosswalk: ${sicRows} SIC→theme rows, ${matchRows} theme→bill-match rows across ` +
     `${THEME_MATCH.length} themes, ${overrideRows} ticker overrides, ` +
-    `${donorThemeRows} donor-industry→theme patterns.`,
+    `${donorThemeRows} donor-industry→theme patterns, ${naicsRows} NAICS→theme prefixes.`,
   );
-  return { sicRows, matchRows, overrideRows, donorThemeRows };
+  return { sicRows, matchRows, overrideRows, donorThemeRows, naicsRows };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

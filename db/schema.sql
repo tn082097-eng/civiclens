@@ -632,6 +632,22 @@ CREATE TABLE IF NOT EXISTS donor_industry_theme (
   note             TEXT
 );
 
+-- NAICS → theme crosswalk (district federal contracts, USAspending). Same
+-- hand-curated, version-controlled philosophy as sic_theme/donor_industry_theme,
+-- same themes. PREFIX-based, longest-prefix-wins: a NAICS code matches the
+-- longest seeded prefix (334510 electromedical → Pharma & Health even though
+-- 3345 instruments → Tech & Semiconductors). Longest-wins makes cross-theme
+-- double counting impossible by construction. Big federal NAICS families with
+-- no tradable-theme meaning (construction 23, food processing 311, prof/R&D
+-- services 5413/5417, facilities support 5612, remediation 5629) are
+-- deliberately UNMAPPED. Seeded by db/load-sector-crosswalk.ts; guarded by
+-- lib/naics-crosswalk.test.ts.
+CREATE TABLE IF NOT EXISTS naics_theme (
+  naics_prefix TEXT PRIMARY KEY,     -- 2–6 digit NAICS prefix
+  theme        TEXT NOT NULL,        -- one of the existing theme_bill_match themes
+  note         TEXT
+);
+
 -- Per-member donor money rolled up to mapped economic-sector themes. The donor
 -- analogue of theme exposure. Only mapped industries contribute; unmapped money
 -- (Labor/Ideology/etc.) is intentionally excluded so themes are comparable to
