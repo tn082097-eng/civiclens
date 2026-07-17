@@ -1,6 +1,6 @@
 # District-contracts detector — design
 
-**Date:** 2026-07-15 · **Status:** DRAFT for review — three design calls resolved below, each with rationale; flag disagreement before build starts.
+**Date:** 2026-07-15 · **Status:** BUILT, then **GATED at the permutation baseline (2026-07-16)** — substrate + loader + crosswalk shipped; the theme-level detector does not discriminate above chance and is NOT registered. See "Permutation baseline — verdict" below.
 **Substrate probe:** SOURCES.md "USAspending API" (frozen 2026-07-15, NJ-05/Gottheimer/CY2023).
 
 ## Pattern statement
@@ -136,8 +136,48 @@ follow-up once terms data exists; v1 states the window in the finding.
 6. Render regression: rebuild one untouched member, byte-diff clean.
 7. Full test suite + double-build byte-identity.
 
-## Open questions
+## Permutation baseline — verdict (2026-07-16): FAILED, detector gated
 
-- Spine confirm: trades (recommended) vs sponsorship vs both-as-separate-detectors.
-- Fixed CY2023–2025 window OK, or wait for terms data?
-- Endpoint 1 itemized-award citations: v1.1 as proposed, or required for v1?
+Null model: member↔district assignment shuffled across the 33-member House
+roster (2,000 permutations, seed `district-contract-baseline-v1`, mulberry32),
+scoring shuffled pairs with the exact shipped decision procedure
+(`qualifyingThemes`, shared import — no drift).
+
+**Run 1** (spine as designed): observed 3/33 members with a hit; null expected
+2.46, z=0.49, **p=0.483**. A member's trades align with a random *other*
+district's contract mix as often as with their own.
+
+**Run 2** (added district-distinctiveness condition, share ≥1.5× roster-median
+share for the theme): identical — observed 3, expected 2.46, p=0.483. The
+condition never binds: roster medians (Defense 48.7%, Pharma 13.5%, Tech 7.7%)
+sit low enough that any theme clearing top-3 + ≥20% clears 1.5× median too.
+
+**Why it can't work at theme level:** (1) Defense & Aerospace is ~49% of every
+district's mapped contract dollars — the federal government buys the same
+things everywhere, so "top contract theme" carries almost no district
+information. (2) The trade side has no district information either —
+congressional portfolios are mega-cap-alike (everyone holds AAPL/JNJ/ABBV), so
+the Pharma/Tech overlaps that fire are portfolio base rates. The two sides are
+exchangeable; no threshold extracts a signal that isn't there. (Same lesson as
+the committee-jurisdiction nexus: an everywhere-hot edge is not a nexus.)
+
+**Disposition:** loader, `district_contract_naics` substrate, `naics_theme`
+crosswalk, and baseline harness are shipped and stay (real substrate, reusable
+edge). The detector file stays for its SQL + spine but is NOT in
+`registry.ts` `DETECTORS` and gets no render section. One tightening iteration
+was allowed by design; further threshold-tuning against the null would be
+p-hacking.
+
+**The discriminating edge (v2 candidate):** recipient-level, not theme-level —
+Endpoint 1 itemized awards give `Recipient Name` per district; a member trading
+stock of the *specific company* receiving federal contracts performed in their
+district is district-specific by construction. Needs recipient-name → ticker
+resolution (subsidiary names are the hard part). Not green-lit; propose
+separately.
+
+## Open questions — resolved at build (2026-07-16)
+
+- Spine: trades (as recommended) — built, then gated by the baseline above.
+- Window: fixed CY2023–2025 — used.
+- Endpoint 1 itemized-award citations: deferred; now the core of the v2
+  recipient-level candidate rather than a citation nicety.
