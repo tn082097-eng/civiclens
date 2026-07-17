@@ -500,3 +500,46 @@ $3.9M top-10 delta; R&D and Architectural vanish under the original map,
 Nursing Care and Aluminum Mfg appear. The field choice materially changes the
 theme mix — the detector uses `district_original` (map at award time; see
 `docs/2026-07-15-district-contracts-detector.md`).
+
+### Endpoint 3 — Recipient rollup for a district (recipient-detector substrate)
+
+`POST /search/spending_by_category/recipient/` — same `filters` object as the
+NAICS rollup (Endpoint 2), `limit` up to 100. Returns aggregated dollars per
+recipient: `results[]` rows carry `name`, `amount`, `recipient_id`
+(hash-suffixed id, `…-C` child / `…-R` recipient). Probe (2026-07-17): 4
+districts (NJ-05, FL-23, CA-17, OH-10), top-100 recipients each, CY2023–25,
+`district_original` filter. Frozen at
+`pfd-cache/usaspending-recipient-probe-2026-07-17/`
+(`recipient_probe_2026-07-17.json` full per-district resolved/unresolved
+lists + `probe_recipients.py`; the script's `member_tickers.json` input is a
+DB export, not frozen).
+
+### Recipient → parent resolution
+
+`GET /recipient/{recipient_id}/` returns `parent_name`/`parent_uei` (SAM.gov
+hierarchy). The source does the hard subsidiary→parent step: HOWMEDICA
+OSTEONICS → STRYKER CORPORATION, GE AVIATION → GENERAL ELECTRIC, DB CONTROL
+→ HEICO. Probe cost-capped parent lookups to the top-40 unmatched recipients
+per district — a full harvest should look up every unmatched recipient.
+
+### SEC ticker universe
+
+`https://www.sec.gov/files/company_tickers.json` — ~8k issuers as
+`{cik_str, ticker, title}`. **Requires a User-Agent header** (e.g.
+`CivicLens research <email>`) or the SEC returns 403.
+
+Auto-resolution (normalized-name match, own name then parent name) covered
+3%–65% of top-100 recipient dollars by district: NJ-05 38% ($212.6M of
+$566.2M), CA-17 65% (incl. $3.9B Lockheed), FL-23 3%, OH-10 8%. One genuine
+trade overlap surfaced immediately: NICE SYSTEMS INC ($30.9M NJ-05
+contracts) ↔ Gottheimer traded NICE.
+
+### Trap — aggressive suffix-stripping collides
+
+Normalizing away corporate suffixes across ~8k SEC names produces false
+positives: ULCC (Frontier *Airlines*) matched FRONTIER TECHNOLOGY INC (a
+$306M private defense firm); SCI (funeral homes) matched ENTERPRISE
+TECHNOLOGY SOLUTIONS. Auto-matching is a candidate generator only — any
+shipped edge needs a hand-curated `recipient_ticker` confirm table (the
+sic_theme philosophy). Only member-overlap pairs need curation, so the
+curated surface stays small.

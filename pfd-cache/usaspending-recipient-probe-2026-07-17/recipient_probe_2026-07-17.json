@@ -1,0 +1,553 @@
+{
+ "josh-gottheimer": {
+  "district": "NJ-05",
+  "top100_total": 566164098.32,
+  "resolved_n": 6,
+  "resolved_dollars": 212570144.60000002,
+  "resolved_share": 0.3754567716864552,
+  "overlap": [
+   {
+    "name": "NICE SYSTEMS INC",
+    "parent": null,
+    "ticker": "NICE",
+    "amount": 30880659.39,
+    "how": "own-name"
+   }
+  ],
+  "unresolved_top": [
+   {
+    "name": "HUDSON TECHNOLOGIES COMPANY",
+    "parent": "HUDSON TECHNOLOGIES COMPANY",
+    "amount": 99490159.37
+   },
+   {
+    "name": "HGL-APTIM TECHNOLOGIES JV LLC",
+    "parent": "HGL-APTIM TECHNOLOGIES JV LLC",
+    "amount": 31800000.0
+   },
+   {
+    "name": "PSYCHOGENICS INC.",
+    "parent": "PSYCHOGENICS INC.",
+    "amount": 30584866.17
+   },
+   {
+    "name": "MAXENTRIC TECHNOLOGIES LLC",
+    "parent": "MAXENTRIC TECHNOLOGIES LLC",
+    "amount": 30010053.99
+   },
+   {
+    "name": "(RC) 2 PHARMA CONNECT L.L.C.",
+    "parent": "(RC) 2 PHARMA CONNECT L.L.C.",
+    "amount": 17727808.92
+   },
+   {
+    "name": "KULITE SEMICONDUCTOR PRODUCTS INC",
+    "parent": "KULITE SEMICONDUCTOR PRODUCTS INC",
+    "amount": 15708128.31
+   },
+   {
+    "name": "HYDROGEOLOGIC, INC.",
+    "parent": "HYDROGEOLOGIC, INC.",
+    "amount": 15451215.66
+   },
+   {
+    "name": "UNITED STATES TECHNOLOGIES INC",
+    "parent": "UNITED STATES TECHNOLOGIES INC",
+    "amount": 15410459.09
+   },
+   {
+    "name": "ARCADIS U.S., INC.",
+    "parent": "ARCADIS N.V.",
+    "amount": 9187165.85
+   },
+   {
+    "name": "WILLRICH PRECISION INSTRUMENT COMPANY, INC",
+    "parent": "WILLRICH PRECISION INSTRUMENT COMPANY, INC",
+    "amount": 6515752.98
+   },
+   {
+    "name": "KYODO SHIPPING & TRADING CORP USA",
+    "parent": "KYODO SHIPPING & TRADING CORP USA",
+    "amount": 6374777.28
+   },
+   {
+    "name": "WSP USA SOLUTIONS INC",
+    "parent": "WSP USA SOLUTIONS INC",
+    "amount": 5379249.0
+   },
+   {
+    "name": "WG CRITICAL CARE, LLC",
+    "parent": "WG CRITICAL CARE, LLC",
+    "amount": 4974870.0
+   }
+  ],
+  "resolved": [
+   {
+    "name": "HOWMEDICA OSTEONICS CORP",
+    "parent": "STRYKER CORPORATION",
+    "ticker": "SYK",
+    "amount": 179233222.08,
+    "how": "parent-name"
+   },
+   {
+    "name": "NICE SYSTEMS INC",
+    "parent": null,
+    "ticker": "NICE",
+    "amount": 30880659.39,
+    "how": "own-name"
+   },
+   {
+    "name": "FEI-ELCOM TECH, INC.",
+    "parent": "FREQUENCY ELECTRONICS INC",
+    "ticker": "FEIM",
+    "amount": 1151676.09,
+    "how": "parent-name"
+   },
+   {
+    "name": "BRAINSWAY USA INC",
+    "parent": null,
+    "ticker": "BWAY",
+    "amount": 910000.0,
+    "how": "own-name"
+   },
+   {
+    "name": "GLOBAL ENTERPRISE GROUP LLC",
+    "parent": null,
+    "ticker": "GTLL",
+    "amount": 218162.04,
+    "how": "own-name"
+   },
+   {
+    "name": "SUNBELT RENTALS, INC",
+    "parent": null,
+    "ticker": "SUNB",
+    "amount": 176425.0,
+    "how": "own-name"
+   }
+  ]
+ },
+ "jared-moskowitz": {
+  "district": "FL-23",
+  "top100_total": 1594344572.1200001,
+  "resolved_n": 4,
+  "resolved_dollars": 52819599.77,
+  "resolved_share": 0.033129350263203,
+  "overlap": [],
+  "unresolved_top": [
+   {
+    "name": "THE GEO GROUP, INC.",
+    "parent": "THE GEO GROUP, INC.",
+    "amount": 538706778.7
+   },
+   {
+    "name": "BRASFIELD & GORRIE LLC",
+    "parent": "BRASFIELD & GORRIE LLC",
+    "amount": 210498525.23
+   },
+   {
+    "name": "GEO REENTRY INC",
+    "parent": "THE GEO GROUP INC",
+    "amount": 179271724.84
+   },
+   {
+    "name": "GEO SECURE SERVICES, LLC",
+    "parent": "THE GEO GROUP, INC.",
+    "amount": 102265085.29
+   },
+   {
+    "name": "EXELAN PHARMACEUTICALS INC",
+    "parent": "EXELAN PHARMACEUTICALS INC",
+    "amount": 101114249.41
+   },
+   {
+    "name": "GEO TRANSPORT, INC.",
+    "parent": "THE GEO GROUP, INC.",
+    "amount": 45139530.2
+   },
+   {
+    "name": "RYZHKA INTERNATIONAL LLC",
+    "parent": "RYZHKA INTERNATIONAL LLC",
+    "amount": 26099396.45
+   },
+   {
+    "name": "AERO PRECISION & REPAIR OVERHAUL CO INC",
+    "parent": "AERO PRECISION & REPAIR OVERHAUL CO INC",
+    "amount": 21264939.03
+   },
+   {
+    "name": "VEHICLE MAINTENANCE PROGRAM INC",
+    "parent": "VEHICLE MAINTENANCE PROGRAM INC",
+    "amount": 18047781.39
+   },
+   {
+    "name": "RAINMAKER, INC.",
+    "parent": "RAINMAKER, INC.",
+    "amount": 17492811.34
+   },
+   {
+    "name": "JNS FOODS LLC",
+    "parent": "JNS FOODS LLC",
+    "amount": 17354414.1
+   },
+   {
+    "name": "55 INDUSTRIES, LLC",
+    "parent": "55 INDUSTRIES, LLC",
+    "amount": 16837392.05
+   },
+   {
+    "name": "ALL-AMERICAN FARMS INC",
+    "parent": "ALL-AMERICAN FARMS INC",
+    "amount": 16164281.18
+   },
+   {
+    "name": "BB&G ENTERPRISES INC",
+    "parent": "BB&G ENTERPRISES INC",
+    "amount": 14873485.68
+   }
+  ],
+  "resolved": [
+   {
+    "name": "AMENTUM SERVICES, INC.",
+    "parent": null,
+    "ticker": "AMTM",
+    "amount": 35844424.25,
+    "how": "own-name"
+   },
+   {
+    "name": "ARRAY USA, INC.",
+    "parent": null,
+    "ticker": "ARRY",
+    "amount": 9280894.5,
+    "how": "own-name"
+   },
+   {
+    "name": "JOHNSON CONTROLS FIRE PROTECTION LP",
+    "parent": "JOHNSON CONTROLS, INC.",
+    "ticker": "JCI",
+    "amount": 5401265.58,
+    "how": "parent-name"
+   },
+   {
+    "name": "GREAT EASTERN GROUP, INC.",
+    "parent": null,
+    "ticker": "GEHDF",
+    "amount": 2293015.44,
+    "how": "own-name"
+   }
+  ]
+ },
+ "ro-khanna": {
+  "district": "CA-17",
+  "top100_total": 6421007480.83,
+  "resolved_n": 19,
+  "resolved_dollars": 4190981847.22,
+  "resolved_share": 0.6526984838021493,
+  "overlap": [],
+  "unresolved_top": [
+   {
+    "name": "NEW TECH SOLUTIONS, INC.",
+    "parent": "NEW TECH SOLUTIONS, INC.",
+    "amount": 758086513.95
+   },
+   {
+    "name": "NORTHROP GRUMMAN SYSTEMS CORPORATION",
+    "parent": "TITAN II INC.",
+    "amount": 540179646.97
+   },
+   {
+    "name": "CEPHEID",
+    "parent": "CEPHEID",
+    "amount": 202117615.42
+   },
+   {
+    "name": "IHEALTH LABS INC.",
+    "parent": "IHEALTH LABS INC.",
+    "amount": 166950000.0
+   },
+   {
+    "name": "SMITHS DETECTION INC.",
+    "parent": "SMITHS DETECTION INC.",
+    "amount": 113430117.74
+   },
+   {
+    "name": "CONDOR RELIABILITY SERVICES, INC.",
+    "parent": "CONDOR RELIABILITY SERVICES, INC.",
+    "amount": 43667218.05
+   },
+   {
+    "name": "ATAC",
+    "parent": "ATAC",
+    "amount": 28724972.79
+   },
+   {
+    "name": "MALONEY-ODIN JV",
+    "parent": "MALONEY-ODIN JV",
+    "amount": 20748016.39
+   },
+   {
+    "name": "MULTIBEAM CORPORATION",
+    "parent": "MULTIBEAM CORPORATION",
+    "amount": 18993222.0
+   },
+   {
+    "name": "RAYTHEON APPLIED SIGNAL TECHNOLOGY, INC.",
+    "parent": "RAYTHEON APPLIED SIGNAL TECHNOLOGY, INC.",
+    "amount": 18253081.23
+   }
+  ],
+  "resolved": [
+   {
+    "name": "LOCKHEED MARTIN CORP",
+    "parent": null,
+    "ticker": "LMT",
+    "amount": 3904021669.71,
+    "how": "own-name"
+   },
+   {
+    "name": "INTUITIVE SURGICAL INC",
+    "parent": null,
+    "ticker": "ISRG",
+    "amount": 140572179.82,
+    "how": "own-name"
+   },
+   {
+    "name": "GENERAL DYNAMICS MISSION SYSTEMS, INC.",
+    "parent": "GENERAL DYNAMICS CORP",
+    "ticker": "GD",
+    "amount": 32620749.15,
+    "how": "parent-name"
+   },
+   {
+    "name": "GARTNER, INC.",
+    "parent": null,
+    "ticker": "IT",
+    "amount": 26844911.65,
+    "how": "own-name"
+   },
+   {
+    "name": "MICROSOFT CORPORATION",
+    "parent": null,
+    "ticker": "MSFT",
+    "amount": 16512031.47,
+    "how": "own-name"
+   },
+   {
+    "name": "ABBOTT LABORATORIES INC.",
+    "parent": null,
+    "ticker": "ABT",
+    "amount": 14289430.69,
+    "how": "own-name"
+   },
+   {
+    "name": "CADENCE DESIGN SYSTEMS INC",
+    "parent": null,
+    "ticker": "CDNS",
+    "amount": 8389696.0,
+    "how": "own-name"
+   },
+   {
+    "name": "KEYSIGHT TECHNOLOGIES INC",
+    "parent": null,
+    "ticker": "KEYS",
+    "amount": 7731305.4,
+    "how": "own-name"
+   },
+   {
+    "name": "BOOZ ALLEN HAMILTON INC",
+    "parent": null,
+    "ticker": "BAH",
+    "amount": 7589525.18,
+    "how": "own-name"
+   },
+   {
+    "name": "DB CONTROL",
+    "parent": "HEICO CORP",
+    "ticker": "HEI",
+    "amount": 6470374.0,
+    "how": "parent-name"
+   },
+   {
+    "name": "CEREBRAS SYSTEMS INC.",
+    "parent": null,
+    "ticker": "CBRS",
+    "amount": 4691000.0,
+    "how": "own-name"
+   },
+   {
+    "name": "ENTERPRISE TECHNOLOGY SOLUTIONS, INC.",
+    "parent": null,
+    "ticker": "SCI",
+    "amount": 4664535.85,
+    "how": "own-name"
+   },
+   {
+    "name": "ALAMAR BIOSCIENCES, INC.",
+    "parent": null,
+    "ticker": "ALMR",
+    "amount": 3552260.0,
+    "how": "own-name"
+   },
+   {
+    "name": "CYTEK BIOSCIENCES, INC.",
+    "parent": null,
+    "ticker": "CTKB",
+    "amount": 2890291.55,
+    "how": "own-name"
+   },
+   {
+    "name": "SERVICENOW, INC.",
+    "parent": null,
+    "ticker": "NOW",
+    "amount": 2247440.4,
+    "how": "own-name"
+   },
+   {
+    "name": "ACCURAY INCORPORATED",
+    "parent": null,
+    "ticker": "ARAY",
+    "amount": 2110821.61,
+    "how": "own-name"
+   },
+   {
+    "name": "SITIME CORPORATION",
+    "parent": null,
+    "ticker": "SITM",
+    "amount": 1965219.0,
+    "how": "own-name"
+   },
+   {
+    "name": "NEXTNAV, LLC",
+    "parent": null,
+    "ticker": "NN",
+    "amount": 1918421.5,
+    "how": "own-name"
+   },
+   {
+    "name": "AMPRIUS TECHNOLOGIES, INC.",
+    "parent": null,
+    "ticker": "AMPX",
+    "amount": 1899984.24,
+    "how": "own-name"
+   }
+  ]
+ },
+ "mike-turner": {
+  "district": "OH-10",
+  "top100_total": 7671963487.95,
+  "resolved_n": 6,
+  "resolved_dollars": 618914558.87,
+  "resolved_share": 0.08067225031011951,
+  "overlap": [],
+  "unresolved_top": [
+   {
+    "name": "UNIVERSITY OF DAYTON",
+    "parent": "UNIVERSITY OF DAYTON",
+    "amount": 636601455.06
+   },
+   {
+    "name": "APPLIED RESEARCH SOLUTIONS, INC.",
+    "parent": "RIVERSIDE RESEARCH INSTITUTE",
+    "amount": 575755245.57
+   },
+   {
+    "name": "LINQUEST CORPORATION",
+    "parent": "LINQUEST CORPORATION",
+    "amount": 314046913.8
+   },
+   {
+    "name": "BLUEHALO, LLC",
+    "parent": "BLUEHALO, LLC",
+    "amount": 262724748.26
+   },
+   {
+    "name": "INTEGRATED PROCUREMENT TECHNOLOGIES",
+    "parent": "INTEGRATED PROCUREMENT TECHNOLOGIES",
+    "amount": 258941420.4
+   },
+   {
+    "name": "HII MISSION TECHNOLOGIES CORP",
+    "parent": "CONTINENTAL MARITIME OF SAN DIEGO  LLC",
+    "amount": 230546259.22
+   },
+   {
+    "name": "MESSER CONSTRUCTION CO",
+    "parent": "MESSER CONSTRUCTION CO",
+    "amount": 219021879.63
+   },
+   {
+    "name": "KBR WYLE SERVICES, LLC",
+    "parent": "KBR WYLE SERVICES, LLC",
+    "amount": 182447991.37
+   },
+   {
+    "name": "SIERRA NEVADA COMPANY, LLC",
+    "parent": "SIERRA NEVADA COMPANY, LLC",
+    "amount": 168776143.0
+   },
+   {
+    "name": "ARCTICOM, LLC",
+    "parent": "ARCTICOM, LLC",
+    "amount": 157717716.2
+   },
+   {
+    "name": "SABEL SYSTEMS TECHNOLOGY SOLUTIONS, LLC",
+    "parent": "SABEL SYSTEMS TECHNOLOGY SOLUTIONS, LLC",
+    "amount": 136365666.27
+   },
+   {
+    "name": "HUMANIT SOLUTIONS LLC",
+    "parent": "HUMANIT SOLUTIONS LLC",
+    "amount": 135564255.81
+   },
+   {
+    "name": "DRS ADVANCED ISR LLC",
+    "parent": "DRS ADVANCED ISR LLC",
+    "amount": 125133096.86
+   }
+  ],
+  "resolved": [
+   {
+    "name": "FRONTIER TECHNOLOGY INC",
+    "parent": null,
+    "ticker": "ULCC",
+    "amount": 306242093.16,
+    "how": "own-name"
+   },
+   {
+    "name": "BOOZ ALLEN HAMILTON INC",
+    "parent": null,
+    "ticker": "BAH",
+    "amount": 131277491.89,
+    "how": "own-name"
+   },
+   {
+    "name": "GE AVIATION SYSTEMS LLC",
+    "parent": "GENERAL ELECTRIC COMPANY",
+    "ticker": "GE",
+    "amount": 68439420.61,
+    "how": "parent-name"
+   },
+   {
+    "name": "HEWLETT PACKARD ENTERPRISE CO",
+    "parent": null,
+    "ticker": "HPE",
+    "amount": 54458231.17,
+    "how": "own-name"
+   },
+   {
+    "name": "RELX INC.",
+    "parent": null,
+    "ticker": "RELX",
+    "amount": 30780439.0,
+    "how": "own-name"
+   },
+   {
+    "name": "LEIDOS, INC.",
+    "parent": null,
+    "ticker": "LDOS",
+    "amount": 27716883.04,
+    "how": "own-name"
+   }
+  ]
+ }
+}
