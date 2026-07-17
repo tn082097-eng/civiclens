@@ -482,3 +482,21 @@ award ceilings; do not mix the two levels in one metric.
   NAICS→theme crosswalk (same 12 themes, same collision-exclusivity rule as
   `donor_industry_theme` — see `lib/donor-crosswalk.test.ts`) is required
   before the detector can compare district contracts to themes.
+
+### district_current vs district_original — measured delta (probe 2026-07-16)
+
+GA-14 CY2023 NAICS rollup queried with both fields (GA redrew its map effective
+the 2024 cycle, so CY2023 awards diverge). Frozen at
+`spending_by_naics_ga14_2023_district_{current,original}.json`.
+
+- `district_current`: top-10 = $27.1M (Aircraft Parts $11.3M, Facilities
+  Support $4.2M, Poultry $4.1M, Phys/Eng R&D $2.6M, Bldg Construction $1.6M,
+  Architectural $1.0M …)
+- `district_original`: top-10 = $23.2M (Aircraft Parts $11.3M, Poultry $4.1M,
+  Facilities Support $1.6M, Nursing Care $1.5M, Bldg Construction $1.4M,
+  Aluminum Mfg $1.1M …)
+
+$3.9M top-10 delta; R&D and Architectural vanish under the original map,
+Nursing Care and Aluminum Mfg appear. The field choice materially changes the
+theme mix — the detector uses `district_original` (map at award time; see
+`docs/2026-07-15-district-contracts-detector.md`).
