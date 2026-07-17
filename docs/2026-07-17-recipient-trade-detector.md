@@ -36,15 +36,29 @@ district is not a base rate.
    `company_tickers.json`, own name first, then SAM.gov parent name.
 2. **`recipient_ticker` confirm table** (precision): hand-curated rows, only
    for pairs where the member actually traded the candidate ticker — the
-   curation surface is the overlap set, not 8k names. No auto-match reaches
-   the detector without a confirm row.
+   curation surface is the overlap set, not 8k names.
+   No auto-match reaches the detector without a confirm row. Confirmation is
+   based only on objective identity evidence — SEC issuer identity, SAM.gov
+   parent identity, publicly verifiable corporate ownership — never on
+   whether the overlap looks interesting; each confirm row cites its
+   evidence.
+
+Parent resolution follows the authoritative SAM.gov parent relationship
+without attempting economic attribution among subsidiaries: GE AVIATION →
+GE is an identity statement, not a claim about how much of the parent's
+value the district contract represents (same caution for conglomerates like
+RTX or Alphabet).
 
 ## Pre-registered null model (registered before any results exist)
 
 Overlap statistic, per member, computed only over confirmed tickers:
-- **S1 (binary):** count of distinct tickers both traded in-window and
-  confirmed as district-contract recipients.
-- **S2 (dollar-weighted):** Σ district contract dollars of those tickers.
+- **S1 (breadth):** count of distinct tickers both traded in-window and
+  confirmed as district-contract recipients. Weights a $500 contract equal
+  to a $5B one by design — it measures how *broadly* a member's trading
+  touches their district's contractor base.
+- **S2 (exposure):** Σ district contract dollars of those tickers — the
+  dollar scale of the overlap. S1 and S2 answer different questions; both
+  must clear the gate.
 
 **Null:** shuffle member↔district assignment across the House roster; 2,000
 permutations, fixed seed, mulberry32 — same harness pattern as
@@ -54,14 +68,33 @@ null at p < 0.05. Baseline runs BEFORE any hand-tracing of individual hits
 (Step-0 rule). If the baseline fails, the detector is not registered — no
 threshold tuning afterward (theme-detector lesson).
 
+**Exchangeability (why the shuffle is valid):** under the null, after
+conditioning on each member's observed trading behavior and each district's
+observed contractor composition, there is no association between a member
+and their own district beyond random assignment. Permutations preserve each
+member's trade set and each district's confirmed recipient set unchanged;
+only the member↔district pairing is shuffled. Districts with hundreds of
+recipients keep them; members trading 5 or 200 tickers keep them.
+
 **Ubiquity exclusion (pre-registered):** any ticker whose confirmed
 recipients receive contracts in more than 1/3 of roster districts is
-excluded from observed AND null statistics. MSFT/LMT contract everywhere;
-presence carries no district information.
+excluded from observed AND null statistics. The cutoff is a design
+criterion, not a tuned constant: a company receiving contracts in most
+districts (MSFT/LMT contract everywhere) is treated as lacking district
+specificity — its presence cannot distinguish a member's own district from
+a shuffled one. One-third is pre-registered here and will not be adjusted
+after results exist.
 
 **Timing layer (descriptive only):** trade within 90 days of an award action
 may sharpen the narrative of a confirmed hit. It is NOT part of the
 confirmatory statistic in v1.
+
+**Negative control (pre-registered, runs with the baseline):** permute
+confirmed ticker identities across the confirm table while preserving each
+member's trade count and each district's recipient count, then rerun the
+detector. This control must reliably return null; a detector that fires on
+identity-scrambled data is reading marginals, not pairings. Run before any
+hand-tracing, reported next to the main baseline.
 
 ## Evaluation caveats
 
