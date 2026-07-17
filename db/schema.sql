@@ -666,6 +666,51 @@ CREATE TABLE IF NOT EXISTS district_contract_naics (
   PRIMARY KEY (member_id, cy, naics)
 );
 
+-- Federal contract transaction dollars into a House member's district, rolled
+-- up per recipient (USAspending spending_by_category/recipient, Endpoint 3 in
+-- SOURCES.md §USAspending). Same filter discipline as district_contract_naics:
+-- district_original, spending_level asserted 'transactions'. recipient_key is
+-- the API's hash id when present, else the recipient name (API omits some
+-- ids). Loaded by db/load-district-recipients.ts; "latest fetch wins" per
+-- (member, cy). Substrate for docs/2026-07-17-recipient-trade-detector.md.
+CREATE TABLE IF NOT EXISTS district_contract_recipient (
+  member_id      TEXT NOT NULL,      -- members.member_id (House only)
+  cy             INTEGER NOT NULL,   -- calendar year of the time_period filter
+  recipient_key  TEXT NOT NULL,      -- recipient_id, else recipient_name
+  recipient_id   TEXT,               -- USAspending hash id (…-C child / …-R)
+  recipient_name TEXT NOT NULL,
+  amount         DOUBLE NOT NULL,    -- transaction dollars in the CY
+  spending_level TEXT NOT NULL,      -- asserted 'transactions'
+  fetched_at     TIMESTAMP NOT NULL,
+  PRIMARY KEY (member_id, cy, recipient_key)
+);
+
+-- SAM.gov parent relationship per recipient (GET /recipient/{id}/). Identity
+-- statement only — no economic attribution among subsidiaries (spec §Identity
+-- resolution). Fetched once per recipient_id, cached on disk.
+CREATE TABLE IF NOT EXISTS recipient_parent (
+  recipient_id   TEXT PRIMARY KEY,
+  recipient_name TEXT,
+  parent_name    TEXT,
+  parent_uei     TEXT,
+  fetched_at     TIMESTAMP NOT NULL
+);
+
+-- Hand-curated recipient→ticker identity confirmations. The precision stage:
+-- no auto-match reaches the detector without a row here. Confirmation is
+-- objective identity evidence ONLY (SEC issuer identity, SAM.gov parent,
+-- publicly verifiable ownership) — never interestingness; evidence cites the
+-- source. Loaded from data/recipient_ticker.tsv by db/load-recipient-ticker.ts.
+-- NO code path may INSERT here except that loader.
+CREATE TABLE IF NOT EXISTS recipient_ticker (
+  recipient_key  TEXT PRIMARY KEY,
+  recipient_name TEXT NOT NULL,
+  ticker         TEXT NOT NULL,      -- SEC ticker, uppercase
+  basis          TEXT NOT NULL,      -- own-name | parent-name | manual
+  evidence       TEXT NOT NULL,      -- objective identity citation
+  confirmed_at   DATE NOT NULL
+);
+
 -- Per-member donor money rolled up to mapped economic-sector themes. The donor
 -- analogue of theme exposure. Only mapped industries contribute; unmapped money
 -- (Labor/Ideology/etc.) is intentionally excluded so themes are comparable to
