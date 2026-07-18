@@ -43,6 +43,21 @@ district is not a base rate.
    whether the overlap looks interesting; each confirm row cites its
    evidence.
 
+The confirmation workflow is implemented so that the curator has access only
+to information necessary to determine corporate identity (recipient name,
+normalized name, parent entity, candidate ticker, and supporting identity
+metadata). No contract values, district assignments, member identities,
+overlap statistics, trade dates, or detector outputs are displayed during
+confirmation (`pipeline/patterns/recipient-trade-candidates.ts`).
+
+Restricting the worklist to tickers traded in-window by ANY roster member is
+a pre-registered computational optimization of the curation surface, not an
+analytical filter based on observed detector results: candidate generation
+itself is recipient → normalized name → SEC ticker, independent of outcomes.
+The roster-wide (not own-member) scope is what keeps the confirmed set
+uncorrelated with the observed member↔district pairing under the shuffle
+null.
+
 Parent resolution follows the authoritative SAM.gov parent relationship
 without attempting economic attribution among subsidiaries: GE AVIATION →
 GE is an identity statement, not a claim about how much of the parent's
@@ -100,6 +115,7 @@ hand-tracing, reported next to the main baseline.
 
 - Evaluate on trading members: ro-khanna and mike-turner have zero
   in-window traded tickers — overlap is impossible for them by construction.
+  Excluding zero-trade members affects statistical power, not validity.
 - Same substrate calls as the theme detector: `district_original`,
   CY2023–25, transactions spending level, House-only.
 - Probe parent lookups were capped at top-40 unmatched per district; the
