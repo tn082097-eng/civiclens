@@ -522,6 +522,14 @@ OSTEONICS → STRYKER CORPORATION, GE AVIATION → GENERAL ELECTRIC, DB CONTROL
 → HEICO. Probe cost-capped parent lookups to the top-40 unmatched recipients
 per district — a full harvest should look up every unmatched recipient.
 
+Full-harvest quirk (2026-07-18): 4 of 21,598 profile fetches 502 **persistently**
+(retried across runs and re-probed directly with curl — server-side, not
+transient): SUPPLYCORE LLC, NOBLE SUPPLY & LOGISTICS LLC, ASRC FEDERAL
+FACILITIES LOGISTICS LLC, NATIONAL INDUSTRIES FOR THE BLIND (all `…-C` ids;
+the `…-R` variant 400s). All four are private/nonprofit with no public
+ticker, so the missing `parent_name` rows cost zero candidates — don't burn
+time re-retrying them.
+
 ### SEC ticker universe
 
 `https://www.sec.gov/files/company_tickers.json` — ~8k issuers as
