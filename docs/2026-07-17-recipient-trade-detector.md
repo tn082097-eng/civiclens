@@ -161,3 +161,29 @@ surfaced and remains unconfirmed. This is a recall gap, not an
 outcome-correlated selection: registry staleness has no plausible dependence
 on the member↔district pairing, so shuffle exchangeability is preserved.
 Corpus-wide staleness re-scan is v2 work, not a launch gate.
+
+## Baseline result (2026-07-19, single pre-registered run) — GATE FAIL, detector NOT registered
+
+One run, defaults as registered (2,000 perms, seed `recipient-trade-baseline-v1`),
+confirm table frozen at 397 rows (`ec37a5f`). Full transcript:
+`docs/recipient-trade-curation-2026-07-18/baseline-run-2026-07-19.txt`.
+
+- Substrate: 33/33 districts, 9 of 33 members with in-window traded tickers.
+- Ubiquity exclusion (> 1/3 of districts): 15 tickers (ABT BAH DELL ETN GD
+  HON JCI LMT MLKN RTX SYK T TMO UPS VZ) — defense/health/telecom staples
+  are near-universal district vendors, as the spec anticipated.
+- Observed S1 (breadth) = 14 vs null expected 19.81 (z = −0.65, p = 0.7445):
+  members trade FEWER of their own district's confirmed recipients than a
+  random district assignment would produce.
+- Observed S2 (exposure) = $164.3M vs null expected $161.5M (z = 0.02,
+  p = 0.3760).
+- Gate (both p < 0.05): **FAIL.**
+- Negative control: 0/20 scramble replicates significant — machinery reads
+  ticker identity, not volume/ubiquity marginals. The null result is a
+  finding about the data, not an artifact.
+
+Disposition per pre-registration: detector is NOT registered. No threshold
+tuning, no mapping edits, no re-runs. The confirm table, substrate, and
+audit trail remain as durable infrastructure; any future variant (e.g.
+subsidiary-level recall re-scan, longer windows, larger roster) is a NEW
+detector requiring its own spec and pre-registration.

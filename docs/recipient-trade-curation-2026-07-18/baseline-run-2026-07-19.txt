@@ -1,0 +1,34 @@
+  districts with substrate rows: 33/33
+recipient-trade null baseline
+  roster: 33 House members (9 with in-window trades), window CY2023–2025
+  confirms: 397 recipient→ticker row(s)
+  ubiquity-excluded tickers (> 1/3 of 33 districts): ABT, BAH, DELL, ETN, GD, HON, JCI, LMT, MLKN, RTX, SYK, T, TMO, UPS, VZ
+  observed S1 (breadth):  14
+  observed S2 (exposure): $164,286,318
+  null (member↔district shuffle, 2000 perms, seed "recipient-trade-baseline-v1"):
+    S1: expected 19.81, z=-0.65, p=0.7445
+    S2: expected $161,493,974, z=0.02, p=0.3760
+  gate (both p < 0.05): FAIL
+
+negative control — ticker-identity scramble, 20 replicates, full procedure each:
+  rep  0: S1 obs 9 p=0.8930 | S2 obs $59,715,709 p=0.3400
+  rep  1: S1 obs 14 p=0.8660 | S2 obs $31,946,337 p=0.6970
+  rep  2: S1 obs 10 p=0.9305 | S2 obs $59,024,240 p=0.5745
+  rep  3: S1 obs 13 p=0.8175 | S2 obs $123,734,534 p=0.3400
+  rep  4: S1 obs 10 p=0.8925 | S2 obs $4,586,220 p=0.9420
+  rep  5: S1 obs 18 p=0.6520 | S2 obs $41,278,176 p=0.6140
+  rep  6: S1 obs 5 p=0.9840 | S2 obs $28,019,777 p=0.6245
+  rep  7: S1 obs 10 p=0.9065 | S2 obs $40,098,051 p=0.5590
+  rep  8: S1 obs 12 p=0.8605 | S2 obs $31,387,451 p=0.5725
+  rep  9: S1 obs 19 p=0.5590 | S2 obs $148,144,451 p=0.4685
+  rep 10: S1 obs 9 p=0.9260 | S2 obs $2,504,757 p=0.9660
+  rep 11: S1 obs 15 p=0.7210 | S2 obs $90,006,182 p=0.3905
+  rep 12: S1 obs 12 p=0.8805 | S2 obs $30,772,967 p=0.7805
+  rep 13: S1 obs 14 p=0.6510 | S2 obs $65,785,161 p=0.4460
+  rep 14: S1 obs 10 p=0.8980 | S2 obs $31,627,446 p=0.6335
+  rep 15: S1 obs 11 p=0.8915 | S2 obs $1,180,682 p=0.9800
+  rep 16: S1 obs 13 p=0.8920 | S2 obs $30,822,701 p=0.6915
+  rep 17: S1 obs 14 p=0.8100 | S2 obs $92,867,035 p=0.4565
+  rep 18: S1 obs 8 p=0.9495 | S2 obs $41,512,760 p=0.5890
+  rep 19: S1 obs 10 p=0.9190 | S2 obs $207,375,195 p=0.3500
+  significant replicates: 0/20 (expect ~1 by chance; > 2 means the detector reads marginals — investigate before ANY use)
