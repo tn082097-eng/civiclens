@@ -2257,6 +2257,23 @@ async function buildMethodology(): Promise<void> {
 <p class="lede" style="margin-bottom:12px;">The deterministic detection pass. Each runs over the corpus and only emits a flag when it can cite real underlying rows.</p>
 ${detectorBlocks}
 
+<h2 id="rejected">Detectors we tested and rejected</h2>
+<p class="lede" style="max-width:760px;">A detector only ships if it can tell the real world from a shuffled one. Each candidate detector is pre-registered — statistic, null model, thresholds, and random seed fixed in code before the test runs — then run once against its null. If it fails, it is not published, not re-tuned, and not re-run. The failures are documented here with the same weight as the successes, because a platform that can only confirm its own hypotheses is an accusation engine, not a measurement instrument.</p>
+
+<div class="trade-card flag-card" style="margin-bottom:14px;">
+  <div class="tc-header"><div class="tc-asset">District contracts ↔ trades (industry level)</div><div class="tc-meta"><span class="muted">rejected 2026-07-16 · p = 0.48</span></div></div>
+  <div class="fc-mech">Hypothesis: members trade the industries that receive federal contract dollars in their own district. Tested by mapping USAspending contract dollars (33 House districts, CY2023–25) to industry themes and comparing each member's trades against their district's contract mix, with a member↔district shuffle as the null.</div>
+  <div class="fc-caveat">Why it failed: defense and aerospace dominate the contract mix of nearly every district, and congressional portfolios hold the same large caps — so shuffled member↔district pairs "matched" as often as real ones (p = 0.48). Industry-level matching carries no district-specific information.</div>
+</div>
+
+<div class="trade-card flag-card" style="margin-bottom:14px;">
+  <div class="tc-header"><div class="tc-asset">District contracts ↔ trades (exact company)</div><div class="tc-meta"><span class="muted">rejected 2026-07-19 · p = 0.74 / 0.38</span></div></div>
+  <div class="fc-mech">Hypothesis: members trade the specific companies receiving federal contracts performed in their district. Tested by resolving 57,199 district contract recipients to stock tickers via SAM.gov corporate hierarchy and SEC issuer records — 397 recipient→ticker links hand-confirmed under a curation protocol blinded to members, districts, dollars, and outcomes — then comparing overlap breadth and dollar exposure against a 2,000-permutation member↔district shuffle. Tickers receiving contracts in over a third of districts were excluded up front as uninformative. A negative control (scrambled ticker identities, 20 replicates) returned 0 false positives, confirming the instrument works.</div>
+  <div class="fc-caveat">Why it failed: observed overlap was indistinguishable from — on the breadth measure, below — what random district assignment produces (p = 0.74 breadth, p = 0.38 dollars). Statistical power was limited: only 9 of 33 harvested members traded individual stocks in the window. The full audit trail — blind worklist, every accepted and rejected identity link, the pre-registered analysis code, and the run transcript — is in the public repository.</div>
+</div>
+
+<p style="max-width:760px;">Neither result proves the absence of a relationship between congressional trading and federal contracting. Each means one specific, honestly-tested method found nothing stronger than chance — and was retired instead of adjusted until it "worked."</p>
+
 <h2 id="sources">Primary sources</h2>
 <p class="lede" style="max-width:760px;">Every claim links back to the filing it came from. CivicLens draws only on primary sources: Congress.gov (bills, sponsorship, votes), GovTrack (vote records), OpenFEC (campaign finance), and House Clerk Periodic Transaction Reports (member trades). No claim rests on LLM-generated or stub data.</p>
 
