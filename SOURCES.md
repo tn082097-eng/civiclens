@@ -527,8 +527,12 @@ Full-harvest quirk (2026-07-18): 4 of 21,598 profile fetches 502 **persistently*
 transient): SUPPLYCORE LLC, NOBLE SUPPLY & LOGISTICS LLC, ASRC FEDERAL
 FACILITIES LOGISTICS LLC, NATIONAL INDUSTRIES FOR THE BLIND (all `…-C` ids;
 the `…-R` variant 400s). All four are private/nonprofit with no public
-ticker, so the missing `parent_name` rows cost zero candidates — don't burn
-time re-retrying them.
+ticker, so the missing `parent_name` rows cost zero candidates.
+
+Retry 2026-07-19: SUPPLYCORE LLC recovered (parent = itself, no SEC ticker);
+the other 3 still 502. Regenerated worklist byte-identical (427 candidates)
+— zero candidate impact confirmed, as predicted. Don't burn more time on
+the remaining 3.
 
 ### SEC ticker universe
 
