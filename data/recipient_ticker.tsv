@@ -1,1 +1,378 @@
 recipient_key	recipient_name	ticker	basis	evidence	confirmed_at
+00f1b918-21b6-2a89-638d-0ca8b8cbd8f1-C	CUBESMART, L.P.	CUBE	parent-name	SAM.gov parent 'CUBESMART' matches SEC issuer 'CubeSmart' (CUBE); subsidiary 'CUBESMART, L.P.' per SAM.gov hierarchy; brand-consistent subsidiary name ('CUBESMART, L.P.' carries issuer brand)	2026-07-18
+01c4a3a3-b4c5-ce4e-822b-d17f09985001-C	RAYTHEON COMPANY	RTX	parent-name	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary	2026-07-19
+01e7329f-0955-7b92-eb6f-88d4f6a39ada-C	JACKSON LABS TECHNOLOGIES, INC.	VIAV	parent-name	Jackson Labs Technologies acquired by Viavi Solutions (VIAV) Jan 2023	2026-07-19
+02040694-f28f-e872-8789-e1bb6b24943b-C	BHR OPERATIONS, L.L.C.	RLJ	parent-name	SAM.gov-registered parent RLJ Lodging Trust (RLJ); FelCor/BHR TRS lessee entities passed to RLJ in the 2017 merger; no contrary record	2026-07-19
+0209b395-0044-6c01-c916-785d5e530cfd-C	ABBOTT RAPID DIAGNOSTICS INFORMATICS, INC	ABT	parent-name	Abbott Rapid Diagnostics informatics unit (ex-Alere), Abbott (ABT) subsidiary since 2017 Alere acquisition	2026-07-19
+02d96557-827b-7983-b39e-007f84487932-C	W.W. GRAINGER, INC.	GWW	own-name	Recipient name 'W.W. GRAINGER, INC.' matches SEC issuer 'W.W. GRAINGER, INC.' (GWW)	2026-07-18
+0341544e-23d8-fe98-3d76-1cdbc8b37e2f-C	VERIZON BUSINESS NETWORK SERVICES LLC	VZ	parent-name	Verizon Business Network Services is a Verizon Communications (VZ) subsidiary	2026-07-19
+03e6aa2c-3b20-ee29-304a-c31f21ebb697-C	DEPUY SYNTHES SALES INC	JNJ	parent-name	DePuy Synthes is Johnson & Johnson's (JNJ) orthopaedics franchise	2026-07-19
+048f7d74-e612-9fae-4a35-d74f6084ac66-C	VIRGINIA ELECTRIC AND POWER COMPANY	D	parent-name	Virginia Electric and Power (Dominion Virginia Power) is Dominion Energy's (D) core utility	2026-07-19
+04ad27e0-68b0-8532-dad9-a684a33b00c2-C	MEDTRONIC USA, INC.	MDT	own-name	Medtronic USA is a direct operating subsidiary of Medtronic (MDT)	2026-07-19
+052f7eaa-fbfb-3116-d2ae-7e47c955ad7d-C	CDA INTERCORP LLC	TDG	parent-name	CDA InterCorp acquired by TransDigm (TDG) 2022	2026-07-19
+053dbdd8-4559-4d19-68e0-1eeef06359eb-C	TWILIO INC.	TWLO	own-name	Recipient name 'TWILIO INC.' matches SEC issuer 'TWILIO INC' (TWLO)	2026-07-18
+0572af7f-c8f7-6604-db66-ea4e2f1b0464-C	BOSTON SCIENTIFIC CORP	BSX	own-name	Recipient name 'BOSTON SCIENTIFIC CORP' matches SEC issuer 'BOSTON SCIENTIFIC CORP' (BSX)	2026-07-18
+062de2a2-7a1a-3952-0572-54e705c0f1e0-C	SBA TOWERS IV LLC	SBAC	parent-name	SBA Towers IV is an SBA Communications (SBAC) tower subsidiary	2026-07-19
+063ae0c7-0487-a45d-7113-69746115d7df-C	BRUINS LESSEE LLC	PEB	parent-name	SAM.gov-registered parent Pebblebrook Hotel Trust (PEB) TRS lessee entity; no contrary record	2026-07-19
+06d55b8d-0bcb-c654-8213-1001f38dd3d2-C	AMAZON.COM SERVICES LLC	AMZN	own-name	Recipient name 'AMAZON.COM SERVICES LLC' matches SEC issuer 'AMAZON COM INC' (AMZN)	2026-07-18
+07aac610-edb4-a86c-7ce4-8aebfcc17d72-C	CHARLES RIVER LABORATORIES, INC.	CRL	own-name	Recipient name 'CHARLES RIVER LABORATORIES, INC.' matches SEC issuer 'CHARLES RIVER LABORATORIES INTERNATIONAL, INC.' (CRL)	2026-07-18
+07c2f679-0c96-de89-c0d0-dc2e1bba1605-C	DEPUY SYNTHES SALES, INC.	JNJ	parent-name	DePuy Synthes is Johnson & Johnson's (JNJ) orthopaedics franchise	2026-07-19
+0900a523-4a41-5037-196c-25f1cb088273-C	DESCARTES SYSTEMS USA LLC	DSGX	own-name	Descartes Systems USA is the US subsidiary of Descartes Systems Group (DSGX)	2026-07-19
+090aeb19-5945-b597-a4c4-a3360aee2145-C	CENTERPOINT ENERGY RESOURCES CORP.	CNP	parent-name	SAM.gov parent 'CENTERPOINT ENERGY, INC.' matches SEC issuer 'CENTERPOINT ENERGY INC' (CNP); subsidiary 'CENTERPOINT ENERGY RESOURCES CORP.' per SAM.gov hierarchy; brand-consistent subsidiary name ('CENTERPOINT ENERGY RESOURCES CORP.' carries issuer brand)	2026-07-18
+098d3c62-6cd7-dfa5-b947-763fbdc54ed4-C	IRON MOUNTAIN SECURE SHREDDING, INC.	IRM	parent-name	SAM.gov parent 'IRON MOUNTAIN INCORPORATED' matches SEC issuer 'IRON MOUNTAIN INC' (IRM); subsidiary 'IRON MOUNTAIN SECURE SHREDDING, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('IRON MOUNTAIN SECURE SHREDDING, INC.' carries issuer brand)	2026-07-18
+09c94e6e-003f-7a9a-a6a9-2305eb5b6025-C	APPLE INC	AAPL	own-name	Recipient name 'APPLE INC' matches SEC issuer 'Apple Inc.' (AAPL)	2026-07-18
+0a1870fe-63cf-230c-7cff-41a3c552489b-C	AT&T ENTERPRISES, LLC	T	own-name	Recipient name 'AT&T ENTERPRISES, LLC' matches SEC issuer 'AT&T INC.' (T)	2026-07-18
+0a4b86ce-1724-5067-6aa7-f0a9af50c129-C	ALLEGIANT AIR LLC	ALGT	parent-name	Allegiant Air LLC is the airline subsidiary of Allegiant Travel Company (ALGT)	2026-07-19
+0a66ad45-abfc-7ae0-0665-32d88ff1fb22-C	NORTHERN STATES POWER COMPANY	XEL	parent-name	Northern States Power is an Xcel Energy (XEL) regulated utility	2026-07-19
+0abea40a-72e5-fad5-db9b-b142cbb981e4-C	TENNANT SALES AND SERVICE COMPANY	TNC	parent-name	Tennant Sales and Service is Tennant Company's (TNC) distribution subsidiary	2026-07-19
+0b19e4e4-bf1e-773b-a5c6-59683d308e14-C	RIVERSIDE ENGINEERING LLC	BAH	parent-name	SAM.gov-registered parent Booz Allen Hamilton (BAH); no contrary public record	2026-07-19
+0c2ec31a-524a-3983-8a91-f1b84e521dcb-C	CONSOLIDATED EDISON COMPANY OF NEW YORK, INC.	ED	parent-name	SAM.gov parent 'CONSOLIDATED EDISON, INC.' matches SEC issuer 'CONSOLIDATED EDISON INC' (ED); subsidiary 'CONSOLIDATED EDISON COMPANY OF NEW YORK, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('CONSOLIDATED EDISON COMPANY OF NEW YORK, INC.' carries issuer brand)	2026-07-18
+0d5d456b-6d06-d27c-1fbe-d75198e724b6-C	COMMONWEALTH EDISON CO	EXC	parent-name	ComEd is Exelon's (EXC) Illinois regulated utility	2026-07-19
+0d87bad0-744d-064c-e353-5ade09f3bc25-C	SNAP, INC	SNAP	own-name	Recipient name 'SNAP, INC' matches SEC issuer 'Snap Inc' (SNAP)	2026-07-18
+0ec2982e-1af5-7c07-1267-43ca6833f333-C	MOTOROLA SOLUTIONS, INC.	MSI	own-name	Recipient name 'MOTOROLA SOLUTIONS, INC.' matches SEC issuer 'Motorola Solutions, Inc.' (MSI)	2026-07-18
+0eedf238-8a2b-ad43-3239-d399ca132f85-C	HONEYWELL INTERNATIONAL, INC	HON	own-name	Recipient name 'HONEYWELL INTERNATIONAL, INC' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON)	2026-07-18
+108b454d-a668-8157-acbc-d6947e8e52dc-C	MCI COMMUNICATIONS SERVICES LLC	VZ	parent-name	MCI Communications Services is Verizon Business (VZ); blind QA check concurred	2026-07-19
+12742781-f07d-409b-9a61-cb580599e8c2-C	MCKESSON CORPORATION	MCK	own-name	McKesson Corporation is the SEC issuer of ticker MCK (own name)	2026-07-19
+13118f61-1859-be73-03d7-603420277bb2-C	S&P GLOBAL INC.	SPGI	own-name	Recipient name 'S&P GLOBAL INC.' matches SEC issuer 'S&P Global Inc.' (SPGI)	2026-07-18
+136e47c1-2fd0-02b1-44eb-264cbc9d4bf9-C	OPTUM INFUSION SERVICES 308, LLC	UNH	parent-name	Optum Infusion Services is an Optum/UnitedHealth Group (UNH) subsidiary	2026-07-19
+14e4d073-7ea5-fc77-e8ca-5b8ec1645798-C	CONCUR TECHNOLOGIES, INC.	SAP	parent-name	Concur acquired by SAP SE (SAP) 2014; blind QA check concurred	2026-07-19
+15b365af-a0c6-6012-a948-a35741cd0ea2-C	HONEYWELL INTERNATIONAL INC.	HON	own-name	Recipient name 'HONEYWELL INTERNATIONAL INC.' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON)	2026-07-18
+1673f61b-6d1c-da56-666d-efb569d6b968-C	THERMO FISHER SCIENTIFIC (ASHEVILLE) LLC	TMO	parent-name	SAM.gov parent 'THERMO FISHER SCIENTIFIC INC.' matches SEC issuer 'THERMO FISHER SCIENTIFIC INC.' (TMO); subsidiary 'THERMO FISHER SCIENTIFIC (ASHEVILLE) LLC' per SAM.gov hierarchy; brand-consistent subsidiary name ('THERMO FISHER SCIENTIFIC (ASHEVILLE) LLC' carries issuer brand)	2026-07-18
+168dba4a-3269-cddb-6256-d010ad1944d7-C	THERMO ELECTRON NORTH AMERICA LLC	TMO	parent-name	Thermo Electron North America is a Thermo Fisher Scientific (TMO) subsidiary	2026-07-19
+17062da9-ec5b-68dc-3368-31e2e4478238-C	SAP PUBLIC SERVICES INC	SAP	parent-name	SAP Public Services is a SAP SE (SAP) subsidiary	2026-07-19
+17296d12-dcf2-41f7-d285-c595591b6a77-C	RAYTHEON COMPANY	RTX	parent-name	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary	2026-07-19
+18263529-f8f1-59ff-6263-cec7193e5975-C	GRIMES AEROSPACE COMPANY	HON	parent-name	Grimes Aerospace is Honeywell (HON) aerospace lighting via the AlliedSignal lineage	2026-07-19
+1a73c826-93ea-5350-f541-533cae0f38f2-C	PPG INDUSTRIES, INC.	PPG	own-name	Recipient name 'PPG INDUSTRIES, INC.' matches SEC issuer 'PPG INDUSTRIES INC' (PPG)	2026-07-18
+1b23e97c-d19e-eb84-942e-5941369c9141-C	GENERAL DYNAMICS ONE SOURCE LLC	GD	parent-name	SAM.gov parent 'GENERAL DYNAMICS CORP' matches SEC issuer 'GENERAL DYNAMICS CORP' (GD); subsidiary 'GENERAL DYNAMICS ONE SOURCE LLC' per SAM.gov hierarchy; brand-consistent subsidiary name ('GENERAL DYNAMICS ONE SOURCE LLC' carries issuer brand)	2026-07-18
+1b7f3eb3-de98-faf4-9509-c4a9568ad372-C	CITIBANK, NATIONAL ASSOCIATION	C	parent-name	Citibank NA is Citigroup's (C) national bank subsidiary	2026-07-19
+1b870f9e-28fd-fecf-a5bd-abb4bd04e550-C	LOCKHEED MARTIN CORPORATION	LMT	own-name	Recipient name 'LOCKHEED MARTIN CORPORATION' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT)	2026-07-18
+1c5c053c-719d-0c13-5434-9736426147ef-C	HONEYWELL INTERNATIONAL INC.	HON	own-name	Recipient name 'HONEYWELL INTERNATIONAL INC.' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON)	2026-07-18
+1d10c8dc-bddb-c540-f234-91dd249f452e-C	ADVANCED MICRO DEVICES, INC.	AMD	own-name	Recipient name 'ADVANCED MICRO DEVICES, INC.' matches SEC issuer 'ADVANCED MICRO DEVICES INC' (AMD)	2026-07-18
+1d88632b-81d6-b72b-652f-c183b3bf0481-C	GENERAL DYNAMICS MISSION SYSTEMS, INC.	GD	parent-name	SAM.gov parent 'GENERAL DYNAMICS CORP' matches SEC issuer 'GENERAL DYNAMICS CORP' (GD); subsidiary 'GENERAL DYNAMICS MISSION SYSTEMS, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('GENERAL DYNAMICS MISSION SYSTEMS, INC.' carries issuer brand)	2026-07-18
+1e2a2523-5616-b8b9-20ad-976519364d40-C	ATMOS ENERGY CORPORATION	ATO	own-name	Recipient name 'ATMOS ENERGY CORPORATION' matches SEC issuer 'ATMOS ENERGY CORP' (ATO)	2026-07-18
+1e48f7b0-13db-6b61-9e05-92c1296a945d-C	ACCENTURE LLP	ACN	own-name	Accenture LLP is Accenture plc's (ACN) US operating partnership	2026-07-19
+1fa8e8a8-9489-3b06-779d-7bd4ce531b2e-C	AT&T CORP.	T	own-name	Recipient name 'AT&T CORP.' matches SEC issuer 'AT&T INC.' (T)	2026-07-18
+1fd9c5d7-99f5-9f2b-29ce-2333453eb637-C	RAYTHEON COMPANY	RTX	parent-name	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary	2026-07-19
+1ff1ee01-c907-4842-d443-a2ba2302dcf5-C	SYSCO WESTERN MINNESOTA, INC.	SYY	parent-name	SAM.gov parent 'SYSCO CORP' matches SEC issuer 'SYSCO CORP' (SYY); subsidiary 'SYSCO WESTERN MINNESOTA, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('SYSCO WESTERN MINNESOTA, INC.' carries issuer brand)	2026-07-18
+203430f8-c340-6b28-6176-a3251ad63357-C	WICKR LLC	AMZN	parent-name	Wickr acquired by AWS/Amazon (AMZN) 2021	2026-07-19
+2059c143-eab8-8123-0622-9f40d0741839-C	PACIFIC BELL TELEPHONE COMPANY	T	parent-name	Pacific Bell is an AT&T Inc (T) incumbent local exchange carrier	2026-07-19
+21b5ad17-3d56-1895-9497-59bc8f8d29f0-C	ARTIVION, INC	AORT	own-name	Recipient name 'ARTIVION, INC' matches SEC issuer 'ARTIVION, INC.' (AORT)	2026-07-18
+223a51b1-d9aa-b2d3-7642-8295d9a47223-C	ADM RICE INC	ADM	parent-name	ADM Rice Inc is an Archer-Daniels-Midland (ADM) subsidiary per SAM.gov hierarchy	2026-07-19
+2249cec5-5efe-d211-bfc4-e6dd47f0bf67-C	FLUOR FEDERAL PETROLEUM OPERATIONS, LLC	FLR	parent-name	Fluor Federal Petroleum Operations is a wholly-owned Fluor Corporation (FLR) subsidiary	2026-07-19
+23e9e4e5-69e4-bf74-8239-89472729f508-C	CINTAS CORPORATION	CTAS	own-name	Cintas Corporation is the SEC issuer of ticker CTAS (own name)	2026-07-19
+258226b6-504d-afdd-19f9-d44ccc479d83-C	FASTENAL COMPANY	FAST	own-name	Fastenal Company is the SEC issuer of ticker FAST (own name)	2026-07-19
+25bed424-595c-f091-acaa-5ccdea9eed59-C	VIRGINIA ELECTRIC AND POWER COMPANY	D	parent-name	Virginia Electric and Power (Dominion Virginia Power) is Dominion Energy's (D) core utility	2026-07-19
+26206021-3c95-80f8-8ebb-e44b98937974-C	SMITH & NEPHEW, INC.	SNN	own-name	Recipient name 'SMITH & NEPHEW, INC.' matches SEC issuer 'SMITH & NEPHEW PLC' (SNN)	2026-07-18
+2697b8f8-115d-2ae1-bded-25a933bfd6ca-C	SMITH & NEPHEW INC	SNN	own-name	Recipient name 'SMITH & NEPHEW INC' matches SEC issuer 'SMITH & NEPHEW PLC' (SNN)	2026-07-18
+26aa8e97-43ed-6854-a2a4-69cd900d6869-C	STRYKER CORPORATION	SYK	own-name	Stryker Corporation is the SEC issuer of ticker SYK (own name)	2026-07-19
+26f00ae5-8cb8-d442-041f-5cc9072cd581-C	LUMASENSE TECHNOLOGIES, INC	AEIS	parent-name	LumaSense acquired by Advanced Energy Industries (AEIS) 2018	2026-07-19
+272478a2-195f-1dd5-da03-0969b678caf4-C	ORACLE AMERICA, INC	ORCL	own-name	Oracle America is Oracle Corporation's (ORCL) principal US operating subsidiary	2026-07-19
+27eda372-3f44-0c3c-7b78-b7f5dbefd2e8-C	CUSHMAN & WAKEFIELD INC	CWK	own-name	Recipient name 'CUSHMAN & WAKEFIELD INC' matches SEC issuer 'Cushman & Wakefield Ltd.' (CWK)	2026-07-18
+28322da1-4ca5-b20b-1e6e-6c3da7ae8071-C	NATIONAL GRID USA SERVICE COMPANY, INC.	NGG	own-name	Recipient name 'NATIONAL GRID USA SERVICE COMPANY, INC.' matches SEC issuer 'NATIONAL GRID PLC' (NGG)	2026-07-18
+29ab01ce-ef72-15ef-b2db-c229f0c84471-C	3M COMPANY	MMM	own-name	3M Company is the SEC issuer of ticker MMM (own name)	2026-07-19
+2aaf55ac-5aa8-9213-5b2c-1d42641923c2-C	GITHUB INC	MSFT	parent-name	GitHub acquired by Microsoft (MSFT) 2018	2026-07-19
+2acfbd75-26c2-0328-d37e-27e90dcef4db-C	RAYTHEON/LOCKHEED MARTIN JAVELIN JV	RTX	parent-name	Javelin JV is co-owned by RTX and Lockheed Martin; RTX is the SAM.gov-registered parent — identity statement, not economic attribution	2026-07-19
+2bcc84b1-fc6a-77a3-e418-10abe600fb5f-C	JOHNSON CONTROLS FIRE PROTECTION LP	JCI	parent-name	SAM.gov parent 'JOHNSON CONTROLS, INC.' matches SEC issuer 'Johnson Controls International plc' (JCI); subsidiary 'JOHNSON CONTROLS FIRE PROTECTION LP' per SAM.gov hierarchy; brand-consistent subsidiary name ('JOHNSON CONTROLS FIRE PROTECTION LP' carries issuer brand)	2026-07-18
+2cd822cf-04c8-0397-8526-d6da8ff340a8-C	THE LEWIN GROUP, INC.	UNH	parent-name	The Lewin Group is an Optum/UnitedHealth Group (UNH) research subsidiary	2026-07-19
+2d0fb54c-8c59-b112-8ece-d0db6b5089eb-C	BRANTNER AND ASSOCIATES, INC.	TEL	parent-name	Brantner & Associates (SEACON) acquired by TE Connectivity (TEL) 2017	2026-07-19
+2daab7a7-91da-74a6-ba82-682ef9da1fc7-C	ROCKWELL AUTOMATION, INC.	ROK	own-name	Recipient name 'ROCKWELL AUTOMATION, INC.' matches SEC issuer 'ROCKWELL AUTOMATION, INC' (ROK)	2026-07-18
+2e28641b-d8b0-be2b-fb19-a5e8d3e334e6-C	PANJIVA, INC	SPGI	parent-name	Panjiva acquired by S&P Global (SPGI) 2018	2026-07-19
+2f611a25-9e07-9d3e-38fe-171ec7f2b2d4-C	OGILVY PUBLIC RELATIONS WORLDWIDE LLC	WPP	parent-name	Ogilvy PR is a WPP plc (WPP) agency	2026-07-19
+30b32b62-ffbf-d7e6-5b9d-95a295b95a6d-C	BOOZ ALLEN HAMILTON INC	BAH	own-name	Recipient name 'BOOZ ALLEN HAMILTON INC' matches SEC issuer 'Booz Allen Hamilton Holding Corp' (BAH)	2026-07-18
+312704a7-ed93-0b45-333a-f677eee767a5-C	EATON CORPORATION	ETN	own-name	Eaton Corporation is the US operating entity of SEC issuer Eaton Corporation plc (ETN)	2026-07-19
+314864f8-c8ed-733f-da40-569a09eaee81-C	REMEL INC.	TMO	parent-name	Remel is a Thermo Fisher Scientific (TMO) microbiology subsidiary	2026-07-19
+3241605e-a536-94ee-2b38-2c56bca7d9c0-C	AVIS RENT A CAR SYSTEM, LLC	CAR	parent-name	Avis Rent A Car System is Avis Budget Group's (CAR) core operating subsidiary	2026-07-19
+32ddce81-1d28-db0a-9df2-8159ab4a74d0-C	RELX INC.	RELX	own-name	RELX Inc is the US entity of SEC issuer RELX plc (RELX)	2026-07-19
+35250199-64c8-5b68-793d-7e575108528b-C	MACOM TECHNOLOGY SOLUTIONS INC.	MTSI	own-name	MACOM Technology Solutions Inc is the operating company of SEC issuer MACOM (MTSI)	2026-07-19
+360760cb-a2ed-6aa4-2d81-a7909557d12c-C	HONEYWELL INTERNATIONAL INC.	HON	own-name	Recipient name 'HONEYWELL INTERNATIONAL INC.' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON)	2026-07-18
+3612de0a-9635-3846-a5a1-7f555fba52df-C	DELL FEDERAL SYSTEMS L.P	DELL	parent-name	SAM.gov parent 'DELL TECHNOLOGIES INC.' matches SEC issuer 'Dell Technologies Inc.' (DELL); subsidiary 'DELL FEDERAL SYSTEMS L.P' per SAM.gov hierarchy; brand-consistent subsidiary name ('DELL FEDERAL SYSTEMS L.P' carries issuer brand)	2026-07-18
+36f52d4f-90c7-008c-9a20-96960a5cb01f-C	PHYSIO-CONTROL INC	SYK	parent-name	Physio-Control acquired by Stryker (SYK) 2016	2026-07-19
+379b0a4a-69bf-aa93-6907-c828ad4635a4-C	CANON FINANCIAL SERVICES, INC.	CAJPY	parent-name	SAM.gov parent 'CANON INC.' matches SEC issuer 'CANON INC' (CAJPY); subsidiary 'CANON FINANCIAL SERVICES, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('CANON FINANCIAL SERVICES, INC.' carries issuer brand)	2026-07-18
+37abf6db-6e7f-3f1e-1f7d-3285df15154c-C	OPTUM PHARMACY 801, INC.	UNH	parent-name	Optum Pharmacy is an Optum/UnitedHealth Group (UNH) subsidiary	2026-07-19
+388ab88d-74c2-54ac-19e4-cb2df60ad520-C	TYSON FOODS INC.	TSN	own-name	Recipient name 'TYSON FOODS INC.' matches SEC issuer 'TYSON FOODS, INC.' (TSN)	2026-07-18
+38edfb63-f368-e976-7fce-8f100a2f30b9-C	DOMINION PRIVATIZATION VIRGINIA, LLC	D	parent-name	Dominion Energy (D) privatization subsidiary; SAM.gov-registered parent, no contrary record	2026-07-19
+39120e4d-cc1c-07a1-ba75-0d0b10a47b97-C	BOOZ ALLEN HAMILTON INC	BAH	own-name	Recipient name 'BOOZ ALLEN HAMILTON INC' matches SEC issuer 'Booz Allen Hamilton Holding Corp' (BAH)	2026-07-18
+39eabfb8-e859-05b4-9485-86c17286ba46-C	THERMO SCIENTIFIC PORTABLE ANALYTICAL INSTRUMENTS INC.	TMO	parent-name	Thermo Scientific PAI is a Thermo Fisher Scientific (TMO) subsidiary	2026-07-19
+3a3721f9-b023-7fd4-1d19-315f54efaafe-C	PROQUEST LLC	CLVT	parent-name	ProQuest acquired by Clarivate (CLVT) Dec 2021	2026-07-19
+3a9f8f49-b8da-38c7-f7e9-c3dc0abb0af4-C	MCKESSON PLASMA AND BIOLOGICS LLC	MCK	parent-name	McKesson Plasma and Biologics is a wholly-owned McKesson (MCK) subsidiary	2026-07-19
+3b507120-47bb-6581-7ec2-0dbbb96de860-C	UBER TECHNOLOGIES, INC.	UBER	own-name	Recipient name 'UBER TECHNOLOGIES, INC.' matches SEC issuer 'Uber Technologies, Inc' (UBER)	2026-07-18
+3b9c0dbd-b9c4-b7d2-3441-01e53b2136d6-C	DELTA AIR LINES, INC.	DAL	own-name	Recipient name 'DELTA AIR LINES, INC.' matches SEC issuer 'DELTA AIR LINES, INC.' (DAL)	2026-07-18
+3ce4c8f8-2cae-67b5-75db-644e5e88b54b-C	HOST HOTELS & RESORTS LP	HST	own-name	Recipient name 'HOST HOTELS & RESORTS LP' matches SEC issuer 'HOST HOTELS & RESORTS, INC.' (HST)	2026-07-18
+3f1fc442-c908-93e2-51d0-a732086bd82c-C	CHSP TRS FISHERMAN WHARF LLC	PK	parent-name	Chesapeake Lodging (CHSP) acquired by Park Hotels & Resorts (PK) 2019; TRS entity under PK	2026-07-19
+3f4b042f-341c-af1f-1f2f-e2f9d6d086b4-C	REAL CAPITAL ANALYTICS, INC	MSCI	parent-name	Real Capital Analytics acquired by MSCI (MSCI) 2021	2026-07-19
+403e9dd0-77f7-a96a-2bb4-ae8b4972ca0e-C	MEDTRONIC INC	MDT	own-name	Medtronic Inc is the SEC issuer of ticker MDT, own-name match	2026-07-19
+4051d253-67f0-30bd-2c7f-5eb539533924-C	LOCKHEED MARTIN CORP	LMT	own-name	Recipient name 'LOCKHEED MARTIN CORP' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT)	2026-07-18
+41694631-0b0f-72ed-221b-29193c88f0d2-C	OPTUM PUBLIC SECTOR SOLUTIONS, INC.	UNH	parent-name	Optum Public Sector Solutions is a subsidiary of UnitedHealth Group (UNH), confirmed via Optum Business federal-govt org pages	2026-07-19
+416e01b8-a579-75ca-d731-d28aca2e2d59-C	GULFSTREAM AEROSPACE CORPORATION	GD	parent-name	Gulfstream is General Dynamics' (GD) business-jet subsidiary	2026-07-19
+42466698-fd45-b54a-8678-8f7fa4a4f88b-C	GOODRICH ACTUATION SYSTEMS LIMITED	RTX	parent-name	Collins Aerospace (RTX) actuation unit for ~86% of CY2023-25; Safran acquisition closed 21 Jul 2025 near window end	2026-07-19
+42d0eda5-ff47-11c7-c37b-d7ee447896f3-C	MEDTRONIC USA INC	MDT	own-name	Medtronic USA Inc is a direct operating subsidiary of Medtronic Inc, ticker MDT	2026-07-19
+437688b7-6fc2-8c51-1405-9477da96649c-C	STERIS CORPORATION	STE	own-name	STERIS Corporation is the operating subsidiary of STERIS plc, SEC issuer of ticker STE	2026-07-19
+43804642-bf8d-a303-906f-faeeb9fa7d8a-C	LEXISNEXIS RISK SOLUTIONS FL INC.	RELX	parent-name	LexisNexis Risk Solutions is a RELX plc (RELX) division	2026-07-19
+43ff1ec9-50e5-1d35-a392-44e72080802d-C	MHN GOVERNMENT SERVICES LLC	CNC	parent-name	MHN Government Services is part of Health Net Federal Services, a wholly-owned Centene (CNC) subsidiary per Centene investor press release	2026-07-19
+447b8c8a-5d1b-fb75-ef60-846c227097c6-C	SBA TOWERS II LLC	SBAC	parent-name	SBA Towers II is an SBA Communications (SBAC) tower subsidiary	2026-07-19
+44ce81f7-2dd1-a89d-90d9-2d5b885e3f41-C	MENTOR WORLDWIDE LLC	JNJ	parent-name	Mentor Worldwide is a Johnson & Johnson (JNJ) MedTech subsidiary	2026-07-19
+4550c803-89d0-bce3-c617-b6add852480b-C	CUMMINS ROCKY MOUNTAIN, LLC	CMI	parent-name	SAM.gov parent 'CUMMINS INC.' matches SEC issuer 'CUMMINS INC' (CMI); subsidiary 'CUMMINS ROCKY MOUNTAIN, LLC' per SAM.gov hierarchy; brand-consistent subsidiary name ('CUMMINS ROCKY MOUNTAIN, LLC' carries issuer brand)	2026-07-18
+455555be-773d-eab1-1e6b-7b94400b757e-C	GENERAL DYNAMICS INFORMATION TECHNOLOGY, INC.	GD	parent-name	SAM.gov parent 'GENERAL DYNAMICS CORP' matches SEC issuer 'GENERAL DYNAMICS CORP' (GD); subsidiary 'GENERAL DYNAMICS INFORMATION TECHNOLOGY, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('GENERAL DYNAMICS INFORMATION TECHNOLOGY, INC.' carries issuer brand)	2026-07-18
+46023044-eacc-a9ca-5b5e-ddc4673fc267-C	LOCKHEED MARTIN CORP	LMT	own-name	Recipient name 'LOCKHEED MARTIN CORP' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT)	2026-07-18
+464a5b15-000e-8668-246a-c4067a6f0452-C	HAMILTON SUNDSTRAND CORPORATION	RTX	parent-name	Hamilton Sundstrand is a Collins Aerospace legacy entity, current RTX subsidiary	2026-07-19
+49ba01f3-56b6-92fd-1814-1a521f21fe7e-C	LOCKHEED MARTIN CORPORATION	LMT	own-name	Recipient name 'LOCKHEED MARTIN CORPORATION' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT)	2026-07-18
+49e0dd6d-3903-1f22-009c-e32a560b8ee0-C	STRYKER CORPORATION	SYK	own-name	Stryker Corporation is the SEC issuer of ticker SYK, own-name match	2026-07-19
+4a1f028e-c2db-7515-800b-214ca781631c-C	ILLINOIS TOOL WORKS INC	ITW	own-name	Recipient name 'ILLINOIS TOOL WORKS INC' matches SEC issuer 'ILLINOIS TOOL WORKS INC' (ITW)	2026-07-18
+4a228748-a256-002e-de46-4dd145e98dfe-C	RAYTHEON COMPANY	RTX	parent-name	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary	2026-07-19
+4acc00cb-4142-56db-919d-5873214336ee-C	AZENTA, INC.	AZTA	own-name	Recipient name 'AZENTA, INC.' matches SEC issuer 'Azenta, Inc.' (AZTA)	2026-07-18
+4b777065-0adb-34ac-c8e1-f0d179d81b63-C	BIO-RAD LABORATORIES, INC.	BIO	own-name	Recipient name 'BIO-RAD LABORATORIES, INC.' matches SEC issuer 'BIO-RAD LABORATORIES, INC.' (BIO)	2026-07-18
+4b893934-0e74-c4ac-f525-6a2beb1f7b32-C	ABBOTT LABORATORIES INC.	ABT	own-name	Recipient name 'ABBOTT LABORATORIES INC.' matches SEC issuer 'ABBOTT LABORATORIES' (ABT)	2026-07-18
+4bd73aa7-7f60-a3d9-4397-54df40f279f6-C	INSPIRE MEDICAL SYSTEMS, INC.	INSP	own-name	Recipient name 'INSPIRE MEDICAL SYSTEMS, INC.' matches SEC issuer 'Inspire Medical Systems, Inc.' (INSP)	2026-07-18
+4c3d8bed-0309-8dd4-8279-e0fa623505f2-C	VECTREN ENERGY DELIVERY OF OHIO, LLC	CNP	parent-name	Vectren merged into CenterPoint Energy (CNP) 2019; Ohio utility subsidiary	2026-07-19
+4ca161f0-b346-caf7-d8b5-fbc0618a124c-C	HUNTSMAN INTERNATIONAL LLC	HUN	own-name	Huntsman International LLC is the primary operating subsidiary of Huntsman Corporation, ticker HUN	2026-07-19
+4cae6b4e-1ccc-101c-c2bc-368bcd4e5340-C	RAYTHEON COMPANY	RTX	parent-name	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary	2026-07-19
+4d954735-5a17-9d2f-f9ad-bd508ab2d168-C	FISHER SCIENTIFIC COMPANY L.L.C.	TMO	parent-name	Fisher Scientific is a core Thermo Fisher Scientific (TMO) subsidiary	2026-07-19
+4dc93a45-67c0-81d9-c200-dc69b5cdcf76-C	WASTE MANAGEMENT OF MINNESOTA, INC.	WM	parent-name	SAM.gov parent 'WASTE MANAGEMENT, INC.' matches SEC issuer 'WASTE MANAGEMENT INC' (WM); subsidiary 'WASTE MANAGEMENT OF MINNESOTA, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('WASTE MANAGEMENT OF MINNESOTA, INC.' carries issuer brand)	2026-07-18
+4e27a227-9e6f-eae8-b53b-d4f80d11cfef-C	INTERNATIONAL BUSINESS MACHINES CORPORATION	IBM	own-name	Recipient name 'INTERNATIONAL BUSINESS MACHINES CORPORATION' matches SEC issuer 'INTERNATIONAL BUSINESS MACHINES CORP' (IBM)	2026-07-18
+4ebe5797-a7aa-41d5-c055-4fb073a3804e-C	LOCKHEED MARTIN SERVICES, LLC	LMT	own-name	Recipient name 'LOCKHEED MARTIN SERVICES, LLC' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT)	2026-07-18
+4f309755-a9a2-cb5a-a1e4-6b613f056590-C	UNITED RENTALS (NORTH AMERICA), INC.	URI	own-name	Recipient name 'UNITED RENTALS (NORTH AMERICA), INC.' matches SEC issuer 'UNITED RENTALS, INC.' (URI)	2026-07-18
+5045cd4a-6b25-9e0a-5d1b-3a9559fadb93-C	FLUOR ENTERPRISES, INC.	FLR	own-name	Fluor Enterprises Inc is a wholly-owned operating subsidiary of Fluor Corporation, ticker FLR	2026-07-19
+5068bf75-a8a3-af40-b3a0-ba93566e89e1-C	JOHNSON CONTROLS SECURITY SOLUTIONS LLC	JCI	parent-name	SAM.gov parent 'JOHNSON CONTROLS, INC.' matches SEC issuer 'Johnson Controls International plc' (JCI); subsidiary 'JOHNSON CONTROLS SECURITY SOLUTIONS LLC' per SAM.gov hierarchy; brand-consistent subsidiary name ('JOHNSON CONTROLS SECURITY SOLUTIONS LLC' carries issuer brand)	2026-07-18
+512f160b-e5b9-7039-89f7-9b78c6367ee9-C	KNOLL, INC.	MLKN	parent-name	Knoll merged into MillerKnoll (MLKN) 2021	2026-07-19
+5139d3f2-159b-be39-2cfa-5b5eb8b17caf-C	JOHNSON CONTROLS FIRE PROTECTION LP	JCI	parent-name	SAM.gov parent 'JOHNSON CONTROLS, INC.' matches SEC issuer 'Johnson Controls International plc' (JCI); subsidiary 'JOHNSON CONTROLS FIRE PROTECTION LP' per SAM.gov hierarchy; brand-consistent subsidiary name ('JOHNSON CONTROLS FIRE PROTECTION LP' carries issuer brand)	2026-07-18
+5186820c-4018-c1ac-5cf3-c5ecd52bcc0c-C	PRAXAIR, INC.	LIN	parent-name	Praxair Inc became indirect wholly-owned subsidiary of Linde plc (LIN) via 2018 SEC-documented merger	2026-07-19
+51bc164d-0975-136d-3fb5-d67ade0957a7-C	RAYTHEON COMPANY	RTX	parent-name	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary	2026-07-19
+51bcdd60-3b39-c1e0-eb40-86dc589989c5-C	CUMMINS INC	CMI	own-name	Recipient name 'CUMMINS INC' matches SEC issuer 'CUMMINS INC' (CMI)	2026-07-18
+52a30156-c031-3fed-cf47-acdeb13d29dd-C	BOSTON SCIENTIFIC NEUROMODULATION CORP	BSX	parent-name	SAM.gov parent 'BOSTON SCIENTIFIC CORP' matches SEC issuer 'BOSTON SCIENTIFIC CORP' (BSX); subsidiary 'BOSTON SCIENTIFIC NEUROMODULATION CORP' per SAM.gov hierarchy; brand-consistent subsidiary name ('BOSTON SCIENTIFIC NEUROMODULATION CORP' carries issuer brand)	2026-07-18
+5487725e-5e9d-21a3-1fbd-6b8aa9244a20-C	ROLLER BEARING COMPANY OF AMERICA, INC.	RBC	parent-name	Roller Bearing Company of America is the principal operating subsidiary of RBC Bearings (RBC)	2026-07-19
+549302b4-4569-6c1e-ab19-17406ede8abb-C	PROVATION SOFTWARE, INC.	FTV	parent-name	ProVation Software was acquired by Fortive Corp (FTV) from Clearlake Capital, closed Dec 27 2021 per Fortive press release	2026-07-19
+54b343cd-3a19-9758-8e57-f6a5ccdca521-C	FILMETRICS INC	KLAC	parent-name	Filmetrics Inc is a wholly-owned subsidiary of KLA Corporation, ticker KLAC	2026-07-19
+54c8ba75-dd0e-3313-b4ee-ae6ab2bf0e7a-C	COMCAST CABLE COMMUNICATIONS, LLC	CMCSA	parent-name	Comcast Cable Communications LLC is the core operating subsidiary of Comcast Corporation, ticker CMCSA	2026-07-19
+562c90b3-76d8-b70e-8093-05abbb229af2-C	GRIFOLS USA LLC	GRFS	own-name	Grifols USA LLC is the US operating subsidiary of Grifols S.A., ADR ticker GRFS	2026-07-19
+5630d744-6d7b-3bff-9a76-fe728ed0174d-C	LOCKHEED MARTIN CORPORATION	LMT	own-name	Recipient name 'LOCKHEED MARTIN CORPORATION' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT)	2026-07-18
+56c8509b-9988-e84a-17fe-52cbe407282f-C	MITCHELL REPAIR INFORMATION CO LLC	SNA	parent-name	Mitchell1 (Mitchell Repair Information) is Snap-on's (SNA) repair-information unit	2026-07-19
+570ab1f2-bb15-a348-974e-d4831a078687-C	MCKESSON MEDICAL-SURGICAL INC.	MCK	parent-name	McKesson Medical-Surgical Inc is a wholly-owned operating subsidiary of McKesson Corporation, ticker MCK	2026-07-19
+5ad7895c-192b-21cd-8baf-92c6dce0b593-C	LOCKHEED MARTIN CORPORATION	LMT	own-name	Recipient name 'LOCKHEED MARTIN CORPORATION' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT)	2026-07-18
+5b3db994-356c-dd09-c567-c688e10ac628-C	GOODRICH CORPORATION	RTX	parent-name	Goodrich Corporation is a Collins Aerospace legacy entity, current RTX subsidiary	2026-07-19
+5d3f395a-6b3c-bba7-ee28-21685a44fed4-C	RLJ III - EM WEST PALM BEACH LESSEE, LLC	RLJ	parent-name	RLJ III lessee entity under RLJ Lodging Trust (RLJ); SAM.gov-registered parent	2026-07-19
+5daa87a2-241b-06ff-9438-17a3957c57cd-C	LOCKHEED MARTIN GLOBAL, INC.	LMT	parent-name	SAM.gov parent 'LOCKHEED MARTIN CORP' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT); subsidiary 'LOCKHEED MARTIN GLOBAL, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('LOCKHEED MARTIN GLOBAL, INC.' carries issuer brand)	2026-07-18
+5e095ef9-a461-36e2-8a63-2c89a2f13900-C	SYSCO CORP	SYY	own-name	Recipient name 'SYSCO CORP' matches SEC issuer 'SYSCO CORP' (SYY)	2026-07-18
+5e62d7b1-b71e-8283-8703-1391e3c4d6a0-C	UNITED PARCEL SERVICE, INC.	UPS	own-name	Recipient name 'UNITED PARCEL SERVICE, INC.' matches SEC issuer 'UNITED PARCEL SERVICE INC' (UPS)	2026-07-18
+5e6a1f1c-4805-89b3-1dd7-4f7d61a9e8e2-C	CANON U.S.A., INC.	CAJPY	parent-name	SAM.gov parent 'CANON INC.' matches SEC issuer 'CANON INC' (CAJPY); subsidiary 'CANON U.S.A., INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('CANON U.S.A., INC.' carries issuer brand)	2026-07-18
+5efd1069-d7f9-0bc5-33e7-ab8fcbbe9cf9-C	SYNOPSYS, INC.	SNPS	own-name	Recipient name 'SYNOPSYS, INC.' matches SEC issuer 'SYNOPSYS INC' (SNPS)	2026-07-18
+6035ac32-2b3f-238d-e1a6-17d8befa32b1-C	FLUOR ENTERPRISES, INC.	FLR	own-name	Fluor Enterprises Inc is a wholly-owned operating subsidiary of Fluor Corporation, ticker FLR	2026-07-19
+62c486be-b101-ea2f-e0c1-4f3bf00a305b-C	HONEYWELL INTERNATIONAL INC.	HON	own-name	Recipient name 'HONEYWELL INTERNATIONAL INC.' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON)	2026-07-18
+62e141b3-4887-5b39-6b75-eace9326395c-C	RTX CORPORATION	RTX	own-name	RTX Corporation is the SEC issuer of ticker RTX, own-name match	2026-07-19
+6375e792-cbcd-e4ee-a325-2b1d72995cd6-C	STRYKER SALES, LLC	SYK	parent-name	Stryker Sales LLC is a wholly-owned operating subsidiary of Stryker Corporation, ticker SYK	2026-07-19
+645df5f2-66e3-8d2b-a612-3bff6ed3da30-C	AMAZON WEB SERVICES, INC.	AMZN	parent-name	AWS Inc is Amazon.com's (AMZN) cloud subsidiary	2026-07-19
+65785d90-d79f-6121-31ae-04c65ee4f318-C	STRYKER SALES, LLC	SYK	parent-name	Stryker Sales LLC is a wholly-owned operating subsidiary of Stryker Corporation, ticker SYK	2026-07-19
+6733d324-9431-4347-c402-8bde64bd97e3-C	LINDE ADVANCED MATERIAL TECHNOLOGIES INC.	LIN	parent-name	Linde Advanced Material Technologies is part of the Linde plc (LIN) corporate family per Linde/Praxair SEC merger filings	2026-07-19
+67427090-de5a-3f91-7f50-f1c349c27dda-C	LINDE ENGINEERING NORTH AMERICA LLC	LIN	parent-name	Linde Engineering North America LLC operates under Linde plc (LIN), consistent with Linde North America Inc corporate structure post-2018 merger	2026-07-19
+681621e2-199c-1489-ce07-823b2d82bf16-C	GOODRICH CORPORATION	RTX	parent-name	Goodrich Corporation is a Collins Aerospace legacy entity, current RTX subsidiary	2026-07-19
+6886d17f-6f9c-740a-e4ed-1a5f341492cb-C	AZENTA US INC	AZTA	own-name	Azenta US Inc is the operating subsidiary of Azenta Inc, renamed from Brooks Automation to ticker AZTA in Dec 2021	2026-07-19
+69204f07-d0a2-c645-1397-00236971fd4d-C	INTERNATIONAL BUSINESS MACHINES CORPORATION	IBM	own-name	Recipient name 'INTERNATIONAL BUSINESS MACHINES CORPORATION' matches SEC issuer 'INTERNATIONAL BUSINESS MACHINES CORP' (IBM)	2026-07-18
+6920a0c2-36ca-bd03-b598-32666c18626a-C	SPRINT COMMUNICATIONS CO LP	TMUS	parent-name	Sprint merged into T-Mobile US (TMUS) Apr 2020	2026-07-19
+696895eb-eafd-64e3-b141-4770efb62355-C	VERTIV SERVICES, INC.	VRT	own-name	Vertiv Services is a Vertiv Holdings (VRT) operating subsidiary	2026-07-19
+6adada2e-4561-37a5-c532-75894b663e2b-C	ADVANTEST AMERICA, INC	ATEYY	own-name	Advantest America is the US subsidiary of Advantest Corporation (ADR ATEYY)	2026-07-19
+6cf5fb1b-4988-d087-5dc1-70939d8fc6c4-C	LOCKHEED MARTIN CORPORATION	LMT	own-name	Recipient name 'LOCKHEED MARTIN CORPORATION' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT)	2026-07-18
+6d4d60f0-b0bb-dc2c-4a48-e9d65476777d-C	JACK HENRY & ASSOCIATES, INC.	JKHY	own-name	Recipient name 'JACK HENRY & ASSOCIATES, INC.' matches SEC issuer 'JACK HENRY & ASSOCIATES INC' (JKHY)	2026-07-18
+6d5f1e92-54d4-ad95-ef75-de5fb31bc593-C	TELEFLEX LLC	TFX	own-name	Teleflex LLC is an operating entity of SEC issuer Teleflex Incorporated (TFX)	2026-07-19
+6e7a895c-aa57-8600-2a8a-4e237f6213f6-C	LOCKHEED MARTIN CORP	LMT	own-name	Recipient name 'LOCKHEED MARTIN CORP' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT)	2026-07-18
+6ecb6057-9c32-243d-af06-5c0f5583e83f-C	COMCAST CABLE COMMUNICATIONS, LLC	CMCSA	parent-name	Comcast Cable Communications LLC is Comcast Corporation's (CMCSA) core cable subsidiary	2026-07-19
+6eda3ee1-f612-3b12-8ada-a920384dd80b-C	JOHNSON CONTROLS GOVERNMENT SYSTEMS, LLC	JCI	parent-name	SAM.gov parent 'JOHNSON CONTROLS, INC.' matches SEC issuer 'Johnson Controls International plc' (JCI); subsidiary 'JOHNSON CONTROLS GOVERNMENT SYSTEMS, LLC' per SAM.gov hierarchy; brand-consistent subsidiary name ('JOHNSON CONTROLS GOVERNMENT SYSTEMS, LLC' carries issuer brand)	2026-07-18
+6f82dd8b-4c28-12ab-8d02-6e7f207dad8b-C	BRANTNER AND ASSOCIATES, INC.	TEL	parent-name	Brantner & Associates (SEACON) acquired by TE Connectivity (TEL) 2017	2026-07-19
+6ffc4386-853e-ef89-67e8-22c28ddcf15c-C	INTERNATIONAL BUSINESS MACHINES CORPORATION	IBM	own-name	Recipient name 'INTERNATIONAL BUSINESS MACHINES CORPORATION' matches SEC issuer 'INTERNATIONAL BUSINESS MACHINES CORP' (IBM)	2026-07-18
+707d6ba0-1a69-315e-5c43-ed322b2029ed-C	YOUNG & RUBICAM LLC	WPP	parent-name	Y&R (VML) is a WPP plc (WPP) agency	2026-07-19
+7170bc0d-a4dc-4b5f-49d4-bffd5d159970-C	SPX AIDS TO NAVIGATION, LLC	SPXC	parent-name	SPX Aids to Navigation is a current SPX Technologies (SPXC) subsidiary	2026-07-19
+71a58244-ee49-c0e8-764f-0103af941762-C	MILLERKNOLL INC	MLKN	own-name	Recipient name 'MILLERKNOLL INC' matches SEC issuer 'MILLERKNOLL, INC.' (MLKN)	2026-07-18
+71b75ca8-519e-df1c-d478-52eb9a69e9c3-C	TEREX CORPORATION	TEX	own-name	Terex Corporation is the SEC issuer of ticker TEX (own name)	2026-07-19
+72559450-0f09-e12b-024d-743eeeffb054-C	HONEYWELL INTERNATIONAL INC.	HON	own-name	Recipient name 'HONEYWELL INTERNATIONAL INC.' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON)	2026-07-18
+7261cb38-689d-0370-e6db-897eb1e5aa32-C	AURIS HEALTH, INC	JNJ	parent-name	Auris Health acquired by Johnson & Johnson (JNJ) 2019	2026-07-19
+72827cbd-31d1-c872-d5b4-0c9b25253f7d-C	SNAP-ON TOOLS INTERNATIONAL, LLC	SNA	parent-name	SAM.gov parent 'SNAP-ON INCORPORATED' matches SEC issuer 'Snap-on Inc' (SNA); subsidiary 'SNAP-ON TOOLS INTERNATIONAL, LLC' per SAM.gov hierarchy; brand-consistent subsidiary name ('SNAP-ON TOOLS INTERNATIONAL, LLC' carries issuer brand)	2026-07-18
+72cdcd20-1c98-67b4-b744-6c119c53377a-C	FLOWERS BAKING CO OF DENTON, LLC	FLO	parent-name	Flowers Baking Co of Denton is a Flowers Foods (FLO) subsidiary	2026-07-19
+769befe2-3919-53e9-5f0f-430397a863b0-C	SOUTHWEST GAS CORPORATION	SWX	own-name	Recipient name 'SOUTHWEST GAS CORPORATION' matches SEC issuer 'Southwest Gas Holdings, Inc.' (SWX)	2026-07-18
+7743786a-287f-b18c-2bc2-3bdc23e728a4-C	HEALTHEQUITY, INC.	HQY	own-name	Recipient name 'HEALTHEQUITY, INC.' matches SEC issuer 'HEALTHEQUITY, INC.' (HQY)	2026-07-18
+779b3e3e-364f-7cbc-28a4-a2b4484b86f4-C	LOCKHEED MARTIN CORPORATION	LMT	own-name	Recipient name 'LOCKHEED MARTIN CORPORATION' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT)	2026-07-18
+77ac8374-ea6a-12e4-de3d-54719e3a0bcf-C	HONEYWELL INTERNATIONAL INC	HON	own-name	Recipient name 'HONEYWELL INTERNATIONAL INC' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON)	2026-07-18
+784eb51b-b1af-f697-80e4-06385f31b860-C	CEB INC.	IT	parent-name	CEB acquired by Gartner (IT) 2017	2026-07-19
+785f8c2a-77bb-b4db-c19a-08d6d86d19a6-C	HONEYWELL INTERNATIONAL INC.	HON	own-name	Recipient name 'HONEYWELL INTERNATIONAL INC.' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON)	2026-07-18
+78d54ccd-3a13-a9f7-5268-26c8e7571abc-C	RELX INC.	RELX	own-name	RELX Inc is the US entity of SEC issuer RELX plc (RELX)	2026-07-19
+7bc520b9-695e-b0d0-9438-382e1a45194f-C	CIPHERTRACE INC	MA	parent-name	CipherTrace acquired by Mastercard (MA) 2021	2026-07-19
+7d1eac33-f87a-7f1c-3029-054d8e5684b5-C	CLOUDFLARE, INC.	NET	own-name	Recipient name 'CLOUDFLARE, INC.' matches SEC issuer 'Cloudflare, Inc.' (NET)	2026-07-18
+7fa3419d-995b-54ec-dfec-78f878e0b59e-C	FACTSET RESEARCH SYSTEMS INC.	FDS	own-name	Recipient name 'FACTSET RESEARCH SYSTEMS INC.' matches SEC issuer 'FACTSET RESEARCH SYSTEMS INC' (FDS)	2026-07-18
+7ff3ea71-85c0-31e7-e04f-f7e58ca75168-C	NORTHERN ILLINOIS GAS COMPANY	SO	parent-name	Nicor Gas is part of Southern Company Gas (SO) since the 2016 AGL merger	2026-07-19
+800b0df9-146e-cc59-ed59-d0bc4caf9664-C	CANON U.S.A., INC.	CAJPY	parent-name	SAM.gov parent 'CANON INC.' matches SEC issuer 'CANON INC' (CAJPY); subsidiary 'CANON U.S.A., INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('CANON U.S.A., INC.' carries issuer brand)	2026-07-18
+80d7942d-de44-b391-8c3b-ecd05b5dbe53-C	GENERAL DYNAMICS MISSION SYSTEMS, INC.	GD	parent-name	SAM.gov parent 'GENERAL DYNAMICS CORP' matches SEC issuer 'GENERAL DYNAMICS CORP' (GD); subsidiary 'GENERAL DYNAMICS MISSION SYSTEMS, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('GENERAL DYNAMICS MISSION SYSTEMS, INC.' carries issuer brand)	2026-07-18
+819a698f-debc-805d-90bf-b64413f35fdc-C	CANON MEDICAL SYSTEMS USA, INC	CAJPY	parent-name	SAM.gov parent 'CANON INC.' matches SEC issuer 'CANON INC' (CAJPY); subsidiary 'CANON MEDICAL SYSTEMS USA, INC' per SAM.gov hierarchy; brand-consistent subsidiary name ('CANON MEDICAL SYSTEMS USA, INC' carries issuer brand)	2026-07-18
+827c3318-8db6-971f-be93-aa9ec4468d03-C	RTX BBN TECHNOLOGIES, INC.	RTX	parent-name	SAM.gov parent 'RTX CORP' matches SEC issuer 'RTX Corp' (RTX); subsidiary 'RTX BBN TECHNOLOGIES, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('RTX BBN TECHNOLOGIES, INC.' carries issuer brand)	2026-07-18
+8331bcf2-039d-6e60-51ec-f9df98c68887-C	GENERAL DYNAMICS INFORMATION TECHNOLOGY, INC.	GD	parent-name	SAM.gov parent 'GENERAL DYNAMICS CORP' matches SEC issuer 'GENERAL DYNAMICS CORP' (GD); subsidiary 'GENERAL DYNAMICS INFORMATION TECHNOLOGY, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('GENERAL DYNAMICS INFORMATION TECHNOLOGY, INC.' carries issuer brand)	2026-07-18
+878a2f09-eee2-eacc-bb11-94e1af5dd653-C	JOHNSON CONTROLS INC	JCI	own-name	Recipient name 'JOHNSON CONTROLS INC' matches SEC issuer 'Johnson Controls International plc' (JCI)	2026-07-18
+88199f05-5712-54a6-7917-601ddc851cc4-C	JOHNSON CONTROLS BUILDING AUTOMATION SYSTEMS, LLC	JCI	parent-name	SAM.gov parent 'JOHNSON CONTROLS, INC.' matches SEC issuer 'Johnson Controls International plc' (JCI); subsidiary 'JOHNSON CONTROLS BUILDING AUTOMATION SYSTEMS, LLC' per SAM.gov hierarchy; brand-consistent subsidiary name ('JOHNSON CONTROLS BUILDING AUTOMATION SYSTEMS, LLC' carries issuer brand)	2026-07-18
+8921df4b-662e-a7be-cda3-afba9bc717a2-C	STRYKER SALES, LLC	SYK	parent-name	Stryker Sales LLC is a wholly-owned Stryker (SYK) subsidiary	2026-07-19
+895ae7a7-a463-07eb-91e9-7f9ad1b958da-C	FELCOR UNION SQUARE LESSEE, LLC	RLJ	parent-name	FelCor lessee entity under RLJ Lodging Trust (RLJ) since the 2017 merger	2026-07-19
+8a26c273-aa5b-a586-2c99-20a1b5710129-C	AT&T CORP.	T	own-name	Recipient name 'AT&T CORP.' matches SEC issuer 'AT&T INC.' (T)	2026-07-18
+8a580323-b93b-d883-9ee2-312490d8c03a-C	WASTE MANAGEMENT OF PENNSYLVANIA, INC.	WM	parent-name	SAM.gov parent 'WASTE MANAGEMENT, INC.' matches SEC issuer 'WASTE MANAGEMENT INC' (WM); subsidiary 'WASTE MANAGEMENT OF PENNSYLVANIA, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('WASTE MANAGEMENT OF PENNSYLVANIA, INC.' carries issuer brand)	2026-07-18
+8a7cd03a-dabc-9d74-2795-cc4f3ada4fd1-C	ALABAMA POWER COMPANY	SO	parent-name	Alabama Power is a Southern Company (SO) regulated utility subsidiary	2026-07-19
+8cac1796-b994-6d54-94d4-00cd00e4a075-C	ABBOTT RAPID DX NORTH AMERICA LLC	ABT	parent-name	Abbott Rapid Dx (ex-Alere) is an Abbott Laboratories (ABT) rapid-diagnostics subsidiary	2026-07-19
+8cf8d783-3621-9b3c-3486-6f5c704f797f-C	VERTIV CORPORATION	VRT	own-name	Vertiv Corporation is the operating entity of SEC issuer Vertiv Holdings (VRT)	2026-07-19
+8e28d0b8-5297-7835-1f69-8fce707daf27-C	INTUITIVE SURGICAL INC	ISRG	own-name	Recipient name 'INTUITIVE SURGICAL INC' matches SEC issuer 'INTUITIVE SURGICAL INC' (ISRG)	2026-07-18
+8e3a2ef5-3697-f6f3-5f35-a4c008071d6b-C	GLOBUS MEDICAL, INC.	GMED	own-name	Recipient name 'GLOBUS MEDICAL, INC.' matches SEC issuer 'GLOBUS MEDICAL INC' (GMED)	2026-07-18
+90e456fc-97f0-9098-9e66-36975f0f3770-C	L. L. ROWE COMPANY	TEL	parent-name	SAM.gov-registered parent TE Connectivity (TEL); no contrary public record	2026-07-19
+925ebbdb-01c8-326b-4110-acb8fd5a7414-C	MEARS GROUP INC	PWR	parent-name	Mears Group is a Quanta Services (PWR) pipeline-services subsidiary	2026-07-19
+92758004-9797-9b84-aca3-932d2c0322e5-C	COINBASE INC	COIN	parent-name	Coinbase Inc is the operating subsidiary of SEC issuer Coinbase Global (COIN)	2026-07-19
+928e25a1-e379-d2e2-3294-32c9d3159947-C	CARRIER ENTERPRISE, LLC	WSO	parent-name	Carrier Enterprise is Watsco's (WSO) majority-owned (80%) JV distribution subsidiary per Watsco 10-K	2026-07-19
+9356f9cf-4506-a887-3d6a-d04387a7637e-C	AEROCONTROLEX GROUP, INC.	TDG	parent-name	AeroControlex Group is a long-held TransDigm (TDG) operating unit	2026-07-19
+93fb1b1c-53e8-fc01-bcb6-b6a7af1273b1-C	BOOZ ALLEN HAMILTON ENGINEERING SERVICES, LLC	BAH	parent-name	SAM.gov parent 'BOOZ ALLEN HAMILTON HOLDING CORPORATION' matches SEC issuer 'Booz Allen Hamilton Holding Corp' (BAH); subsidiary 'BOOZ ALLEN HAMILTON ENGINEERING SERVICES, LLC' per SAM.gov hierarchy; brand-consistent subsidiary name ('BOOZ ALLEN HAMILTON ENGINEERING SERVICES, LLC' carries issuer brand)	2026-07-18
+9499aa66-87aa-0f1a-10f0-a581034359c9-C	GRIMES AEROSPACE COMPANY	HON	parent-name	Grimes Aerospace is Honeywell (HON) aerospace lighting via the AlliedSignal lineage	2026-07-19
+953b6e49-f189-0070-008e-9abed09925ac-C	HONEYWELL AEROSPACE YEOVIL	HON	parent-name	SAM.gov parent 'HONEYWELL INTERNATIONAL INC.' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON); subsidiary 'HONEYWELL AEROSPACE YEOVIL' per SAM.gov hierarchy; brand-consistent subsidiary name ('HONEYWELL AEROSPACE YEOVIL' carries issuer brand)	2026-07-18
+963017a4-7c44-8029-c07b-ea24185fdc8a-C	BLACKROCK FINANCIAL MANAGEMENT INC	BLK	parent-name	SAM.gov parent 'BLACKROCK, INC.' matches SEC issuer 'BlackRock, Inc.' (BLK); subsidiary 'BLACKROCK FINANCIAL MANAGEMENT INC' per SAM.gov hierarchy; brand-consistent subsidiary name ('BLACKROCK FINANCIAL MANAGEMENT INC' carries issuer brand)	2026-07-18
+9657d2d6-ea0a-6d43-d3d2-56f93a9384af-C	HONEYWELL INTERNATIONAL INC.	HON	own-name	Recipient name 'HONEYWELL INTERNATIONAL INC.' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON)	2026-07-18
+96c5fa29-f046-fa3e-3112-e548ee6a526f-C	SOLAR TURBINES INCORPORATED	CAT	parent-name	Solar Turbines is a wholly-owned Caterpillar (CAT) subsidiary	2026-07-19
+98183ce7-7fa7-ff61-3b5e-060fc0a294e2-C	FISHER SCIENTIFIC COMPANY L.L.C.	TMO	parent-name	Fisher Scientific is a core Thermo Fisher Scientific (TMO) subsidiary	2026-07-19
+99ca957e-94d5-66a2-9d4a-8ff0601e794d-C	AVAGO TECHNOLOGIES US INC	AVGO	parent-name	Avago Technologies US is a Broadcom Inc (AVGO) legal-lineage subsidiary	2026-07-19
+9b96a5e8-7aa6-15db-84f2-0c3878e4aaba-C	CITIBANK, N.A.	C	parent-name	Citibank NA is Citigroup's (C) national bank subsidiary	2026-07-19
+9bca02d6-dc64-52ba-4d3e-bc5b38b1f6a5-C	CATERPILLAR INC	CAT	own-name	Recipient name 'CATERPILLAR INC' matches SEC issuer 'CATERPILLAR INC' (CAT)	2026-07-18
+9c282e38-d785-86bf-6733-2065159b2919-C	JOHNSON CONTROLS, INC	JCI	own-name	Recipient name 'JOHNSON CONTROLS, INC' matches SEC issuer 'Johnson Controls International plc' (JCI)	2026-07-18
+9ca06d06-287d-7bc5-0748-b773d09f12eb-C	T-MOBILE USA, INC.	TMUS	own-name	Recipient name 'T-MOBILE USA, INC.' matches SEC issuer 'T-Mobile US, Inc.' (TMUS)	2026-07-18
+9dc269de-4b2d-9035-9d39-749ff3661031-C	GEIGER INTERNATIONAL INC	MLKN	parent-name	Geiger is a Herman Miller brand under MillerKnoll (MLKN)	2026-07-19
+9e483c5d-7352-28b3-89dd-33052a121331-C	CUMMINS POWER GENERATION INC.	CMI	parent-name	SAM.gov parent 'CUMMINS INC.' matches SEC issuer 'CUMMINS INC' (CMI); subsidiary 'CUMMINS POWER GENERATION INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('CUMMINS POWER GENERATION INC.' carries issuer brand)	2026-07-18
+9e9fe3bb-3b8f-430b-6060-0ebed4132aad-C	EATON CORPORATION	ETN	own-name	Eaton Corporation is the US operating entity of SEC issuer Eaton Corporation plc (ETN)	2026-07-19
+9ef0f53f-0e5b-4a26-6aed-27fc8e2f4788-C	CAREDX, INC.	CDNA	own-name	Recipient name 'CAREDX, INC.' matches SEC issuer 'CareDx, Inc.' (CDNA)	2026-07-18
+9fc6492e-8a88-e1b4-3cc4-9487432eab8c-C	AVIONIC INSTRUMENTS LLC	TDG	parent-name	Avionic Instruments LLC is a TransDigm (TDG) operating unit	2026-07-19
+a033f445-de74-654e-59d9-ea1a2f61fb73-C	MSCI INC	MSCI	own-name	Recipient name 'MSCI INC' matches SEC issuer 'MSCI Inc.' (MSCI)	2026-07-18
+a0ef059e-42bf-0e69-637c-270e7f0fe556-C	SAP NATIONAL SECURITY SERVICES INC	SAP	parent-name	SAP NS2 is SAP SE's (SAP) US national-security subsidiary	2026-07-19
+a1ed8c29-7fb0-6b9f-864b-ea1c77e08891-C	HOST HOTELS & RESORTS LP	HST	own-name	Recipient name 'HOST HOTELS & RESORTS LP' matches SEC issuer 'HOST HOTELS & RESORTS, INC.' (HST)	2026-07-18
+a2854240-44c7-519b-4914-020b2317a659-C	ALERE SAN DIEGO, INC.	ABT	parent-name	Alere acquired by Abbott (ABT) Oct 2017; Alere San Diego is an Abbott unit	2026-07-19
+a32ad0b3-979f-4fbe-900f-5d0232368bbd-C	EQUIFAX INFORMATION SERVICES LLC	EFX	parent-name	SAM.gov parent 'EQUIFAX INC' matches SEC issuer 'EQUIFAX INC' (EFX); subsidiary 'EQUIFAX INFORMATION SERVICES LLC' per SAM.gov hierarchy; brand-consistent subsidiary name ('EQUIFAX INFORMATION SERVICES LLC' carries issuer brand)	2026-07-18
+a3374bb6-88f5-88cf-3bdb-b4c6d825fd98-C	LOCKHEED MARTIN CORP	LMT	own-name	Recipient name 'LOCKHEED MARTIN CORP' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT)	2026-07-18
+a3d96349-e421-0c3b-e82c-c8b235732d69-C	KEYSIGHT TECHNOLOGIES, INC.	KEYS	own-name	Recipient name 'KEYSIGHT TECHNOLOGIES, INC.' matches SEC issuer 'Keysight Technologies, Inc.' (KEYS)	2026-07-18
+a4aa9eb2-0b4e-544d-d1c3-a838749a60ed-C	CLARIS INTERNATIONAL INC.	AAPL	parent-name	Claris International (FileMaker) is Apple's (AAPL) wholly-owned software subsidiary	2026-07-19
+a4c28996-484c-cf28-76b4-8e46e982c93e-C	ROCKWELL COLLINS, INC.	RTX	parent-name	Rockwell Collins is a Collins Aerospace legacy entity, current RTX subsidiary	2026-07-19
+a62fa63a-9b78-b4be-b33d-eb009a40a77c-C	PUBLIC SERVICE COMPANY OF COLORADO	XEL	parent-name	PSCo is an Xcel Energy (XEL) regulated utility	2026-07-19
+a6504795-f2b9-5f80-a0b8-c1cb5899212e-C	BLACKROCK INSTITUTIONAL TRUST COMPANY NATIONAL ASSOCIATION	BLK	parent-name	SAM.gov parent 'BLACKROCK, INC.' matches SEC issuer 'BlackRock, Inc.' (BLK); subsidiary 'BLACKROCK INSTITUTIONAL TRUST COMPANY NATIONAL ASSOCIATION' per SAM.gov hierarchy; brand-consistent subsidiary name ('BLACKROCK INSTITUTIONAL TRUST COMPANY NATIONAL ASSOCIATION' carries issuer brand)	2026-07-18
+a756c2b0-8906-ba0d-e0bb-cca92a88ee2f-C	HP INC.	HPQ	own-name	Recipient name 'HP INC.' matches SEC issuer 'HP INC' (HPQ)	2026-07-18
+a81c9133-71d7-9646-43d5-eb0e55cd73cc-C	BIO-RAD LABORATORIES, INC.	BIO	own-name	Recipient name 'BIO-RAD LABORATORIES, INC.' matches SEC issuer 'BIO-RAD LABORATORIES, INC.' (BIO)	2026-07-18
+a8e3de84-2045-6b38-2f7d-1470d3efdc95-C	MICROGENICS CORPORATION	TMO	parent-name	Microgenics is a Thermo Fisher Scientific (TMO) diagnostics subsidiary	2026-07-19
+a8e90c7c-8175-41a5-b841-5b038f67a07d-C	UNITED PARCEL SERVICE CO.	UPS	own-name	Recipient name 'UNITED PARCEL SERVICE CO.' matches SEC issuer 'UNITED PARCEL SERVICE INC' (UPS)	2026-07-18
+ab05ceb2-d750-3470-0575-3ffe0d9cc616-C	HONEYWELL INTERNATIONAL INC	HON	own-name	Recipient name 'HONEYWELL INTERNATIONAL INC' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON)	2026-07-18
+abe97812-085d-1dad-04d8-0e90d2ca0f1a-C	CAREMARK RX, L.L.C.	CVS	parent-name	Caremark Rx is CVS Health's (CVS) PBM subsidiary	2026-07-19
+ac0b9590-0ad8-0854-a7ed-8474dc0b203b-C	RAYTHEON COMPANY	RTX	parent-name	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary	2026-07-19
+ad35c12e-7105-a0e3-d98a-5918beef4c6a-C	KEYSIGHT TECHNOLOGIES INC	KEYS	own-name	Recipient name 'KEYSIGHT TECHNOLOGIES INC' matches SEC issuer 'Keysight Technologies, Inc.' (KEYS)	2026-07-18
+ad37d43a-4735-29f2-39e2-41c6c74062a2-C	EATON CORPORATION	ETN	own-name	Eaton Corporation is the US operating entity of SEC issuer Eaton Corporation plc (ETN)	2026-07-19
+af618dbb-8243-6bfb-bd94-f7e66350305d-C	THE ADVISORY BOARD COMPANY	UNH	parent-name	Advisory Board's healthcare business acquired by Optum/UnitedHealth (UNH) 2017	2026-07-19
+afd3aa9a-cbaa-9be4-1ddb-7b2690601c48-C	VERACYTE, INC.	VCYT	own-name	Recipient name 'VERACYTE, INC.' matches SEC issuer 'VERACYTE, INC.' (VCYT)	2026-07-18
+afdcb1d9-116b-6676-344c-3c7deb8ecf76-C	MEDICAL SPECIALTIES INC	HCA	parent-name	SAM.gov-registered parent HCA Healthcare (HCA); no contrary public record	2026-07-19
+b08f8773-1e62-248a-d212-05bf5257410e-C	LEXISNEXIS RISK SOLUTIONS INC	RELX	parent-name	LexisNexis Risk Solutions is a RELX plc (RELX) division	2026-07-19
+b143e4e4-6e13-3227-a9be-875c39fabe95-C	ABBVIE US LLC	ABBV	own-name	AbbVie US LLC is AbbVie Inc's (ABBV) principal US operating subsidiary	2026-07-19
+b20b122a-596c-14ad-0033-6e5bc41f4768-C	RAYTHEON COMPANY	RTX	parent-name	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary	2026-07-19
+b2d89a5f-9cb0-1d9e-ced9-0d379873ccf1-C	GENERAL DYNAMICS MISSION SYSTEMS, INC.	GD	parent-name	SAM.gov parent 'GENERAL DYNAMICS CORP' matches SEC issuer 'GENERAL DYNAMICS CORP' (GD); subsidiary 'GENERAL DYNAMICS MISSION SYSTEMS, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('GENERAL DYNAMICS MISSION SYSTEMS, INC.' carries issuer brand)	2026-07-18
+b3207faf-40d1-6381-22dc-fadfb0443df0-C	COMCAST CABLE COMMUNICATIONS MANAGEMENT LLC	CMCSA	parent-name	Comcast Cable Communications Management is a Comcast Corporation (CMCSA) subsidiary	2026-07-19
+b3e790b7-6e7f-6d8d-3d8d-166313abd786-C	WEYERHAEUSER COMPANY	WY	own-name	Weyerhaeuser Company is the SEC issuer of ticker WY (own name)	2026-07-19
+b4b8c717-7458-45ff-103c-4a7453207027-C	ROCKWELL AUTOMATION, INC.	ROK	own-name	Recipient name 'ROCKWELL AUTOMATION, INC.' matches SEC issuer 'ROCKWELL AUTOMATION, INC' (ROK)	2026-07-18
+b54de748-ee64-a1e6-546e-e7007b054797-C	MCKESSON CORPORATION	MCK	own-name	McKesson Corporation is the SEC issuer of ticker MCK (own name)	2026-07-19
+b5efc906-dc09-c632-df80-da2973e64153-C	MOTOROLA SOLUTIONS, INC.	MSI	own-name	Recipient name 'MOTOROLA SOLUTIONS, INC.' matches SEC issuer 'Motorola Solutions, Inc.' (MSI)	2026-07-18
+b638e162-f732-50b3-c5b9-9fe1086d041a-C	GALLATIN RIVER COMMUNICATIONS, L.L.C.	LUMN	parent-name	Gallatin River Communications is a legacy CenturyTel ILEC under Lumen Technologies (LUMN)	2026-07-19
+b6b091bb-570b-bf26-3e7a-b4a1a7c2d61a-C	RAYTHEON COMPANY	RTX	parent-name	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary	2026-07-19
+b6e4ad0f-6877-b3a2-4c54-578230c072a9-C	DEERE & COMPANY	DE	own-name	Deere & Company is the SEC issuer of ticker DE (own name)	2026-07-19
+b706783c-a759-4f66-8953-20fda4bd1acc-C	THERMO EBERLINE LLC	TMO	parent-name	Thermo Eberline is a Thermo Fisher Scientific (TMO) radiation-measurement unit	2026-07-19
+b8a507ef-0ba0-e553-27ac-c0d5823b7bd2-C	IAN EVAN & ALEXANDER CORP	BAH	parent-name	SAM.gov-registered parent Booz Allen Hamilton (BAH); no contrary public record	2026-07-19
+b91e6418-aa27-f6c2-90a9-1545753a6d15-C	RAYTHEON COMPANY	RTX	parent-name	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary	2026-07-19
+b942a813-cf16-3577-afb8-6e20ea3078f6-C	HOWMEDICA OSTEONICS CORP	SYK	parent-name	Howmedica Osteonics acquired by Stryker 1998, ongoing wholly-owned subsidiary, ticker SYK	2026-07-19
+b97d19b0-833c-8d8f-3a2c-157d04ea55ef-C	LOCKHEED MARTIN CORP	LMT	own-name	Recipient name 'LOCKHEED MARTIN CORP' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT)	2026-07-18
+ba54128b-d307-1a1b-8efb-7fd3c35ec697-C	INCENTIVE TECHNOLOGY GROUP LLC	ICFI	parent-name	Incentive Technology Group acquired by ICF International (ICFI) Jan 2020	2026-07-19
+ba61d3e5-9ee2-62c6-7002-6eb9efd7682d-C	RAYTHEON COMPANY	RTX	parent-name	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary	2026-07-19
+bb71d7cd-d3e5-e496-6896-4d4005925f76-C	GENERAL DYNAMICS INFORMATION TECHNOLOGY, INC.	GD	parent-name	SAM.gov parent 'GENERAL DYNAMICS CORP' matches SEC issuer 'GENERAL DYNAMICS CORP' (GD); subsidiary 'GENERAL DYNAMICS INFORMATION TECHNOLOGY, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('GENERAL DYNAMICS INFORMATION TECHNOLOGY, INC.' carries issuer brand)	2026-07-18
+bba3f7fd-f185-9f3b-8985-e8ea6bd3253e-C	S&P GLOBAL MARKET INTELLIGENCE LLC	SPGI	parent-name	SAM.gov parent 'S&P GLOBAL INC.' matches SEC issuer 'S&P Global Inc.' (SPGI); subsidiary 'S&P GLOBAL MARKET INTELLIGENCE LLC' per SAM.gov hierarchy; brand-consistent subsidiary name ('S&P GLOBAL MARKET INTELLIGENCE LLC' carries issuer brand)	2026-07-18
+bcc6d6fc-0fa8-aac1-2016-427adf3da83f-C	BIOMARK LLC	MRK	parent-name	Biomark (PIT-tag maker) acquired by Merck Animal Health (Merck & Co, MRK) 2021	2026-07-19
+bd24e068-bcad-bd3f-24c2-233dee816bd1-C	CUMMINS INC.	CMI	own-name	Recipient name 'CUMMINS INC.' matches SEC issuer 'CUMMINS INC' (CMI)	2026-07-18
+be01076d-a1f9-6fed-33a7-be78e0546da3-C	JOHNSON CONTROLS, INC.	JCI	own-name	Recipient name 'JOHNSON CONTROLS, INC.' matches SEC issuer 'Johnson Controls International plc' (JCI)	2026-07-18
+bf49f582-79fa-4760-a1cd-930e9bd9fc96-C	EQUIFAX WORKFORCE SOLUTIONS LLC	EFX	parent-name	SAM.gov parent 'EQUIFAX INC' matches SEC issuer 'EQUIFAX INC' (EFX); subsidiary 'EQUIFAX WORKFORCE SOLUTIONS LLC' per SAM.gov hierarchy; brand-consistent subsidiary name ('EQUIFAX WORKFORCE SOLUTIONS LLC' carries issuer brand)	2026-07-18
+bf95e1ce-d407-e40f-d8aa-28d691e1a32b-C	STANDARD & POOR'S FINANCIAL SERVICES LLC	SPGI	parent-name	S&P Financial Services is S&P Global's (SPGI) ratings entity	2026-07-19
+bf96e834-1074-5989-1c37-234bbff65d0e-C	SYSCO LAS VEGAS INC	SYY	parent-name	SAM.gov parent 'SYSCO CORP' matches SEC issuer 'SYSCO CORP' (SYY); subsidiary 'SYSCO LAS VEGAS INC' per SAM.gov hierarchy; brand-consistent subsidiary name ('SYSCO LAS VEGAS INC' carries issuer brand)	2026-07-18
+c201e67a-668c-58e3-4ab5-8653d259ae26-C	DEPUY SYNTHES SALES INC	JNJ	parent-name	DePuy Synthes is Johnson & Johnson's (JNJ) orthopaedics franchise	2026-07-19
+c260138e-301c-323a-da05-526c32e86e85-C	CREATIVE SYSTEMS AND CONSULTING L.L.C.	ICFI	parent-name	Creative Systems & Consulting acquired by ICF International (ICFI) Dec 2021	2026-07-19
+c26fd0ee-9777-5d09-8189-a9b89ea1ece5-C	IRON MOUNTAIN INFORMATION MANAGEMENT LLC	IRM	parent-name	SAM.gov parent 'IRON MOUNTAIN INCORPORATED' matches SEC issuer 'IRON MOUNTAIN INC' (IRM); subsidiary 'IRON MOUNTAIN INFORMATION MANAGEMENT LLC' per SAM.gov hierarchy; brand-consistent subsidiary name ('IRON MOUNTAIN INFORMATION MANAGEMENT LLC' carries issuer brand)	2026-07-18
+c2ccd353-9f62-d8c7-8f63-78458e9e9cc7-C	RAYTHEON COMPANY	RTX	parent-name	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary	2026-07-19
+c3413d6d-75a8-a9eb-ca67-ca4debbb94a3-C	FLUOR INTERCONTINENTAL, INC	FLR	parent-name	Fluor Intercontinental Inc is SEC-confirmed wholly-owned subsidiary of Fluor Corporation, ticker FLR	2026-07-19
+c414eca8-312b-9a3c-fc83-0d305303c6f7-C	VECTREN LLC	CNP	parent-name	Vectren merged into CenterPoint Energy (CNP) 2019	2026-07-19
+c7d92acb-5e8f-b082-a677-a914ade01512-C	INTEGRA LIFESCIENCES CORPORATION	IART	own-name	Recipient name 'INTEGRA LIFESCIENCES CORPORATION' matches SEC issuer 'INTEGRA LIFESCIENCES HOLDINGS CORP' (IART)	2026-07-18
+c80dfd00-42cb-8a42-b4b3-bcf5a5fd31b0-C	GENERAL DYNAMICS OTS (DRI), INC.	GD	parent-name	SAM.gov parent 'GENERAL DYNAMICS CORP' matches SEC issuer 'GENERAL DYNAMICS CORP' (GD); subsidiary 'GENERAL DYNAMICS OTS (DRI), INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('GENERAL DYNAMICS OTS (DRI), INC.' carries issuer brand)	2026-07-18
+c81228a6-de4a-cda8-b887-15e209431fef-C	CINTAS CORPORATION NO. 2	CTAS	parent-name	Cintas Corporation No. 2 is SEC-confirmed subsidiary of Cintas Corporation, ticker CTAS	2026-07-19
+c90c2205-c1a1-7671-ce14-decf86061294-C	TELEFLEX MEDICAL INCORPORATED	TFX	parent-name	Teleflex Medical Incorporated per SEC subsidiary listing of Teleflex Incorporated, ticker TFX	2026-07-19
+c91e0c78-c5d5-8ebc-6909-7c63ed78a275-C	HONEYWELL INTERNATIONAL INC.	HON	own-name	Recipient name 'HONEYWELL INTERNATIONAL INC.' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON)	2026-07-18
+c9332296-ebc7-77ba-a48c-073954512459-C	KLA CORPORATION	KLAC	own-name	KLA Corporation is the SEC issuer of ticker KLAC (own name)	2026-07-19
+c94a63ea-3f6b-72f7-c9e1-b946c3ffcc4a-C	VALLEY PROTEINS, LLC	DAR	parent-name	Valley Proteins acquired by Darling Ingredients (DAR) May 2022	2026-07-19
+c951b7db-49ea-ae71-ff2b-954383df8043-C	CUMMINS INC.	CMI	own-name	Recipient name 'CUMMINS INC.' matches SEC issuer 'CUMMINS INC' (CMI)	2026-07-18
+cabf3eec-12ae-f6bd-186f-a2bb9df04df6-C	DJONT/JPM HOSPITALITY LEASING (SPE), L.L.C.	RLJ	parent-name	DJONT is a FelCor lessee entity under RLJ Lodging Trust (RLJ) since the 2017 merger; SAM.gov-registered parent	2026-07-19
+cae13eb7-b259-520c-9ae0-a46eb3ea2acd-C	INTERNATIONAL BUSINESS MACHINES CORPORATION	IBM	own-name	Recipient name 'INTERNATIONAL BUSINESS MACHINES CORPORATION' matches SEC issuer 'INTERNATIONAL BUSINESS MACHINES CORP' (IBM)	2026-07-18
+cbcf9a15-b96e-3b46-30e5-81fbd88b2240-C	PORTFOLIO MEDIA INC	RELX	parent-name	Portfolio Media (Law360) is a LexisNexis/RELX plc (RELX) subsidiary	2026-07-19
+cbd9f3e4-bdd7-ddc1-a8a5-10284f15a504-C	LOCKHEED MISSILES & SPACE COMP	LMT	parent-name	Lockheed Missiles & Space is a legacy Lockheed Martin (LMT) entity	2026-07-19
+cc38608d-009f-b679-f6ee-e392b17dc79d-C	ABBOTT LABORATORIES INC.	ABT	own-name	Recipient name 'ABBOTT LABORATORIES INC.' matches SEC issuer 'ABBOTT LABORATORIES' (ABT)	2026-07-18
+cce9df51-3950-87f4-0b34-4353d5a08f32-C	RAYTHEON COMPANY	RTX	parent-name	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary	2026-07-19
+ccff8bad-982e-9119-4b69-3802144f95d7-C	GENERAL DYNAMICS INFORMATION TECHNOLOGY, INC.	GD	parent-name	SAM.gov parent 'GENERAL DYNAMICS CORP' matches SEC issuer 'GENERAL DYNAMICS CORP' (GD); subsidiary 'GENERAL DYNAMICS INFORMATION TECHNOLOGY, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('GENERAL DYNAMICS INFORMATION TECHNOLOGY, INC.' carries issuer brand)	2026-07-18
+cd535b27-2955-21fe-2707-c2c76f9c6e6a-C	ABBOTT MOLECULAR INC.	ABT	parent-name	Abbott Molecular is a wholly-owned Abbott Laboratories (ABT) diagnostics subsidiary	2026-07-19
+cdcd697e-f17e-ff7e-2450-77a61fc69842-C	AMAZON.COM LLC	AMZN	own-name	Recipient name 'AMAZON.COM LLC' matches SEC issuer 'AMAZON COM INC' (AMZN)	2026-07-18
+ceb32173-4900-91c2-280a-acdfbd574d2a-C	LOCKHEED MARTIN COHERENT TECHNOLOGIES, INC.	LMT	parent-name	SAM.gov parent 'LOCKHEED MARTIN CORPORATION' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT); subsidiary 'LOCKHEED MARTIN COHERENT TECHNOLOGIES, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('LOCKHEED MARTIN COHERENT TECHNOLOGIES, INC.' carries issuer brand)	2026-07-18
+cfa69943-4319-c761-8159-2e052a8ccff3-C	AT&T CORP.	T	own-name	Recipient name 'AT&T CORP.' matches SEC issuer 'AT&T INC.' (T)	2026-07-18
+cfac3ae1-5dbb-bba6-80af-36f438addf14-C	UNITED AIRLINES, INC.	UAL	own-name	Recipient name 'UNITED AIRLINES, INC.' matches SEC issuer 'United Airlines Holdings, Inc.' (UAL)	2026-07-18
+cfdb99d6-7cee-3d75-33a3-219241d6fc30-C	LOCKHEED MARTIN CORPORATION	LMT	own-name	Recipient name 'LOCKHEED MARTIN CORPORATION' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT)	2026-07-18
+d08dc12d-6186-9227-958f-53808fe39ca3-C	LINDE GAS & EQUIPMENT INC.	LIN	parent-name	Linde Gas & Equipment Inc is a Linde plc (LIN) operating subsidiary	2026-07-19
+d1f2ff03-8420-4b97-952e-d9e250bfb5f6-C	RAYTHEON COMPANY	RTX	parent-name	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary	2026-07-19
+d20eacf8-741d-728c-6b73-bddb892d5800-C	HONEYWELL INTERNATIONAL INC.	HON	own-name	Recipient name 'HONEYWELL INTERNATIONAL INC.' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON)	2026-07-18
+d2451904-5e9f-d65b-49d6-5fbe521abbe0-C	FEI COMPANY	TMO	parent-name	FEI acquired by Thermo Fisher Scientific (TMO) 2016	2026-07-19
+d27246e8-024c-7149-d961-1edfd05c2a44-C	ARROW INTERNATIONAL, INC.	TFX	parent-name	Arrow International acquired by Teleflex 2007 ($2B), still subsidiary, ticker TFX	2026-07-19
+d3b182df-5daa-6f63-c00e-d99b7ba7875e-C	NATIONAL STEEL AND SHIPBUILDING COMPANY	GD	parent-name	NASSCO is General Dynamics' (GD) shipyard subsidiary	2026-07-19
+d49f36ae-b747-42e3-5257-6787a69e51e9-C	DELL MARKETING L.P.	DELL	parent-name	SAM.gov parent 'DELL TECHNOLOGIES INC.' matches SEC issuer 'Dell Technologies Inc.' (DELL); subsidiary 'DELL MARKETING L.P.' per SAM.gov hierarchy; brand-consistent subsidiary name ('DELL MARKETING L.P.' carries issuer brand)	2026-07-18
+d4fcadd5-c9fc-e78a-9465-e075ee069a08-C	LIFE TECHNOLOGIES CORPORATION	TMO	parent-name	Life Technologies acquired by Thermo Fisher Scientific (TMO) 2014	2026-07-19
+d644eb31-6dae-c244-e41a-613f1b0e01c3-C	BIO RAD LABORATORIES INC	BIO	own-name	Recipient name 'BIO RAD LABORATORIES INC' matches SEC issuer 'BIO-RAD LABORATORIES, INC.' (BIO)	2026-07-18
+d71e3181-5dd2-4be8-2540-38d626163a79-C	UNITED RENTALS, INC.	URI	own-name	Recipient name 'UNITED RENTALS, INC.' matches SEC issuer 'UNITED RENTALS, INC.' (URI)	2026-07-18
+d740322e-a72b-3070-4a22-597b01b2f0bf-C	S&P GLOBAL INC.	SPGI	own-name	Recipient name 'S&P GLOBAL INC.' matches SEC issuer 'S&P Global Inc.' (SPGI)	2026-07-18
+d91f6bf5-043f-8df8-fd93-90cc71696bd3-C	SPX AIDS TO NAVIGATION OY	SPXC	parent-name	SPX Aids to Navigation OY is a current subsidiary of SPX Technologies, ticker SPXC	2026-07-19
+d96f3486-0fa5-045a-5da7-9cffc0b4a114-C	AT&T ENTERPRISES, LLC	T	own-name	Recipient name 'AT&T ENTERPRISES, LLC' matches SEC issuer 'AT&T INC.' (T)	2026-07-18
+db1a4671-c077-8b5a-ad52-6e23942010ae-C	SOUTHWESTERN BELL TELEPHONE COMPANY	T	parent-name	Southwestern Bell is an AT&T Inc (T) incumbent local exchange carrier	2026-07-19
+dbce5398-89aa-55e3-1b2c-87d60e4d408b-C	SPTS TECHNOLOGIES, INC.	KLAC	parent-name	SPTS Technologies part of KLA Corporation via 2019 Orbotech acquisition, ticker KLAC	2026-07-19
+dcd8d510-c4ee-88b7-077f-1c6c54b3e45f-C	JOHNSON CONTROLS, INC.	JCI	own-name	Recipient name 'JOHNSON CONTROLS, INC.' matches SEC issuer 'Johnson Controls International plc' (JCI)	2026-07-18
+dd15f363-15bc-f5a0-bec1-6c8ee142ed94-C	ONE GAS INC	OGS	own-name	Recipient name 'ONE GAS INC' matches SEC issuer 'ONE Gas, Inc.' (OGS)	2026-07-18
+dd77b7c3-663e-cb91-229f-5766a50e9b7f-C	MICROSOFT CORPORATION	MSFT	own-name	Microsoft Corporation is the SEC issuer of ticker MSFT (own name)	2026-07-19
+de388c19-a8c4-1547-ce0f-e99b8ac74b44-C	EDWARDS LIFESCIENCES LLC	EW	own-name	Recipient name 'EDWARDS LIFESCIENCES LLC' matches SEC issuer 'Edwards Lifesciences Corp' (EW)	2026-07-18
+df00cf41-7461-bcb8-3bca-18eba4fff18c-C	CUMMINS INC.	CMI	own-name	Recipient name 'CUMMINS INC.' matches SEC issuer 'CUMMINS INC' (CMI)	2026-07-18
+df147a2e-58a8-344a-b760-8618a5370cbb-C	JONES LANG LASALLE AMERICAS, INC.	JLL	own-name	Recipient name 'JONES LANG LASALLE AMERICAS, INC.' matches SEC issuer 'JONES LANG LASALLE INC' (JLL)	2026-07-18
+df712cb5-bbd4-3546-af85-21322f535aa4-C	THERMO ELECTRON NORTH AMERICA LLC	TMO	parent-name	Thermo Electron North America is a Thermo Fisher Scientific (TMO) subsidiary	2026-07-19
+dfdd88d1-f7e4-0d70-2383-41a337cfccec-C	HONEYWELL INC	HON	own-name	Honeywell Inc is the legacy entity within Honeywell International (HON)	2026-07-19
+e124b55b-be9e-afa5-19f4-302e6896ad46-C	TE CONNECTIVITY CORPORATION	TEL	own-name	Recipient name 'TE CONNECTIVITY CORPORATION' matches SEC issuer 'TE Connectivity plc' (TEL)	2026-07-18
+e1c0598c-8b98-1615-980d-adb2854e3c4d-C	VINDICATOR TECHNOLOGIES, INC.	HON	parent-name	Vindicator Technologies is Honeywell's (HON) security-systems line	2026-07-19
+e21a16e9-3b0d-87a1-11ef-cd3ed20ae500-C	HONEYWELL INTERNATIONAL INC.	HON	own-name	Recipient name 'HONEYWELL INTERNATIONAL INC.' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON)	2026-07-18
+e249a03f-34e0-6c86-7664-8c8ce35eabaa-C	TCI INTERNATIONAL, INC	SPXC	parent-name	TCI International is a wholly-owned SPX Technologies (SPXC) subsidiary	2026-07-19
+e24d5cbf-108d-06e6-788f-02c4f4bd9fc8-C	ON-X LIFE TECHNOLOGIES INC.	AORT	parent-name	On-X Life Technologies is Artivion's (AORT) heart-valve unit via the 2016 CryoLife acquisition	2026-07-19
+e31a62d4-da4f-10e2-fb37-801942dbcab0-C	ELSEVIER B.V.	RELX	parent-name	Elsevier is RELX plc's (RELX) scientific publishing division	2026-07-19
+e46e4a5e-0808-76be-0305-4ceb3e64f2fa-C	LEXISNEXIS SPECIAL SERVICES INC	RELX	parent-name	LexisNexis Special Services is a RELX plc (RELX) subsidiary	2026-07-19
+e486a3f0-e0a7-0aa5-952e-f71fdab96ce8-C	UNITED RENTALS NORTH AMERICA INC	URI	own-name	Recipient name 'UNITED RENTALS NORTH AMERICA INC' matches SEC issuer 'UNITED RENTALS, INC.' (URI)	2026-07-18
+e6a914e0-2eaa-1b0c-17a3-669d0d2ed9aa-C	HONEYWELL INTERNATIONAL INC.	HON	own-name	Recipient name 'HONEYWELL INTERNATIONAL INC.' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON)	2026-07-18
+e88441ce-d65a-7ad0-5edc-e87f7b577770-C	NICE SYSTEMS INC	NICE	own-name	NICE Systems Inc is the US subsidiary of SEC issuer NICE Ltd (NICE)	2026-07-19
+e88e8956-8eb7-7920-2f33-c66829ac91b1-C	SOUTHWESTERN BELL TELEPHONE COMPANY	T	parent-name	Southwestern Bell is an AT&T Inc (T) incumbent local exchange carrier	2026-07-19
+e9d6860f-30dc-4d28-51a0-3b3f5e37cec7-C	TE CONNECTIVITY CORPORATION	TEL	own-name	Recipient name 'TE CONNECTIVITY CORPORATION' matches SEC issuer 'TE Connectivity plc' (TEL)	2026-07-18
+ea75ddee-2d00-ac7f-5e72-6f42d7c88c8c-C	LOCKHEED MARTIN CORPORATION	LMT	own-name	Recipient name 'LOCKHEED MARTIN CORPORATION' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT)	2026-07-18
+ebe6041c-c99b-fb52-193d-1d9ad18e645e-C	GARTNER, INC.	IT	own-name	Recipient name 'GARTNER, INC.' matches SEC issuer 'GARTNER INC' (IT)	2026-07-18
+ec19aa19-5743-cc5c-2c9f-e9fe33c8b72f-C	SOLIPSYS CORPORATION	RTX	parent-name	Solipsys is a Raytheon (RTX) subsidiary since 2003	2026-07-19
+ec369610-bc05-47f5-a28d-ccbfcd09e748-C	MCKESSON MEDICAL-SURGICAL GOVERNMENT SOLUTIONS LLC	MCK	parent-name	McKesson Medical-Surgical Government Solutions is a wholly-owned McKesson (MCK) subsidiary	2026-07-19
+ecc87e38-8e85-f135-37c2-b249ce14c768-C	JONES LANG LASALLE AMERICAS, INC.	JLL	own-name	Recipient name 'JONES LANG LASALLE AMERICAS, INC.' matches SEC issuer 'JONES LANG LASALLE INC' (JLL)	2026-07-18
+ee0b1e34-8214-00ae-7234-b76977f89b35-C	IDSC HOLDINGS LLC	SNA	parent-name	SAM.gov-registered parent Snap-on (SNA); no contrary public record	2026-07-19
+eee287d8-87a3-eb52-5f8d-dfbffe684f3e-C	AT&T CORP.,	T	own-name	Recipient name 'AT&T CORP.,' matches SEC issuer 'AT&T INC.' (T)	2026-07-18
+ef6337ce-be34-980c-d110-5c0e70f2a666-C	ARCHER-DANIELS-MIDLAND COMPANY	ADM	own-name	Recipient name 'ARCHER-DANIELS-MIDLAND COMPANY' matches SEC issuer 'Archer-Daniels-Midland Co' (ADM)	2026-07-18
+f09ed3a7-cbd4-f4d6-046d-eb0780590412-C	GENERAL DYNAMICS MISSION SYSTEMS, INC.	GD	parent-name	SAM.gov parent 'GENERAL DYNAMICS CORP' matches SEC issuer 'GENERAL DYNAMICS CORP' (GD); subsidiary 'GENERAL DYNAMICS MISSION SYSTEMS, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('GENERAL DYNAMICS MISSION SYSTEMS, INC.' carries issuer brand)	2026-07-18
+f1e4ed58-f006-1f6f-b3ba-64a95aab33ca-C	CISCO SYSTEMS INC	CSCO	own-name	Recipient name 'CISCO SYSTEMS INC' matches SEC issuer 'CISCO SYSTEMS, INC.' (CSCO)	2026-07-18
+f203bb8c-f4f4-1175-bad9-551bf4b5d9cb-C	SBA SITE MANAGEMENT, LLC	SBAC	parent-name	SBA Site Management is an SBA Communications (SBAC) subsidiary	2026-07-19
+f21cd6d7-6141-944c-de87-681087f8af47-C	UNITED PARCEL SERVICE INC	UPS	own-name	Recipient name 'UNITED PARCEL SERVICE INC' matches SEC issuer 'UNITED PARCEL SERVICE INC' (UPS)	2026-07-18
+f321e226-c4b2-f29f-443b-86843ff28e53-C	RAYTHEON COMPANY	RTX	parent-name	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary	2026-07-19
+f35c9c9a-89ed-d462-289b-743fc763f45e-C	SERVICENOW, INC.	NOW	own-name	Recipient name 'SERVICENOW, INC.' matches SEC issuer 'ServiceNow, Inc.' (NOW)	2026-07-18
+f461a5c8-6e97-a1b3-b511-ed8c86be3ebf-C	EATON CORPORATION	ETN	own-name	Eaton Corporation is the US operating entity of SEC issuer Eaton Corporation plc (ETN)	2026-07-19
+f599f0f7-f59e-fb70-4042-cf41d063621d-C	SONY BIOTECHNOLOGY INC.	SONY	parent-name	Sony Biotechnology is wholly-owned via Sony Corporation of America chain, Sony Group Corp ADR ticker SONY	2026-07-19
+f6af6197-5083-ed76-befd-626783ccaf59-C	HONEYWELL INTERNATIONAL INC	HON	own-name	Recipient name 'HONEYWELL INTERNATIONAL INC' matches SEC issuer 'HONEYWELL INTERNATIONAL INC' (HON)	2026-07-18
+f7268051-dfb6-e5cf-ab3d-11235ea4137f-C	ICF INCORPORATED, L.L.C.	ICFI	parent-name	SAM.gov parent 'ICF INTERNATIONAL, INC.' matches SEC issuer 'ICF International, Inc.' (ICFI); subsidiary 'ICF INCORPORATED, L.L.C.' per SAM.gov hierarchy; brand-consistent subsidiary name ('ICF INCORPORATED, L.L.C.' carries issuer brand)	2026-07-18
+f740eb86-a84e-ddf4-03cf-fe9834b257e5-C	ABBOTT LABORATORIES INC.	ABT	own-name	Recipient name 'ABBOTT LABORATORIES INC.' matches SEC issuer 'ABBOTT LABORATORIES' (ABT)	2026-07-18
+f8e92406-63f8-2165-1aa8-cdb4ceeb209f-C	FLUOR FEDERAL SERVICES INC	FLR	parent-name	Fluor Federal Services is a wholly-owned Fluor Corporation (FLR) subsidiary	2026-07-19
+fa9f6e02-3bb4-c48e-cb7c-294ee20c8b3e-C	VERIZON FEDERAL INC.	VZ	parent-name	Verizon Federal is a Verizon Communications (VZ) subsidiary	2026-07-19
+fc81edc3-d3a1-9355-9626-50780edaadec-C	COSTAR REALTY INFORMATION, INC.	CSGP	parent-name	SAM.gov parent 'COSTAR GROUP, INC.' matches SEC issuer 'COSTAR GROUP, INC.' (CSGP); subsidiary 'COSTAR REALTY INFORMATION, INC.' per SAM.gov hierarchy; brand-consistent subsidiary name ('COSTAR REALTY INFORMATION, INC.' carries issuer brand)	2026-07-18
+fd78ff32-bcfe-2db3-b26c-e5e31cea3090-C	SUPERIOR CARE PHARMACY, LLC	CVS	parent-name	SAM.gov-registered parent CVS Health (CVS, Omnicare network); no contrary public record	2026-07-19
+fdcddcc5-c44a-c042-59a0-d27b5865848d-C	CSR INC.	CVS	parent-name	SAM.gov-registered parent CVS Health (CVS); no contrary public record	2026-07-19
+fdd413b6-1bf7-ad06-7ddf-4a3fb13aba51-C	LOCKHEED MARTIN CORPORATION	LMT	own-name	Recipient name 'LOCKHEED MARTIN CORPORATION' matches SEC issuer 'LOCKHEED MARTIN CORP' (LMT)	2026-07-18
+fe89c119-4838-f4be-408f-67bf85f6c40e-C	WILLIS TOWERS WATSON US LLC	WTW	own-name	Recipient name 'WILLIS TOWERS WATSON US LLC' matches SEC issuer 'WILLIS TOWERS WATSON PLC' (WTW)	2026-07-18
+ff16a643-4b81-e97e-c914-246f2f982a6c-C	LINK2GOV, LLC	FIS	parent-name	Link2Gov is FIS's (FIS) government payments unit via the Metavante lineage	2026-07-19
+ffa00e83-9db4-5c88-43e7-1b283f664dc9-C	LNRS DATA SERVICES INC	RELX	parent-name	LNRS (LexisNexis Risk Solutions) Data Services is a RELX plc (RELX) subsidiary	2026-07-19
+ffca72e5-fba2-798a-6969-2a6c45e9f985-C	BOOZ ALLEN HAMILTON INC	BAH	own-name	Recipient name 'BOOZ ALLEN HAMILTON INC' matches SEC issuer 'Booz Allen Hamilton Holding Corp' (BAH)	2026-07-18
+ffdd682b-d30d-4207-e9ce-a898a75113ff-C	EXTRA SPACE MANAGEMENT, INC.	EXR	parent-name	Extra Space Management is Extra Space Storage's (EXR) management subsidiary	2026-07-19
