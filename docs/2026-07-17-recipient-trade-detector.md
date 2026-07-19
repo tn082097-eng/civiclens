@@ -126,3 +126,38 @@ hand-tracing, reported next to the main baseline.
 GO on feasibility. Build starts only after user review of this spec. Gates
 at build time, in order: SOURCES.md freeze (done) → confirm-table curation →
 pre-registered baseline → only then hand-tracing and render.
+
+## Amendment 1 — stale-parent correction rule (2026-07-19, adopted BEFORE baseline execution)
+
+Curation QA (2026-07-18) found a SAM.gov instrument failure mode: the
+recorded parent hierarchy can lag corporate events (Carrier still listed
+under RTX five years after the 2020 spin-off). Rule, applied uniformly and
+outcome-blind (no baseline run, no detector output viewed at adoption time):
+
+> Where the SAM.gov parent is contradicted by a documented public corporate
+> event (acquisition, divestiture, spin-off, merger) whose date PRECEDES the
+> observation window (CY2023–25), the confirm row records the post-event
+> issuer, `basis=manual`, evidence citing the event + date. Events falling
+> inside the window would require a dated-validity rule; none of the 20
+> affected rows have one (all events ≤ Dec 2022 — verified).
+
+Related mechanical rule adopted 2026-07-18 (same failure mode, before any
+verdicts were aggregated): parent-name Tier A rows are auto-accepted only
+under brand containment (recipient's own name carries the issuer's brand
+tokens); all others were demoted to individual blind verification. Code:
+`docs/recipient-trade-curation-2026-07-18/brand-split.ts`.
+
+Full audit trail at `docs/recipient-trade-curation-2026-07-18/`: blind
+worklist (427 rows), tier split, brand split, per-row verdicts including all
+30 REJECTs and reasons, the 20 manual holds with overridden SAM.gov parent +
+corrected ticker + event evidence, and the assembly script that reconciled
+427 → 377 confirms + 20 corrections + 30 rejects with zero unaccounted rows.
+
+Known limitation (asymmetric correction coverage): corrections were only
+discoverable for recipients whose STALE ticker was roster-traded — that is
+what surfaced them on the worklist. A recipient whose stale parent maps to a
+non-traded ticker but whose true post-event parent IS roster-traded never
+surfaced and remains unconfirmed. This is a recall gap, not an
+outcome-correlated selection: registry staleness has no plausible dependence
+on the member↔district pairing, so shuffle exchangeability is preserved.
+Corpus-wide staleness re-scan is v2 work, not a launch gate.

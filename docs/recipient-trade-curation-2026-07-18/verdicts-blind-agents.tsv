@@ -1,0 +1,41 @@
+403e9dd0-77f7-a96a-2bb4-ae8b4972ca0e-C	ACCEPT	Medtronic Inc is the SEC issuer of ticker MDT, own-name match
+41694631-0b0f-72ed-221b-29193c88f0d2-C	ACCEPT	Optum Public Sector Solutions is a subsidiary of UnitedHealth Group (UNH), confirmed via Optum Business federal-govt org pages
+42d0eda5-ff47-11c7-c37b-d7ee447896f3-C	ACCEPT	Medtronic USA Inc is a direct operating subsidiary of Medtronic Inc, ticker MDT
+437688b7-6fc2-8c51-1405-9477da96649c-C	ACCEPT	STERIS Corporation is the operating subsidiary of STERIS plc, SEC issuer of ticker STE
+43ff1ec9-50e5-1d35-a392-44e72080802d-C	ACCEPT	MHN Government Services is part of Health Net Federal Services, a wholly-owned Centene (CNC) subsidiary per Centene investor press release
+47d067a1-f961-09ca-7b41-dbd318aced0c-C	REJECT	Rome Research Corp was sold by PAR Technology to NexTech Solutions, closed July 1 2024; parent link to PAR (PAR) is stale per PAR/NexTech press releases
+47fdfa4e-1d2c-ce21-54b8-922832ac22b2-C	MANUAL:LHX	L3Harris Technologies is the SEC issuer itself (ticker LHX); ITT sold its Exelis defense unit to Harris in 2015, so ITT is not the current parent/issuer
+49e0dd6d-3903-1f22-009c-e32a560b8ee0-C	ACCEPT	Stryker Corporation is the SEC issuer of ticker SYK, own-name match
+4ca161f0-b346-caf7-d8b5-fbc0618a124c-C	ACCEPT	Huntsman International LLC is the primary operating subsidiary of Huntsman Corporation, ticker HUN
+5045cd4a-6b25-9e0a-5d1b-3a9559fadb93-C	ACCEPT	Fluor Enterprises Inc is a wholly-owned operating subsidiary of Fluor Corporation, ticker FLR
+5186820c-4018-c1ac-5cf3-c5ecd52bcc0c-C	ACCEPT	Praxair Inc became indirect wholly-owned subsidiary of Linde plc (LIN) via 2018 SEC-documented merger
+521de427-4f94-2745-b4c8-ea4476918426-C	MANUAL:UNH	Change Healthcare was acquired by Optum/UnitedHealth Group (UNH) in 2022; McKesson (MCK) parent listing is stale
+549302b4-4569-6c1e-ab19-17406ede8abb-C	ACCEPT	ProVation Software was acquired by Fortive Corp (FTV) from Clearlake Capital, closed Dec 27 2021 per Fortive press release
+54b343cd-3a19-9758-8e57-f6a5ccdca521-C	ACCEPT	Filmetrics Inc is a wholly-owned subsidiary of KLA Corporation, ticker KLAC
+54c8ba75-dd0e-3313-b4ee-ae6ab2bf0e7a-C	ACCEPT	Comcast Cable Communications LLC is the core operating subsidiary of Comcast Corporation, ticker CMCSA
+562c90b3-76d8-b70e-8093-05abbb229af2-C	ACCEPT	Grifols USA LLC is the US operating subsidiary of Grifols S.A., ADR ticker GRFS
+570ab1f2-bb15-a348-974e-d4831a078687-C	ACCEPT	McKesson Medical-Surgical Inc is a wholly-owned operating subsidiary of McKesson Corporation, ticker MCK
+6035ac32-2b3f-238d-e1a6-17d8befa32b1-C	ACCEPT	Fluor Enterprises Inc is a wholly-owned operating subsidiary of Fluor Corporation, ticker FLR
+62e141b3-4887-5b39-6b75-eace9326395c-C	ACCEPT	RTX Corporation is the SEC issuer of ticker RTX, own-name match
+6375e792-cbcd-e4ee-a325-2b1d72995cd6-C	ACCEPT	Stryker Sales LLC is a wholly-owned operating subsidiary of Stryker Corporation, ticker SYK
+64f84c6a-3ec2-0244-a2e5-bcc7e4a5a2ca-C	REJECT	American Systems Corporation is an unrelated privately-held IT services firm; AIG ticker belongs to American International Group, no corporate link
+65785d90-d79f-6121-31ae-04c65ee4f318-C	ACCEPT	Stryker Sales LLC is a wholly-owned operating subsidiary of Stryker Corporation, ticker SYK
+6733d324-9431-4347-c402-8bde64bd97e3-C	ACCEPT	Linde Advanced Material Technologies is part of the Linde plc (LIN) corporate family per Linde/Praxair SEC merger filings
+67427090-de5a-3f91-7f50-f1c349c27dda-C	ACCEPT	Linde Engineering North America LLC operates under Linde plc (LIN), consistent with Linde North America Inc corporate structure post-2018 merger
+6886d17f-6f9c-740a-e4ed-1a5f341492cb-C	ACCEPT	Azenta US Inc is the operating subsidiary of Azenta Inc, renamed from Brooks Automation to ticker AZTA in Dec 2021
+b942a813-cf16-3577-afb8-6e20ea3078f6-C	ACCEPT	Howmedica Osteonics acquired by Stryker 1998, ongoing wholly-owned subsidiary, ticker SYK
+c3413d6d-75a8-a9eb-ca67-ca4debbb94a3-C	ACCEPT	Fluor Intercontinental Inc is SEC-confirmed wholly-owned subsidiary of Fluor Corporation, ticker FLR
+c81228a6-de4a-cda8-b887-15e209431fef-C	ACCEPT	Cintas Corporation No. 2 is SEC-confirmed subsidiary of Cintas Corporation, ticker CTAS
+c90c2205-c1a1-7671-ce14-decf86061294-C	ACCEPT	Teleflex Medical Incorporated per SEC subsidiary listing of Teleflex Incorporated, ticker TFX
+d27246e8-024c-7149-d961-1edfd05c2a44-C	ACCEPT	Arrow International acquired by Teleflex 2007 ($2B), still subsidiary, ticker TFX
+d91f6bf5-043f-8df8-fd93-90cc71696bd3-C	ACCEPT	SPX Aids to Navigation OY is a current subsidiary of SPX Technologies, ticker SPXC
+dbce5398-89aa-55e3-1b2c-87d60e4d408b-C	ACCEPT	SPTS Technologies part of KLA Corporation via 2019 Orbotech acquisition, ticker KLAC
+c99a1fdd-2c4a-0a33-4a08-bcde0bfac664-C	REJECT	Aesynt was sold by McKesson to Francisco Partners in 2013; no longer a McKesson subsidiary — stale SAM.gov parent
+d08dc12d-6186-9227-958f-53808fe39ca3-C	ACCEPT	Linde Gas & Equipment Inc is a Linde plc (LIN) operating subsidiary
+f58d2354-9d87-e9d7-c90c-089c6ba9816f-C	REJECT	Peraton is privately owned by Veritas Capital, not ITT; ITT connection is historical lineage only — stale SAM.gov parent
+f599f0f7-f59e-fb70-4042-cf41d063621d-C	ACCEPT	Sony Biotechnology is wholly-owned via Sony Corporation of America chain, Sony Group Corp ADR ticker SONY
+f79fd35f-2df2-c088-b484-ee4ba8b764c4-C	REJECT	Messer was divested FROM Linde/Praxair to Messer Group/CVC in 2019 antitrust remedy; no longer Linde-owned — stale SAM.gov parent
+fb7fd509-5fe8-ec41-aa86-51924720c5be-C	REJECT	Atmosphere Commercial Interiors sold by Target in 2015 to Omni Workspace; no longer a Target subsidiary — stale SAM.gov parent
+9869839a-619f-9824-74c8-972f881dd6f4-C	REJECT	Peraton is privately owned by Veritas Capital, not ITT (Harris govt-IT spinoff 2017); stale SAM.gov parent
+b80388f7-eb04-5a87-a089-b8555ed646c2-C	REJECT	BlackRock Industries LLC is an unrelated construction/engineering contractor; no corporate link to BlackRock Inc (BLK)
+3d1c24f2-aa60-5560-2dba-3e8c5d2cc5bc-C	REJECT	HEAT Software merged into Ivanti (private, Clearlake-owned) in 2017; no relationship to Fortive — false SAM.gov parent

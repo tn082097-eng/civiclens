@@ -1,0 +1,186 @@
+3M COMPANY		MMM	ACCEPT	3M Company is the SEC issuer of ticker MMM (own name)
+ABBOTT MOLECULAR INC.	ABBOTT LABORATORIES	ABT	ACCEPT	Abbott Molecular is a wholly-owned Abbott Laboratories (ABT) diagnostics subsidiary
+ABBOTT RAPID DIAGNOSTICS INFORMATICS, INC	ABBOTT LABORATORIES	ABT	ACCEPT	Abbott Rapid Diagnostics informatics unit (ex-Alere), Abbott (ABT) subsidiary since 2017 Alere acquisition
+ABBOTT RAPID DX NORTH AMERICA LLC	ABBOTT LABORATORIES	ABT	ACCEPT	Abbott Rapid Dx (ex-Alere) is an Abbott Laboratories (ABT) rapid-diagnostics subsidiary
+ABBVIE US LLC		ABBV	ACCEPT	AbbVie US LLC is AbbVie Inc's (ABBV) principal US operating subsidiary
+ACCENTURE LLP		ACN	ACCEPT	Accenture LLP is Accenture plc's (ACN) US operating partnership
+ACCLARENT, INC	JOHNSON & JOHNSON	JNJ	REJECT	J&J sold Acclarent to Integra LifeSciences (closed Apr 2024) — ownership changed mid-window, stale SAM.gov parent
+ADM RICE INC	ARCHER-DANIELS-MIDLAND COMPANY	ADM	ACCEPT	ADM Rice Inc is an Archer-Daniels-Midland (ADM) subsidiary per SAM.gov hierarchy
+ADVANTEST AMERICA, INC		ATEYY	ACCEPT	Advantest America is the US subsidiary of Advantest Corporation (ADR ATEYY)
+AEROCONTROLEX GROUP, INC.	TRANSDIGM GROUP INCORPORATED	TDG	ACCEPT	AeroControlex Group is a long-held TransDigm (TDG) operating unit
+AHMIC AEROSPACE LLC	TRANSDIGM GROUP INCORPORATED	TDG	REJECT	Ahmic Aerospace acquired by CUBRC (private) Apr 2024; no TransDigm ownership in public record — stale/incorrect SAM.gov parent
+ALABAMA POWER COMPANY	SOUTHERN CO SERVICES INC	SO	ACCEPT	Alabama Power is a Southern Company (SO) regulated utility subsidiary
+ALERE SAN DIEGO, INC.	ABBOTT LABORATORIES	ABT	ACCEPT	Alere acquired by Abbott (ABT) Oct 2017; Alere San Diego is an Abbott unit
+ALLEGIANT AIR LLC	ALLEGIANT TRAVEL COMPANY	ALGT	ACCEPT	Allegiant Air LLC is the airline subsidiary of Allegiant Travel Company (ALGT)
+AMAZON WEB SERVICES, INC.	AMAZON.COM, INC.	AMZN	ACCEPT	AWS Inc is Amazon.com's (AMZN) cloud subsidiary
+AMERICAN TECHNOLOGY SOLUTIONS INTERNATIONAL CORP		AIG	REJECT	Unrelated private government-services firm; AIG is American International Group — name-token collision only
+AMO SALES AND SERVICE, INC.	ABBOTT LABORATORIES	ABT	MANUAL:JNJ	Abbott Medical Optics sold to Johnson & Johnson Feb 2017 ($4.3B); AMO entities are J&J Surgical Vision (JNJ) — SAM.gov parent stale
+APRIA HEALTHCARE LLC	BLACKSTONE INC.	BX	MANUAL:OMI	Apria acquired by Owens & Minor (OMI) Mar 2022; Blackstone parent stale
+ARRAY USA, INC.		ARRY	REJECT	No public record tying Array USA Inc to Array Technologies (ARRY); federal 'Array' contractor is Array Information Technology (CGI-owned since 2021) — collision, reject on doubt
+ASCO POWER SERVICES INC	VERTIV CORP	VRT	REJECT	ASCO Power sold by Vertiv to Schneider Electric Nov 2017 ($1.25B); Vertiv parent stale
+AURIS HEALTH, INC	JOHNSON & JOHNSON	JNJ	ACCEPT	Auris Health acquired by Johnson & Johnson (JNJ) 2019
+AVAGO TECHNOLOGIES US INC	BROADCOM INC.	AVGO	ACCEPT	Avago Technologies US is a Broadcom Inc (AVGO) legal-lineage subsidiary
+AVIONIC INSTRUMENTS LLC	TRANSDIGM GROUP INCORPORATED	TDG	ACCEPT	Avionic Instruments LLC is a TransDigm (TDG) operating unit
+AVIS RENT A CAR SYSTEM, LLC	AVIS BUDGET GROUP, INC.	CAR	ACCEPT	Avis Rent A Car System is Avis Budget Group's (CAR) core operating subsidiary
+B9 SELECT RESI VA OWNER LLC	RYMAN HOSPITALITY PROPERTIES, INC.	RHP	REJECT	Entity is the Residence Inn Arlington Capital View SPE with Blackstone-style B9 naming; no public record of Ryman (RHP) ownership — reject on doubt
+BHR OPERATIONS, L.L.C.	RLJ LODGING TRUST	RLJ	ACCEPT	SAM.gov-registered parent RLJ Lodging Trust (RLJ); FelCor/BHR TRS lessee entities passed to RLJ in the 2017 merger; no contrary record
+BIOMARK LLC	MERCK & CO., INC.	MRK	ACCEPT	Biomark (PIT-tag maker) acquired by Merck Animal Health (Merck & Co, MRK) 2021
+BRANTNER AND ASSOCIATES, INC.	TE CONNECTIVITY LTD.	TEL	ACCEPT	Brantner & Associates (SEACON) acquired by TE Connectivity (TEL) 2017
+BRUINS LESSEE LLC	PEBBLEBROOK HOTEL TRUST	PEB	ACCEPT	SAM.gov-registered parent Pebblebrook Hotel Trust (PEB) TRS lessee entity; no contrary record
+CAREMARK RX, L.L.C.	CVS HEALTH CORPORATION	CVS	ACCEPT	Caremark Rx is CVS Health's (CVS) PBM subsidiary
+CARRIER CORPORATION	RTX CORP	RTX	MANUAL:CARR	Carrier spun off from United Technologies Apr 2020 as Carrier Global (CARR); RTX parent stale
+CARRIER ENTERPRISE, LLC	WATSCO, INC.	WSO	ACCEPT	Carrier Enterprise is Watsco's (WSO) majority-owned (80%) JV distribution subsidiary per Watsco 10-K
+CDA INTERCORP LLC	TRANSDIGM GROUP INCORPORATED	TDG	ACCEPT	CDA InterCorp acquired by TransDigm (TDG) 2022
+CEB INC.	GARTNER, INC.	IT	ACCEPT	CEB acquired by Gartner (IT) 2017
+CHANGE HEALTHCARE OPERATIONS, LLC	MCKESSON CORPORATION	MCK	MANUAL:UNH	Change Healthcare acquired by Optum/UnitedHealth Group (UNH) Oct 2022; McKesson parent stale
+CHSP TRS FISHERMAN WHARF LLC	PARK HOTELS & RESORTS INC.	PK	ACCEPT	Chesapeake Lodging (CHSP) acquired by Park Hotels & Resorts (PK) 2019; TRS entity under PK
+CINTAS CORPORATION		CTAS	ACCEPT	Cintas Corporation is the SEC issuer of ticker CTAS (own name)
+CIPHERTRACE INC	MASTERCARD INCORPORATED	MA	ACCEPT	CipherTrace acquired by Mastercard (MA) 2021
+CITIBANK, N.A.	CITIGROUP INC.	C	ACCEPT	Citibank NA is Citigroup's (C) national bank subsidiary
+CITIBANK, NATIONAL ASSOCIATION	CITIGROUP INC.	C	ACCEPT	Citibank NA is Citigroup's (C) national bank subsidiary
+CLARIS INTERNATIONAL INC.	APPLE INC.	AAPL	ACCEPT	Claris International (FileMaker) is Apple's (AAPL) wholly-owned software subsidiary
+COINBASE INC	COINBASE GLOBAL  INC	COIN	ACCEPT	Coinbase Inc is the operating subsidiary of SEC issuer Coinbase Global (COIN)
+COMCAST CABLE COMMUNICATIONS, LLC	COMCAST CORPORATION	CMCSA	ACCEPT	Comcast Cable Communications LLC is Comcast Corporation's (CMCSA) core cable subsidiary
+COMCAST CABLE COMMUNICATIONS MANAGEMENT LLC	COMCAST CORPORATION	CMCSA	ACCEPT	Comcast Cable Communications Management is a Comcast Corporation (CMCSA) subsidiary
+COMMONWEALTH EDISON CO	EXELON CORPORATION	EXC	ACCEPT	ComEd is Exelon's (EXC) Illinois regulated utility
+CONCUR TECHNOLOGIES, INC.	SAP SE	SAP	ACCEPT	Concur acquired by SAP SE (SAP) 2014; blind QA check concurred
+CREATIVE SYSTEMS AND CONSULTING L.L.C.	ICF INTERNATIONAL, INC.	ICFI	ACCEPT	Creative Systems & Consulting acquired by ICF International (ICFI) Dec 2021
+CSR INC.	CVS HEALTH CORPORATION	CVS	ACCEPT	SAM.gov-registered parent CVS Health (CVS); no contrary public record
+DEERE & COMPANY		DE	ACCEPT	Deere & Company is the SEC issuer of ticker DE (own name)
+DEPUY SYNTHES SALES INC	JOHNSON & JOHNSON	JNJ	ACCEPT	DePuy Synthes is Johnson & Johnson's (JNJ) orthopaedics franchise
+DEPUY SYNTHES SALES, INC.	JOHNSON & JOHNSON	JNJ	ACCEPT	DePuy Synthes is Johnson & Johnson's (JNJ) orthopaedics franchise
+DERCO AEROSPACE, INC.	RTX CORP	RTX	MANUAL:LMT	Derco is part of Sikorsky; Sikorsky sold by UTC to Lockheed Martin (LMT) Jul 2015 — RTX parent stale
+DESCARTES SYSTEMS USA LLC		DSGX	ACCEPT	Descartes Systems USA is the US subsidiary of Descartes Systems Group (DSGX)
+DJONT/JPM HOSPITALITY LEASING (SPE), L.L.C.	RLJ LODGING TRUST	RLJ	ACCEPT	DJONT is a FelCor lessee entity under RLJ Lodging Trust (RLJ) since the 2017 merger; SAM.gov-registered parent
+DOMINION PRIVATIZATION VIRGINIA, LLC	DOMINION ENERGY, INC.	D	ACCEPT	Dominion Energy (D) privatization subsidiary; SAM.gov-registered parent, no contrary record
+EATON CORPORATION		ETN	ACCEPT	Eaton Corporation is the US operating entity of SEC issuer Eaton Corporation plc (ETN)
+ELSEVIER B.V.	RELX PLC	RELX	ACCEPT	Elsevier is RELX plc's (RELX) scientific publishing division
+ENCORE MEDICAL, L.P.	BLACKSTONE INC.	BX	MANUAL:ENOV	Encore Medical (DJO) sold by Blackstone to Colfax Feb 2019; DJO is now Enovis (ENOV) — BX parent stale
+ENERGY SYSTEMS GROUP, LLC	CENTERPOINT ENERGY, INC.	CNP	REJECT	Sold by CenterPoint to Oaktree-affiliate ESG Holdings Q3 2023 (~$160M) — CNP owned only a fraction of the window, stale
+EXTRA SPACE MANAGEMENT, INC.	EXTRA SPACE STORAGE INC.	EXR	ACCEPT	Extra Space Management is Extra Space Storage's (EXR) management subsidiary
+FASTENAL COMPANY		FAST	ACCEPT	Fastenal Company is the SEC issuer of ticker FAST (own name)
+FEI COMPANY	THERMO FISHER SCIENTIFIC INC.	TMO	ACCEPT	FEI acquired by Thermo Fisher Scientific (TMO) 2016
+FELCOR UNION SQUARE LESSEE, LLC	RLJ LODGING TRUST	RLJ	ACCEPT	FelCor lessee entity under RLJ Lodging Trust (RLJ) since the 2017 merger
+FISHER SCIENTIFIC COMPANY L.L.C.	THERMO FISHER SCIENTIFIC INC.	TMO	ACCEPT	Fisher Scientific is a core Thermo Fisher Scientific (TMO) subsidiary
+FLOWERS BAKING CO OF DENTON, LLC	FLOWERS FOODS INC	FLO	ACCEPT	Flowers Baking Co of Denton is a Flowers Foods (FLO) subsidiary
+FLUOR FEDERAL PETROLEUM OPERATIONS, LLC	FLUOR CORPORATION	FLR	ACCEPT	Fluor Federal Petroleum Operations is a wholly-owned Fluor Corporation (FLR) subsidiary
+FLUOR FEDERAL SERVICES INC	FLUOR CORPORATION	FLR	ACCEPT	Fluor Federal Services is a wholly-owned Fluor Corporation (FLR) subsidiary
+GALLATIN RIVER COMMUNICATIONS, L.L.C.	LUMEN TECHNOLOGIES, INC	LUMN	ACCEPT	Gallatin River Communications is a legacy CenturyTel ILEC under Lumen Technologies (LUMN)
+GEIGER INTERNATIONAL INC	MILLERKNOLL INC	MLKN	ACCEPT	Geiger is a Herman Miller brand under MillerKnoll (MLKN)
+GITHUB INC	MICROSOFT CORPORATION	MSFT	ACCEPT	GitHub acquired by Microsoft (MSFT) 2018
+GOODRICH ACTUATION SYSTEMS LIMITED	RTX CORP	RTX	ACCEPT	Collins Aerospace (RTX) actuation unit for ~86% of CY2023-25; Safran acquisition closed 21 Jul 2025 near window end
+GOODRICH CORPORATION	RTX CORP	RTX	ACCEPT	Goodrich Corporation is a Collins Aerospace legacy entity, current RTX subsidiary
+GRIMES AEROSPACE COMPANY	HONEYWELL INTERNATIONAL INC.	HON	ACCEPT	Grimes Aerospace is Honeywell (HON) aerospace lighting via the AlliedSignal lineage
+GRIMES AEROSPACE COMPANY	HONEYWELL INTERNATIONAL INC	HON	ACCEPT	Grimes Aerospace is Honeywell (HON) aerospace lighting via the AlliedSignal lineage
+GULFSTREAM AEROSPACE CORPORATION	GENERAL DYNAMICS CORP	GD	ACCEPT	Gulfstream is General Dynamics' (GD) business-jet subsidiary
+HAMILTON SUNDSTRAND CORPORATION	RTX CORP	RTX	ACCEPT	Hamilton Sundstrand is a Collins Aerospace legacy entity, current RTX subsidiary
+HONEYWELL INC		HON	ACCEPT	Honeywell Inc is the legacy entity within Honeywell International (HON)
+IAN EVAN & ALEXANDER CORP	BOOZ ALLEN HAMILTON HOLDING CORPORATION	BAH	ACCEPT	SAM.gov-registered parent Booz Allen Hamilton (BAH); no contrary public record
+IDSC HOLDINGS LLC	SNAP-ON INCORPORATED	SNA	ACCEPT	SAM.gov-registered parent Snap-on (SNA); no contrary public record
+INCENTIVE TECHNOLOGY GROUP LLC	ICF INTERNATIONAL, INC.	ICFI	ACCEPT	Incentive Technology Group acquired by ICF International (ICFI) Jan 2020
+JACKSON LABS TECHNOLOGIES, INC.	VIAVI SOLUTIONS INC.	VIAV	ACCEPT	Jackson Labs Technologies acquired by Viavi Solutions (VIAV) Jan 2023
+KBR WYLE SERVICES, LLC	HONEYWELL INTERNATIONAL INC	HON	MANUAL:KBR	KBR acquired Honeywell Technology Solutions (HTSI) 2016 forming KBRwyle; entity is a KBR Inc (KBR) subsidiary — HON parent stale
+KFT FIRE TRAINER LLC	RTX CORP	RTX	REJECT	KFT (ex-Kidde Fire Trainers) sold to Keystone Capital 2015, management-owned since 2020 — UTC/RTX parent long stale
+KLA CORPORATION		KLAC	ACCEPT	KLA Corporation is the SEC issuer of ticker KLAC (own name)
+KNOLL, INC.	MILLERKNOLL INC	MLKN	ACCEPT	Knoll merged into MillerKnoll (MLKN) 2021
+LEXISNEXIS RISK SOLUTIONS FL INC.	RELX PLC	RELX	ACCEPT	LexisNexis Risk Solutions is a RELX plc (RELX) division
+LEXISNEXIS RISK SOLUTIONS INC	RELX PLC	RELX	ACCEPT	LexisNexis Risk Solutions is a RELX plc (RELX) division
+LEXISNEXIS SPECIAL SERVICES INC	RELX PLC	RELX	ACCEPT	LexisNexis Special Services is a RELX plc (RELX) subsidiary
+LIFE TECHNOLOGIES CORPORATION	THERMO FISHER SCIENTIFIC INC.	TMO	ACCEPT	Life Technologies acquired by Thermo Fisher Scientific (TMO) 2014
+LINK2GOV, LLC	FIDELITY NATIONAL INFORMATION SERVICES, INC.	FIS	ACCEPT	Link2Gov is FIS's (FIS) government payments unit via the Metavante lineage
+L. L. ROWE COMPANY	TE CONNECTIVITY LTD.	TEL	ACCEPT	SAM.gov-registered parent TE Connectivity (TEL); no contrary public record
+LNRS DATA SERVICES INC	RELX PLC	RELX	ACCEPT	LNRS (LexisNexis Risk Solutions) Data Services is a RELX plc (RELX) subsidiary
+LOCKHEED MISSILES & SPACE COMP	LOCKHEED MARTIN CORP	LMT	ACCEPT	Lockheed Missiles & Space is a legacy Lockheed Martin (LMT) entity
+LUMASENSE TECHNOLOGIES, INC	ADVANCED ENERGY INDUSTRIES INC	AEIS	ACCEPT	LumaSense acquired by Advanced Energy Industries (AEIS) 2018
+LUMEN SOLUTIONS GROUP INC		LUMN	REJECT	Unrelated consulting/staffing firm; not Lumen Technologies — name collision (blind-agent finding)
+MACOM TECHNOLOGY SOLUTIONS INC.		MTSI	ACCEPT	MACOM Technology Solutions Inc is the operating company of SEC issuer MACOM (MTSI)
+MARRIOTT INTERNATIONAL INC	RYMAN HOSPITALITY PROPERTIES, INC.	RHP	MANUAL:MAR	Marriott International is SEC issuer MAR; Ryman owns Gaylord properties Marriott manages — SAM.gov registration reflects the property, not the corporate parent
+MARRIOTT INTERNATIONAL, INC.	RYMAN HOSPITALITY PROPERTIES, INC.	RHP	MANUAL:MAR	Marriott International is SEC issuer MAR; Ryman owns Gaylord properties Marriott manages — SAM.gov registration reflects the property, not the corporate parent
+MCI COMMUNICATIONS SERVICES LLC	VERIZON COMMUNICATIONS INC	VZ	ACCEPT	MCI Communications Services is Verizon Business (VZ); blind QA check concurred
+MCKESSON CORPORATION		MCK	ACCEPT	McKesson Corporation is the SEC issuer of ticker MCK (own name)
+MCKESSON MEDICAL-SURGICAL GOVERNMENT SOLUTIONS LLC	MCKESSON CORPORATION	MCK	ACCEPT	McKesson Medical-Surgical Government Solutions is a wholly-owned McKesson (MCK) subsidiary
+MCKESSON PLASMA AND BIOLOGICS LLC	MCKESSON CORPORATION	MCK	ACCEPT	McKesson Plasma and Biologics is a wholly-owned McKesson (MCK) subsidiary
+MEARS GROUP INC	QUANTA SERVICES, INC.	PWR	ACCEPT	Mears Group is a Quanta Services (PWR) pipeline-services subsidiary
+MEDICAL SPECIALTIES INC	HCA HEALTHCARE, INC.	HCA	ACCEPT	SAM.gov-registered parent HCA Healthcare (HCA); no contrary public record
+MEDTRONIC USA, INC.		MDT	ACCEPT	Medtronic USA is a direct operating subsidiary of Medtronic (MDT)
+MENTOR WORLDWIDE LLC	JOHNSON & JOHNSON	JNJ	ACCEPT	Mentor Worldwide is a Johnson & Johnson (JNJ) MedTech subsidiary
+MICROGENICS CORPORATION	THERMO FISHER SCIENTIFIC INC.	TMO	ACCEPT	Microgenics is a Thermo Fisher Scientific (TMO) diagnostics subsidiary
+MICROSOFT CORPORATION		MSFT	ACCEPT	Microsoft Corporation is the SEC issuer of ticker MSFT (own name)
+MITCHELL REPAIR INFORMATION CO LLC	SNAP-ON INCORPORATED	SNA	ACCEPT	Mitchell1 (Mitchell Repair Information) is Snap-on's (SNA) repair-information unit
+NATIONAL STEEL AND SHIPBUILDING COMPANY	GENERAL DYNAMICS CORP	GD	ACCEPT	NASSCO is General Dynamics' (GD) shipyard subsidiary
+NICE SYSTEMS INC		NICE	ACCEPT	NICE Systems Inc is the US subsidiary of SEC issuer NICE Ltd (NICE)
+NORESCO, LLC	RTX CORP	RTX	REJECT	Noresco left the UTC/RTX group with the Apr 2020 Carrier spinoff — RTX parent stale
+NORTHERN ILLINOIS GAS COMPANY	SOUTHERN CO SERVICES INC	SO	ACCEPT	Nicor Gas is part of Southern Company Gas (SO) since the 2016 AGL merger
+NORTHERN STATES POWER COMPANY	XCEL ENERGY INC.	XEL	ACCEPT	Northern States Power is an Xcel Energy (XEL) regulated utility
+NUVASIVE CLINICAL SERVICES MONITORING, INC.	GLOBUS MEDICAL, INC.	GMED	REJECT	NuVasive merged into Globus Medical Sep 2023 — ownership split NUVA/GMED across the window, no single issuer for >=80% of it
+OGILVY PUBLIC RELATIONS WORLDWIDE LLC	WPP PLC	WPP	ACCEPT	Ogilvy PR is a WPP plc (WPP) agency
+ON-X LIFE TECHNOLOGIES INC.	ARTIVION, INC	AORT	ACCEPT	On-X Life Technologies is Artivion's (AORT) heart-valve unit via the 2016 CryoLife acquisition
+OPTUM INFUSION SERVICES 308, LLC	UNITEDHEALTH GROUP INCORPORATED	UNH	ACCEPT	Optum Infusion Services is an Optum/UnitedHealth Group (UNH) subsidiary
+OPTUM PHARMACY 801, INC.	UNITEDHEALTH GROUP INCORPORATED	UNH	ACCEPT	Optum Pharmacy is an Optum/UnitedHealth Group (UNH) subsidiary
+ORACLE AMERICA, INC		ORCL	ACCEPT	Oracle America is Oracle Corporation's (ORCL) principal US operating subsidiary
+OTIS ELEVATOR COMPANY	RTX CORP	RTX	MANUAL:OTIS	Otis spun off from United Technologies Apr 2020 as Otis Worldwide (OTIS); RTX parent stale
+PACIFIC BELL TELEPHONE COMPANY	AT&T INC.	T	ACCEPT	Pacific Bell is an AT&T Inc (T) incumbent local exchange carrier
+PANJIVA, INC	S&P GLOBAL INC.	SPGI	ACCEPT	Panjiva acquired by S&P Global (SPGI) 2018
+PERFORMANCE EQUITY MANAGEMENT, LLC	GENERAL MOTORS COMPANY	GM	REJECT	PEM is an independent PE firm spun out of GM's investment arm (~2005); no current GM ownership in public record
+PERSONNEL DECISIONS RESEARCH INSTITUTES, LLC	GARTNER, INC.	IT	REJECT	PDRI sold by Gartner to SHL ~2019 — Gartner (IT) parent stale
+PETROLEUM ANALYZER CO L.P	ROPER TECHNOLOGIES, INC.	ROP	REJECT	Roper divested its industrial businesses incl. PAC to CD&R's Indicor Nov 2022 — ROP parent stale
+PHYSIO-CONTROL INC	STRYKER CORPORATION	SYK	ACCEPT	Physio-Control acquired by Stryker (SYK) 2016
+PORTFOLIO MEDIA INC	RELX PLC	RELX	ACCEPT	Portfolio Media (Law360) is a LexisNexis/RELX plc (RELX) subsidiary
+PROQUEST LLC	CLARIVATE PLC	CLVT	ACCEPT	ProQuest acquired by Clarivate (CLVT) Dec 2021
+PUBLIC SERVICE COMPANY OF COLORADO	XCEL ENERGY INC.	XEL	ACCEPT	PSCo is an Xcel Energy (XEL) regulated utility
+RAYTHEON COMPANY	RTX CORP	RTX	ACCEPT	Raytheon Company merged into Raytheon Technologies 2020; legacy entity is an RTX subsidiary
+RAYTHEON/LOCKHEED MARTIN JAVELIN JV	RTX CORP	RTX	ACCEPT	Javelin JV is co-owned by RTX and Lockheed Martin; RTX is the SAM.gov-registered parent — identity statement, not economic attribution
+REAL CAPITAL ANALYTICS, INC	MSCI INC	MSCI	ACCEPT	Real Capital Analytics acquired by MSCI (MSCI) 2021
+RELX INC.		RELX	ACCEPT	RELX Inc is the US entity of SEC issuer RELX plc (RELX)
+REMEL INC.	THERMO FISHER SCIENTIFIC INC.	TMO	ACCEPT	Remel is a Thermo Fisher Scientific (TMO) microbiology subsidiary
+REVOLVE SOLUTIONS LLC		RVLV	REJECT	Government consulting firm; Revolve Group (RVLV) is a fashion retailer — name collision
+RIVERSIDE ENGINEERING LLC	BOOZ ALLEN HAMILTON HOLDING CORPORATION	BAH	ACCEPT	SAM.gov-registered parent Booz Allen Hamilton (BAH); no contrary public record
+RLJ III - EM WEST PALM BEACH LESSEE, LLC	RLJ LODGING TRUST	RLJ	ACCEPT	RLJ III lessee entity under RLJ Lodging Trust (RLJ); SAM.gov-registered parent
+ROCKWELL COLLINS, INC.	RTX CORP	RTX	ACCEPT	Rockwell Collins is a Collins Aerospace legacy entity, current RTX subsidiary
+ROLLER BEARING COMPANY OF AMERICA, INC.	RBC BEARINGS INCORPORATED	RBC	ACCEPT	Roller Bearing Company of America is the principal operating subsidiary of RBC Bearings (RBC)
+RSA SECURITY LLC	DELL TECHNOLOGIES INC.	DELL	REJECT	RSA divested by Dell to Symphony Technology Group Sep 2020 — DELL parent stale
+SAP NATIONAL SECURITY SERVICES INC	SAP SE	SAP	ACCEPT	SAP NS2 is SAP SE's (SAP) US national-security subsidiary
+SAP PUBLIC SERVICES INC	SAP SE	SAP	ACCEPT	SAP Public Services is a SAP SE (SAP) subsidiary
+SBA SITE MANAGEMENT, LLC	SBA COMMUNICATIONS CORPORATION	SBAC	ACCEPT	SBA Site Management is an SBA Communications (SBAC) subsidiary
+SBA TOWERS II LLC	SBA COMMUNICATIONS CORPORATION	SBAC	ACCEPT	SBA Towers II is an SBA Communications (SBAC) tower subsidiary
+SBA TOWERS IV LLC	SBA COMMUNICATIONS CORPORATION	SBAC	ACCEPT	SBA Towers IV is an SBA Communications (SBAC) tower subsidiary
+SCOTT TECHNOLOGIES, INC.	JOHNSON CONTROLS, INC.	JCI	MANUAL:MMM	Scott Safety (Scott Technologies) sold by Johnson Controls to 3M (MMM) Oct 2017 — JCI parent stale
+SEATTLE UNION STREET ASSOCIATES	RYMAN HOSPITALITY PROPERTIES, INC.	RHP	REJECT	No public record of a Ryman (RHP) Seattle asset — reject on doubt
+SIKORSKY AIRCRAFT CORPORATION	RTX CORP	RTX	MANUAL:LMT	Sikorsky sold by United Technologies to Lockheed Martin (LMT) Jul 2015 — RTX parent stale
+SIKORSKY SUPPORT SERVICES INC	RTX CORP	RTX	MANUAL:LMT	Sikorsky sold by United Technologies to Lockheed Martin (LMT) Jul 2015 — RTX parent stale
+SIRCHIE ACQUISITION CO LLC	RAYMOND JAMES FINANCIAL  INC.	RJF	REJECT	Raymond James Capital's 2007 control long divested; Sirchie under PE ownership since mid-2010s — RJF parent stale
+SOLAR TURBINES INCORPORATED	CATERPILLAR INC.	CAT	ACCEPT	Solar Turbines is a wholly-owned Caterpillar (CAT) subsidiary
+SOLIPSYS CORPORATION	RTX CORP	RTX	ACCEPT	Solipsys is a Raytheon (RTX) subsidiary since 2003
+SOUTHWESTERN BELL TELEPHONE COMPANY	AT&T INC.	T	ACCEPT	Southwestern Bell is an AT&T Inc (T) incumbent local exchange carrier
+SPRINT COMMUNICATIONS CO LP	T-MOBILE US, INC.	TMUS	ACCEPT	Sprint merged into T-Mobile US (TMUS) Apr 2020
+SPX AIDS TO NAVIGATION, LLC	SPX CORPORATION	SPXC	ACCEPT	SPX Aids to Navigation is a current SPX Technologies (SPXC) subsidiary
+STANDARD & POOR'S FINANCIAL SERVICES LLC	S&P GLOBAL INC.	SPGI	ACCEPT	S&P Financial Services is S&P Global's (SPGI) ratings entity
+STARLIMS CORPORATION	ABBOTT LABORATORIES	ABT	REJECT	Abbott sold STARLIMS (Abbott Informatics) to Francisco Partners Jan 2021 — ABT parent stale
+STRYKER CORPORATION		SYK	ACCEPT	Stryker Corporation is the SEC issuer of ticker SYK (own name)
+STRYKER SALES, LLC	STRYKER CORPORATION	SYK	ACCEPT	Stryker Sales LLC is a wholly-owned Stryker (SYK) subsidiary
+SUPERIOR CARE PHARMACY, LLC	CVS HEALTH CORPORATION	CVS	ACCEPT	SAM.gov-registered parent CVS Health (CVS, Omnicare network); no contrary public record
+SYMMETRY ENERGY SOLUTIONS LLC	CENTERPOINT ENERGY, INC.	CNP	REJECT	CenterPoint sold its energy-services book (Symmetry) to Energy Capital Partners Jun 2020 — CNP parent stale
+TCI INTERNATIONAL, INC	SPX CORPORATION	SPXC	ACCEPT	TCI International is a wholly-owned SPX Technologies (SPXC) subsidiary
+TELEFLEX LLC		TFX	ACCEPT	Teleflex LLC is an operating entity of SEC issuer Teleflex Incorporated (TFX)
+TENNANT SALES AND SERVICE COMPANY	TENNANT COMPANY	TNC	ACCEPT	Tennant Sales and Service is Tennant Company's (TNC) distribution subsidiary
+TEREX CORPORATION		TEX	ACCEPT	Terex Corporation is the SEC issuer of ticker TEX (own name)
+THE ADVISORY BOARD COMPANY	UNITEDHEALTH GROUP INCORPORATED	UNH	ACCEPT	Advisory Board's healthcare business acquired by Optum/UnitedHealth (UNH) 2017
+THE LEWIN GROUP, INC.	UNITEDHEALTH GROUP INCORPORATED	UNH	ACCEPT	The Lewin Group is an Optum/UnitedHealth Group (UNH) research subsidiary
+THERMO EBERLINE LLC	THERMO FISHER SCIENTIFIC INC.	TMO	ACCEPT	Thermo Eberline is a Thermo Fisher Scientific (TMO) radiation-measurement unit
+THERMO ELECTRON NORTH AMERICA LLC	THERMO FISHER SCIENTIFIC INC.	TMO	ACCEPT	Thermo Electron North America is a Thermo Fisher Scientific (TMO) subsidiary
+THERMO SCIENTIFIC PORTABLE ANALYTICAL INSTRUMENTS INC.	THERMO FISHER SCIENTIFIC INC.	TMO	ACCEPT	Thermo Scientific PAI is a Thermo Fisher Scientific (TMO) subsidiary
+THOR SOLUTIONS LLC		THO	REJECT	Naval engineering firm; Thor Industries (THO) is an RV maker — name collision (blind-agent finding)
+VALLEY PROTEINS, LLC	DARLING INGREDIENTS INC	DAR	ACCEPT	Valley Proteins acquired by Darling Ingredients (DAR) May 2022
+VECTREN ENERGY DELIVERY OF OHIO, LLC	CENTERPOINT ENERGY, INC.	CNP	ACCEPT	Vectren merged into CenterPoint Energy (CNP) 2019; Ohio utility subsidiary
+VECTREN LLC	CENTERPOINT ENERGY, INC.	CNP	ACCEPT	Vectren merged into CenterPoint Energy (CNP) 2019
+VECTRUS SYSTEMS LLC	ITT CORPORATION	ITT	MANUAL:VVX	Vectrus (2014 Exelis spinoff) merged with Vertex Jul 2022 into V2X Inc (VVX); ITT parent stale
+VERIZON BUSINESS NETWORK SERVICES LLC	VERIZON COMMUNICATIONS INC	VZ	ACCEPT	Verizon Business Network Services is a Verizon Communications (VZ) subsidiary
+VERIZON FEDERAL INC.	VERIZON COMMUNICATIONS INC	VZ	ACCEPT	Verizon Federal is a Verizon Communications (VZ) subsidiary
+VERTIV CORPORATION		VRT	ACCEPT	Vertiv Corporation is the operating entity of SEC issuer Vertiv Holdings (VRT)
+VERTIV SERVICES, INC.		VRT	ACCEPT	Vertiv Services is a Vertiv Holdings (VRT) operating subsidiary
+VINDICATOR TECHNOLOGIES, INC.	HONEYWELL INTERNATIONAL INC	HON	ACCEPT	Vindicator Technologies is Honeywell's (HON) security-systems line
+VIRGINIA ELECTRIC AND POWER COMPANY	DOMINION ENERGY, INC.	D	ACCEPT	Virginia Electric and Power (Dominion Virginia Power) is Dominion Energy's (D) core utility
+WEYERHAEUSER COMPANY		WY	ACCEPT	Weyerhaeuser Company is the SEC issuer of ticker WY (own name)
+WICKR LLC	AMAZON.COM, INC.	AMZN	ACCEPT	Wickr acquired by AWS/Amazon (AMZN) 2021
+WIND RIVER SYSTEMS, INC.	INTEL CORPORATION	INTC	MANUAL:APTV	Intel sold Wind River to TPG 2018; Aptiv (APTV) acquired Wind River Dec 2022 — INTC parent stale
+YOUNG & RUBICAM LLC	WPP PLC	WPP	ACCEPT	Y&R (VML) is a WPP plc (WPP) agency

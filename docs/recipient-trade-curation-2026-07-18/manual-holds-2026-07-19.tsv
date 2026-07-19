@@ -1,0 +1,21 @@
+recipient_key	recipient_name	sam_parent	worklist_ticker	suggested	evidence
+07cec1ba-5444-1dd1-fc10-8a488f8d8170-C	AMO SALES AND SERVICE, INC.	ABBOTT LABORATORIES	ABT	JNJ	Abbott Medical Optics sold to Johnson & Johnson Feb 2017 ($4.3B); AMO entities are J&J Surgical Vision (JNJ) — SAM.gov parent stale
+0f4fc69f-90b0-3adc-8052-aaef04b55efa-C	CARRIER CORPORATION	RTX CORP	RTX	CARR	Carrier spun off from United Technologies Apr 2020 as Carrier Global (CARR); RTX parent stale
+14c92d76-9870-ace3-dbf2-431863daf0bd-C	KBR WYLE SERVICES, LLC	HONEYWELL INTERNATIONAL INC	HON	KBR	KBR acquired Honeywell Technology Solutions (HTSI) 2016 forming KBRwyle; entity is a KBR Inc (KBR) subsidiary — HON parent stale
+1aa2628c-1397-0a64-42fc-579340cc3882-C	SCOTT TECHNOLOGIES, INC.	JOHNSON CONTROLS, INC.	JCI	MMM	Scott Safety (Scott Technologies) sold by Johnson Controls to 3M (MMM) Oct 2017 — JCI parent stale
+385c148c-559c-6218-53ff-80836c64dc4c-C	VECTRUS SYSTEMS LLC	ITT CORPORATION	ITT	VVX	Vectrus (2014 Exelis spinoff) merged with Vertex Jul 2022 into V2X Inc (VVX); ITT parent stale
+3d6c62dd-afb7-6b62-76f9-0a803019320c-C	CHANGE HEALTHCARE OPERATIONS, LLC	MCKESSON CORPORATION	MCK	UNH	Change Healthcare acquired by Optum/UnitedHealth Group (UNH) Oct 2022; McKesson parent stale
+47fdfa4e-1d2c-ce21-54b8-922832ac22b2-C	L3HARRIS TECHNOLOGIES, INC	ITT CORPORATION	ITT	LHX	L3Harris Technologies is the SEC issuer itself (ticker LHX); ITT sold its Exelis defense unit to Harris in 2015, so ITT is not the current parent/issuer
+4b338935-1fe1-e136-3ef3-dbe01c516fbd-C	DERCO AEROSPACE, INC.	RTX CORP	RTX	LMT	Derco is part of Sikorsky; Sikorsky sold by UTC to Lockheed Martin (LMT) Jul 2015 — RTX parent stale
+5099e6a7-7a4e-921b-9375-d64b9383d38e-C	OTIS ELEVATOR COMPANY	RTX CORP	RTX	OTIS	Otis spun off from United Technologies Apr 2020 as Otis Worldwide (OTIS); RTX parent stale
+521de427-4f94-2745-b4c8-ea4476918426-C	CHANGE HEALTHCARE TECHNOLOGIES LLC	MCKESSON CORPORATION	MCK	UNH	Change Healthcare was acquired by Optum/UnitedHealth Group (UNH) in 2022; McKesson (MCK) parent listing is stale
+53ffa4ca-993b-c29c-d8d4-e8e916d4176b-C	MARRIOTT INTERNATIONAL INC	RYMAN HOSPITALITY PROPERTIES, INC.	RHP	MAR	Marriott International is SEC issuer MAR; Ryman owns Gaylord properties Marriott manages — SAM.gov registration reflects the property, not the corporate parent
+58465eb6-2fbe-cf76-0826-be3fa0af837b-C	SIKORSKY SUPPORT SERVICES INC	RTX CORP	RTX	LMT	Sikorsky sold by United Technologies to Lockheed Martin (LMT) Jul 2015 — RTX parent stale
+713cfd25-bd59-e2bc-6f5e-643305508622-C	WIND RIVER SYSTEMS, INC.	INTEL CORPORATION	INTC	APTV	Intel sold Wind River to TPG 2018; Aptiv (APTV) acquired Wind River Dec 2022 — INTC parent stale
+7a954f30-eada-36b9-2b45-2db412908b7a-C	SIKORSKY AIRCRAFT CORPORATION	RTX CORP	RTX	LMT	Sikorsky sold by United Technologies to Lockheed Martin (LMT) Jul 2015 — RTX parent stale
+84655a23-e9d4-3888-de97-8d9f8550c9f2-C	ENCORE MEDICAL, L.P.	BLACKSTONE INC.	BX	ENOV	Encore Medical (DJO) sold by Blackstone to Colfax Feb 2019; DJO is now Enovis (ENOV) — BX parent stale
+91b0761f-a2de-b7fd-1e40-b8988212371d-C	MARRIOTT INTERNATIONAL, INC.	RYMAN HOSPITALITY PROPERTIES, INC.	RHP	MAR	Marriott International is SEC issuer MAR; Ryman owns Gaylord properties Marriott manages — SAM.gov registration reflects the property, not the corporate parent
+c853e3df-73ca-57c7-e3a9-361b2dd12a0d-C	APRIA HEALTHCARE LLC	BLACKSTONE INC.	BX	OMI	Apria acquired by Owens & Minor (OMI) Mar 2022; Blackstone parent stale
+d64537c9-5482-dd40-cdd4-5cf07b66329d-C	SIKORSKY AIRCRAFT CORPORATION	RTX CORP	RTX	LMT	Sikorsky sold by United Technologies to Lockheed Martin (LMT) Jul 2015 — RTX parent stale
+d981737e-a58a-cdd8-c395-26255cd079ca-C	MARRIOTT INTERNATIONAL, INC.	RYMAN HOSPITALITY PROPERTIES, INC.	RHP	MAR	Marriott International is SEC issuer MAR; Ryman owns Gaylord properties Marriott manages — SAM.gov registration reflects the property, not the corporate parent
+fb7a25a1-ab68-1934-0232-150ecc357c99-C	CARRIER CORPORATION	RTX CORP	RTX	CARR	Carrier spun off from United Technologies Apr 2020 as Carrier Global (CARR); RTX parent stale
