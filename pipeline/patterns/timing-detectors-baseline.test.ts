@@ -102,15 +102,21 @@ test('evaluateVerdict: pooled 10% boundary and per-member >4/20 rule', () => {
     false,
     '5/20 on a single member fails despite low pool',
   );
-  // Pooled just over 10% -> FAIL. 2 members, 3+0 of 20 each = 3/40 = 7.5% pass;
-  // 5+0 of 20 -> but 5>4 fails on per-member. Build a pure pooled-fail:
-  // 3 members at 3/20 each = 9/60 = 15% pooled, none over 4 -> FAIL on pool.
+  // Pure pooled-fail with no per-member breach: 3 members at 3/20 each =
+  // 9/60 = 15% pooled, none over 4 -> FAIL on the pooled rule.
   assert.equal(
     evaluateVerdict([{ member: 'a', sig: 3 }, { member: 'b', sig: 3 }, { member: 'c', sig: 3 }], 20).pass,
     false,
     'pooled 15% fails on the pooled rule with no per-member breach',
   );
-  // Pooled exactly 10% (2/20 on one member of ten), none over 4 -> PASS.
+  // Pooled exactly 10% (4/20 on one member, one clean member -> 4/40 = 10%),
+  // and worst = 4 = PER_MEMBER_MAX -> PASS (both boundaries are inclusive).
+  assert.equal(
+    evaluateVerdict([{ member: 'a', sig: 4 }, { member: 'b', sig: 0 }], 20).pass,
+    true,
+    'pooled exactly 10% with worst=4/20 passes (inclusive boundaries)',
+  );
+  // Pooled 5% (2/40), none over 4 -> PASS.
   assert.equal(
     evaluateVerdict([{ member: 'a', sig: 2 }, { member: 'b', sig: 0 }], 20).pass,
     true,
