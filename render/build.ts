@@ -1205,7 +1205,12 @@ const EVIDENCE_ANCHOR: Record<string, string> = {
 
 // Pattern intensity (0..1) → existing weight-only visual tier from the visual
 // identity pass. No color affect; weight scales with substrate, not "badness".
-function patternIntensityClass(i: number): string {
+// Scored-null cap (docs/2026-07-20-timing-detectors-scoring.md): a flag scored
+// against the per-member null that is NOT significant (p >= 0.05) is capped at
+// the lowest weight tier — the DB `intensity` column stays untouched, the cap is
+// render-only. Unscored rows (p_value NULL/undefined) keep prior behavior.
+export function patternIntensityClass(i: number, pValue?: number | null): string {
+  if (pValue != null && pValue >= 0.05) return 'intensity-low';
   if (i >= 0.8) return 'intensity-high';
   if (i >= 0.6) return 'intensity-medium';
   return 'intensity-low';
@@ -1227,7 +1232,8 @@ const PATTERN_META: Record<string, { mechanism: string; caveat: string }> = {
   'spousal-trade-timing': {
     mechanism:
       'Flags trades held by a spouse or jointly, placed within 14 days before a vote on a ' +
-      "bill the member's committee handled.",
+      "bill the member's committee handled, then compares that count to a seeded permutation " +
+      "null built from the household's own trading pace.",
     caveat:
       'Spouse or joint accounts may be independently managed. CivicLens has no hearing ' +
       'calendar; committee jurisdiction is the relevance proxy.',
@@ -1388,7 +1394,7 @@ async function renderPatterns(memberSlug: string): Promise<string> {
       const statsHtml = conf.stats ? `<div class="fc-stats">${esc(conf.stats)}</div>` : '';
       const caveatHtml = meta ? `<div class="fc-caveat">What this doesn't show: ${esc(meta.caveat)}</div>` : '';
 
-      return `<div class="trade-card flag-card ${patternIntensityClass(intensity)}">
+      return `<div class="trade-card flag-card ${patternIntensityClass(intensity, r.p_value ?? null)}">
         <div class="tc-header">
           <div class="tc-asset">${esc(label)}</div>
           <div class="tc-meta">${esc(span)}</div>
@@ -2247,6 +2253,7 @@ async function buildMethodology(): Promise<void> {
   <ul>
     <li><strong>A flag is a measured pattern</strong> in the public record — never an accusation or a finding of wrongdoing.</li>
     <li><strong>Confidence comes from a permutation null model.</strong> For a scored detector, the observed count is compared against many shuffles of the member's <em>own</em> activity, holding their pace fixed. The p-value is the share of shuffles that match or exceed the observed count; a low p-value means the pattern is hard to produce by that member's ordinary behaviour alone.</li>
+    <li><strong>The timing detectors are scored against each member's own trading pace.</strong> The trade-vote and spousal-timing flags use a seeded per-member null — a volume-preserving date shuffle for high-volume traders, a calendar draw otherwise — so a member whose sheer trade count fills every window earns no signal from volume alone. A flag that scores at p ≥ 0.05 keeps rendering with explicit chance-level language and is visually capped at the lowest weight tier. The null does not model earnings-season or market-event clustering, so tightly-timed trades driven by public market events can still register. This scoring layer is pre-registered (statistic, null, thresholds, and seeds fixed in code before the run) in the project repository, docs/2026-07-20-timing-detectors-scoring.md.</li>
     <li><strong>Statistics are shown, never invented.</strong> Detectors that are not scored against a null model say so plainly and show only the count of cited records — no fabricated p-value.</li>
     <li><strong>Weight reflects evidence strength, not a verdict.</strong> Visual intensity on a flag card maps to the strength of the statistical signal; it carries no moral colour.</li>
     <li><strong>Everything is reproducible.</strong> The null model is seeded, so the same inputs yield the same scores. Every flag cites real rows you can verify in the sections above it.</li>
