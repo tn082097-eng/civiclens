@@ -67,13 +67,16 @@ export interface DistinctTrade {
 
 /**
  * Collapse trade×vote rows to distinct trades, keeping the best-scoring vote
- * per trade. Trade identity = filing_id + tx_date + tx_type + instrument
- * (tx_index isn't exposed by the view; this is the finest available key).
+ * per trade. Trade identity = filing_id + tx_date + tx_type + UPPER(instrument)
+ * (tx_index isn't exposed by the view; this is the finest available key). The
+ * instrument is uppercased in the KEY ONLY so a mixed-case ticker-less asset
+ * dedupes to one trade — the same spine the null scorer uses ("one spine, no
+ * drift"). The `instrument` field keeps its original case for rendered labels.
  */
 export function dedupeTrades(rows: TradeVoteRow[]): DistinctTrade[] {
   const byTrade = new Map<string, DistinctTrade>();
   for (const r of rows) {
-    const key = `${r.filing_id}|${r.tx_date}|${r.tx_type}|${r.instrument}`;
+    const key = `${r.filing_id}|${r.tx_date}|${r.tx_type}|${r.instrument.toUpperCase()}`;
     const days = Number(r.days_before_vote);
     const score = Number(r.score);
     const voteLabel = `Vote ${r.vote_date}: ${(r.bill_title ?? r.vote_question).slice(0, 80)}`;
