@@ -19,6 +19,7 @@ import { countNexus, type Trade, type NexusVote } from './patterns/_nexus.js';
 import { permutationTest, calendarDraw, volumeShuffleDraw } from './patterns/_permutation.js';
 import { mulberry32, seedFrom } from './patterns/_rng.js';
 import { tradeVoteSubstrate, spousalSubstrate } from './patterns/_substrate.js';
+import { warnIfUnconsumed } from './patterns/_confirmatory-guard.js';
 
 const WINDOW_DAYS = 14;
 const N_PERM = 10_000;
@@ -155,6 +156,10 @@ async function main(): Promise<void> {
     console.error('usage: score-anomaly.ts (--member <slug> | --all) [--pattern <name>]');
     process.exit(2);
   }
+
+  // ADR 0003: routine recompute path — warn (do not block) when a scored
+  // detector's confirmatory run is not yet consumed via its baseline runner.
+  warnIfUnconsumed(patterns.filter(p => (SCORED_PATTERNS as readonly string[]).includes(p)));
 
   for (const pattern of patterns) {
     if (!SCORED_PATTERNS.includes(pattern as (typeof SCORED_PATTERNS)[number])) {
