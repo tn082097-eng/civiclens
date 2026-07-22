@@ -82,9 +82,10 @@ execution was not a valid instance of the preregistered protocol — e.g. an
 implementation defect in the scoring code, corrupted or wrong input data, or a
 reproducibility failure. The invalidation must be written down (a dated
 amendment to the detector's spec, or a superseding ADR) **before** any
-replacement run is executed. A replacement run after documented invalidation is
-still one confirmatory run under the same registration; it is a *repair*, not a
-second attempt.
+replacement run is executed. A documented invalidation permits a replacement run
+through the supported workflow. Exactly-one replacement execution remains a
+policy requirement until Phase 2 adds replacement registration IDs, reservation
+state, and lineage.
 
 **The evidence is required, not just the status.** In the registry
 (`docs/confirmatory-runs.md`), a detector reopens only when the `invalidation`

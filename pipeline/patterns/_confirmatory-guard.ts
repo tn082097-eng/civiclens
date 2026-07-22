@@ -107,12 +107,17 @@ export function checkDetectors(ids: string[], registry: RegistryRow[]): CheckRes
       };
     }
 
-    // Cleared via documented invalidation: a single repair/replacement run is
-    // permitted under the same registration.
+    // Cleared via documented invalidation: a replacement run is permitted
+    // through the supported workflow. Exactly-one replacement execution remains
+    // a POLICY requirement (not mechanically enforced) until Phase 2 adds
+    // replacement registration IDs, reservation state, and lineage.
     if (claimsInvalidation && documented) {
       return {
         id, row, status: 'ok-invalidated', blocked: false,
-        message: `OK: "${id}" was invalidated (${row.invalidation}) — one documented repair/replacement run permitted under the same registration.`,
+        message:
+          `OK: "${id}" has a documented invalidation (${row.invalidation}) — a replacement run is permitted ` +
+          `through the supported workflow. Exactly-one replacement execution remains a policy requirement ` +
+          `until Phase 2 adds replacement registration IDs, reservation state, and lineage.`,
       };
     }
 
