@@ -13,18 +13,27 @@
  * threshold and re-running just replaces that detector's rows.
  */
 
+import type { DuckDBConnection } from '@duckdb/node-api';
 import { getDb } from '../db/init.js';
 import { listMembers } from '../db/queries.js';
 import { DETECTORS } from './patterns/registry.js';
 import type { PatternHit } from './patterns/types.js';
+import { SCORED_PATTERNS, scorePattern, type ScoreResult } from './score-anomaly.js';
+
+/** Signature of the inline scorer (real one is scorePattern; tests inject a stub). */
+type Scorer = (pattern: string, member: string) => Promise<ScoreResult | null>;
 
 async function writeHits(
   pattern: string,
   member: string,
   hits: PatternHit[],
+  conn: DuckDBConnection,
 ): Promise<void> {
-  const conn = await getDb();
   // Clear this detector's prior hits for this member, then insert fresh.
+  // This DELETE-then-INSERT is the idempotency mechanism (pattern_hits has no
+  // PK by design — DuckDB index-delete bug, db/schema.sql). It drops the stat
+  // columns, so writeAndScore re-scores immediately for SCORED_PATTERNS to
+  // avoid stranding previously-scored stats as NULL on a re-run.
   await conn.run('DELETE FROM pattern_hits WHERE pattern = ? AND member = ?', [
     pattern,
     member,
@@ -47,6 +56,34 @@ async function writeHits(
   }
 }
 
+/**
+ * Orchestration contract: write a detector's hits, then — for a SCORED_PATTERNS
+ * detector with at least one hit — re-score inline so the freshly re-inserted
+ * rows carry their stat columns. Because writeHits DELETE-then-INSERTs without
+ * stats, skipping this step would silently NULL previously-scored stats on a
+ * re-run (the wipeout bug). Returns the scorer's result (for the log line) or
+ * null when no scoring applies.
+ *
+ * A scorer failure propagates — it is never swallowed into "0 hits".
+ */
+export async function writeAndScore(
+  pattern: string,
+  member: string,
+  hits: PatternHit[],
+  deps: { conn?: DuckDBConnection; scorer?: Scorer } = {},
+): Promise<ScoreResult | null> {
+  const conn = deps.conn ?? (await getDb());
+  const scorer = deps.scorer ?? scorePattern;
+  await writeHits(pattern, member, hits, conn);
+  if (
+    hits.length > 0 &&
+    (SCORED_PATTERNS as readonly string[]).includes(pattern)
+  ) {
+    return scorer(pattern, member);
+  }
+  return null;
+}
+
 async function runForMember(member: string): Promise<number> {
   let total = 0;
   for (const det of DETECTORS) {
@@ -58,12 +95,15 @@ async function runForMember(member: string): Promise<number> {
       console.error(`  ✗ ${det.name} threw for ${member}:`, (e as Error).message);
       throw e;
     }
-    await writeHits(det.name, member, hits);
+    const score = await writeAndScore(det.name, member, hits);
     total += hits.length;
     const summary = hits.length
       ? hits.map(h => `${h.intensity.toFixed(2)}`).join(',')
       : '—';
-    console.log(`  ${det.name}: ${hits.length} hit(s) [${summary}]`);
+    const scoreNote = score
+      ? ` p=${score.pValue.toFixed(4)} z=${score.zScore.toFixed(2)} [${score.nullModel}]`
+      : '';
+    console.log(`  ${det.name}: ${hits.length} hit(s) [${summary}]${scoreNote}`);
   }
   return total;
 }
@@ -102,7 +142,12 @@ async function main(): Promise<void> {
   process.exit(0);
 }
 
-main().catch(e => {
-  console.error(e);
-  process.exit(1);
-});
+// Entry-point guard (repo convention): only run the CLI when invoked directly,
+// so importing this module for its exports (e.g. writeAndScore in tests) does
+// not trigger main()/process.exit.
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch(e => {
+    console.error(e);
+    process.exit(1);
+  });
+}

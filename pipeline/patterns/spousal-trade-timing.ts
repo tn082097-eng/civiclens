@@ -42,6 +42,17 @@ const NAME = 'spousal-trade-timing';
 const WINDOW_DAYS = 14;
 const ETF_LIST = sqlList(BROAD_MARKET_ETFS);
 
+/**
+ * intensity = base 0.5 + 0.3*proximity + 0.2*volume, capped at 1, where
+ * proximity = 1 - tightest/14 and volume = min(1, n/5). Pure + exported so the
+ * dedupe-key reconciliation is characterization-tested without touching SQL.
+ */
+export function spousalIntensity(tightest: number, n: number): number {
+  const proximity = 1 - tightest / WINDOW_DAYS;
+  const volume = Math.min(1, n / 5);
+  return Math.min(1, 0.5 + 0.3 * proximity + 0.2 * volume);
+}
+
 const SQL = `
 SELECT
   trade_filing_id::text AS filing_id,
@@ -83,10 +94,12 @@ export const spousalTradeTiming: PatternDetector = {
 
     // holder is constant per trade (a filing line is one holder), so tracking
     // spouse/joint split by distinct trade: rebuild after dedupe.
+    // Key on the SAME identity dedupeTrades uses (instrument uppercased) so the
+    // holder lookup below cannot miss on a mixed-case ticker-less asset.
     const holderByKey = new Map<string, string>();
     for (const r of rows) {
       holderByKey.set(
-        `${r.filing_id}|${r.tx_date}|${r.tx_type}|${r.instrument}`,
+        `${r.filing_id}|${r.tx_date}|${r.tx_type}|${r.instrument.toUpperCase()}`,
         r.holder.toLowerCase(),
       );
     }
@@ -104,7 +117,7 @@ export const spousalTradeTiming: PatternDetector = {
     for (const t of trades) {
       const holder =
         holderByKey.get(
-          `${t.filing_id}|${t.tx_date}|${t.tx_type}|${t.instrument}`,
+          `${t.filing_id}|${t.tx_date}|${t.tx_type}|${t.instrument.toUpperCase()}`,
         ) ?? 'spouse';
       if (holder === 'spouse') spouse++;
       else joint++;
@@ -140,9 +153,7 @@ export const spousalTradeTiming: PatternDetector = {
     if (sameDay > 0) finding += `; ${sameDay} on the same day as the vote`;
     finding += '.';
 
-    const proximity = 1 - tightest / WINDOW_DAYS;
-    const volume = Math.min(1, n / 5);
-    const intensity = Math.min(1, 0.5 + 0.3 * proximity + 0.2 * volume);
+    const intensity = spousalIntensity(tightest, n);
 
     return [
       {

@@ -34,6 +34,26 @@ const WINDOW_DAYS = 14;
 const ETF_LIST = sqlList(BROAD_MARKET_ETFS);
 const WORD_LIST = sqlList(COMMON_WORD_TICKERS);
 
+/**
+ * Trade identity for dedupe. Instrument is UPPER-cased so a ticker-less asset
+ * disclosed under mixed case collapses to one trade — the same identity the
+ * null-scorer substrate uses (spec "one spine, no drift"). Pure + exported so
+ * the reconciliation is characterization-tested without touching SQL.
+ */
+export function tradeIdentityKey(r: {
+  filing_id: string;
+  tx_date: string;
+  tx_type: string;
+  instrument: string;
+}): string {
+  return `${r.filing_id}|${r.tx_date}|${r.tx_type}|${r.instrument.toUpperCase()}`;
+}
+
+/** intensity = best score / 100, capped at 1. Pure + exported for tests. */
+export function tradeIntensity(maxScore: number): number {
+  return Math.min(1, maxScore / 100);
+}
+
 const SQL = `
 SELECT
   trade_filing_id::text                       AS filing_id,
@@ -110,7 +130,7 @@ export const tradeVoteAlignment: PatternDetector = {
     // best-scoring vote. Trade identity = filing+date+type+instrument.
     const byTrade = new Map<string, Trade>();
     for (const r of rows) {
-      const key = `${r.filing_id}|${r.tx_date}|${r.tx_type}|${r.instrument}`;
+      const key = tradeIdentityKey(r);
       const score = Number(r.base_score) + (r.ticker_named ? 5 : 0);
       const cur = byTrade.get(key);
       if (!cur || score > cur.bestScore) {
@@ -166,7 +186,7 @@ export const tradeVoteAlignment: PatternDetector = {
         pattern: NAME,
         member: memberSlug,
         finding: parts.join('; ') + '.',
-        intensity: Math.min(1, maxScore / 100),
+        intensity: tradeIntensity(maxScore),
         citing,
         dates,
         detectedAt: new Date().toISOString(),
