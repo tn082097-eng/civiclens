@@ -86,6 +86,13 @@ replacement run is executed. A replacement run after documented invalidation is
 still one confirmatory run under the same registration; it is a *repair*, not a
 second attempt.
 
+**The evidence is required, not just the status.** In the registry
+(`docs/confirmatory-runs.md`), a detector reopens only when the `invalidation`
+column carries a non-empty documented reference. A bare `status: invalidated`
+with an empty reference is an *unevidenced exception* and the guard fails closed
+on it — enforcing that the documentation exists before the replacement run, not
+after.
+
 Distinguishing the two kinds of change:
 
 - **Recomputation after a data refresh** (new PFD filings, new votes) is NOT a
