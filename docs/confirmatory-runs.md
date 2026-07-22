@@ -11,12 +11,16 @@ Each detector is one table row. Columns are stable; the guard parses them.
 - `detector_id` — stable slug, matches the spec and the run command.
 - `spec` — the preregistration doc.
 - `status` — one of: `registered` (spec written, run NOT yet consumed),
-  `consumed-pass`, `consumed-fail`, `invalidated` (a documented invalidation is
-  on record; a single replacement/repair run is permitted).
+  `consumed-pass`, `consumed-fail`, `invalidated`. The `invalidated` status
+  reopens a detector for a single replacement/repair run **only when the
+  `invalidation` column also carries a documented reference** — a bare
+  `invalidated` status with an empty reference fails closed (ADR 0003 §4).
 - `run_commit` — git commit recording the result (blank until consumed).
 - `outcome` — short result summary (blank until consumed).
 - `invalidation` — link to the dated amendment/ADR that invalidated the run, if
-  any (blank otherwise). Only a non-blank value reopens a consumed detector.
+  any (blank otherwise). **A non-blank value is REQUIRED to reopen a consumed or
+  invalidated detector** — neither `status=invalidated` nor any other status
+  clears the guard without it.
 
 Update this file as part of a confirmatory run's own record-keeping — the same
 step that appends the result to the spec. A run that is not recorded here is not

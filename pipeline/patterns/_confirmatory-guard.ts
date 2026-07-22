@@ -79,8 +79,24 @@ export function checkDetectors(ids: string[], registry: RegistryRow[]): CheckRes
       };
     }
     const consumed = CONSUMED.has(row.status);
-    const invalidated = row.invalidation.length > 0 || row.status === 'invalidated';
-    if (consumed && !invalidated) {
+    const claimsInvalidation = row.status === 'invalidated' || consumed;
+    // ADR 0003 §4: invalidation must be DOCUMENTED before a replacement run.
+    // A nonempty invalidation reference is the evidence; a bare `invalidated`
+    // status with no reference is an unevidenced exception and must fail closed.
+    const documented = row.invalidation.length > 0;
+
+    // Unevidenced invalidation: status says invalidated but no reference recorded.
+    if (row.status === 'invalidated' && !documented) {
+      return {
+        id, row, status: 'stop-consumed', blocked: true,
+        message:
+          `STOP: "${id}" is marked status=invalidated but carries NO documented invalidation reference.\n` +
+          `      ADR 0003 §4: invalidation must be documented (a dated amendment / superseding ADR) BEFORE any replacement run.\n` +
+          `      Record the reference in the registry's invalidation column, then re-run. Failing closed until then.`,
+      };
+    }
+
+    if (consumed && !documented) {
       return {
         id, row, status: 'stop-consumed', blocked: true,
         message:
@@ -90,12 +106,16 @@ export function checkDetectors(ids: string[], registry: RegistryRow[]): CheckRes
           `      A materially different hypothesis/features/procedure/data/rule is a NEW registration, not a rerun.`,
       };
     }
-    if (invalidated) {
+
+    // Cleared via documented invalidation: a single repair/replacement run is
+    // permitted under the same registration.
+    if (claimsInvalidation && documented) {
       return {
         id, row, status: 'ok-invalidated', blocked: false,
-        message: `OK: "${id}" was invalidated (${row.invalidation || 'status=invalidated'}) — one repair/replacement run permitted under the same registration.`,
+        message: `OK: "${id}" was invalidated (${row.invalidation}) — one documented repair/replacement run permitted under the same registration.`,
       };
     }
+
     return {
       id, row, status: 'ok-registered', blocked: false,
       message: `OK: "${id}" is registered and its confirmatory run is not yet consumed — clear to proceed.`,

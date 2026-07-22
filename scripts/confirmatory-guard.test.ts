@@ -21,14 +21,16 @@ const FIXTURE = `
 | recipient-trade | docs/x.md | consumed-fail | a47ca81 | GATE FAIL | |
 | trade-vote-alignment | docs/y.md | registered | | awaiting | |
 | repaired-one | docs/z.md | consumed-fail | deadbee | defect | docs/z.md#amendment-1 |
-| invalidated-status | docs/w.md | invalidated | | | |
+| invalidated-empty | docs/w.md | invalidated | | | |
+| invalidated-documented | docs/v.md | invalidated | | | docs/v.md#amendment-1 |
 `;
 
 test('parseRegistry: extracts data rows, skips header/separator/prose', () => {
   const rows = parseRegistry(FIXTURE);
-  assert.equal(rows.length, 4, 'four data rows, no header/sep/prose');
+  assert.equal(rows.length, 5, 'five data rows, no header/sep/prose');
   assert.deepEqual(rows.map(r => r.detector_id), [
-    'recipient-trade', 'trade-vote-alignment', 'repaired-one', 'invalidated-status',
+    'recipient-trade', 'trade-vote-alignment', 'repaired-one',
+    'invalidated-empty', 'invalidated-documented',
   ]);
 });
 
@@ -50,8 +52,16 @@ test('checkDetectors: consumed but documented-invalidation link => ok (repair pe
   assert.equal(r.blocked, false);
 });
 
-test('checkDetectors: status=invalidated => ok even with empty link', () => {
-  const [r] = checkDetectors(['invalidated-status'], parseRegistry(FIXTURE));
+test('checkDetectors: status=invalidated with EMPTY link => BLOCKED (fails closed, ADR 0003 §4)', () => {
+  // An unevidenced invalidation must NOT clear — invalidation must be documented
+  // before any replacement run. This is the corrected Phase 1 rule.
+  const [r] = checkDetectors(['invalidated-empty'], parseRegistry(FIXTURE));
+  assert.equal(r.status, 'stop-consumed');
+  assert.equal(r.blocked, true);
+});
+
+test('checkDetectors: status=invalidated WITH documented link => ok (repair permitted)', () => {
+  const [r] = checkDetectors(['invalidated-documented'], parseRegistry(FIXTURE));
   assert.equal(r.status, 'ok-invalidated');
   assert.equal(r.blocked, false);
 });
