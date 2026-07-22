@@ -25,6 +25,7 @@
  */
 
 import { listMembers } from '../../db/queries.js';
+import { assertConfirmatoryAllowed } from './_confirmatory-guard.js';
 import { mulberry32, seedFrom } from './_rng.js';
 import type { Trade, NexusVote } from './_nexus.js';
 import { tradeVoteSubstrate, spousalSubstrate } from './_substrate.js';
@@ -105,6 +106,9 @@ const scrambleSeed = (pattern: string, i: number, member: string) => `${pattern}
 const nullSeed = (pattern: string, i: number, member: string) => `${pattern}-nc-null-v1-${i}|${member}`;
 
 async function main(): Promise<void> {
+  // ADR 0003 in-path guard: refuse before any DB/computation if either timing
+  // detector's preregistered confirmatory run is already consumed.
+  assertConfirmatoryAllowed([...SCORED_PATTERNS]);
   const nPerm = parseInt(process.argv[2] ?? String(N_PERM_DEFAULT), 10);
   const roster = (await listMembers()).map(m => m.member_id);
 

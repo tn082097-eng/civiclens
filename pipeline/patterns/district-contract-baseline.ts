@@ -15,6 +15,7 @@
  */
 
 import { getDb } from '../../db/init.js';
+import { assertConfirmatoryAllowed } from './_confirmatory-guard.js';
 import { mulberry32, seedFrom } from './_rng.js';
 import { permutationTest } from './_permutation.js';
 import {
@@ -23,6 +24,8 @@ import {
 } from './district-contract-trade-alignment.js';
 
 async function main() {
+  // ADR 0003 in-path guard: this baseline scores the district-contract spine.
+  assertConfirmatoryAllowed(['district-contracts-theme']);
   const nPerm = parseInt(process.argv[2] ?? '2000', 10);
   const seedStr = process.argv[3] ?? 'district-contract-baseline-v1';
   const conn = await getDb();

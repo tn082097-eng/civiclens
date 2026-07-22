@@ -6,6 +6,10 @@ are computed. Template: `docs/2026-07-17-recipient-trade-detector.md`.
 **Machinery provenance:** rigor-pillar design
 (`docs/superpowers/specs/2026-05-27-rigor-pillar-design.md`); policy anchor:
 ADR-0002 §A (`docs/adr/0002-launch-scope-and-descriptive-detector-policy.md`).
+**Detector IDs:** `trade-vote-alignment`, `spousal-trade-timing` (registry:
+`docs/confirmatory-runs.md`). This spec's confirmatory run is one-shot and
+final per ADR 0003; run `npm run guard:confirmatory -- trade-vote-alignment
+spousal-trade-timing` before any scoring computation.
 
 ## Scope — what this registers (and what it does not)
 

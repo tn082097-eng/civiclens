@@ -19,6 +19,7 @@ import { listMembers } from '../db/queries.js';
 import { DETECTORS } from './patterns/registry.js';
 import type { PatternHit } from './patterns/types.js';
 import { SCORED_PATTERNS, scorePattern, type ScoreResult } from './score-anomaly.js';
+import { warnIfUnconsumed } from './patterns/_confirmatory-guard.js';
 
 /** Signature of the inline scorer (real one is scorePattern; tests inject a stub). */
 type Scorer = (pattern: string, member: string) => Promise<ScoreResult | null>;
@@ -129,6 +130,10 @@ async function main(): Promise<void> {
     }
     members = [slug];
   }
+
+  // ADR 0003: this is a routine recompute path, not the confirmatory event —
+  // warn (do not block) if a scored detector's confirmatory run isn't consumed.
+  warnIfUnconsumed([...SCORED_PATTERNS]);
 
   let grandTotal = 0;
   for (const m of members) {

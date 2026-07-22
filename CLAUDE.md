@@ -1,3 +1,12 @@
+## Confirmatory analyses — read AGENTS.md first
+
+Before running ANY preregistered confirmatory analysis (baseline, permutation
+null, negative control), run the pre-run guard:
+`npm run guard:confirmatory -- <detector-id>` (exit 1 = STOP, run already
+consumed). One confirmatory run per detector; FAIL is archived, not retuned; new
+hypothesis ⇒ new preregistration. Policy: ADR 0003 + `AGENTS.md`; registry:
+`docs/confirmatory-runs.md`.
+
 ## Dev loop (incremental by default)
 
 Run only the stage/member you're working on; full rebuild stays available.

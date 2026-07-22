@@ -4,9 +4,10 @@
   "type": "module",
   "description": "CivicLens multi-agent data pipeline",
   "scripts": {
-    "test": "tsx --test pipeline/*.test.ts pipeline/patterns/*.test.ts render/*.test.ts agents/*.test.ts lib/*.test.ts db/*.test.ts",
+    "test": "tsx --test pipeline/*.test.ts pipeline/patterns/*.test.ts render/*.test.ts agents/*.test.ts lib/*.test.ts db/*.test.ts scripts/*.test.ts",
     "validate:corpus": "tsx scripts/validate-artifact-corpus.ts",
-    "verify:baseline": "tsx scripts/verify-baseline.ts"
+    "verify:baseline": "tsx scripts/verify-baseline.ts",
+    "guard:confirmatory": "tsx scripts/confirmatory-guard.ts"
   },
   "dependencies": {
     "@duckdb/node-api": "^1.5.2-r.1",

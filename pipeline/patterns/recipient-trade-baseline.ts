@@ -15,6 +15,7 @@
  * Usage: npx tsx pipeline/patterns/recipient-trade-baseline.ts [nPerm] [seed-string]
  */
 import { getDb } from '../../db/init.js';
+import { assertConfirmatoryAllowed } from './_confirmatory-guard.js';
 import { mulberry32, seedFrom } from './_rng.js';
 import { CY_START, CY_END } from './district-contract-trade-alignment.js';
 import {
@@ -110,6 +111,9 @@ function runProcedure(
 const usd = (n: number) => '$' + Math.round(n).toLocaleString();
 
 async function main() {
+  // ADR 0003 in-path guard: refuse before any DB/computation if this detector's
+  // preregistered confirmatory run is already consumed and not invalidated.
+  assertConfirmatoryAllowed(['recipient-trade']);
   const nPerm = parseInt(process.argv[2] ?? '2000', 10);
   const seedStr = process.argv[3] ?? 'recipient-trade-baseline-v1';
   const sub = await loadSubstrate();

@@ -80,3 +80,8 @@ Required product language (verbatim, maintainer-set):
 ## Out of scope for this ADR
 
 Detector mathematics, new detectors, architecture changes, roster growth.
+
+> The statistical-integrity policy for confirmatory detector analyses — one
+> preregistered run per detector, FAIL archived not optimized, new hypothesis ⇒
+> new registration — is **ADR 0003**
+> (`docs/adr/0003-preregistered-confirmatory-analysis-policy.md`).
