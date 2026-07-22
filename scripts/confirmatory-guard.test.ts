@@ -46,7 +46,9 @@ test('checkDetectors: registered + not consumed => ok (ok-registered)', () => {
   assert.equal(r.blocked, false);
 });
 
-test('checkDetectors: consumed but documented-invalidation link => ok (repair permitted)', () => {
+test('checkDetectors: consumed but documented-invalidation link => ok (replacement permitted through supported workflow)', () => {
+  // A documented invalidation permits a replacement run; exactly-one execution
+  // is a policy requirement, not mechanically enforced until Phase 2.
   const [r] = checkDetectors(['repaired-one'], parseRegistry(FIXTURE));
   assert.equal(r.status, 'ok-invalidated');
   assert.equal(r.blocked, false);
@@ -60,7 +62,7 @@ test('checkDetectors: status=invalidated with EMPTY link => BLOCKED (fails close
   assert.equal(r.blocked, true);
 });
 
-test('checkDetectors: status=invalidated WITH documented link => ok (repair permitted)', () => {
+test('checkDetectors: status=invalidated WITH documented link => ok (replacement permitted through supported workflow)', () => {
   const [r] = checkDetectors(['invalidated-documented'], parseRegistry(FIXTURE));
   assert.equal(r.status, 'ok-invalidated');
   assert.equal(r.blocked, false);
