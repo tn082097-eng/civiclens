@@ -52,24 +52,37 @@ async function dbSlugLookup(bioguide: string): Promise<string | undefined> {
 
 /** Resolve a raw name/bioguide to {bioguide, slug}. Slug prefers the existing DB member_id
  *  (never rename bernie-sanders); derives first-last only for a brand-new member.
- *  `opts.slugLookup` overrides the DB lookup for deterministic tests. */
+ *  `opts.index`/`opts.aliasMap` override the legislator singletons for deterministic
+ *  tests (fixture in, no legislators-cache dependency); `opts.slugLookup` overrides
+ *  the DB slug lookup. When either override is supplied the process-wide slugCache is
+ *  bypassed so injected inputs give deterministic, contamination-free results. */
 export async function resolveMember(
   raw: string | { name?: string; bioguide?: string },
-  opts?: { slugLookup?: (bioguide: string) => string | undefined },
+  opts?: {
+    index?: Map<string, LegislatorIdentity>;
+    aliasMap?: Map<string, Set<string>>;
+    slugLookup?: (bioguide: string) => string | undefined;
+  },
 ): Promise<ResolveResult> {
   const input = typeof raw === 'string' ? { name: raw } : raw;
-  const ident = resolveIdentity(input, getLegislatorIndex(), getAllAliases());
+  const index = opts?.index ?? getLegislatorIndex();
+  const aliasMap = opts?.aliasMap ?? getAllAliases();
+  const ident = resolveIdentity(input, index, aliasMap);
   if (ident.ok === false) return ident;
 
   const bio = ident.bioguide;
-  let slug = slugCache.get(bio);
+  // Injected inputs must be deterministic across calls: skip the shared cache so
+  // a prior call's slug can't leak into a fixture-driven one (and vice versa).
+  const injected = !!(opts?.index || opts?.aliasMap || opts?.slugLookup);
+
+  let slug = injected ? undefined : slugCache.get(bio);
   if (!slug) {
     slug = opts?.slugLookup ? opts.slugLookup(bio) : await dbSlugLookup(bio);
   }
   if (!slug) {
-    const leg = getLegislatorIndex().get(bio)!;
+    const leg = index.get(bio)!;
     slug = deriveSlug(leg.officialFull || `${leg.first} ${leg.last}`);
   }
-  slugCache.set(bio, slug);
+  if (!injected) slugCache.set(bio, slug);
   return { ok: true, bioguide: bio, slug };
 }

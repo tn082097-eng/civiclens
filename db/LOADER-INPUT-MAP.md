@@ -7,6 +7,18 @@ Two classes:
 - **FILE-fed** — reads local files. The organizer produces these files; no keys, no rate limits. *These are the organizer's targets.*
 - **API-fed** — fetches live inside the loader. Needs keys / hits rate limits. *These must be redirected to bulk sources (rewrite the fetch, or pre-stage a file the loader reads).*
 
+> **Ingestion scope (member-scope repair, 2026-07-23).** The broad loaders
+> `load-pfd`, `load-senate-ptr`, `load-fec-ie`, `load-opensecrets`, and
+> `load-bill-summaries` now REQUIRE an explicit scope: exactly one of
+> `--member <slug>`, `--bioguide <id>`, or `--all`. **No selector fails closed**
+> (usage error) — it never silently means all. Member mode resolves to exactly
+> one canonical member (by `bioguide_id`) before any network call or DB
+> mutation, and only that member's rows reach DELETE/INSERT. Loaders accept an
+> injected `{ conn }` (and file loaders a `cacheRoot`) for hermetic temp-DB
+> tests. Shared contract: `lib/ingest-scope.ts`. `load-sponsored`,
+> `load-cosponsored`, and the `load-district-*` loaders were already
+> member-scoped (they take an optional `member-id`).
+
 ---
 
 ## FILE-fed loaders (organizer targets)
@@ -60,7 +72,11 @@ dir per member where `final-review.json.readyToApply === true` and
 ### `db/load-pfd.ts` — House PFD transactions
 
 - **Reads:** `pfd-cache/{year}/*.json` (one JSON per filing; output of
-  `skills/pfd-fetcher/extract.ts`). CLI: `--year YYYY[,YYYY] [--dry-run]`.
+  `skills/pfd-fetcher/extract.ts`). CLI:
+  `--year YYYY[,YYYY] (--member <slug>|--bioguide <id>|--all) [--dry-run]`.
+  In member mode only filings resolving to the target reach DELETE/INSERT;
+  unrelated/unmatched filers are skipped (never fail the run), and zero matching
+  target filings is an explicit result (`targetMatched: 0`).
 - **Per-file shape:**
   ```
   { filingId, source, filer:{ name, status, stateDistrict },
@@ -78,7 +94,9 @@ dir per member where `final-review.json.readyToApply === true` and
 ### `db/load-senate-ptr.ts` — Senate PTR transactions
 
 - **Reads:** `senate-ptr-cache/{year}/*.json` (output of `skills/senate-ptr/fetch.ts`).
-  CLI: `[--dry-run]`. Iterates all `\d{4}` year dirs.
+  CLI: `(--member <slug>|--bioguide <id>|--all) [--dry-run]`. Iterates all
+  `\d{4}` year dirs, but in member mode only the resolved senator's filings reach
+  DELETE/INSERT — the by-year cache layout can never cause a cross-senator write.
 - **Per-file shape:**
   ```
   { filingId, source, filer:{ firstName, lastName }, dateReceived,

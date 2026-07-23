@@ -17,10 +17,19 @@
  *   npx tsx agents/pipeline.ts --load-bills [--limit N]
  */
 
+import type { DuckDBConnection } from '@duckdb/node-api';
 import { applySchema, getDb } from './init.js';
+import type { IngestScope } from '../lib/ingest-scope.js';
 
 const CONGRESS_KEY = process.env.CONGRESS_API_KEY ?? '';
 const UA = 'CivicLens/1.0 (research)';
+
+/** SQL predicate + params restricting a `votes` query to the scope. */
+function scopePredicate(scope: IngestScope, alias = ''): { sql: string; params: string[] } {
+  const col = alias ? `${alias}.member_id` : 'member_id';
+  if (scope.kind === 'member') return { sql: ` AND ${col} = ?`, params: [scope.memberId] };
+  return { sql: '', params: [] };
+}
 
 // ─── Bill-ref extraction ────────────────────────────────────────────────────
 
@@ -105,9 +114,16 @@ async function fetchGovtrackBillId(sourceUrl: string): Promise<string | null> {
 // Pass 1: regex over question text — fast, no network.
 // Pass 2: GovTrack API for votes that still have no bill_id — covers votes
 //         whose question text is just a bill title with no "H.R. N" reference.
-async function backfillBillIds(opts: { apiPass?: boolean; apiLimit?: number } = {}): Promise<{ filled: number; skipped: number; apiResolved: number; total: number }> {
-  const conn = await getDb();
-  const r = await conn.run(`SELECT vote_id, member_id, question, source_url FROM votes WHERE bill_id IS NULL`);
+export async function backfillBillIds(
+  scope: IngestScope,
+  opts: { apiPass?: boolean; apiLimit?: number; conn?: DuckDBConnection } = {},
+): Promise<{ filled: number; skipped: number; apiResolved: number; total: number }> {
+  const conn = opts.conn ?? await getDb();
+  const pred = scopePredicate(scope);
+  const r = await conn.run(
+    `SELECT vote_id, member_id, question, source_url FROM votes WHERE bill_id IS NULL${pred.sql}`,
+    pred.params,
+  );
   const rows = await r.getRowObjects() as any[];
 
   let filled = 0, skipped = 0, apiResolved = 0;
@@ -255,18 +271,34 @@ async function refillTitles(): Promise<{ filled: number; missed: number; total: 
   return { filled, missed, total: rows.length };
 }
 
-async function loadSummaries(opts: { limit?: number } = {}): Promise<{ fetched: number; cached: number; skipped: number }> {
-  const conn = await getDb();
-  // Distinct bill_ids referenced by votes that we don't already have.
+/**
+ * Distinct bill_ids referenced by the scope's votes that we don't already have a
+ * summary for. In member mode the worklist ORIGINATES ONLY from the target's
+ * votes (a shared bill_summaries row may still be upserted because it's keyed by
+ * bill, but a member run never enumerates the whole roster's bills).
+ */
+export async function distinctBillWorklist(
+  scope: IngestScope,
+  conn: DuckDBConnection,
+): Promise<string[]> {
+  const pred = scopePredicate(scope, 'v');
   const r = await conn.run(`
     SELECT DISTINCT v.bill_id
     FROM votes v
     LEFT JOIN bill_summaries bs ON bs.bill_id = v.bill_id
     WHERE v.bill_id IS NOT NULL
-      AND bs.bill_id IS NULL
+      AND bs.bill_id IS NULL${pred.sql}
     ORDER BY v.bill_id
-  `);
-  const all = (await r.getRowObjects() as any[]).map(x => String(x.bill_id));
+  `, pred.params);
+  return (await r.getRowObjects() as any[]).map(x => String(x.bill_id));
+}
+
+async function loadSummaries(
+  scope: IngestScope,
+  opts: { limit?: number; conn?: DuckDBConnection } = {},
+): Promise<{ fetched: number; cached: number; skipped: number }> {
+  const conn = opts.conn ?? await getDb();
+  const all = await distinctBillWorklist(scope, conn);
   const todo = opts.limit ? all.slice(0, opts.limit) : all;
   const fetchedAt = new Date().toISOString();
 
@@ -305,7 +337,7 @@ async function loadSummaries(opts: { limit?: number } = {}): Promise<{ fetched: 
 
 // ─── Main ───────────────────────────────────────────────────────────────────
 
-export async function main(opts: {
+export async function main(scope: IngestScope, opts: {
   limit?: number;
   backfillOnly?: boolean;
   apiPass?: boolean;
@@ -314,12 +346,12 @@ export async function main(opts: {
   await applySchema();
 
   console.log('Pass 1: backfilling votes.bill_id from question text (regex)…');
-  const bf = await backfillBillIds({ apiPass: false });
+  const bf = await backfillBillIds(scope, { apiPass: false });
   console.log(`  ${bf.filled} filled by regex, ${bf.skipped} unparseable, ${bf.total} total NULL rows scanned.\n`);
 
   if (opts.apiPass) {
     console.log(`Pass 2: GovTrack API resolution for remaining NULL bill_ids${opts.apiLimit ? ` (limit ${opts.apiLimit} API calls)` : ''}…`);
-    const bf2 = await backfillBillIds({ apiPass: true, apiLimit: opts.apiLimit });
+    const bf2 = await backfillBillIds(scope, { apiPass: true, apiLimit: opts.apiLimit });
     console.log(`  ${bf2.filled} filled by regex, ${bf2.apiResolved} resolved via GovTrack API, ${bf2.skipped} still unresolvable.\n`);
   }
 
@@ -327,23 +359,33 @@ export async function main(opts: {
   if (!CONGRESS_KEY) {
     throw new Error('CONGRESS_API_KEY missing — set in the CivicLens .env');
   }
-  const r = await loadSummaries({ limit: opts.limit });
+  const r = await loadSummaries(scope, { limit: opts.limit });
   console.log(`\nDone: ${r.fetched} fetched, ${r.cached} already cached, ${r.skipped} skipped.`);
 
-  console.log(`\nRefilling titles for bills with NULL title…`);
-  const tr = await refillTitles();
-  console.log(`  ${tr.filled} titles filled, ${tr.missed} still NULL out of ${tr.total} candidates.`);
+  // Global NULL-title refill is a roster-wide pass — it does not originate from
+  // the target's votes, so it runs ONLY in all mode. Member onboarding never
+  // triggers it (guide B.5 / adversarial check).
+  if (scope.kind === 'all') {
+    console.log(`\nRefilling titles for bills with NULL title…`);
+    const tr = await refillTitles();
+    console.log(`  ${tr.filled} titles filled, ${tr.missed} still NULL out of ${tr.total} candidates.`);
+  } else {
+    console.log(`\n(member scope: skipping global NULL-title refill — not target-originated.)`);
+  }
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const args = process.argv.slice(2);
-  const limitIdx    = args.indexOf('--limit');
-  const apiLimitIdx = args.indexOf('--api-limit');
-  const limit       = limitIdx    >= 0 ? parseInt(args[limitIdx    + 1] ?? '', 10) : undefined;
-  const apiLimit    = apiLimitIdx >= 0 ? parseInt(args[apiLimitIdx + 1] ?? '', 10) : undefined;
-  const backfillOnly = args.includes('--backfill-only');
-  const apiPass      = args.includes('--api-pass');
-  main({ limit, backfillOnly, apiPass, apiLimit })
-    .then(() => process.exit(0))
-    .catch(e => { console.error(e); process.exit(1); });
+  (async () => {
+    const { parseScopeArgs, resolveScope } = await import('../lib/ingest-scope.js');
+    const args = process.argv.slice(2);
+    const limitIdx    = args.indexOf('--limit');
+    const apiLimitIdx = args.indexOf('--api-limit');
+    const limit       = limitIdx    >= 0 ? parseInt(args[limitIdx    + 1] ?? '', 10) : undefined;
+    const apiLimit    = apiLimitIdx >= 0 ? parseInt(args[apiLimitIdx + 1] ?? '', 10) : undefined;
+    const backfillOnly = args.includes('--backfill-only');
+    const apiPass      = args.includes('--api-pass');
+    const scope = await resolveScope(parseScopeArgs(args));
+    await main(scope, { limit, backfillOnly, apiPass, apiLimit });
+    process.exit(0);
+  })().catch(e => { console.error(e); process.exit(1); });
 }

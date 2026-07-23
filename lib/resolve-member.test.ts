@@ -38,14 +38,32 @@ test('a colliding alias is ambiguous, not first-match', () => {
 
 test('resolveMember preserves an existing DB slug', async () => {
   const r = await resolveMember({ name: 'Bernard Sanders' }, {
+    index: idx,
+    aliasMap: aliases,
     slugLookup: (bio) => (bio === 'S000033' ? 'bernie-sanders' : undefined),
   });
   assert.deepEqual(r, { ok: true, bioguide: 'S000033', slug: 'bernie-sanders' });
 });
 test('resolveMember derives first-last for a member with no DB row', async () => {
-  const r = await resolveMember({ name: 'Robert Smith' }, { slugLookup: () => undefined });
+  const r = await resolveMember({ name: 'Robert Smith' }, {
+    index: idx,
+    aliasMap: aliases,
+    slugLookup: () => undefined,
+  });
   // ambiguous → still rejected before slug derivation
   assert.equal(r.ok, false);
+});
+test('resolveMember derives a slug from the injected index when no DB row', async () => {
+  const r = await resolveMember({ name: 'Bernard Sanders' }, {
+    index: idx,
+    aliasMap: aliases,
+    slugLookup: () => undefined, // brand-new member, no DB slug
+  });
+  assert.deepEqual(r, { ok: true, bioguide: 'S000033', slug: 'bernard-sanders' });
+});
+test('resolveMember rejects an unknown name via the injected index', async () => {
+  const r = await resolveMember({ name: 'Nobody McNobody' }, { index: idx, aliasMap: aliases });
+  assert.deepEqual(r, { ok: false, reason: 'unresolved' });
 });
 test('deriveSlug is first-last, punctuation collapsed', () => {
   assert.equal(deriveSlug('Bernard Sanders'), 'bernard-sanders');

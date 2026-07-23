@@ -80,6 +80,36 @@ confirmatory analysis, verify:
 - [ ] Any "rerun" is either a data-refresh recomputation (design unchanged) or a
       documented-invalidation repair — not a disguised second attempt.
 
+## Member-scoped ingestion (never violate)
+
+"Onboard one member" means one member at every command boundary. The broad
+enrichment loaders — `load-pfd`, `load-senate-ptr`, `load-fec-ie`,
+`load-opensecrets`, `load-bill-summaries` — REQUIRE an explicit scope: exactly
+one of `--member <slug>`, `--bioguide <id>`, or `--all`.
+
+- **No selector fails closed** (usage error). Absence of a selector NEVER means
+  `--all`. Supplying both a member selector and `--all` fails.
+- Canonical identity is `bioguide_id`; a slug/name resolves to exactly one
+  member (unknown/ambiguous fails) BEFORE any network call or DB mutation.
+- Member mode touches only the target's rows: DELETE/INSERT is member/cycle/
+  filing-scoped, live fetches fire only for the target, and no global pass
+  (e.g. bill NULL-title refill) runs. Batch remains available only via `--all`.
+- **Chamber branch — the loader set depends on the chamber.** A House member uses
+  `--load-pfd` (House PFDs) plus the district loaders
+  (`--load-district-contracts` / `--load-district-recipients`). A SENATOR uses
+  `--load-senate-ptr` and must **not** run `--load-pfd` and must **not** run the
+  district loaders: senators have no congressional district, and there is no
+  statewide (or any-state) substitute — skip those loaders entirely rather than
+  substituting something else.
+- Routine member onboarding via `pipeline/run-patterns.ts` is timing-SAFE by
+  default: the parked timing pair (`trade-vote-alignment`, `spousal-trade-timing`)
+  is filtered out, so a new member never gets first timing p-values as a side
+  effect. Timing scoring lives solely in `score-anomaly.ts` and the
+  `*-baseline.ts` confirmatory runners (see ADR 0003 above).
+- Shared contract: `lib/ingest-scope.ts`. `load-sponsored`, `load-cosponsored`,
+  and `load-district-*` were already member-scoped. `score-theme-gaps.ts` is a
+  separate ADR-0002 member-scoped artifact path and is unaffected.
+
 ## General
 
 - No stub data — fail loudly, never fall back to LLM-generated placeholders.
