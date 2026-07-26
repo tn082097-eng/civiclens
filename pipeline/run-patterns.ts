@@ -17,9 +17,33 @@ import type { DuckDBConnection } from '@duckdb/node-api';
 import { getDb } from '../db/init.js';
 import { listMembers } from '../db/queries.js';
 import { DETECTORS } from './patterns/registry.js';
+import type { PatternDetector } from './patterns/types.js';
 import type { PatternHit } from './patterns/types.js';
 import { SCORED_PATTERNS, scorePattern, type ScoreResult } from './score-anomaly.js';
 import { warnIfUnconsumed } from './patterns/_confirmatory-guard.js';
+
+/**
+ * The parked timing pair. run-patterns is a ROUTINE onboarding path and must
+ * never run, write, DELETE, or score these — a new member must not receive first
+ * timing p-values as an onboarding side effect (ADR 0003 governs their one-shot
+ * confirmatory run; scoring lives solely in score-anomaly.ts / *-baseline.ts).
+ * These are exactly SCORED_PATTERNS; kept as a named constant for the guard.
+ */
+export const PARKED_TIMING_PATTERNS = SCORED_PATTERNS;
+
+/**
+ * The detectors run-patterns is allowed to run — the registry MINUS the parked
+ * timing pair. We filter (not delete from the registry) so score-anomaly and the
+ * baseline runners still see the full set. Filtering here means the parked
+ * detectors' detect()/writeHits()/DELETE/writeAndScore()/scorePattern() are
+ * never reached from this entrypoint.
+ */
+export function onboardingSafeDetectors(
+  candidates: PatternDetector[] = DETECTORS,
+): PatternDetector[] {
+  const parked = new Set<string>(PARKED_TIMING_PATTERNS as readonly string[]);
+  return candidates.filter(d => !parked.has(d.name));
+}
 
 /** Signature of the inline scorer (real one is scorePattern; tests inject a stub). */
 type Scorer = (pattern: string, member: string) => Promise<ScoreResult | null>;
@@ -85,9 +109,20 @@ export async function writeAndScore(
   return null;
 }
 
-async function runForMember(member: string): Promise<number> {
+/**
+ * PRIVATE raw execution loop. Runs whatever detectors it is handed — writing +
+ * scoring each. It is intentionally NOT exported: nothing outside this module
+ * may run an arbitrary, unfiltered detector list (that is the timing bypass we
+ * are closing). The ONLY way in from outside is
+ * runOnboardingDetectorsForMember, which filters the parked pair first.
+ */
+async function runDetectorLoop(
+  member: string,
+  detectors: PatternDetector[],
+  deps: { conn?: DuckDBConnection; scorer?: Scorer } = {},
+): Promise<number> {
   let total = 0;
-  for (const det of DETECTORS) {
+  for (const det of detectors) {
     let hits: PatternHit[];
     try {
       hits = await det.detect(member);
@@ -96,7 +131,7 @@ async function runForMember(member: string): Promise<number> {
       console.error(`  ✗ ${det.name} threw for ${member}:`, (e as Error).message);
       throw e;
     }
-    const score = await writeAndScore(det.name, member, hits);
+    const score = await writeAndScore(det.name, member, hits, deps);
     total += hits.length;
     const summary = hits.length
       ? hits.map(h => `${h.intensity.toFixed(2)}`).join(',')
@@ -107,6 +142,29 @@ async function runForMember(member: string): Promise<number> {
     console.log(`  ${det.name}: ${hits.length} hit(s) [${summary}]${scoreNote}`);
   }
   return total;
+}
+
+/**
+ * The onboarding safety boundary. Accepts an UNFILTERED candidate detector list
+ * and INTERNALLY excludes the parked timing pair (trade-vote-alignment,
+ * spousal-trade-timing) BEFORE any detect(), DB mutation, or scoring — so even a
+ * caller that hands in the parked detectors cannot make them run, write, delete,
+ * or score. Defaults to the full registry. This is the ONLY exported way to run
+ * detectors for a member; the raw loop stays private. Timing scoring lives
+ * solely in score-anomaly.ts / *-baseline.ts (ADR 0003).
+ */
+export async function runOnboardingDetectorsForMember(
+  member: string,
+  candidates: PatternDetector[] = DETECTORS,
+  deps: { conn?: DuckDBConnection; scorer?: Scorer } = {},
+): Promise<number> {
+  const safe = onboardingSafeDetectors(candidates);
+  return runDetectorLoop(member, safe, deps);
+}
+
+/** Production onboarding path: full registry in, parked pair filtered internally. */
+async function runForMember(member: string): Promise<number> {
+  return runOnboardingDetectorsForMember(member);
 }
 
 async function main(): Promise<void> {
@@ -131,9 +189,19 @@ async function main(): Promise<void> {
     members = [slug];
   }
 
-  // ADR 0003: this is a routine recompute path, not the confirmatory event —
-  // warn (do not block) if a scored detector's confirmatory run isn't consumed.
-  warnIfUnconsumed([...SCORED_PATTERNS]);
+  // Timing-safe by default: the parked timing pair is filtered out of this
+  // path entirely (onboardingSafeDetectors), so no timing detect/write/score
+  // ever runs here — a new member never gets first timing p-values as an
+  // onboarding side effect. Timing scoring lives solely in score-anomaly.ts and
+  // the *-baseline.ts confirmatory runners (ADR 0003). The advisory below makes
+  // that explicit if the pair is still unconsumed.
+  warnIfUnconsumed([...PARKED_TIMING_PATTERNS]);
+  const detectors = onboardingSafeDetectors();
+  console.log(
+    `(onboarding-safe: running ${detectors.length} detector(s); ` +
+    `parked timing pair [${[...PARKED_TIMING_PATTERNS].join(', ')}] excluded — ` +
+    `use score-anomaly.ts for those.)`,
+  );
 
   let grandTotal = 0;
   for (const m of members) {
@@ -142,7 +210,7 @@ async function main(): Promise<void> {
   }
   console.log(
     `\nDone. ${grandTotal} hit(s) across ${members.length} member(s), ` +
-      `${DETECTORS.length} detector(s).`,
+      `${detectors.length} detector(s).`,
   );
   process.exit(0);
 }

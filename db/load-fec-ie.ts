@@ -20,9 +20,25 @@
  * See SOURCES.md → "FEC OpenFEC API". Schema lives in db/schema.sql.
  */
 
+import type { DuckDBConnection } from '@duckdb/node-api';
 import { applySchema, getDb } from './init.js';
 import { fetchSuperPacIE } from '../lib/fec-ie.js';
 import type { SuperPacIEReport } from '../lib/types.js';
+import type { IngestScope } from '../lib/ingest-scope.js';
+
+/** The FEC IE fetcher, injectable so tests can mock the network. */
+export type IeFetcher = (
+  candidateId: string,
+  cycle: number,
+  opts: { itemized: boolean },
+) => Promise<SuperPacIEReport>;
+
+/** Injected deps: tests pass a temp conn + mock fetcher; prod passes nothing. */
+export interface FecIeDeps {
+  dryRun?: boolean;
+  conn?: DuckDBConnection;
+  fetcher?: IeFetcher;
+}
 
 interface MemberRef {
   memberId: string;
@@ -39,8 +55,31 @@ interface MemberResult {
   error?: string;
 }
 
-async function membersWithFec(): Promise<MemberRef[]> {
-  const conn = await getDb();
+/**
+ * Enumerate the target members BEFORE any network fetch. In member mode this is
+ * exactly the resolved member (and it must have a fec_candidate_id — else fail
+ * loud, never fall through to a zero-result roster run). In all mode it is every
+ * member with a FEC id.
+ */
+async function membersInScope(conn: DuckDBConnection, scope: IngestScope): Promise<MemberRef[]> {
+  if (scope.kind === 'member') {
+    const r = await conn.run(
+      `SELECT member_id, fec_candidate_id FROM members WHERE member_id = ? LIMIT 1`,
+      [scope.memberId],
+    );
+    const rows = (await r.getRowObjects()) as any[];
+    if (rows.length === 0) {
+      throw new Error(`load-fec-ie: member "${scope.memberId}" not in members table`);
+    }
+    const cid = String(rows[0].fec_candidate_id ?? '');
+    if (!cid) {
+      throw new Error(
+        `load-fec-ie: member "${scope.memberId}" has no fec_candidate_id — resolve it first ` +
+        `(db/backfill-fec-candidate.ts or FEC_OVERRIDES). Refusing to run a zero-result roster pass.`,
+      );
+    }
+    return [{ memberId: scope.memberId, candidateId: cid }];
+  }
   const r = await conn.run(
     `SELECT member_id, fec_candidate_id
        FROM members
@@ -57,6 +96,8 @@ async function membersWithFec(): Promise<MemberRef[]> {
 async function loadMemberCycle(
   m: MemberRef,
   cycle: number,
+  conn: DuckDBConnection,
+  fetcher: IeFetcher,
   opts: { dryRun?: boolean },
 ): Promise<MemberResult> {
   const res: MemberResult = {
@@ -70,7 +111,7 @@ async function loadMemberCycle(
 
   let report: SuperPacIEReport;
   try {
-    report = await fetchSuperPacIE(m.candidateId, cycle, { itemized: true });
+    report = await fetcher(m.candidateId, cycle, { itemized: true });
   } catch (e: any) {
     res.error = e?.message ?? String(e);
     return res;
@@ -85,9 +126,10 @@ async function loadMemberCycle(
 
   if (opts.dryRun) return res;
 
-  const conn = await getDb();
   const fetchedAt = report.fetchedAt ?? new Date().toISOString();
 
+  await conn.run('BEGIN');
+  try {
   await conn.run(
     `DELETE FROM super_pac_ie WHERE member_id = ? AND cycle = ?`,
     [m.memberId, cycle],
@@ -130,25 +172,35 @@ async function loadMemberCycle(
       ],
     );
   }
+    await conn.run('COMMIT');
+  } catch (e) {
+    await conn.run('ROLLBACK');
+    throw e;
+  }
 
   return res;
 }
 
 export async function loadFecIe(
   cycles: number[],
-  opts: { dryRun?: boolean } = {},
+  scope: IngestScope,
+  deps: FecIeDeps = {},
 ): Promise<{ results: MemberResult[]; errored: number }> {
-  await applySchema();
-  const members = await membersWithFec();
+  const conn = deps.conn ?? (await getDb());
+  if (!deps.conn) await applySchema();
+  const fetcher = deps.fetcher ?? fetchSuperPacIE;
+  // Enumerate targets BEFORE any network fetch (fail-loud on a member without a
+  // FEC id happens here, not after a wasted roster pass).
+  const members = await membersInScope(conn, scope);
   const results: MemberResult[] = [];
 
   for (const cycle of cycles) {
     console.log(
       `\nLoading FEC IE for ${members.length} member(s), cycle ${cycle}` +
-      `${opts.dryRun ? ' (dry-run — DB unchanged)' : ''}…`,
+      `${deps.dryRun ? ' (dry-run — DB unchanged)' : ''}…`,
     );
     for (const m of members) {
-      const r = await loadMemberCycle(m, cycle, opts);
+      const r = await loadMemberCycle(m, cycle, conn, fetcher, { dryRun: deps.dryRun });
       results.push(r);
     }
   }
@@ -203,8 +255,10 @@ export function parseArgs(argv: string[]): { cycles: number[]; dryRun: boolean }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   (async () => {
+    const { parseScopeArgs, resolveScope } = await import('../lib/ingest-scope.js');
     const { cycles, dryRun } = parseArgs(process.argv.slice(2));
-    const { results, errored } = await loadFecIe(cycles, { dryRun });
+    const scope = await resolveScope(parseScopeArgs(process.argv.slice(2)));
+    const { results, errored } = await loadFecIe(cycles, scope, { dryRun });
     printSummary(results);
     process.exit(errored > 0 ? 1 : 0);
   })().catch(e => {

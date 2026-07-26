@@ -324,11 +324,12 @@ ${bold('CivicLens Pipeline Runner')}
   ${cyan('npx tsx agents/pipeline.ts --batch names.txt [n]')} batch from file (concurrency n, default 3)
   ${cyan('npx tsx agents/pipeline.ts --list')}                 list recent tasks
   ${cyan('npx tsx agents/pipeline.ts --status <task-id>')}     show task details
-  ${cyan('npx tsx agents/pipeline.ts --load-pfd <year> [--dry-run]')} load House Clerk PFDs for year into DuckDB
-  ${cyan('npx tsx agents/pipeline.ts --load-senate-ptr [--dry-run]')} load Senate EFDS PTRs into DuckDB
-  ${cyan('npx tsx agents/pipeline.ts --load-fec-ie <cycle[,cycle]> [--dry-run]')} load FEC Super PAC IE into DuckDB
-  ${cyan('npx tsx agents/pipeline.ts --load-opensecrets <cycle[,cycle]> [--dry-run]')} parse cached OpenSecrets industry HTML into DuckDB
-  ${cyan('npx tsx agents/pipeline.ts --load-bills [--api-pass] [--api-limit N] [--limit N]')} backfill votes.bill_id + fetch summaries
+  ${dim('  ↳ scope-gated loaders REQUIRE exactly one of --member <slug>, --bioguide <id>, or --all (no selector fails closed)')}
+  ${cyan('npx tsx agents/pipeline.ts --load-pfd <year> (--member <slug>|--bioguide <id>|--all) [--dry-run]')} House Clerk PFDs
+  ${cyan('npx tsx agents/pipeline.ts --load-senate-ptr (--member <slug>|--bioguide <id>|--all) [--dry-run]')} Senate EFDS PTRs
+  ${cyan('npx tsx agents/pipeline.ts --load-fec-ie <cycle[,cycle]> (--member <slug>|--bioguide <id>|--all) [--dry-run]')} FEC Super PAC IE
+  ${cyan('npx tsx agents/pipeline.ts --load-opensecrets <cycle[,cycle]> (--member <slug>|--bioguide <id>|--all) [--dry-run]')} cached OpenSecrets HTML
+  ${cyan('npx tsx agents/pipeline.ts --load-bills (--member <slug>|--bioguide <id>|--all) [--api-pass] [--api-limit N] [--limit N]')} votes.bill_id + summaries
   ${cyan('npx tsx agents/pipeline.ts --load-sponsored [member-id]')} authoritative sponsor rows + inline policyArea (run AFTER load-from-tasks)
   ${cyan('npx tsx agents/pipeline.ts --load-lda [args...]')}        Senate LDA lobbying (full options in db/load-lda.ts; use --years 2018-2026 etc)
   ${cyan('npx tsx agents/pipeline.ts --load-district-contracts [member-id] [--cy 2023,2024,2025] [--force] [--dry-run]')} USAspending NAICS rollups per House district
@@ -367,13 +368,15 @@ ${bold('CivicLens Pipeline Runner')}
     process.exit(0);
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
 } else if (arg === '--load-pfd') {
-  if (!arg2) { console.error('Usage: --load-pfd <year[,year,...]> [--dry-run]'); process.exit(1); }
+  if (!arg2) { console.error('Usage: --load-pfd <year[,year,...]> (--member <slug>|--bioguide <id>|--all) [--dry-run]'); process.exit(1); }
   const years = arg2.split(',').map(s => parseInt(s.trim(), 10)).filter(n => Number.isFinite(n));
   if (years.length === 0) { console.error('--load-pfd: years must be numeric'); process.exit(1); }
-  const dryRun = arg3 === '--dry-run' || process.argv.includes('--dry-run');
+  const dryRun = process.argv.includes('--dry-run');
   (async () => {
     const { loadPfdYears } = await import('../db/load-pfd.js');
-    const { totalUnmatched } = await loadPfdYears(years, { dryRun });
+    const { parseScopeArgs, resolveScope } = await import('../lib/ingest-scope.js');
+    const scope = await resolveScope(parseScopeArgs(process.argv.slice(3)));
+    const { totalUnmatched } = await loadPfdYears(years, scope, { dryRun });
     process.exit(totalUnmatched > 0 ? 1 : 0);
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(2); });
 } else if (arg === '--load-fec-ie') {
@@ -381,8 +384,10 @@ ${bold('CivicLens Pipeline Runner')}
   const cycleArg = arg2 && !arg2.startsWith('--') ? arg2 : '2024';
   (async () => {
     const { loadFecIe, parseArgs } = await import('../db/load-fec-ie.js');
+    const { parseScopeArgs, resolveScope } = await import('../lib/ingest-scope.js');
     const { cycles } = parseArgs([cycleArg]);
-    const { results, errored } = await loadFecIe(cycles, { dryRun });
+    const scope = await resolveScope(parseScopeArgs(process.argv.slice(3)));
+    const { results, errored } = await loadFecIe(cycles, scope, { dryRun });
     const withIe = results.filter((r: any) => !r.error && r.aggregates > 0).length;
     console.log(`\nFEC IE load: ${results.length} member-cycle rows, ${withIe} with IE, ${errored} errored${dryRun ? ' (dry-run)' : ''}`);
     process.exit(errored > 0 ? 1 : 0);
@@ -392,8 +397,10 @@ ${bold('CivicLens Pipeline Runner')}
   const cycleArg = arg2 && !arg2.startsWith('--') ? arg2 : '2024';
   (async () => {
     const { loadOpenSecrets, parseArgs } = await import('../db/load-opensecrets.js');
+    const { parseScopeArgs, resolveScope } = await import('../lib/ingest-scope.js');
     const { cycles } = parseArgs([cycleArg]);
-    const { results, errored } = await loadOpenSecrets(cycles, { dryRun });
+    const scope = await resolveScope(parseScopeArgs(process.argv.slice(3)));
+    const { results, errored } = await loadOpenSecrets(cycles, scope, { dryRun });
     const ok = results.filter((r: any) => !r.error).length;
     console.log(`\nOpenSecrets load: ${results.length} member-cycle file(s), ${ok} loaded, ${errored} errored${dryRun ? ' (dry-run)' : ''}`);
     process.exit(errored > 0 && results.every((r: any) => r.error) ? 1 : 0);
@@ -401,13 +408,15 @@ ${bold('CivicLens Pipeline Runner')}
 } else if (arg === '--load-bills') {
   (async () => {
     const { main: loadBills } = await import('../db/load-bill-summaries.js');
+    const { parseScopeArgs, resolveScope } = await import('../lib/ingest-scope.js');
     const pargs = process.argv.slice(2);
     const limitIdx    = pargs.indexOf('--limit');
     const apiLimitIdx = pargs.indexOf('--api-limit');
     const limit       = limitIdx    >= 0 ? parseInt(pargs[limitIdx    + 1] ?? '', 10) : undefined;
     const apiLimit    = apiLimitIdx >= 0 ? parseInt(pargs[apiLimitIdx + 1] ?? '', 10) : undefined;
     const apiPass     = pargs.includes('--api-pass');
-    await loadBills({ limit, apiPass, apiLimit });
+    const scope = await resolveScope(parseScopeArgs(process.argv.slice(3)));
+    await loadBills(scope, { limit, apiPass, apiLimit });
     process.exit(0);
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
 } else if (arg === '--load-ticker-sectors') {
@@ -463,7 +472,9 @@ ${bold('CivicLens Pipeline Runner')}
   const dryRun = process.argv.includes('--dry-run');
   (async () => {
     const { loadSenatePtrs } = await import('../db/load-senate-ptr.js');
-    const { filers, totalTx, unmatched } = await loadSenatePtrs({ dryRun });
+    const { parseScopeArgs, resolveScope } = await import('../lib/ingest-scope.js');
+    const scope = await resolveScope(parseScopeArgs(process.argv.slice(3)));
+    const { filers, totalTx, unmatched } = await loadSenatePtrs(scope, { dryRun });
     const nameW = Math.max(20, ...filers.map((f: any) => f.name.length));
     const memberW = Math.max(20, ...filers.map((f: any) => (f.memberId ?? 'unmatched').length));
     const line = '─'.repeat(nameW + memberW + 30);

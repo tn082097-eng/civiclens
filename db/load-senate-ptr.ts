@@ -13,8 +13,17 @@
 
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import type { DuckDBConnection } from '@duckdb/node-api';
 import { applySchema, getDb } from './init.js';
 import { SENATE_CACHE } from '../lib/paths.js';
+import type { IngestScope } from '../lib/ingest-scope.js';
+
+/** Injected deps: tests pass a temp conn + cache root; prod passes nothing. */
+export interface SenateDeps {
+  dryRun?: boolean;
+  conn?: DuckDBConnection;
+  cacheRoot?: string;
+}
 
 // ─── Member resolution ────────────────────────────────────────────────────────
 // Senate filings have first + last name. Match by last name against members table
@@ -26,8 +35,7 @@ interface Resolution {
   method: string;
 }
 
-async function resolveSenator(firstName: string, lastName: string): Promise<Resolution> {
-  const conn = await getDb();
+async function resolveSenator(firstName: string, lastName: string, conn: DuckDBConnection): Promise<Resolution> {
   // Strip punctuation, then generational suffixes: EFDS filer lastName can be
   // "McConnell, Jr." which must resolve as "McConnell".
   const last = lastName.replace(/[^a-zA-Z\s]/g, '').trim()
@@ -65,25 +73,28 @@ interface FilerSummary {
 }
 
 export async function loadSenatePtrs(
-  opts: { dryRun?: boolean } = {},
-): Promise<{ filers: FilerSummary[]; totalTx: number; unmatched: number }> {
-  await applySchema();
-  const conn = await getDb();
+  scope: IngestScope,
+  deps: SenateDeps = {},
+): Promise<{ filers: FilerSummary[]; totalTx: number; unmatched: number; targetMatched: number }> {
+  const conn = deps.conn ?? (await getDb());
+  if (!deps.conn) await applySchema();
+  const cacheRoot = deps.cacheRoot ?? SENATE_CACHE;
 
-  if (!existsSync(SENATE_CACHE)) {
-    throw new Error(`senate-ptr-cache not found at ${SENATE_CACHE} — run skills/senate-ptr/fetch.ts first`);
+  if (!existsSync(cacheRoot)) {
+    throw new Error(`senate-ptr-cache not found at ${cacheRoot} — run skills/senate-ptr/fetch.ts first`);
   }
 
-  const years = readdirSync(SENATE_CACHE).filter(d => /^\d{4}$/.test(d)).sort();
+  const years = readdirSync(cacheRoot).filter(d => /^\d{4}$/.test(d)).sort();
   if (years.length === 0) throw new Error('No year directories in senate-ptr-cache');
 
   const fetchedAt = new Date().toISOString();
   const resolutionCache = new Map<string, Resolution>();
   const summaryMap = new Map<string, FilerSummary>();
   let totalTx = 0;
+  let targetMatched = 0;
 
   for (const year of years) {
-    const dir      = resolve(SENATE_CACHE, year);
+    const dir      = resolve(cacheRoot, year);
     const jsonFiles = readdirSync(dir).filter(f => f.endsWith('.json'));
 
     for (const f of jsonFiles) {
@@ -103,60 +114,80 @@ export async function loadSenatePtrs(
       const key = fullName.toLowerCase();
       let resolution = resolutionCache.get(key);
       if (!resolution) {
-        resolution = await resolveSenator(firstName, lastName);
+        resolution = await resolveSenator(firstName, lastName, conn);
         resolutionCache.set(key, resolution);
       }
+
+      // Member scope: only the resolved target's filings reach DELETE/INSERT.
+      // The cache is arranged by YEAR, not by senator, so we must filter per
+      // filing — never write another senator merely because their file is in a
+      // scanned year dir.
+      const isTarget = scope.kind === 'all' || resolution.memberId === scope.memberId;
 
       const summary = summaryMap.get(key) ?? {
         name: fullName, memberId: resolution.memberId,
         method: resolution.method, confidence: resolution.confidence, txCount: 0,
       };
-      summary.txCount += txs.length;
+      if (isTarget) {
+        summary.txCount += txs.length;
+        totalTx += txs.length;
+        targetMatched++;
+      }
       summaryMap.set(key, summary);
-      totalTx += txs.length;
 
-      if (opts.dryRun) continue;
+      if (!isTarget || deps.dryRun) continue;
 
-      await conn.run(`DELETE FROM pfd_transactions WHERE filing_id = ?`, [filingId]);
+      await conn.run('BEGIN');
+      try {
+        await conn.run(`DELETE FROM pfd_transactions WHERE filing_id = ?`, [filingId]);
 
-      let txIndex = 0;
-      for (const tx of txs) {
-        await conn.run(
-          `INSERT OR REPLACE INTO pfd_transactions
-           (filing_id, tx_index, filer_name, filer_state_district, member_id,
-            holder, asset, ticker, asset_type, sub_account, location,
-            tx_type, tx_date, notification_date, amount_band, filing_status,
-            description, source_url, match_confidence, match_method, source_year, fetched_at)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-          [
-            filingId, txIndex,
-            fullName, null, resolution.memberId,
-            tx.owner ?? null, tx.asset ?? null, tx.ticker ?? null, tx.assetType ?? null,
-            null, null,
-            tx.type ?? null, tx.transactionDate ?? null, null,
-            tx.amountBand ?? null, 'New',
-            tx.comment ?? null, ptrUrl,
-            resolution.confidence, resolution.method,
-            parseInt(year), fetchedAt,
-          ],
-        );
-        txIndex++;
+        let txIndex = 0;
+        for (const tx of txs) {
+          await conn.run(
+            `INSERT OR REPLACE INTO pfd_transactions
+             (filing_id, tx_index, filer_name, filer_state_district, member_id,
+              holder, asset, ticker, asset_type, sub_account, location,
+              tx_type, tx_date, notification_date, amount_band, filing_status,
+              description, source_url, match_confidence, match_method, source_year, fetched_at)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+            [
+              filingId, txIndex,
+              fullName, null, resolution.memberId,
+              tx.owner ?? null, tx.asset ?? null, tx.ticker ?? null, tx.assetType ?? null,
+              null, null,
+              tx.type ?? null, tx.transactionDate ?? null, null,
+              tx.amountBand ?? null, 'New',
+              tx.comment ?? null, ptrUrl,
+              resolution.confidence, resolution.method,
+              parseInt(year), fetchedAt,
+            ],
+          );
+          txIndex++;
+        }
+        await conn.run('COMMIT');
+      } catch (e) {
+        await conn.run('ROLLBACK');
+        throw e;
       }
     }
   }
 
-  const filers = [...summaryMap.values()];
-  const unmatched = filers.filter(f => !f.memberId).length;
-  return { filers, totalTx, unmatched };
+  const relevant = scope.kind === 'all'
+    ? [...summaryMap.values()]
+    : [...summaryMap.values()].filter(f => f.memberId === scope.memberId);
+  const unmatched = relevant.filter(f => !f.memberId).length;
+  return { filers: [...summaryMap.values()], totalTx, unmatched, targetMatched };
 }
 
 // ─── CLI ──────────────────────────────────────────────────────────────────────
 
 async function main() {
   const dryRun = process.argv.includes('--dry-run');
+  const { parseScopeArgs, resolveScope } = await import('../lib/ingest-scope.js');
+  const scope = await resolveScope(parseScopeArgs(process.argv.slice(2)));
 
   console.log(`Loading Senate PTRs${dryRun ? ' (dry-run)' : ''}…\n`);
-  const { filers, totalTx, unmatched } = await loadSenatePtrs({ dryRun });
+  const { filers, totalTx, unmatched } = await loadSenatePtrs(scope, { dryRun });
 
   const nameW = Math.max(20, ...filers.map(f => f.name.length));
   const memberW = Math.max(20, ...filers.map(f => (f.memberId ?? 'unmatched').length));

@@ -15,8 +15,17 @@
 
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import type { DuckDBConnection } from '@duckdb/node-api';
 import { applySchema, getDb } from './init.js';
 import { PFD_CACHE as PFD_CACHE_ROOT } from '../lib/paths.js';
+import type { IngestScope } from '../lib/ingest-scope.js';
+
+/** Injected dependencies (tests pass a temp conn + cache root; prod passes nothing). */
+export interface PfdDeps {
+  dryRun?: boolean;
+  conn?: DuckDBConnection;
+  cacheRoot?: string;
+}
 
 // ─── Filer-to-member resolution ─────────────────────────────────────────────
 
@@ -54,8 +63,8 @@ function lastNameOf(filerName: string): string | null {
 async function resolveFiler(
   filerName: string,
   stateDistrict: string | undefined | null,
+  conn: DuckDBConnection,
 ): Promise<Resolution> {
-  const conn = await getDb();
   const { state, district } = parseStateDistrict(stateDistrict);
   const lastName = lastNameOf(filerName);
   if (!state || !lastName) {
@@ -98,11 +107,13 @@ interface FilerSummary {
 
 export async function loadPfdYear(
   year: number,
-  opts: { dryRun?: boolean } = {},
-): Promise<{ filers: FilerSummary[]; totalTx: number; unmatched: number }> {
-  await applySchema();
-  const conn = await getDb();
-  const dir = resolve(PFD_CACHE_ROOT, String(year));
+  scope: IngestScope,
+  deps: PfdDeps = {},
+): Promise<{ filers: FilerSummary[]; totalTx: number; unmatched: number; targetMatched: number }> {
+  const conn = deps.conn ?? (await getDb());
+  if (!deps.conn) await applySchema();
+  const cacheRoot = deps.cacheRoot ?? PFD_CACHE_ROOT;
+  const dir = resolve(cacheRoot, String(year));
   if (!existsSync(dir)) {
     throw new Error(`pfd-cache/${year} not found at ${dir}`);
   }
@@ -118,6 +129,7 @@ export async function loadPfdYear(
   const summaryByKey = new Map<string, FilerSummary>();
   const fetchedAt = new Date().toISOString();
   let totalTx = 0;
+  let targetMatched = 0; // filings whose resolved member == the member-scope target
 
   for (const f of jsonFiles) {
     const fp = resolve(dir, f);
@@ -141,54 +153,76 @@ export async function loadPfdYear(
     const key = `${filerName}|${stateDistrict}`;
     let resolution = resolutionByKey.get(key);
     if (!resolution) {
-      resolution = await resolveFiler(filerName, stateDistrict);
+      resolution = await resolveFiler(filerName, stateDistrict, conn);
       resolutionByKey.set(key, resolution);
     }
+
+    // Member scope: metadata may be inspected for every filing (resolution is
+    // cheap + memoised), but only filings resolving to the target reach the
+    // DELETE/INSERT below. Unrelated / unmatched filers never touch the DB and
+    // never fail the run.
+    const isTarget = scope.kind === 'all' || resolution.memberId === scope.memberId;
 
     const summary = summaryByKey.get(key) ?? {
       filerName, stateDistrict, resolution, filingCount: 0, txCount: 0,
     };
     summary.filingCount++;
-    summary.txCount += txs.length;
+    if (isTarget) {
+      summary.txCount += txs.length;
+      totalTx += txs.length;
+      targetMatched++;
+    }
     summaryByKey.set(key, summary);
-    totalTx += txs.length;
 
-    if (opts.dryRun) continue;
+    if (!isTarget || deps.dryRun) continue;
 
     // Wipe + reinsert all transactions for this filing. Cheaper than a
     // diff-and-update and matches the "latest fetch wins" semantics used
-    // elsewhere in the schema.
-    await conn.run(`DELETE FROM pfd_transactions WHERE filing_id = ?`, [filingId]);
+    // elsewhere in the schema. Transactional so a mid-write failure can't
+    // leave the target's filing half-written (empty).
+    await conn.run('BEGIN');
+    try {
+      await conn.run(`DELETE FROM pfd_transactions WHERE filing_id = ?`, [filingId]);
 
-    let txIndex = 0;
-    for (const tx of txs) {
-      const sourceUrl = `https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/${year}/${filingId}.pdf`;
-      await conn.run(
-        `INSERT OR REPLACE INTO pfd_transactions
-         (filing_id, tx_index, filer_name, filer_state_district, member_id,
-          holder, asset, ticker, asset_type, sub_account, location,
-          tx_type, tx_date, notification_date, amount_band, filing_status,
-          description, source_url,
-          match_confidence, match_method, source_year, fetched_at)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-        [
-          filingId, txIndex,
-          filerName, stateDistrict, resolution.memberId,
-          tx.holder ?? null, tx.asset ?? null, tx.ticker ?? null, tx.assetType ?? null,
-          tx.subholding ?? null, tx.location ?? null,
-          tx.type ?? null, tx.date ?? null, tx.notificationDate ?? null,
-          tx.amountBand ?? null, tx.filingStatus ?? null,
-          tx.description ?? null, sourceUrl,
-          resolution.confidence, resolution.method, year, fetchedAt,
-        ],
-      );
-      txIndex++;
+      let txIndex = 0;
+      for (const tx of txs) {
+        const sourceUrl = `https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/${year}/${filingId}.pdf`;
+        await conn.run(
+          `INSERT OR REPLACE INTO pfd_transactions
+           (filing_id, tx_index, filer_name, filer_state_district, member_id,
+            holder, asset, ticker, asset_type, sub_account, location,
+            tx_type, tx_date, notification_date, amount_band, filing_status,
+            description, source_url,
+            match_confidence, match_method, source_year, fetched_at)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+          [
+            filingId, txIndex,
+            filerName, stateDistrict, resolution.memberId,
+            tx.holder ?? null, tx.asset ?? null, tx.ticker ?? null, tx.assetType ?? null,
+            tx.subholding ?? null, tx.location ?? null,
+            tx.type ?? null, tx.date ?? null, tx.notificationDate ?? null,
+            tx.amountBand ?? null, tx.filingStatus ?? null,
+            tx.description ?? null, sourceUrl,
+            resolution.confidence, resolution.method, year, fetchedAt,
+          ],
+        );
+        txIndex++;
+      }
+      await conn.run('COMMIT');
+    } catch (e) {
+      await conn.run('ROLLBACK');
+      throw e;
     }
   }
 
-  const filers = [...summaryByKey.values()];
-  const unmatched = filers.filter(f => f.resolution.memberId === null).length;
-  return { filers, totalTx, unmatched };
+  // Only target-eligible filers count toward "unmatched": in member mode the
+  // target's own filings are always matched (else there'd be no target), so a
+  // clean member run reports 0 unmatched regardless of unrelated filers.
+  const relevant = scope.kind === 'all'
+    ? [...summaryByKey.values()]
+    : [...summaryByKey.values()].filter(f => f.resolution.memberId === scope.memberId);
+  const unmatched = relevant.filter(f => f.resolution.memberId === null).length;
+  return { filers: [...summaryByKey.values()], totalTx, unmatched, targetMatched };
 }
 
 // ─── Pretty summary printer ─────────────────────────────────────────────────
@@ -243,21 +277,22 @@ export function parseArgs(argv: string[]): { years: number[]; dryRun: boolean } 
     }
   }
   if (years.length === 0) {
-    throw new Error('Usage: load-pfd.ts --years <YYYY[,YYYY,...]> [--dry-run]');
+    throw new Error('Usage: load-pfd.ts --years <YYYY[,YYYY,...]> (--member <slug>|--bioguide <id>|--all) [--dry-run]');
   }
   return { years, dryRun };
 }
 
 export async function loadPfdYears(
   years: number[],
-  opts: { dryRun?: boolean } = {},
+  scope: IngestScope,
+  deps: PfdDeps = {},
 ): Promise<{ totalTx: number; totalUnmatched: number }> {
   let totalTx = 0;
   let totalUnmatched = 0;
   for (const year of years) {
-    console.log(`\nLoading PFDs for ${year}${opts.dryRun ? ' (dry-run)' : ''}…`);
-    const result = await loadPfdYear(year, opts);
-    printSummary(result, opts);
+    console.log(`\nLoading PFDs for ${year}${deps.dryRun ? ' (dry-run)' : ''}…`);
+    const result = await loadPfdYear(year, scope, deps);
+    printSummary(result, { dryRun: deps.dryRun });
     totalTx += result.totalTx;
     totalUnmatched += result.unmatched;
   }
@@ -268,8 +303,10 @@ export async function loadPfdYears(
 }
 
 async function main() {
+  const { parseScopeArgs, resolveScope } = await import('../lib/ingest-scope.js');
   const { years, dryRun } = parseArgs(process.argv.slice(2));
-  const { totalUnmatched } = await loadPfdYears(years, { dryRun });
+  const scope = await resolveScope(parseScopeArgs(process.argv.slice(2)));
+  const { totalUnmatched } = await loadPfdYears(years, scope, { dryRun });
   process.exit(totalUnmatched > 0 ? 1 : 0);
 }
 

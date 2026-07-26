@@ -24,10 +24,19 @@
  * ~/Developer/browser-harness/agent-workspace/domain-skills/opensecrets/.
  */
 
+import type { DuckDBConnection } from '@duckdb/node-api';
 import { applySchema, getDb } from './init.js';
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { OPENSECRETS_CACHE as CACHE_ROOT } from '../lib/paths.js';
+import { OPENSECRETS_CACHE as DEFAULT_CACHE_ROOT } from '../lib/paths.js';
+import type { IngestScope } from '../lib/ingest-scope.js';
+
+/** Injected deps: tests pass a temp conn + cache root; prod passes nothing. */
+export interface OpenSecretsDeps {
+  dryRun?: boolean;
+  conn?: DuckDBConnection;
+  cacheRoot?: string;
+}
 
 // The 13 OpenSecrets top-level sector labels. A table row whose first label cell
 // is one of these is a sector-aggregate row (and carries its first industry in
@@ -142,6 +151,7 @@ async function loadMemberCycleFile(
   cycle: number,
   filePath: string,
   sourceUrl: string,
+  conn: DuckDBConnection,
   opts: { dryRun?: boolean },
 ): Promise<MemberResult> {
   const res: MemberResult = { memberId, cycle, industries: 0, total: 0 };
@@ -169,45 +179,81 @@ async function loadMemberCycleFile(
   res.total = rows.reduce((a, r) => a + r.total, 0);
   if (opts.dryRun) return res;
 
-  const conn = await getDb();
   const fetchedAt = new Date().toISOString();
-  await conn.run(
-    `DELETE FROM donor_industry WHERE member_id = ? AND cycle = ? AND source = 'opensecrets'`,
-    [memberId, cycle],
-  );
-  for (const r of rows) {
+  await conn.run('BEGIN');
+  try {
     await conn.run(
-      `INSERT INTO donor_industry
-       (member_id, cycle, sector, industry, total, individuals, pacs, source, source_url, fetched_at)
-       VALUES (?,?,?,?,?,?,?, 'opensecrets', ?, ?)`,
-      [memberId, cycle, r.sector, r.industry, r.total, r.individuals, r.pacs, sourceUrl, fetchedAt],
+      `DELETE FROM donor_industry WHERE member_id = ? AND cycle = ? AND source = 'opensecrets'`,
+      [memberId, cycle],
     );
+    for (const r of rows) {
+      await conn.run(
+        `INSERT INTO donor_industry
+         (member_id, cycle, sector, industry, total, individuals, pacs, source, source_url, fetched_at)
+         VALUES (?,?,?,?,?,?,?, 'opensecrets', ?, ?)`,
+        [memberId, cycle, r.sector, r.industry, r.total, r.individuals, r.pacs, sourceUrl, fetchedAt],
+      );
+    }
+    await conn.run('COMMIT');
+  } catch (e) {
+    await conn.run('ROLLBACK');
+    throw e;
   }
   return res;
 }
 
+/** OpenSecrets caches one file per member: `<cycle>/<member_id>.html`. */
+function sourceUrlFor(memberId: string): string {
+  return `https://www.opensecrets.org/members-of-congress/${memberId}/industries`;
+}
+
 export async function loadOpenSecrets(
   cycles: number[],
-  opts: { dryRun?: boolean } = {},
+  scope: IngestScope,
+  deps: OpenSecretsDeps = {},
 ): Promise<{ results: MemberResult[]; errored: number }> {
-  await applySchema();
+  const conn = deps.conn ?? (await getDb());
+  if (!deps.conn) await applySchema();
+  const cacheRoot = deps.cacheRoot ?? DEFAULT_CACHE_ROOT;
   const results: MemberResult[] = [];
 
   for (const cycle of cycles) {
-    const dir = join(CACHE_ROOT, String(cycle));
+    const dir = join(cacheRoot, String(cycle));
     if (!existsSync(dir)) {
       console.log(`No cache dir for cycle ${cycle} (${dir}) — skipping.`);
       continue;
     }
+
+    if (scope.kind === 'member') {
+      // Member mode: open ONLY the resolved target's file. The cache filename is
+      // the canonical member_id, so we open <cycle>/<memberId>.html directly
+      // rather than scanning the dir — no other member-cycle can be touched. A
+      // missing file is an explicit interpretable result, never a roster scan.
+      const file = join(dir, `${scope.memberId}.html`);
+      if (!existsSync(file)) {
+        results.push({
+          memberId: scope.memberId, cycle, industries: 0, total: 0,
+          error: `no cached OpenSecrets HTML for ${scope.memberId} cycle ${cycle} ` +
+            `(expected ${file}) — run the civiclens-opensecrets-harvest skill first`,
+        });
+        continue;
+      }
+      console.log(`\nLoading OpenSecrets industries for ${scope.memberId}, cycle ${cycle}` +
+        `${deps.dryRun ? ' (dry-run — DB unchanged)' : ''}…`);
+      results.push(await loadMemberCycleFile(
+        scope.memberId, cycle, file, sourceUrlFor(scope.memberId), conn, deps));
+      continue;
+    }
+
     const files = readdirSync(dir).filter(f => f.endsWith('.html'));
     console.log(
       `\nLoading OpenSecrets industries for ${files.length} member file(s), cycle ${cycle}` +
-      `${opts.dryRun ? ' (dry-run — DB unchanged)' : ''}…`,
+      `${deps.dryRun ? ' (dry-run — DB unchanged)' : ''}…`,
     );
     for (const f of files) {
       const memberId = f.replace(/\.html$/, '');
-      const sourceUrl = `https://www.opensecrets.org/members-of-congress/${memberId}/industries`;
-      const r = await loadMemberCycleFile(memberId, cycle, join(dir, f), sourceUrl, opts);
+      const r = await loadMemberCycleFile(
+        memberId, cycle, join(dir, f), sourceUrlFor(memberId), conn, deps);
       results.push(r);
     }
   }
@@ -250,8 +296,10 @@ export function parseArgs(argv: string[]): { cycles: number[]; dryRun: boolean }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   (async () => {
+    const { parseScopeArgs, resolveScope } = await import('../lib/ingest-scope.js');
     const { cycles, dryRun } = parseArgs(process.argv.slice(2));
-    const { results, errored } = await loadOpenSecrets(cycles, { dryRun });
+    const scope = await resolveScope(parseScopeArgs(process.argv.slice(2)));
+    const { results, errored } = await loadOpenSecrets(cycles, scope, { dryRun });
     printSummary(results);
     process.exit(errored > 0 && results.every(r => r.error) ? 1 : 0);
   })().catch(e => { console.error(`\nFatal: ${e?.message ?? e}`); process.exit(2); });
