@@ -21,11 +21,11 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { DuckDBInstance, type DuckDBConnection } from '@duckdb/node-api';
-import { onboardingSafeDetectors, runOnboardingDetectorsForMember, PARKED_TIMING_PATTERNS } from './run-patterns.ts';
+import { onboardingSafeDetectors, runOnboardingDetectorsForMember, PARKED_TIMING_PATTERNS } from './run-patterns.js';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import type { PatternDetector, PatternHit } from './patterns/types.ts';
-import type { ScoreResult } from './score-anomaly.ts';
+import type { PatternDetector, PatternHit } from './patterns/types.js';
+import type { ScoreResult } from './score-anomaly.js';
 
 const SCHEMA = `
 CREATE TABLE pattern_hits (

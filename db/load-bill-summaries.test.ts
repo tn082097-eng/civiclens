@@ -6,9 +6,9 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { tempDb, insertMember, snapshot } from './__testkit__/temp-db.ts';
-import { backfillBillIds, distinctBillWorklist } from './load-bill-summaries.ts';
-import type { IngestScope } from '../lib/ingest-scope.ts';
+import { tempDb, insertMember, snapshot } from './__testkit__/temp-db.js';
+import { backfillBillIds, distinctBillWorklist } from './load-bill-summaries.js';
+import type { IngestScope } from '../lib/ingest-scope.js';
 
 function memberScope(slug: string): IngestScope {
   return { kind: 'member', slug, bioguideId: 'X', memberId: slug, chamber: 'house' };

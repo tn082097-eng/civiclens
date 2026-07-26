@@ -8,9 +8,9 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { onboardingSafeDetectors, PARKED_TIMING_PATTERNS } from './run-patterns.ts';
-import { DETECTORS } from './patterns/registry.ts';
-import { SCORED_PATTERNS } from './score-anomaly.ts';
+import { onboardingSafeDetectors, PARKED_TIMING_PATTERNS } from './run-patterns.js';
+import { DETECTORS } from './patterns/registry.js';
+import { SCORED_PATTERNS } from './score-anomaly.js';
 
 test('parked timing patterns are exactly the scored pair', () => {
   assert.deepEqual([...PARKED_TIMING_PATTERNS].sort(), [...SCORED_PATTERNS].sort());

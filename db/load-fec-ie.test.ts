@@ -7,10 +7,10 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { tempDb, insertMember, snapshot } from './__testkit__/temp-db.ts';
-import { loadFecIe } from './load-fec-ie.ts';
-import type { IngestScope } from '../lib/ingest-scope.ts';
-import type { SuperPacIEReport } from '../lib/types.ts';
+import { tempDb, insertMember, snapshot } from './__testkit__/temp-db.js';
+import { loadFecIe } from './load-fec-ie.js';
+import type { IngestScope } from '../lib/ingest-scope.js';
+import type { SuperPacIEReport } from '../lib/types.js';
 
 function memberScope(slug: string): IngestScope {
   return { kind: 'member', slug, bioguideId: 'X', memberId: slug, chamber: 'house' };
