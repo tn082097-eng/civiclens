@@ -10,8 +10,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { buildIndex, buildAliasMap } from './legislators.ts';
-import { parseScopeArgs, resolveScope, ScopeError, type MemberRow } from './ingest-scope.ts';
+import { buildIndex, buildAliasMap } from './legislators.js';
+import { parseScopeArgs, resolveScope, ScopeError, type MemberRow } from './ingest-scope.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const FIXTURE = join(HERE, '__fixtures__', 'legislators-fixture.yaml');

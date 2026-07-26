@@ -8,9 +8,9 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync, mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { tempDb, insertMember, snapshot } from './__testkit__/temp-db.ts';
-import { loadSenatePtrs } from './load-senate-ptr.ts';
-import type { IngestScope } from '../lib/ingest-scope.ts';
+import { tempDb, insertMember, snapshot } from './__testkit__/temp-db.js';
+import { loadSenatePtrs } from './load-senate-ptr.js';
+import type { IngestScope } from '../lib/ingest-scope.js';
 
 function senatorScope(slug: string): IngestScope {
   return { kind: 'member', slug, bioguideId: 'X', memberId: slug, chamber: 'senate' };

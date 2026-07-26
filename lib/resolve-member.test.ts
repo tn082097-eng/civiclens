@@ -2,8 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { buildIndex, buildAliasMap } from './legislators.ts';
-import { resolveIdentity, resolveMember, deriveSlug } from './resolve-member.ts';
+import { buildIndex, buildAliasMap } from './legislators.js';
+import { resolveIdentity, resolveMember, deriveSlug } from './resolve-member.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const FIXTURE = join(HERE, '__fixtures__', 'legislators-fixture.yaml');
