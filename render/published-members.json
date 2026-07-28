@@ -1,6 +1,66 @@
 {
   "members": [
     {
+      "slug": "blake-moore",
+      "name": "Blake Moore",
+      "party": "Republican",
+      "chamber": "house",
+      "state": "UT",
+      "stats": {
+        "trades": 40,
+        "votes": 2100,
+        "sponsored": 95,
+        "cosponsored": 617,
+        "donors": 100
+      },
+      "dataThrough": "2026-07-23"
+    },
+    {
+      "slug": "dan-crenshaw",
+      "name": "Dan Crenshaw",
+      "party": "Republican",
+      "chamber": "house",
+      "state": "TX",
+      "stats": {
+        "trades": 8,
+        "votes": 2100,
+        "sponsored": 91,
+        "cosponsored": 1260,
+        "donors": 99
+      },
+      "dataThrough": "2026-07-23"
+    },
+    {
+      "slug": "dan-goldman",
+      "name": "Dan Goldman",
+      "party": "Democrat",
+      "chamber": "house",
+      "state": "NY",
+      "stats": {
+        "trades": 1307,
+        "votes": 1886,
+        "sponsored": 65,
+        "cosponsored": 1357,
+        "donors": 100
+      },
+      "dataThrough": "2026-07-23"
+    },
+    {
+      "slug": "jared-moskowitz",
+      "name": "Jared Moskowitz",
+      "party": "Democrat",
+      "chamber": "house",
+      "state": "FL",
+      "stats": {
+        "trades": 393,
+        "votes": 1886,
+        "sponsored": 37,
+        "cosponsored": 794,
+        "donors": 100
+      },
+      "dataThrough": "2026-07-23"
+    },
+    {
       "slug": "josh-gottheimer",
       "name": "Josh Gottheimer",
       "party": "Democrat",
@@ -8,12 +68,87 @@
       "state": "NJ",
       "stats": {
         "trades": 1923,
-        "votes": 2000,
-        "sponsored": 194,
+        "votes": 2100,
+        "sponsored": 196,
         "cosponsored": 3243,
         "donors": 99
       },
-      "dataThrough": "2026-06-30"
+      "dataThrough": "2026-07-23"
+    },
+    {
+      "slug": "lois-frankel",
+      "name": "Lois Frankel",
+      "party": "Democrat",
+      "chamber": "house",
+      "state": "FL",
+      "stats": {
+        "trades": 324,
+        "votes": 2100,
+        "sponsored": 92,
+        "cosponsored": 2267,
+        "donors": 100
+      },
+      "dataThrough": "2026-07-23"
+    },
+    {
+      "slug": "nancy-pelosi",
+      "name": "Nancy Pelosi",
+      "party": "Democrat",
+      "chamber": "house",
+      "state": "CA",
+      "stats": {
+        "trades": 71,
+        "votes": 2000,
+        "sponsored": 173,
+        "cosponsored": 5070,
+        "donors": 100
+      },
+      "dataThrough": "2026-07-23"
+    },
+    {
+      "slug": "ron-wyden",
+      "name": "Ron Wyden",
+      "party": "Democrat",
+      "chamber": "senate",
+      "state": "OR",
+      "stats": {
+        "trades": 36,
+        "votes": 1700,
+        "sponsored": 43,
+        "cosponsored": 7621,
+        "donors": 100
+      },
+      "dataThrough": "2026-07-27"
+    },
+    {
+      "slug": "sheldon-whitehouse",
+      "name": "Sheldon Whitehouse",
+      "party": "Democrat",
+      "chamber": "senate",
+      "state": "RI",
+      "stats": {
+        "trades": 120,
+        "votes": 1700,
+        "sponsored": 137,
+        "cosponsored": 4273,
+        "donors": 100
+      },
+      "dataThrough": "2026-07-27"
+    },
+    {
+      "slug": "susan-collins",
+      "name": "Susan Collins",
+      "party": "Republican",
+      "chamber": "senate",
+      "state": "ME",
+      "stats": {
+        "trades": 28,
+        "votes": 1700,
+        "sponsored": 156,
+        "cosponsored": 5426,
+        "donors": 100
+      },
+      "dataThrough": "2026-07-27"
     }
   ]
 }
