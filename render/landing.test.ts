@@ -31,7 +31,7 @@ test('renderLanding: inventory language only — no detector/signal claims on th
   const html = renderLanding(manifest());
   assert.ok(!/\bp\s*=|permutation|significant|flagged|suspicious/i.test(html));
   assert.match(html, /do not\s+establish causation or statistical significance/i);
-  assert.match(html, /Single-member beta/);
+  assert.match(html, /Public beta/);
 });
 
 test('renderLanding: escapes member fields', () => {

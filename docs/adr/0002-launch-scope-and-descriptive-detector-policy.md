@@ -47,8 +47,12 @@ Required product language (verbatim, maintainer-set):
 
 ## B. Launch scope: single member first
 
-- The current publish target is a **single-member launch** (Josh Gottheimer,
-  the verified end-to-end page).
+> **Amended 2026-07-28 — roster launch.** The single-member phase closed. The
+> inclusion rule below supersedes the single-member target; the rest of this
+> section (deferred corpus pages, no single-member site mode) stands unchanged.
+
+- ~~The current publish target is a **single-member launch** (Josh Gottheimer,
+  the verified end-to-end page).~~ Superseded — see the inclusion rule below.
 - Corpus-wide pages — `index.html`, `network.html`, `nexus.html` — are
   **deferred** until the roster is validated roster-wide. They aggregate all
   ~57 members, 37 of whom have no trade data loaded; publishing them now would
@@ -57,6 +61,35 @@ Required product language (verbatim, maintainer-set):
   corpus pages. There is deliberately **no** single-member *site* mode yet;
   building one is future work to be decided at roster-launch time, not
   retrofitted now.
+
+### B.1 Inclusion rule (amendment, 2026-07-28)
+
+A member is published when **both** hold:
+
+1. Their theme-gaps band is **`ranked`** or **`low-power`** — i.e. the member
+   has enough theme-mappable trades for the page to say something. Members at
+   `insufficient-data` are not published; their pages would be honest but
+   empty, which is the failure §B was written to prevent.
+2. They are a **sitting member of the current Congress**. Publication is
+   opt-in via the `MEMBERS` array in `scripts/package-launch.sh`, so
+   non-sitting members cannot leak onto the site by default; this criterion
+   makes the exclusion deliberate rather than incidental.
+
+Rationale for the band threshold rather than a raw trade count: the band
+denominator is *theme-mappable* trades, so it already accounts for the
+crosswalk coverage gap. A member with many trades that never resolve to a
+theme legitimately stays unpublished until the crosswalk improves — the fix
+belongs in `db/load-sector-crosswalk.ts`, not in a lowered publish bar.
+
+Applying the rule at the 2026-07-28 roster launch yields **10 members**:
+gottheimer · goldman · moskowitz · frankel · whitehouse · pelosi · moore ·
+wyden · collins · crenshaw.
+
+`marjorie-taylor-greene` meets criterion 1 (band `ranked`) but fails
+criterion 2: she resigned effective 2026-01-05 (`members.in_office = false`,
+`term_end 2026-01-05`; her vote record ends 2025-12-18 and congress.gov
+returns no committee assignments). Her data is complete and correct through
+her last day — she is excluded as a non-sitting member, not as a data defect.
 
 ## C. Deployment: verified-artifact, never a CI rebuild
 

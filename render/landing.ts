@@ -47,9 +47,9 @@ const LEDE =
   'not verdicts.';
 
 const BETA =
-  'Single-member beta: one member is published end-to-end while every section ' +
-  'of the methodology is validated. The roster expands as each member’s data ' +
-  'passes the same verification.';
+  'Public beta: every published member is verified end-to-end against the same ' +
+  'methodology. Members appear here once they have enough disclosed trades to ' +
+  'analyse; the roster expands as each member’s data passes that verification.';
 
 const NO_CAUSATION =
   'Detectors identify reproducible patterns in available data. They do not ' +

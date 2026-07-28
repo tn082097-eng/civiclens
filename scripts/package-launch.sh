@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Assemble the single-member launch artifact (public/) from the locally
-# verified site/ build. Deploy flow per docs/adr/0002 §C: local verified
-# build -> committed public/ -> GitHub Pages. CI never rebuilds.
+# Assemble the launch artifact (public/) from the locally verified site/
+# build. Deploy flow per docs/adr/0002 §C: local verified build -> committed
+# public/ -> GitHub Pages. CI never rebuilds. Roster membership is governed by
+# the ADR 0002 §B.1 inclusion rule; MEMBERS below is the opt-in list.
 #
 # Contents:
 #   public/index.html                    landing, rendered from the

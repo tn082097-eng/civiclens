@@ -118,6 +118,27 @@ function asInt(v: any): number | null {
 
 // ─── Loaders per table ──────────────────────────────────────────────────────
 
+/**
+ * Donor rows worth writing: named, canonicalisable entries only.
+ *
+ * The donor write is "latest fetch wins", but only when the fetch actually
+ * returned rows. An empty `donors` array is ambiguous — it means either
+ * "genuinely no donors" or "the OpenFEC call failed" (no committee for the
+ * candidate ID, rate limit, transient 5xx). Deleting on empty turns a soft
+ * upstream failure into permanent local data loss: observed 2026-07-28, when a
+ * research refresh wiped a member's 100 donor rows after OpenFEC returned
+ * "no committee for candidate H2FL22080".
+ *
+ * Preserving on empty is the safe asymmetry. A stale donor set is visibly
+ * dated (via `fetched_at`) and self-heals on the next good fetch; a deleted
+ * one is neither. Callers therefore clear existing rows only when this returns
+ * a non-empty list.
+ */
+export function usableDonors(donors: unknown): any[] {
+  if (!Array.isArray(donors)) return [];
+  return donors.filter((dn: any) => dn?.name && canonicalDonor(dn.name));
+}
+
 export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: number; bills: number; committees: number; controversies: number }> {
   const conn = await getDb();
   const researcherPath = resolve(pick.taskDir, 'researcher.json');
@@ -167,13 +188,13 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
     ]
   );
 
-  // donors — clear existing rows for this member (cumulative semantics: latest fetch wins)
-  await conn.run(`DELETE FROM donors WHERE member_id = ?`, [memberId]);
+  const fetchedDonors = usableDonors(d.donors);
+  if (fetchedDonors.length > 0) {
+    await conn.run(`DELETE FROM donors WHERE member_id = ?`, [memberId]);
+  }
   let donorCount = 0;
-  for (const dn of d.donors ?? []) {
-    if (!dn?.name) continue;
-    const canonical = canonicalDonor(dn.name);
-    if (!canonical) continue;
+  for (const dn of fetchedDonors) {
+    const canonical = canonicalDonor(dn.name)!;
     await conn.run(
       `INSERT OR REPLACE INTO donors
        (member_id, donor_name, donor_canonical, donor_type, amount, latest_date,
