@@ -139,7 +139,7 @@ footer a { color: var(--fg-dim); }
 <body>
 <header>
   <h1>CivicLens</h1>
-  <div class="sub"><a href="index.html">Corpus</a> · Methodology · generated 2026-07-19 21:12Z</div>
+  <div class="sub"><a href="index.html">Corpus</a> · Methodology · generated 2026-07-28 03:44Z</div>
 </header>
 <main>
 
@@ -151,6 +151,7 @@ footer a { color: var(--fg-dim); }
   <ul>
     <li><strong>A flag is a measured pattern</strong> in the public record — never an accusation or a finding of wrongdoing.</li>
     <li><strong>Confidence comes from a permutation null model.</strong> For a scored detector, the observed count is compared against many shuffles of the member's <em>own</em> activity, holding their pace fixed. The p-value is the share of shuffles that match or exceed the observed count; a low p-value means the pattern is hard to produce by that member's ordinary behaviour alone.</li>
+    <li><strong>The timing detectors are scored against each member's own trading pace.</strong> The trade-vote and spousal-timing flags use a seeded per-member null — a volume-preserving date shuffle for high-volume traders, a calendar draw otherwise — so a member whose sheer trade count fills every window earns no signal from volume alone. A flag that scores at p ≥ 0.05 keeps rendering with explicit chance-level language and is visually capped at the lowest weight tier. The null does not model earnings-season or market-event clustering, so tightly-timed trades driven by public market events can still register. This scoring layer is pre-registered (statistic, null, thresholds, and seeds fixed in code before the run) in the project repository, docs/2026-07-20-timing-detectors-scoring.md.</li>
     <li><strong>Statistics are shown, never invented.</strong> Detectors that are not scored against a null model say so plainly and show only the count of cited records — no fabricated p-value.</li>
     <li><strong>Weight reflects evidence strength, not a verdict.</strong> Visual intensity on a flag card maps to the strength of the statistical signal; it carries no moral colour.</li>
     <li><strong>Everything is reproducible.</strong> The null model is seeded, so the same inputs yield the same scores. Every flag cites real rows you can verify in the sections above it.</li>
@@ -166,7 +167,7 @@ footer a { color: var(--fg-dim); }
 </div>
 <div class="trade-card flag-card" style="margin-bottom:14px;">
   <div class="tc-header"><div class="tc-asset">Spousal trade timing</div><div class="tc-meta"><span class="muted">spousal-trade-timing</span></div></div>
-  <div class="fc-mech">How measured: Flags trades held by a spouse or jointly, placed within 14 days before a vote on a bill the member&#39;s committee handled.</div>
+  <div class="fc-mech">How measured: Flags trades held by a spouse or jointly, placed within 14 days before a vote on a bill the member&#39;s committee handled, then compares that count to a seeded permutation null built from the household&#39;s own trading pace.</div>
   <div class="fc-caveat">What this doesn't show: Spouse or joint accounts may be independently managed. CivicLens has no hearing calendar; committee jurisdiction is the relevance proxy.</div>
 </div>
 <div class="trade-card flag-card" style="margin-bottom:14px;">

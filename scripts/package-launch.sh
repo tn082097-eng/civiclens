@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Assemble the single-member launch artifact (public/) from the locally
-# verified site/ build. Deploy flow per docs/adr/0002 §C: local verified
-# build -> committed public/ -> GitHub Pages. CI never rebuilds.
+# Assemble the launch artifact (public/) from the locally verified site/
+# build. Deploy flow per docs/adr/0002 §C: local verified build -> committed
+# public/ -> GitHub Pages. CI never rebuilds. Roster membership is governed by
+# the ADR 0002 §B.1 inclusion rule; MEMBERS below is the opt-in list.
 #
 # Contents:
 #   public/index.html                    landing, rendered from the
@@ -26,7 +27,13 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-MEMBERS=(josh-gottheimer)
+# Roster per ADR 0002 §B.1: theme-gaps band `ranked` or `low-power`, and a
+# sitting member of the current Congress. Publication is opt-in — a member not
+# listed here cannot reach the site.
+MEMBERS=(
+  josh-gottheimer dan-goldman jared-moskowitz lois-frankel sheldon-whitehouse
+  nancy-pelosi blake-moore ron-wyden susan-collins dan-crenshaw
+)
 DB=data/civiclens.duckdb
 
 for f in site/methodology.html "$DB"; do
