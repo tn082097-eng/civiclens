@@ -45,6 +45,7 @@ import { DONOR_SQL, SPONSORED_SQL } from '../pipeline/patterns/donor-sector-vote
 import { loadThemeGapsOrSentinel } from './load-artifacts.js';
 import { renderLanding, type PublishedManifest } from './landing.js';
 import { revolvingEmptyShell, outsideSpendingEmptyShell } from './empty-shells.js';
+import { orderIeCycles, ieCycleLabel } from './ie-cycles.js';
 
 const OUT_DIR = SITE_DIR;
 const MEMBERS_DIR = resolve(OUT_DIR, 'members');
@@ -1414,33 +1415,44 @@ async function renderPatterns(memberSlug: string): Promise<string> {
 ${cards}`;
 }
 
-// FEC election cycle to render for a member: their most recent cycle with IE
-// on record, else the current election cycle (so the empty shell is labeled
-// with the cycle that was actually checked). Derived, never hardcoded — some
-// members have 2026 IE loaded while others stop at 2024.
+// FEC election cycles to render for a member: EVERY cycle they have IE on
+// record for, newest first — else the current election cycle (so the empty
+// shell is labeled with the cycle that was actually checked). Derived, never
+// hardcoded — some members have 2026 IE loaded while others stop at 2024.
 const CURRENT_FEC_CYCLE = Number(CYCLE_END.slice(0, 4)) - 1;
 
-async function latestIeCycle(memberId: string): Promise<number | null> {
+/**
+ * All cycles with IE rows, newest first. ORDER BY cycle DESC is already a total
+ * order (one row per cycle after GROUP BY), which the render path requires for
+ * byte-reproducibility.
+ */
+async function ieCyclesFor(memberId: string): Promise<number[]> {
   const conn = await getDb();
   const rows = (await (await conn.run(
-    `SELECT MAX(cycle)::int AS mx FROM super_pac_ie WHERE member_id = ?`,
+    `SELECT cycle::int AS cycle FROM super_pac_ie WHERE member_id = ?
+      GROUP BY cycle ORDER BY cycle DESC`,
     [memberId],
-  )).getRowObjects()) as Array<{ mx: number | null }>;
-  return rows[0]?.mx != null ? Number(rows[0].mx) : null;
+  )).getRowObjects()) as Array<{ cycle: number }>;
+  return orderIeCycles(rows);
 }
 
-async function renderOutsideSpending(m: MemberDetail, cycle: number): Promise<string> {
+async function renderOutsideSpending(m: MemberDetail, cycles: number[]): Promise<string> {
   if (!m.fec_candidate_id) return outsideSpendingEmptyShell('no-fec-id');
 
-  let report: SuperPacIEReport;
-  try {
-    report = await fetchSuperPacIE(m.fec_candidate_id, cycle, { topFunders: 3 });
-  } catch (e) {
-    console.warn(`[outside-spending] fetch failed for ${m.member_id}:`, (e as Error).message);
-    return outsideSpendingEmptyShell('no-ie');
+  // One report per cycle, in the caller's (newest-first) order. A cycle whose
+  // fetch fails is dropped rather than failing the whole section — a member
+  // with a good 2024 and a broken 2026 still gets their 2024 spending rendered.
+  const reports: Array<{ cycle: number; report: SuperPacIEReport }> = [];
+  for (const cycle of cycles) {
+    try {
+      const report = await fetchSuperPacIE(m.fec_candidate_id, cycle, { topFunders: 3 });
+      if (report.supporting.length > 0 || report.opposing.length > 0) reports.push({ cycle, report });
+    } catch (e) {
+      console.warn(`[outside-spending] fetch failed for ${m.member_id} ${cycle}:`, (e as Error).message);
+    }
   }
 
-  if (report.supporting.length === 0 && report.opposing.length === 0) return outsideSpendingEmptyShell('no-ie');
+  if (reports.length === 0) return outsideSpendingEmptyShell('no-ie');
 
   function fmtPac(p: SuperPacIE, funders: SuperPacFunder[] | undefined): string {
     const meta = [p.committeeType, p.designation, p.party].filter(Boolean).join(' · ');
@@ -1461,31 +1473,38 @@ async function renderOutsideSpending(m: MemberDetail, cycle: number): Promise<st
     </div>`;
   }
 
-  const supportingTop = report.supporting.slice(0, 3);
-  const opposingTop = report.opposing.slice(0, 3);
-  const funders = report.topFunders ?? {};
+  const cycleBlocks = reports.map(({ cycle, report }) => {
+    const supportingTop = report.supporting.slice(0, 3);
+    const opposingTop = report.opposing.slice(0, 3);
+    const funders = report.topFunders ?? {};
 
-  const supportingBlock = supportingTop.length === 0
-    ? `<p class="muted">No supporting independent expenditure in ${cycle} cycle.</p>`
-    : `<div class="pac-list">${supportingTop.map(p => fmtPac(p, funders[p.committeeId])).join('')}</div>`;
+    const supportingBlock = supportingTop.length === 0
+      ? `<p class="muted">No supporting independent expenditure in ${cycle} cycle.</p>`
+      : `<div class="pac-list">${supportingTop.map(p => fmtPac(p, funders[p.committeeId])).join('')}</div>`;
 
-  const opposingBlock = opposingTop.length === 0
-    ? `<p class="muted">No opposing independent expenditure in ${cycle} cycle.</p>`
-    : `<div class="pac-list">${opposingTop.map(p => fmtPac(p, funders[p.committeeId])).join('')}</div>`;
+    const opposingBlock = opposingTop.length === 0
+      ? `<p class="muted">No opposing independent expenditure in ${cycle} cycle.</p>`
+      : `<div class="pac-list">${opposingTop.map(p => fmtPac(p, funders[p.committeeId])).join('')}</div>`;
 
-  return sectionShell('sec-outside-spending', 'Outside spending (Super PACs)', `
-<p class="lede" style="margin-bottom:8px;">
-  Independent expenditure for or against ${esc(m.name)}, ${cycle} cycle.
-  Uncapped, not coordinated with the candidate. Funders shown where Schedule A is available.
-</p>
+    return `<div class="ie-cycle">
+<h3 style="margin-top:20px;">${esc(ieCycleLabel(cycle, CURRENT_FEC_CYCLE))}</h3>
 <div class="pac-totals">
   <span class="pac-side support">Supporting: ${fmtMoney(report.totalSupporting)}</span>
   <span class="pac-side oppose">Opposing: ${fmtMoney(report.totalOpposing)}</span>
 </div>
-<h3 style="margin-top:16px;">Supporting Super PACs</h3>
+<h4 style="margin-top:12px;">Supporting Super PACs</h4>
 ${supportingBlock}
-<h3 style="margin-top:16px;">Opposing Super PACs</h3>
+<h4 style="margin-top:12px;">Opposing Super PACs</h4>
 ${opposingBlock}
+</div>`;
+  }).join('');
+
+  return sectionShell('sec-outside-spending', 'Outside spending (Super PACs)', `
+<p class="lede" style="margin-bottom:8px;">
+  Independent expenditure for or against ${esc(m.name)}, by election cycle.
+  Uncapped, not coordinated with the candidate. Funders shown where Schedule A is available.
+</p>
+${cycleBlocks}
 `);
 }
 
@@ -1685,8 +1704,11 @@ ${revolving.map(c => {
 </table>`;
 
   const timelineBlock = buildTimelineBlock(m.member_id, timeline.votes, timeline.trades);
+  // A member with no IE rows still gets the current cycle checked, so the empty
+  // shell is labeled with the cycle that was actually looked at.
+  const ieCycles = await ieCyclesFor(m.member_id);
   const outsideSpendingBlock = await renderOutsideSpending(
-    m, (await latestIeCycle(m.member_id)) ?? CURRENT_FEC_CYCLE);
+    m, ieCycles.length > 0 ? ieCycles : [CURRENT_FEC_CYCLE]);
   const cosponsorBlock = renderCosponsorEmbed(cosponsorEdges);
   const patternsBlock = await renderPatterns(m.member_id);
   const glance = await fetchActivityGlance(m.member_id);
