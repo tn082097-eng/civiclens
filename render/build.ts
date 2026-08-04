@@ -45,7 +45,7 @@ import { DONOR_SQL, SPONSORED_SQL } from '../pipeline/patterns/donor-sector-vote
 import { loadThemeGapsOrSentinel } from './load-artifacts.js';
 import { renderLanding, type PublishedManifest } from './landing.js';
 import { revolvingEmptyShell, outsideSpendingEmptyShell } from './empty-shells.js';
-import { orderIeCycles, ieCycleLabel } from './ie-cycles.js';
+import { orderIeCycles, ieCycleLabel, ieFetchOutcome, ieUnavailableNote } from './ie-cycles.js';
 
 const OUT_DIR = SITE_DIR;
 const MEMBERS_DIR = resolve(OUT_DIR, 'members');
@@ -1442,17 +1442,40 @@ async function renderOutsideSpending(m: MemberDetail, cycles: number[]): Promise
   // One report per cycle, in the caller's (newest-first) order. A cycle whose
   // fetch fails is dropped rather than failing the whole section — a member
   // with a good 2024 and a broken 2026 still gets their 2024 spending rendered.
+  // A dropped cycle is disclosed on the page (see ieFetchOutcome): the DB said
+  // that cycle has rows, so omitting it silently would hide real money.
+  //
+  // `fetched` tracks cycles the API actually answered for, including a truthful
+  // zero — a cycle that fetched fine and had no spending is NOT a failure and
+  // must never be reported as unavailable.
   const reports: Array<{ cycle: number; report: SuperPacIEReport }> = [];
+  const fetched: number[] = [];
   for (const cycle of cycles) {
     try {
       const report = await fetchSuperPacIE(m.fec_candidate_id, cycle, { topFunders: 3 });
+      fetched.push(cycle);
       if (report.supporting.length > 0 || report.opposing.length > 0) reports.push({ cycle, report });
     } catch (e) {
       console.warn(`[outside-spending] fetch failed for ${m.member_id} ${cycle}:`, (e as Error).message);
     }
   }
 
-  if (reports.length === 0) return outsideSpendingEmptyShell('no-ie');
+  const outcome = ieFetchOutcome(cycles, fetched);
+  const unavailableBlock = outcome.kind === 'complete'
+    ? ''
+    : `<p class="muted" style="margin-bottom:8px;">${esc(ieUnavailableNote(outcome.failed))}</p>`;
+
+  // Every cycle failed: the empty shell would claim "no independent-expenditure
+  // spending found", which the DB contradicts. Say what actually happened.
+  if (outcome.kind === 'total') {
+    return sectionShell('sec-outside-spending', 'Outside spending (Super PACs)', unavailableBlock);
+  }
+
+  if (reports.length === 0) {
+    return outcome.kind === 'partial'
+      ? sectionShell('sec-outside-spending', 'Outside spending (Super PACs)', unavailableBlock)
+      : outsideSpendingEmptyShell('no-ie');
+  }
 
   function fmtPac(p: SuperPacIE, funders: SuperPacFunder[] | undefined): string {
     const meta = [p.committeeType, p.designation, p.party].filter(Boolean).join(' · ');
@@ -1504,6 +1527,7 @@ ${opposingBlock}
   Independent expenditure for or against ${esc(m.name)}, by election cycle.
   Uncapped, not coordinated with the candidate. Funders shown where Schedule A is available.
 </p>
+${unavailableBlock}
 ${cycleBlocks}
 `);
 }

@@ -25,3 +25,44 @@ export function orderIeCycles(rows: Array<{ cycle: number }>): number[] {
 export function ieCycleLabel(cycle: number, currentCycle: number): string {
   return cycle >= currentCycle ? `${cycle} cycle (in progress)` : `${cycle} cycle`;
 }
+
+/**
+ * Whether the render covers every cycle the DB said this member has.
+ *
+ * The dollar figures do not come from `super_pac_ie` — the DB supplies only the
+ * cycle *numbers*, and every amount is fetched live per cycle from OpenFEC. A
+ * fetch that throws used to be swallowed with a `console.warn`, so the page
+ * rendered without that cycle and gave no sign it was ever meant to be there.
+ * That reproduces the visible failure of the MAX(cycle) bug this module was
+ * written to fix — real money absent from a transparency page — via a different
+ * cause, and it is harder to notice: a section showing one cycle reads as
+ * complete, whereas an empty section reads as suspicious.
+ *
+ * `total` is kept distinct from `complete` because the two render identically
+ * otherwise: an all-cycles-failed member would fall through to the empty shell
+ * and assert "no independent-expenditure spending found", which the DB
+ * contradicts. Absence of evidence is not evidence of absence.
+ */
+export type IeFetchOutcome = {
+  kind: 'complete' | 'partial' | 'total';
+  failed: number[];
+};
+
+export function ieFetchOutcome(requested: number[], rendered: number[]): IeFetchOutcome {
+  const got = new Set(rendered);
+  const failed = [...new Set(requested)].filter(c => !got.has(c)).sort((a, b) => b - a);
+  if (failed.length === 0) return { kind: 'complete', failed };
+  return { kind: requested.length > 0 && rendered.length === 0 ? 'total' : 'partial', failed };
+}
+
+/**
+ * Disclosure line for cycles that could not be retrieved. Deliberately worded as
+ * a retrieval failure: saying "no spending" here would state as fact the very
+ * thing we failed to determine.
+ */
+export function ieUnavailableNote(failed: number[]): string {
+  if (failed.length === 0) return '';
+  const cycles = failed.map(c => `${c}`).join(', ');
+  const plural = failed.length > 1 ? 'cycles' : 'cycle';
+  return `Independent-expenditure data for the ${cycles} ${plural} could not be retrieved from OpenFEC for this build. Spending on record for ${failed.length > 1 ? 'those cycles' : 'that cycle'} is not shown below.`;
+}
