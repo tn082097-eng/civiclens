@@ -163,6 +163,33 @@ test('non-empty aggregates fully replace old rows — no stale duplicates left b
   }
 });
 
+test('independence: non-empty aggregates + empty filings in one run → aggregates replaced AND filings preserved', async () => {
+  const { conn, cleanup } = await tempDb();
+  try {
+    await insertMember(conn, { memberId: 'jane-doe', name: 'Jane Doe', chamber: 'house', fecCandidateId: 'H0DOE0001' });
+
+    const firstFetcher = async (cid: string, cycle: number) =>
+      report(cid, cycle, 5000, { filings: [filing('TX1', 5000)] });
+    await loadFecIe([2024], memberScope('jane-doe'), { conn, fetcher: firstFetcher });
+    const filingsBefore = await snapshot(conn, "(SELECT * FROM super_pac_ie_filings WHERE member_id='jane-doe')", 'member_id, cycle, transaction_id');
+    assert.match(filingsBefore, /TX1/);
+
+    // Same run: fresh non-empty aggregates, but zero itemized filings this time.
+    const secondFetcher = async (cid: string, cycle: number) =>
+      report(cid, cycle, 9000, { filings: [] });
+    await loadFecIe([2024], memberScope('jane-doe'), { conn, fetcher: secondFetcher });
+
+    const aggRows = JSON.parse(await snapshot(conn, "(SELECT * FROM super_pac_ie WHERE member_id='jane-doe')", 'member_id, cycle, committee_id'));
+    assert.equal(aggRows.length, 1);
+    assert.equal(aggRows[0].total_amount, 9000, 'aggregates replaced with the fresh non-empty set');
+
+    const filingsAfter = await snapshot(conn, "(SELECT * FROM super_pac_ie_filings WHERE member_id='jane-doe')", 'member_id, cycle, transaction_id');
+    assert.equal(filingsAfter, filingsBefore, 'filings preserved even though aggregates were replaced in the same run');
+  } finally {
+    cleanup();
+  }
+});
+
 test('all mode fetches every member with a FEC id', async () => {
   const { conn, cleanup } = await tempDb();
   try {
