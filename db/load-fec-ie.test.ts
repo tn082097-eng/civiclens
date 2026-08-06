@@ -16,16 +16,32 @@ function memberScope(slug: string): IngestScope {
   return { kind: 'member', slug, bioguideId: 'X', memberId: slug, chamber: 'house' };
 }
 
-function report(candidateId: string, cycle: number, amount: number): SuperPacIEReport {
-  return {
+/**
+ * `opts.aggregates` and `opts.filings` vary independently so tests can pin the
+ * empty-aggregates-only / empty-filings-only / both-nonempty combinations. When
+ * `opts.filings` is omitted (not merely `[]`), the report models a non-itemized
+ * fetch that never requested filings at all — distinct from an itemized fetch
+ * that came back genuinely empty.
+ */
+function report(
+  candidateId: string,
+  cycle: number,
+  amount: number,
+  opts: { aggregates?: boolean; filings?: any[] } = {},
+): SuperPacIEReport {
+  const includeAggregates = opts.aggregates ?? true;
+  const rep: SuperPacIEReport = {
     candidateId, cycle, fetchedAt: '2026-01-01T00:00:00.000Z',
-    supporting: [{
+    supporting: includeAggregates ? [{
       committeeId: 'C001', committeeName: 'Test PAC', committeeType: 'O',
       designation: 'U', party: 'X', supportOppose: 'S',
       totalAmount: amount, count: 1,
-    } as any],
-    opposing: [], totalSupporting: amount, totalOpposing: 0, filings: [],
+    } as any] : [],
+    opposing: [], totalSupporting: includeAggregates ? amount : 0, totalOpposing: 0,
   };
+  if ('filings' in opts) rep.filings = opts.filings;
+  else rep.filings = [];
+  return rep;
 }
 
 async function seedTwoWithFec(conn: any) {
@@ -69,6 +85,27 @@ test('missing fec_candidate_id for the selected member fails loud (no roster pas
       /fec_candidate_id|no FEC candidate/i,
     );
     assert.equal(called, false, 'no network fetch when the target lacks a FEC id');
+  } finally {
+    cleanup();
+  }
+});
+
+test('empty aggregates array preserves existing super_pac_ie rows for that member/cycle', async () => {
+  const { conn, cleanup } = await tempDb();
+  try {
+    await insertMember(conn, { memberId: 'jane-doe', name: 'Jane Doe', chamber: 'house', fecCandidateId: 'H0DOE0001' });
+
+    // First run: real aggregates land.
+    const goodFetcher = async (cid: string, cycle: number) => report(cid, cycle, 5000);
+    await loadFecIe([2024], memberScope('jane-doe'), { conn, fetcher: goodFetcher });
+    const before = await snapshot(conn, "(SELECT * FROM super_pac_ie WHERE member_id='jane-doe')", 'member_id, cycle, committee_id');
+    assert.match(before, /Test PAC/);
+
+    // Second run: FEC responds 200-OK but with zero aggregates.
+    const emptyFetcher = async (cid: string, cycle: number) => report(cid, cycle, 0, { aggregates: false });
+    await loadFecIe([2024], memberScope('jane-doe'), { conn, fetcher: emptyFetcher });
+    const after = await snapshot(conn, "(SELECT * FROM super_pac_ie WHERE member_id='jane-doe')", 'member_id, cycle, committee_id');
+    assert.equal(after, before, 'existing aggregates preserved when the fresh fetch is empty');
   } finally {
     cleanup();
   }

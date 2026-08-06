@@ -130,14 +130,26 @@ async function loadMemberCycle(
 
   await conn.run('BEGIN');
   try {
-  await conn.run(
-    `DELETE FROM super_pac_ie WHERE member_id = ? AND cycle = ?`,
-    [m.memberId, cycle],
-  );
-  await conn.run(
-    `DELETE FROM super_pac_ie_filings WHERE member_id = ? AND cycle = ?`,
-    [m.memberId, cycle],
-  );
+  // Preserving on empty is the safe asymmetry (see usableDonors() in
+  // db/load-from-tasks.ts): a 200-OK-but-empty FEC response is indistinguishable
+  // from a transient upstream hiccup, while a real "this member has no IE"
+  // result and a hiccup look identical on the wire. A stale row set is visibly
+  // dated via fetched_at and self-heals on the next good fetch; a deleted one is
+  // neither. So each DELETE is gated on ITS OWN array being non-empty — the two
+  // tables' counts diverge legitimately, so one is not a validity proxy for the
+  // other.
+  if (aggregates.length > 0) {
+    await conn.run(
+      `DELETE FROM super_pac_ie WHERE member_id = ? AND cycle = ?`,
+      [m.memberId, cycle],
+    );
+  }
+  if (filings.length > 0) {
+    await conn.run(
+      `DELETE FROM super_pac_ie_filings WHERE member_id = ? AND cycle = ?`,
+      [m.memberId, cycle],
+    );
+  }
 
   for (const a of aggregates) {
     await conn.run(
