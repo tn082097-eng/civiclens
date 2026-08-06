@@ -44,6 +44,15 @@ function report(
   return rep;
 }
 
+function filing(id: string, amount: number): any {
+  return {
+    committeeId: 'C001', committeeName: 'Test PAC', candidateId: 'H0DOE0001',
+    supportOppose: 'S', amount, expenditureDate: '2024-01-01', disbursementDate: null,
+    description: 'ad buy', payeeName: 'Ad Co', pdfUrl: null, reportYear: 2024,
+    electionType: 'G2024', transactionId: id,
+  };
+}
+
 async function seedTwoWithFec(conn: any) {
   await insertMember(conn, { memberId: 'jane-doe', name: 'Jane Doe', chamber: 'house', fecCandidateId: 'H0DOE0001' });
   await insertMember(conn, { memberId: 'john-roe', name: 'John Roe', chamber: 'house', fecCandidateId: 'H0ROE0002' });
@@ -106,6 +115,29 @@ test('empty aggregates array preserves existing super_pac_ie rows for that membe
     await loadFecIe([2024], memberScope('jane-doe'), { conn, fetcher: emptyFetcher });
     const after = await snapshot(conn, "(SELECT * FROM super_pac_ie WHERE member_id='jane-doe')", 'member_id, cycle, committee_id');
     assert.equal(after, before, 'existing aggregates preserved when the fresh fetch is empty');
+  } finally {
+    cleanup();
+  }
+});
+
+test('empty filings array preserves existing super_pac_ie_filings rows', async () => {
+  const { conn, cleanup } = await tempDb();
+  try {
+    await insertMember(conn, { memberId: 'jane-doe', name: 'Jane Doe', chamber: 'house', fecCandidateId: 'H0DOE0001' });
+
+    // First run: real filings land.
+    const goodFetcher = async (cid: string, cycle: number) =>
+      report(cid, cycle, 5000, { filings: [filing('TX1', 5000)] });
+    await loadFecIe([2024], memberScope('jane-doe'), { conn, fetcher: goodFetcher });
+    const before = await snapshot(conn, "(SELECT * FROM super_pac_ie_filings WHERE member_id='jane-doe')", 'member_id, cycle, transaction_id');
+    assert.match(before, /TX1/);
+
+    // Second run: FEC responds 200-OK with aggregates but zero itemized filings.
+    const emptyFetcher = async (cid: string, cycle: number) =>
+      report(cid, cycle, 5000, { filings: [] });
+    await loadFecIe([2024], memberScope('jane-doe'), { conn, fetcher: emptyFetcher });
+    const after = await snapshot(conn, "(SELECT * FROM super_pac_ie_filings WHERE member_id='jane-doe')", 'member_id, cycle, transaction_id');
+    assert.equal(after, before, 'existing filings preserved when the fresh fetch has zero filings');
   } finally {
     cleanup();
   }
