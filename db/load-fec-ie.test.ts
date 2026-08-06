@@ -143,6 +143,26 @@ test('empty filings array preserves existing super_pac_ie_filings rows', async (
   }
 });
 
+test('non-empty aggregates fully replace old rows — no stale duplicates left behind', async () => {
+  const { conn, cleanup } = await tempDb();
+  try {
+    await insertMember(conn, { memberId: 'jane-doe', name: 'Jane Doe', chamber: 'house', fecCandidateId: 'H0DOE0001' });
+
+    const firstFetcher = async (cid: string, cycle: number) => report(cid, cycle, 5000);
+    await loadFecIe([2024], memberScope('jane-doe'), { conn, fetcher: firstFetcher });
+
+    const secondFetcher = async (cid: string, cycle: number) => report(cid, cycle, 9000);
+    await loadFecIe([2024], memberScope('jane-doe'), { conn, fetcher: secondFetcher });
+
+    const rows = await snapshot(conn, "(SELECT * FROM super_pac_ie WHERE member_id='jane-doe')", 'member_id, cycle, committee_id');
+    const parsed = JSON.parse(rows);
+    assert.equal(parsed.length, 1, 'exactly one row survives — old one replaced, not duplicated');
+    assert.equal(parsed[0].total_amount, 9000, 'the surviving row is the fresh one');
+  } finally {
+    cleanup();
+  }
+});
+
 test('all mode fetches every member with a FEC id', async () => {
   const { conn, cleanup } = await tempDb();
   try {
