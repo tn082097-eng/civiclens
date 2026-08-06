@@ -190,6 +190,33 @@ test('independence: non-empty aggregates + empty filings in one run → aggregat
   }
 });
 
+test('filings: undefined (non-itemized fetch) preserves existing filings and is distinguishable from filings: []', async () => {
+  const { conn, cleanup } = await tempDb();
+  try {
+    await insertMember(conn, { memberId: 'jane-doe', name: 'Jane Doe', chamber: 'house', fecCandidateId: 'H0DOE0001' });
+
+    // First run: itemized fetch with a real filing.
+    const goodFetcher = async (cid: string, cycle: number) =>
+      report(cid, cycle, 5000, { filings: [filing('TX1', 5000)] });
+    await loadFecIe([2024], memberScope('jane-doe'), { conn, fetcher: goodFetcher });
+    const before = await snapshot(conn, "(SELECT * FROM super_pac_ie_filings WHERE member_id='jane-doe')", 'member_id, cycle, transaction_id');
+    assert.match(before, /TX1/);
+
+    // Second run: a non-itemized fetch never requests filings — `filings` key absent.
+    const nonItemizedFetcher = async (cid: string, cycle: number) => {
+      const rep = report(cid, cycle, 5000, {});
+      delete (rep as any).filings;
+      return rep;
+    };
+    const { results } = await loadFecIe([2024], memberScope('jane-doe'), { conn, fetcher: nonItemizedFetcher });
+    const after = await snapshot(conn, "(SELECT * FROM super_pac_ie_filings WHERE member_id='jane-doe')", 'member_id, cycle, transaction_id');
+    assert.equal(after, before, 'existing filings preserved when the fetch never requested filings at all');
+    assert.equal(results[0].filingsRequested, false, 'result distinguishes "not requested" from "requested and empty"');
+  } finally {
+    cleanup();
+  }
+});
+
 test('all mode fetches every member with a FEC id', async () => {
   const { conn, cleanup } = await tempDb();
   try {

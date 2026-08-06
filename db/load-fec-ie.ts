@@ -50,6 +50,14 @@ interface MemberResult {
   candidateId: string;
   aggregates: number;
   filings: number;
+  /**
+   * Whether this fetch actually asked for itemized filings. `report.filings`
+   * being `undefined` (non-itemized fetch, filings never requested) and `[]`
+   * (itemized fetch, genuinely zero filings) both surface as `filings: 0`
+   * above, but they are not the same fact — this field keeps them
+   * distinguishable in the result instead of collapsing both to one shape.
+   */
+  filingsRequested: boolean;
   totalSupporting: number;
   totalOpposing: number;
   error?: string;
@@ -105,6 +113,7 @@ async function loadMemberCycle(
     candidateId: m.candidateId,
     aggregates: 0,
     filings: 0,
+    filingsRequested: false,
     totalSupporting: 0,
     totalOpposing: 0,
   };
@@ -123,6 +132,7 @@ async function loadMemberCycle(
   const filings = report.filings ?? [];
   res.aggregates = aggregates.length;
   res.filings = filings.length;
+  res.filingsRequested = report.filings !== undefined;
 
   if (opts.dryRun) return res;
 
