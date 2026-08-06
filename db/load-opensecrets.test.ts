@@ -98,6 +98,32 @@ test('member mode with a missing target file is an explicit result, not a roster
   }
 });
 
+test('a challenged/corrupt page (zero rows, no dt-empty marker) errors out instead of deleting existing donor_industry rows', async () => {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'os-cache-'));
+  try {
+    await seedTwoMembers(conn);
+    // Good first fetch: real industry rows land.
+    writeCache(cacheRoot, 2024, 'jane-doe', widgetHtml('Pharmaceuticals', 5000));
+    await loadOpenSecrets([2024], memberScope('jane-doe'), { conn, cacheRoot });
+    const before = await snapshot(conn, "(SELECT * FROM donor_industry WHERE member_id='jane-doe')", 'member_id, cycle, industry');
+    assert.match(before, /Pharmaceuticals/);
+
+    // Second fetch: a challenge/corrupt save — no rows parse, and no dt-empty /
+    // "No matching records found" marker distinguishing it from a real empty page.
+    writeCache(cacheRoot, 2024, 'jane-doe', '<html><body>Are you a robot?</body></html>');
+    const { results, errored } = await loadOpenSecrets([2024], memberScope('jane-doe'), { conn, cacheRoot });
+
+    assert.ok(results[0].error, 'unmarked zero-row page surfaces as an explicit error, not a silent success');
+    assert.equal(errored, 1);
+    const after = await snapshot(conn, "(SELECT * FROM donor_industry WHERE member_id='jane-doe')", 'member_id, cycle, industry');
+    assert.equal(after, before, 'existing donor_industry rows untouched — errors out before the DELETE');
+  } finally {
+    cleanup();
+    rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
 test('all mode loads every cached file', async () => {
   const { conn, cleanup } = await tempDb();
   const cacheRoot = mkdtempSync(join(tmpdir(), 'os-cache-'));
