@@ -30,8 +30,12 @@ function filing(filingId: string, name: string, sd: string, ticker: string) {
     filer: { name, status: 'Member', stateDistrict: sd },
     signedAt: '2024-01-01',
     transactions: [
+      // notificationDate is present on 4,848/4,848 real cached House PFD
+      // transactions and is required by the loader's validation gate
+      // (db/load-pfd.ts), so the fixture carries it too.
       { holder: 'self', asset: `${ticker} Inc`, ticker, assetType: 'ST',
-        type: 'purchase', date: '2024-03-01', amountBand: '$1,001 - $15,000' },
+        type: 'purchase', date: '2024-03-01', notificationDate: '2024-03-15',
+        amountBand: '$1,001 - $15,000' },
     ],
   };
 }
