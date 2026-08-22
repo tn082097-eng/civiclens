@@ -58,8 +58,34 @@ export interface PTRRecord {
   source: 'house-clerk-ptr';
   filer: { name: string; status: string; stateDistrict: string };
   signedAt: string | null;  // ISO YYYY-MM-DD
-  transactions: Transaction[];
+  /**
+   * Non-empty by construction. A Periodic Transaction Report exists to report
+   * transactions, so a PTRRecord with zero rows is a parser failure, not a
+   * filing with nothing in it. The tuple type makes `transactions: []`
+   * unrepresentable — the failure has to come back as `unresolved` instead.
+   */
+  transactions: [Transaction, ...Transaction[]];
 }
+
+/**
+ * Why a readable PTR yielded no rows. Carries the evidence needed to tell
+ * "the layout beat the parser" apart from "there was nothing to find", which
+ * is exactly the distinction that let 19 launch filings load as empty.
+ */
+export interface PTRUnresolved {
+  filingId: string;
+  reason: 'no-transaction-rows' | 'not-a-ptr' | 'empty-input';
+  evidence: {
+    textBytes: number;
+    tableEntered: boolean;
+    datePairsSeen: number;   // independent count: how many rows SHOULD exist
+    rowsMatched: number;
+  };
+}
+
+export type PTRResult =
+  | { kind: 'parsed'; record: PTRRecord }
+  | { kind: 'unresolved'; info: PTRUnresolved };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -236,49 +262,121 @@ export function extractPTR_OCR(text: string): PTRRecord | null {
     }
   }
 
+  // Same non-empty invariant as the text parser. No OCR behaviour changes
+  // here: a zero-row OCR result was already discarded by the caller (it hit
+  // the "scanned table — needs commercial OCR" branch), so returning null
+  // reaches the identical outcome through the type system instead.
+  if (transactions.length === 0) return null;
+
   return {
     filingId,
     source: 'house-clerk-ptr',
     filer: { name, status: 'Member', stateDistrict },
     signedAt: null,
-    transactions,
+    transactions: transactions as [Transaction, ...Transaction[]],
   };
 }
 
 // ─── Parser ───────────────────────────────────────────────────────────────────
 
+/**
+ * One transaction row.
+ *
+ * Generalised 2026-08-22 to cover four layout variants observed across the
+ * House PTR corpus. All four are structural — none is keyed to a member, a
+ * DocID, or a filing year:
+ *
+ *   1. trailing checkbox glyph after the amount   `… $1,001 - $15,000    c`
+ *      (the cap-gains checkbox renders as a stray letter in the text layer)
+ *   2. amount-high wrapped to a later line        `$50,001 -` … `$100,000`
+ *   3. single amount, no range                    `$1.00`  (options rows)
+ *   4. leading numeric row id before the owner    `2000097616 JT  Cerence …`
+ *
+ * Transaction type is read from its own column between the asset and the
+ * transaction date — never inferred from position or surrounding prose.
+ */
 const PRIMARY_RE = new RegExp(
-  '^\\s+(SP|JT|DC)?\\s*' +                           // owner (optional, blank=self)
+  '^\\s*(?:\\d{6,}\\s+)?' +                          // (4) optional leading row id
+  '(SP|JT|DC)?\\s*' +                                // owner (optional, blank=self)
   '(.+?)\\s+' +                                      // asset name (non-greedy)
-  '(P|S \\(partial\\)|S|E|X)\\s+' +                  // transaction type
+  '(P|S \\(partial\\)|S|E|X)\\s+' +                  // transaction type (own column)
   '(\\d{2}\\/\\d{2}\\/\\d{4})\\s+' +                 // transaction date
   '(\\d{2}\\/\\d{2}\\/\\d{4})\\s+' +                 // notification date
-  '\\$([\\d,]+)\\s*-' +                              // amount-low + dash
-  '(?:\\s*\\$([\\d,]+))?' +                          // amount-high (optional, same line)
-  '\\s*$'
+  '\\$([\\d,.]+)' +                                  // amount-low (3: allows $1.00)
+  '(?:\\s*-\\s*(?:\\$([\\d,.]+))?)?' +               // (2) dash and/or high, both optional
+  '\\s*[a-z]?\\s*$'                                  // (1) trailing checkbox glyph
 );
 
-const AMT_HIGH_RE   = /\$([\d,]+)\s*$/;        // right-anchored
+/** Table header, case-insensitively — some filings render `transaction Date`. */
+const TABLE_HEADER_RE = /transaction\s+date/i;
+const NOTIFICATION_RE = /notification/i;
+
+// Right-anchored; tolerates a trailing checkbox glyph so a wrapped
+// amount-high (`$50,001 -` on the row, `$100,000` on a later line) is still
+// picked up when the checkbox letter lands on the continuation line.
+const AMT_HIGH_RE   = /\$([\d,.]+)\s*[a-z]?\s*$/;
 const TICKER_RE     = /\(([A-Z][A-Z0-9.]*)\)/;  // allow single-letter (e.g. Visa "V")
 const ASSET_TYPE_RE = /\[([A-Z]{2})\]/;
-const FILING_STATUS_RE = /F\s+S\s*:\s*(.+?)\s*$/;
+// Matches both the abbreviated `F S :` form and the fully-spelled
+// `FILING STATUS:` form used by the 200xxxxx-era template (any case).
+const FILING_STATUS_RE = /(?:F\s+S|FILING\s+STATUS)\s*:\s*(.+?)\s*$/i;
+const SUBHOLDING_RE    = /(?:S\s+O|SUBHOLDING\s+OF)\s*:\s*(.+?)\s*$/i;
+
+/**
+ * Strip cap-gains checkbox glyphs from an asset-name fragment.
+ *
+ * The checkbox column renders in the text layer as a run of isolated single
+ * letters (`c d e f g`), one per line, which land inside the asset name when
+ * lines are joined. They are layout artifacts, not part of the asset.
+ */
+function stripCheckboxGlyphs(s: string): string {
+  return s
+    .replace(/(?:^|\s)[b-g](?=\s|$)/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 const DESC_START_RE = /^\s+D\s+:\s*(.*)$/;     // "D : <text>"
 const SUB_OWNER_RE  = /\bS\s+O\s*:\s*(.+?)(?:\s+L\s*:|\s*$)/;  // "S O : Marjorie IRA"
 const LOCATION_RE   = /\bL\s*:\s*([A-Z]{2})\b/;                 // "L : US"
 
-export function extractPTR(text: string): PTRRecord | null {
-  if (!isPTR(text)) return null;
+/**
+ * Parse a text-layer PTR.
+ *
+ * `authoritativeFilingId` — the DocID from the House Clerk index (or the
+ * cache filename derived from it). The PDF body text is not a reliable source
+ * for this: the `200xxxxx`-era template renders the label as `Filing Id #`
+ * (lowercase `d`), so a case-sensitive body match yields '' and the filing
+ * loses its identity. Prefer the authoritative id whenever the caller has it.
+ */
+export function extractPTRResult(text: string, authoritativeFilingId?: string): PTRResult {
+  const textBytes = text.length;
+  if (!text.trim()) {
+    return { kind: 'unresolved', info: { filingId: authoritativeFilingId ?? '',
+      reason: 'empty-input',
+      evidence: { textBytes, tableEntered: false, datePairsSeen: 0, rowsMatched: 0 } } };
+  }
+  if (!isPTR(text)) {
+    return { kind: 'unresolved', info: { filingId: authoritativeFilingId ?? '',
+      reason: 'not-a-ptr',
+      evidence: { textBytes, tableEntered: false, datePairsSeen: 0, rowsMatched: 0 } } };
+  }
 
+  // Body text is the fallback, not the source of truth. Match the label
+  // case-insensitively so the lowercase-`d` template still yields an id when
+  // no authoritative one was passed.
   const filingId =
-    text.match(/Filing ID #(\d+)/)?.[1] ?? '';
+    authoritativeFilingId ?? text.match(/Filing\s*ID\s*#(\d+)/i)?.[1] ?? '';
+  // Case-insensitive: the 200xxxxx-era template renders these labels
+  // lowercase (`name:`, `Status:`, `filer information`). A case-sensitive
+  // match left filer.name empty, which the loader's identity gate rejects.
   const name =
-    text.match(/^Name:\s+(.+?)\s*$/m)?.[1].trim() ?? '';
+    text.match(/^name:\s+(.+?)\s*$/im)?.[1].trim() ?? '';
   const status =
-    text.match(/^Status:\s+(.+?)\s*$/m)?.[1].trim() ?? '';
+    text.match(/^status:\s+(.+?)\s*$/im)?.[1].trim() ?? '';
   const stateDistrict =
-    text.match(/State\/District:?\s+(\S+)/)?.[1] ?? '';
+    text.match(/state\/district:?\s+(\S+)/i)?.[1] ?? '';
   const signed =
-    text.match(/Digitally Signed:.+?,\s*(\d{2}\/\d{2}\/\d{4})/)?.[1] ?? null;
+    text.match(/digitally signed:.+?,\s*(\d{2}\/\d{2}\/\d{4})/i)?.[1] ?? null;
 
   const lines = text.split('\n');
   const transactions: Transaction[] = [];
@@ -289,7 +387,7 @@ export function extractPTR(text: string): PTRRecord | null {
     if (!current) return;
     const tx: Transaction = {
       holder:           current.holder           ?? 'self',
-      asset:            (current.asset ?? '').replace(/\s+/g, ' ').trim(),
+      asset:            stripCheckboxGlyphs(current.asset ?? ''),
       ticker:           current.ticker           ?? null,
       assetType:        current.assetType        ?? null,
       subholding:       current.subholding       ?? null,
@@ -297,6 +395,9 @@ export function extractPTR(text: string): PTRRecord | null {
       type:             current.type             ?? '',
       date:             current.date             ?? '',
       notificationDate: current.notificationDate ?? '',
+      // A single amount (no range) is legitimate — options rows disclose an
+      // exact figure like `$1.00`. Only emit the range form when a high bound
+      // was actually found, on the row or on a continuation line.
       amountBand:       current.amountLow && current.amountHigh
                         ? `$${current.amountLow} - $${current.amountHigh}`
                         : current.amountLow
@@ -315,7 +416,11 @@ export function extractPTR(text: string): PTRRecord | null {
     // Detect table region. The table-header line is fragmented by
     // pdftotext, so anchor on the unambiguous "Transaction Date" cell.
     if (!inTable) {
-      if (/Transaction\s+Date/.test(raw) && /Notification/.test(raw)) {
+      // Case-insensitive: the 200xxxxx-era template renders this header as
+      // `transaction Date` / `notification`, which a case-sensitive test
+      // misses — the table is then never entered and the filing parses as
+      // empty. That was the cause for 12 of the 19 repaired launch filings.
+      if (TABLE_HEADER_RE.test(raw) && NOTIFICATION_RE.test(raw)) {
         inTable = true;
       }
       continue;
@@ -323,7 +428,15 @@ export function extractPTR(text: string): PTRRecord | null {
     // Page-break artifact: multi-page PDFs repeat the table header on each
     // page. pdftotext emits it inline as text, which would otherwise be
     // appended to whatever asset/description we're inside.
-    if (/ID\s+Owner\s+Asset/.test(raw) || /Cap\.\s*$/.test(raw) || /Gains\s*>/.test(raw) || /^\s*\$200\?/.test(raw)) {
+    // Case-insensitive for the same reason as the header test above: this
+    // template renders the repeated header as `iD  owner asset`.
+    if (/id\s+owner\s+asset/i.test(raw) || /cap\.\s*$/i.test(raw) || /gains\s*>/i.test(raw) || /^\s*\$200\?/.test(raw)) {
+      continue;
+    }
+    // Header cells that wrap onto their own line in the narrow-column
+    // template (`transaction Date` above `type`). Without this they would be
+    // appended to the previous row's asset name as continuation text.
+    if (/^\s*(type|date|transaction\s+date|notification\s+date|amount)\s*$/i.test(raw)) {
       continue;
     }
     // Table ends at the asset-type-codes URL footer.
@@ -404,7 +517,7 @@ export function extractPTR(text: string): PTRRecord | null {
     const ah = raw.match(AMT_HIGH_RE);
     if (ah && !current.amountHigh) { current.amountHigh = ah[1]; consumed = true; }
 
-    const so = raw.match(SUB_OWNER_RE);
+    const so = raw.match(SUB_OWNER_RE) ?? raw.match(SUBHOLDING_RE);
     if (so && !current.subholding) { current.subholding = so[1].trim(); consumed = true; }
 
     const loc = raw.match(LOCATION_RE);
@@ -417,8 +530,12 @@ export function extractPTR(text: string): PTRRecord | null {
       .replace(ASSET_TYPE_RE, '')
       .replace(AMT_HIGH_RE, '')
       .replace(SUB_OWNER_RE, '')
+      .replace(SUBHOLDING_RE, '')
+      .replace(FILING_STATUS_RE, '')
       .replace(LOCATION_RE, '')
       .trim();
+    // Drop lines that are only checkbox glyphs — `c`, `d e f g`, etc.
+    if (leftover && !stripCheckboxGlyphs(leftover)) leftover = '';
     if (leftover && /[A-Za-z]/.test(leftover)) {
       current.asset = (current.asset ?? '') + ' ' + leftover;
       consumed = true;
@@ -432,13 +549,40 @@ export function extractPTR(text: string): PTRRecord | null {
   // Flush trailing record if file ends without the URL footer.
   flush();
 
+  // A readable PTR that produced no rows is a parser failure, not an empty
+  // filing. Report it as unresolved with the evidence needed to diagnose it —
+  // `datePairsSeen` is an independent count of how many rows the text layer
+  // contains, so `datePairsSeen > 0 && rowsMatched === 0` names the defect
+  // precisely.
+  if (transactions.length === 0) {
+    const datePairsSeen =
+      (text.match(/\d{2}\/\d{2}\/\d{4}\s+\d{2}\/\d{2}\/\d{4}/g) ?? []).length;
+    return { kind: 'unresolved', info: { filingId, reason: 'no-transaction-rows',
+      evidence: { textBytes, tableEntered: inTable, datePairsSeen, rowsMatched: 0 } } };
+  }
+
   return {
-    filingId,
-    source: 'house-clerk-ptr',
-    filer: { name, status, stateDistrict },
-    signedAt: usToIso(signed),
-    transactions,
+    kind: 'parsed',
+    record: {
+      filingId,
+      source: 'house-clerk-ptr',
+      filer: { name, status, stateDistrict },
+      signedAt: usToIso(signed),
+      transactions: transactions as [Transaction, ...Transaction[]],
+    },
   };
+}
+
+/**
+ * Back-compat wrapper: returns the record or null.
+ *
+ * Callers that need to distinguish "not a PTR" from "a PTR the parser could
+ * not read" must use `extractPTRResult` — that distinction is the whole point
+ * of the union and is erased here.
+ */
+export function extractPTR(text: string, authoritativeFilingId?: string): PTRRecord | null {
+  const r = extractPTRResult(text, authoritativeFilingId);
+  return r.kind === 'parsed' ? r.record : null;
 }
 
 // ─── CLI ──────────────────────────────────────────────────────────────────────
@@ -472,14 +616,29 @@ function main() {
     }
 
     try {
-      // Try standard parser first; if it returns null on OCR text, use OCR parser
-      let rec = extractPTR(text);
+      // The DocID in the cache filename comes from the House Clerk index and
+      // is authoritative. The PDF body is not: the 200xxxxx-era template
+      // renders the label `Filing Id #`, so a body-text match can come back
+      // empty and strand the filing without an identity.
+      const authoritativeId = basename(f).replace(/\.txt$/, '').match(/(\d{6,})$/)?.[1];
+
+      const result = extractPTRResult(text, authoritativeId);
+      let rec = result.kind === 'parsed' ? result.record : null;
       if (!rec && usedOcr) rec = extractPTR_OCR(text);
-      if (!rec) { skipped++; if (usedOcr) process.stdout.write('\n'); continue; }
-      // Skip writing empty OCR results — scanned table PDFs produce 0 tx
-      if (usedOcr && rec.transactions.length === 0) {
+
+      // Source-agnostic: a PTR that yields no rows is never written as a
+      // success, whether the text came from pdftotext or from OCR. Writing
+      // one is what let 19 launch filings load as legitimately-empty.
+      if (!rec) {
         if (usedOcr) process.stdout.write('\n');
-        console.warn(`  ⚠ ${basename(f)} [OCR] → 0 tx (scanned table — needs commercial OCR)`);
+        if (result.kind === 'unresolved' && result.info.reason === 'no-transaction-rows') {
+          const ev = result.info.evidence;
+          console.warn(
+            `  ⚠ ${basename(f)} [unresolved] → 0 tx from ${ev.textBytes} B` +
+            `; table${ev.tableEntered ? '' : ' NOT'} entered; ${ev.datePairsSeen} date-pair(s) visible` +
+            (usedOcr ? ' (scanned table — needs commercial OCR)' : ' — LAYOUT NOT PARSED, filing withheld'),
+          );
+        }
         skipped++;
         continue;
       }
