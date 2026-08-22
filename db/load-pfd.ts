@@ -64,8 +64,15 @@ function isRealIsoDate(s: string): boolean {
 
 const IsoDate = z.string().refine(isRealIsoDate, 'not a real calendar date (YYYY-MM-DD)');
 
-/** `$1,001 - $15,000`, or a single `$5,000,000`. Range must be ordered. */
-const AMOUNT_BAND_RE = /^\$([\d,]+)(?:\s*-\s*\$([\d,]+))?$/;
+/**
+ * `$1,001 - $15,000`, or a single `$5,000,000`. Range must be ordered.
+ *
+ * Cents are allowed because they occur in the real record: an options row
+ * that expired worthless discloses an exact `$1.00` rather than a band
+ * (e.g. filing 20022320, Roblox calls). Rejecting those would withhold a
+ * genuine, correctly-parsed disclosure.
+ */
+const AMOUNT_BAND_RE = /^\$([\d,]+(?:\.\d{1,2})?)(?:\s*-\s*\$([\d,]+(?:\.\d{1,2})?))?$/;
 
 function isValidAmountBand(s: string): boolean {
   const m = s.match(AMOUNT_BAND_RE);
@@ -173,6 +180,20 @@ export function classifyFiling(rec: any): FilingVerdict {
     };
   }
   const txs: any[] = Array.isArray(rec?.transactions) ? rec.transactions : [];
+
+  // A Periodic Transaction Report with no transactions is a parse failure,
+  // not a filing with nothing in it — the field-level rules below would all
+  // pass vacuously and let it through as `verified`. That is precisely how 19
+  // launch filings loaded as empty while the source PDFs held 193 rows.
+  // Treat it as unresolved so it can never trigger the DELETE.
+  if (txs.length === 0) {
+    return {
+      state: 'unresolved',
+      verdicts: [],
+      problems: ['transactions: unresolved (zero rows — a PTR must disclose at least one)'],
+    };
+  }
+
   const verdicts = txs.map((tx, i) => classifyTransaction(tx, i));
   const rejected = verdicts.filter(v => v.state === 'rejected');
   const unresolved = verdicts.filter(v => v.state === 'unresolved');
