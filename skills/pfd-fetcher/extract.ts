@@ -74,7 +74,7 @@ export interface PTRRecord {
  */
 export interface PTRUnresolved {
   filingId: string;
-  reason: 'no-transaction-rows' | 'not-a-ptr' | 'empty-input';
+  reason: 'no-transaction-rows' | 'row-count-mismatch' | 'not-a-ptr' | 'empty-input';
   evidence: {
     textBytes: number;
     tableEntered: boolean;
@@ -315,6 +315,8 @@ const NOTIFICATION_RE = /notification/i;
 // amount-high (`$50,001 -` on the row, `$100,000` on a later line) is still
 // picked up when the checkbox letter lands on the continuation line.
 const AMT_HIGH_RE   = /\$([\d,.]+)\s*[a-z]?\s*$/;
+// Two adjacent US dates — the structural signature of a transaction row.
+const DATE_PAIR_RE  = /\d{2}\/\d{2}\/\d{4}\s+\d{2}\/\d{2}\/\d{4}/;
 // Tickers and asset-type codes are uppercase at the source, but the
 // `200xxxxx`-era text layer mangles individual capitals (`D`→`d`, `L`→`l`,
 // `B`→`b`): `(AAPl)`, `(AMd)`, `(AbbV)`, `(Cb)`, `[Ol]`. Match either case and
@@ -423,6 +425,13 @@ export function extractPTRResult(text: string, authoritativeFilingId?: string): 
   };
 
   let inTable = false;
+  // Structural candidate rows seen INSIDE the table region. A PTR row is
+  // identified by its two adjacent MM/DD/YYYY cells (transaction date and
+  // notification date) — a shape that does not occur in the header, the
+  // certification block, or the footer. Counting these inside the table (as
+  // opposed to a global scan of the document) is what makes the invariant
+  // below a statement about the table's own structure.
+  let candidateRows = 0;
   for (const raw of lines) {
     // Detect table region. The table-header line is fragmented by
     // pdftotext, so anchor on the unambiguous "Transaction Date" cell.
@@ -456,6 +465,8 @@ export function extractPTRResult(text: string, authoritativeFilingId?: string): 
       break;
     }
     if (!raw.trim()) continue;
+
+    if (DATE_PAIR_RE.test(raw)) candidateRows++;
 
     // Primary transaction line — start of a new record.
     const primary = raw.match(PRIMARY_RE);
@@ -571,10 +582,21 @@ export function extractPTRResult(text: string, authoritativeFilingId?: string): 
   // contains, so `datePairsSeen > 0 && rowsMatched === 0` names the defect
   // precisely.
   if (transactions.length === 0) {
-    const datePairsSeen =
-      (text.match(/\d{2}\/\d{2}\/\d{4}\s+\d{2}\/\d{2}\/\d{4}/g) ?? []).length;
     return { kind: 'unresolved', info: { filingId, reason: 'no-transaction-rows',
-      evidence: { textBytes, tableEntered: inTable, datePairsSeen, rowsMatched: 0 } } };
+      evidence: { textBytes, tableEntered: inTable,
+        datePairsSeen: candidateRows, rowsMatched: 0 } } };
+  }
+
+  // Row-count invariant. Recovering SOME rows is more dangerous than
+  // recovering none: a partial extraction passes the loader's per-row
+  // validation gate (every row it did recover is individually valid) and then
+  // REPLACES a complete filing with a truncated one. Whole-for-whole
+  // replacement is only sound when the row count matches the table's own
+  // structure, so a shortfall is withheld as `unresolved` rather than loaded.
+  if (transactions.length < candidateRows) {
+    return { kind: 'unresolved', info: { filingId, reason: 'row-count-mismatch',
+      evidence: { textBytes, tableEntered: inTable,
+        datePairsSeen: candidateRows, rowsMatched: transactions.length } } };
   }
 
   return {
@@ -647,12 +669,18 @@ function main() {
       // one is what let 19 launch filings load as legitimately-empty.
       if (!rec) {
         if (usedOcr) process.stdout.write('\n');
-        if (result.kind === 'unresolved' && result.info.reason === 'no-transaction-rows') {
+        if (result.kind === 'unresolved' &&
+            (result.info.reason === 'no-transaction-rows' ||
+             result.info.reason === 'row-count-mismatch')) {
           const ev = result.info.evidence;
+          const partial = result.info.reason === 'row-count-mismatch';
           console.warn(
-            `  ⚠ ${basename(f)} [unresolved] → 0 tx from ${ev.textBytes} B` +
-            `; table${ev.tableEntered ? '' : ' NOT'} entered; ${ev.datePairsSeen} date-pair(s) visible` +
-            (usedOcr ? ' (scanned table — needs commercial OCR)' : ' — LAYOUT NOT PARSED, filing withheld'),
+            `  ⚠ ${basename(f)} [unresolved] → ${ev.rowsMatched} of ${ev.datePairsSeen} row(s) ` +
+            `from ${ev.textBytes} B; table${ev.tableEntered ? '' : ' NOT'} entered` +
+            (partial
+              ? ' — PARTIAL PARSE, filing withheld (replacement must be whole-for-whole)'
+              : usedOcr ? ' (scanned table — needs commercial OCR)'
+                        : ' — LAYOUT NOT PARSED, filing withheld'),
           );
         }
         skipped++;

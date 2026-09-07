@@ -358,3 +358,51 @@ test('uppercase tickers and asset types are unchanged by the case-tolerant patte
   assert.equal(r.record.transactions[0].ticker, 'AAPL');
   assert.equal(r.record.transactions[0].assetType, 'ST');
 });
+
+// ─── A2 repair: structural row-count invariant ─────────────────────────────
+// A filing where SOME rows match is more dangerous than one where none do: it
+// passes the loader's per-row validation gate and REPLACES a complete filing
+// with a partial one. The invariant counts structural candidate rows inside
+// the transaction table only — never a global date-pair scan, which would
+// count header, certification, and footer dates outside the table region.
+
+test('a filing whose table rows partially match is unresolved, not partially parsed', () => {
+  // Three structural rows in the table; the middle one uses a shape the
+  // primary matcher does not cover, so only two would be recovered.
+  const text = [HEAD_LOWER,
+    '     SP    Apple Inc. (AAPL)                      P        01/03/2022 01/04/2022   $1,001 - $15,000',
+    '     SP    Broken Row Inc. (BRK)                  ?        01/05/2022 01/06/2022   $1,001 - $15,000',
+    '     SP    Cisco Systems (CSCO)                   P        01/07/2022 01/08/2022   $1,001 - $15,000',
+    FOOTER].join('\n');
+  const r = parse(text, '20020235');
+  assert.equal(r.kind, 'unresolved', 'a partial parse must not be reported as success');
+  if (r.kind !== 'unresolved') return;
+  assert.equal(r.info.reason, 'row-count-mismatch');
+  assert.equal(r.info.evidence.rowsMatched, 2);
+  assert.equal(r.info.evidence.datePairsSeen, 3, 'structural candidate rows inside the table');
+});
+
+test('the row-count invariant ignores date pairs outside the transaction table', () => {
+  // A date pair in the certification/footer block must not inflate the
+  // structural count and spuriously withhold a complete filing.
+  const text = [HEAD_LOWER,
+    '     SP    Apple Inc. (AAPL)                      P        01/03/2022 01/04/2022   $1,001 - $15,000',
+    FOOTER,
+    '     Certified on 02/01/2022 02/02/2022 by the filer.',
+  ].join('\n');
+  const r = parse(text, '20020235');
+  assert.equal(r.kind, 'parsed', 'a complete filing is not withheld by out-of-table dates');
+  if (r.kind !== 'parsed') return;
+  assert.equal(r.record.transactions.length, 1);
+});
+
+test('a fully-matching multi-row filing satisfies the invariant', () => {
+  const text = [HEAD_LOWER,
+    '     SP    Apple Inc. (AAPL)                      P        01/03/2022 01/04/2022   $1,001 - $15,000',
+    '     SP    Cisco Systems (CSCO)                   S        01/07/2022 01/08/2022   $1,001 - $15,000',
+    FOOTER].join('\n');
+  const r = parse(text, '20020235');
+  assert.equal(r.kind, 'parsed');
+  if (r.kind !== 'parsed') return;
+  assert.equal(r.record.transactions.length, 2);
+});
