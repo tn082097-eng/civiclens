@@ -73,8 +73,11 @@ export function renderMoneyVotesSection(d: MoneyVotesData): string {
     '<p class="muted">Where concentration and sponsorship meet the detector\'s ' +
     'thresholds, the flag appears under <a class="row-link" href="#sec-patterns">Patterns</a> ' +
     'with its evidence.</p>';
+  const provenance =
+    '<p class="muted">CivicLens analysis: themes are built from third-party-coded ' +
+    'employer and occupation data derived from public FEC filings.</p>';
   return sectionShell('sec-money-votes', 'Money & votes',
-    `${lede}\n${table}\n${crossRef}\n${MONEY_VOTES_PENDING}`);
+    `${lede}\n${table}\n${crossRef}\n${provenance}\n${MONEY_VOTES_PENDING}`);
 }
 
 export function assembleMemberBody(slots: Record<string, string>): string {

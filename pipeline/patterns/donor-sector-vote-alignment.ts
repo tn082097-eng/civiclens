@@ -106,8 +106,23 @@ LIMIT 3
 
 interface DonorTheme { theme: string; theme_total: number; min_cycle: number; max_cycle: number; }
 interface SponsoredBill { bill_id: string; title: string; introduced_at: string | null; theme: string; }
+interface ContributingIndustry { industry: string; total: number; }
 
 const usd = (n: number) => '$' + Math.round(n).toLocaleString();
+
+export function buildDonorThemeCitation(
+  memberSlug: string,
+  theme: string,
+  industries: ContributingIndustry[],
+): CitedRow[] {
+  if (industries.length === 0) return [];
+  const total = industries.reduce((sum, industry) => sum + Number(industry.total), 0);
+  return [{
+    kind: 'donor',
+    id: `${memberSlug}|${theme}`,
+    label: `${theme} — ${industries.length} contributing industr${industries.length === 1 ? 'y' : 'ies'} (${usd(total)})`,
+  }];
+}
 
 export const donorSectorVoteAlignment: PatternDetector = {
   name: NAME,
@@ -154,14 +169,8 @@ export const donorSectorVoteAlignment: PatternDetector = {
 
       const citing: CitedRow[] = [];
       const iRes = await conn.run(TOP_INDUSTRIES_SQL, [memberSlug, dt.theme]);
-      const inds = (await iRes.getRowObjects()) as unknown as Array<{ industry: string; total: number }>;
-      for (const ind of inds) {
-        citing.push({
-          kind: 'donor',
-          id: `${memberSlug}|${dt.theme}|${ind.industry}`,
-          label: `${ind.industry} (${usd(Number(ind.total))})`,
-        });
-      }
+      const inds = (await iRes.getRowObjects()) as unknown as ContributingIndustry[];
+      citing.push(...buildDonorThemeCitation(memberSlug, dt.theme, inds));
 
       const dates = new Set<string>();
       const billTitles: string[] = [];

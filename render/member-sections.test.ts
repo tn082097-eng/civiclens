@@ -49,6 +49,9 @@ test('renderMoneyVotesSection: themes render as rows, escaped, with the not-comp
   assert.match(html, /31/);
   assert.match(html, /Not yet computed/, 'part (b) present even with evidence');
   assert.match(html, /#sec-patterns/, 'cross-links to the patterns section');
+  assert.match(html, /CivicLens analysis/);
+  assert.match(html, /third-party-coded employer and occupation data/);
+  assert.match(html, /public FEC filings/);
   assert.ok(!/\bp\s*=|permutation|significant/i.test(html), 'no fabricated statistics language');
 });
 
