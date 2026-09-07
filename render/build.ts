@@ -100,6 +100,52 @@ export function memberHref(id: unknown, prefix = ''): string {
 // ─── Theme-gap receipts section (deterministic — ADR 0001, no LLM prose) ──────
 
 const fmtN = (n: number) => n.toLocaleString('en-US');
+const RECEIPT_CARD_CAP = 20;
+const RECEIPT_HISTOGRAM_BINS = 20; // 0.05-wide bins; first bin is the 1-in-20 tail.
+
+function renderReceiptDistribution(a: ThemeGapReceipts): string {
+  const scores = a.receipts
+    .map(r => r.pPair)
+    .filter((p): p is number => p !== null)
+    .sort((x, y) => x - y);
+  if (scores.length === 0) return '';
+
+  const bins = Array.from({ length: RECEIPT_HISTOGRAM_BINS }, () => 0);
+  for (const score of scores) {
+    bins[Math.min(RECEIPT_HISTOGRAM_BINS - 1, Math.floor(score * RECEIPT_HISTOGRAM_BINS))]++;
+  }
+  const observed = scores.filter(p => p < 0.05).length;
+  const expected = scores.length * 0.05;
+  // A two-standard-deviation envelope keeps "consistent" meaningful instead
+  // of reserving it for the almost-impossible exact equality observed=expected.
+  const ordinaryVariation = 2 * Math.sqrt(scores.length * 0.05 * 0.95);
+  const verdict = observed < expected - ordinaryVariation
+    ? 'Fewer than chance predicts.'
+    : observed > expected + ordinaryVariation
+    ? 'More than chance predicts.'
+    : 'Consistent with chance.';
+  const median = scores[Math.floor(scores.length / 2)];
+  const maxBin = Math.max(...bins, 1);
+  const chartWidth = 480;
+  const chartHeight = 72;
+  const gap = 2;
+  const barWidth = chartWidth / RECEIPT_HISTOGRAM_BINS;
+  const bars = bins.map((count, i) => {
+    const height = Math.max(1, Math.round((count / maxBin) * 52));
+    const x = Math.round(i * barWidth + gap / 2);
+    const y = chartHeight - height;
+    const rare = i === 0 && observed > expected ? ' rare' : '';
+    return `<rect class="hist-bar${rare}" x="${x}" y="${y}" width="${Math.max(1, Math.floor(barWidth - gap))}" height="${height}"/>`;
+  }).join('');
+
+  return `<div class="receipt-distribution">` +
+    `<p class="distribution-meta">${fmtN(scores.length)} scored pairs across this member's own shuffled calendars.</p>` +
+    `<svg class="receipt-histogram" viewBox="0 0 ${chartWidth} ${chartHeight}" role="img" ` +
+    `aria-label="Distribution of ${fmtN(scores.length)} shuffled-calendar comparisons from zero to one">${bars}</svg>` +
+    `<p class="distribution-axis"><span>shorter gap</span><span>typical pair: ${median.toFixed(2)}</span><span>longer gap</span></p>` +
+    `<p class="distribution-verdict">About ${fmtN(Math.round(expected))} pairs this close would be expected by chance. ` +
+    `Observed: ${fmtN(observed)}. <strong>${verdict}</strong></p></div>`;
+}
 
 /**
  * Render the ThemeGapReceipts artifact as a static HTML section: a coverage
@@ -120,26 +166,37 @@ export function renderReceiptsSection(a: ThemeGapReceipts): string {
     return `<section class="receipts" id="sec-receipts"><h2>Trade–vote timing</h2>${cov}` +
       `<p class="empty">No theme-matched trade→vote pairs on record for this member.</p></section>`;
   }
+  const distribution = renderReceiptDistribution(a);
+  const cards = a.receipts.slice(0, RECEIPT_CARD_CAP);
+  const capNote = a.receipts.length > RECEIPT_CARD_CAP
+    ? `<p class="receipt-cap">Showing the ${fmtN(RECEIPT_CARD_CAP)} ` +
+      `${a.band === 'ranked' ? 'shortest-gap' : 'recorded'} pairs of ${fmtN(a.receipts.length)}. ` +
+      `The full distribution is above.</p>`
+    : '';
   if (a.band === 'insufficient-data') {
     const banner = `<p class="band">Timing score unavailable — ${a.tradeCount} disclosed trades ` +
       `(minimum 5). Receipts below are shown for the record, unranked.</p>`;
-    return `<section class="receipts" id="sec-receipts"><h2>Trade–vote timing</h2>${cov}${banner}` +
-      a.receipts.map(receiptCard).join('') + `</section>`;
+    return `<section class="receipts" id="sec-receipts"><h2>Trade–vote timing</h2>${cov}${banner}${distribution}${capNote}` +
+      cards.map(receiptCard).join('') + `</section>`;
   }
   const banner = a.band === 'low-power'
     ? `<p class="band">Low statistical power — ${a.tradeCount} disclosed trades. Timing shown but not ranked.</p>`
     : '';
-  return `<section class="receipts" id="sec-receipts"><h2>Trade–vote timing</h2>${cov}${banner}` +
-    a.receipts.map(receiptCard).join('') + `</section>`;
+  return `<section class="receipts" id="sec-receipts"><h2>Trade–vote timing</h2>${cov}${banner}${distribution}${capNote}` +
+    cards.map(receiptCard).join('') + `</section>`;
 }
 
 function receiptCard(r: ThemeGapReceipts['receipts'][number]): string {
-  const p = r.pPair === null ? '' : ` · <span class="p">p = ${r.pPair.toFixed(2)}</span>`;
+  const rarity = r.pPair === null
+    ? ''
+    : r.pPair < 0.05
+    ? ` · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span>`
+    : ` · <span class="rarity rarity-ordinary">consistent with chance</span>`;
   return `<article class="receipt" data-theme="${esc(r.theme)}">` +
     `<a href="${esc(safeUrl(r.tradeSourceUrl))}">${esc(r.txType)} ${esc(r.ticker)}</a> on ${esc(r.txDate)} — ` +
     `<b>${r.daysBeforeVote} days later</b> → ` +
     `<a href="${esc(safeUrl(r.voteSourceUrl))}">voted</a> on ` +
-    `<a href="${esc(safeUrl(r.billSourceUrl))}">${esc(r.billTitle)}</a> (${esc(r.voteDate)})${p}</article>`;
+    `<a href="${esc(safeUrl(r.billSourceUrl))}">${esc(r.billTitle)}</a> (${esc(r.voteDate)})${rarity}</article>`;
 }
 
 function partyClass(party: string | null): string {
@@ -313,6 +370,19 @@ a.member:hover { border-bottom-color: var(--accent); color: var(--accent); }
 .kv { display: grid; grid-template-columns: 200px 1fr; gap: 6px 16px; margin: 12px 0 24px; font-size: 13px; }
 .kv .k { color: var(--fg-dim); }
 .notice { padding: 10px 14px; background: rgba(121, 184, 255, 0.06); border: 1px solid rgba(121, 184, 255, 0.2); border-radius: 4px; font-size: 13px; color: var(--fg-dim); margin-bottom: 24px; }
+.coverage, .band, .receipt-cap, .distribution-meta, .distribution-axis, .distribution-verdict { color: var(--fg-dim); font-size: 13px; }
+.receipt-distribution { border: 1px solid var(--line); border-radius: 4px; padding: 12px 14px; margin: 14px 0; }
+.receipt-distribution p { margin: 0 0 8px; }
+.receipt-distribution p:last-child { margin-bottom: 0; }
+.receipt-histogram { display: block; width: 100%; max-width: 480px; height: 72px; }
+.receipt-histogram .hist-bar { fill: var(--fg-dim); }
+.receipt-histogram .hist-bar.rare { fill: #f7c948; }
+.distribution-axis { display: flex; justify-content: space-between; max-width: 480px; font-size: 11px; }
+.receipt-cap { margin: 12px 0; }
+.receipt { border-left: 1px solid var(--line); padding: 7px 10px; margin-bottom: 7px; font-size: 13px; }
+.rarity { color: var(--fg-dim); font-size: 11px; }
+.rarity-rare { color: #f7c948; border-left: 2px solid #f7c948; padding-left: 5px; font-weight: 600; }
+.rarity-ordinary { border-left: 1px solid var(--line); padding-left: 5px; }
 .trade-activity { margin: 0 0 24px; }
 .suspicion-badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 500; border: 1px solid var(--line); color: var(--fg-dim); }
 .suspicion-badge.medium { border-color: var(--fg-dim); color: var(--fg); font-weight: 600; }
