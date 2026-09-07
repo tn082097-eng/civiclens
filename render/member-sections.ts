@@ -19,6 +19,15 @@ export function reservedStub(id: string, title: string): string {
   return sectionShell(id, title, '<p class="muted">Not computed yet.</p>');
 }
 
+// `members.trade_activity` is stored prose generated from an earlier data
+// snapshot. It has no source-snapshot marker, so a later filing load can make
+// its counts and claims stale while the deterministic sections update. Keep
+// the value in the database, but do not publish it until it has a reproducible,
+// source-backed refresh contract.
+export function renderStoredTradeActivity(_tradeActivity: string | null): string {
+  return '';
+}
+
 // ─── Money & votes ──────────────────────────────────────────────────────────
 // Two strictly separated parts: (a) evidence that exists in DuckDB today —
 // donor money rolled up to sector themes next to the member's focused

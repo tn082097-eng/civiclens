@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   MEMBER_SECTION_IDS, sectionShell, reservedStub, assembleMemberBody,
-  renderMoneyVotesSection, type MoneyVotesData,
+  renderMoneyVotesSection, renderStoredTradeActivity, type MoneyVotesData,
 } from './member-sections.js';
 
 test('registry lists the 13 sections in fixed order', () => {
@@ -53,6 +53,14 @@ test('renderMoneyVotesSection: themes render as rows, escaped, with the not-comp
   assert.match(html, /third-party-coded employer and occupation data/);
   assert.match(html, /public FEC filings/);
   assert.ok(!/\bp\s*=|permutation|significant/i.test(html), 'no fabricated statistics language');
+});
+
+test('stored trade-activity prose is suppressed because it can become stale after data refreshes', () => {
+  const stale = 'The full set of eight disclosed transactions shows concentration.';
+  const html = renderStoredTradeActivity(stale);
+  assert.equal(html, '');
+  assert.ok(!html.includes(stale));
+  assert.ok(!html.includes('Trade activity'));
 });
 
 test('assembleMemberBody emits each section id exactly once, in order', () => {

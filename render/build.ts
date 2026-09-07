@@ -39,7 +39,8 @@ import type { ThemeGapReceipts } from '../lib/schemas.js';
 import { SITE_DIR } from '../lib/paths.js';
 import {
   assembleMemberBody, reservedStub, sectionShell,
-  renderMoneyVotesSection, type MoneyVotesData, type MoneyVotesTheme,
+  renderMoneyVotesSection, renderStoredTradeActivity,
+  type MoneyVotesData, type MoneyVotesTheme,
 } from './member-sections.js';
 import { DONOR_SQL, SPONSORED_SQL } from '../pipeline/patterns/donor-sector-vote-alignment.js';
 import { loadThemeGapsOrSentinel } from './load-artifacts.js';
@@ -1626,12 +1627,7 @@ export async function buildMemberPage(m: MemberDetail): Promise<void> {
 
   const bio = m.bio_summary ? `<p class="lede">${esc(m.bio_summary)}</p>` : '';
 
-  const tradeActivityBlock = m.trade_activity
-    ? `<div class="trade-activity">
-  <h2>Trade activity</h2>
-  <p class="lede">${esc(m.trade_activity)}</p>
-</div>`
-    : '';
+  const tradeActivityBlock = renderStoredTradeActivity(m.trade_activity);
 
   const donorsBlock = donors.length === 0
     ? '<p class="muted">No donors loaded.</p>'
