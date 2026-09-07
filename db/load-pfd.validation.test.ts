@@ -293,3 +293,74 @@ test('valid amount bands pass and malformed ones are rejected', () => {
     assert.notEqual(classifyTransaction(goodTx({ amountBand: bad }), 0).state, 'verified', bad);
   }
 });
+
+// ─── A2 repair: zero-row filings must be reported, not silently skipped ────
+// `classifyFiling` has always had a correct zero-row branch, but the loader's
+// early `continue` fired first, so the branch was unreachable and such
+// filings never appeared in `withheld`. A silent skip is indistinguishable
+// from a clean run — which is exactly how the 19 launch filings loaded empty.
+
+test('a zero-row filing is reported as withheld, not silently skipped', async () => {
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-cache-'));
+  const { conn, cleanup } = await tempDb();
+  try {
+    await seedMember(conn);
+    writeFiling(cacheRoot, 2024, {
+      filingId: 'F-EMPTY', filer: { name: 'Jane Doe', stateDistrict: 'CA12' },
+      transactions: [],
+    });
+    const res = await loadPfdYear(2024, memberScope('jane-doe'), { conn, cacheRoot });
+    assert.equal(res.totalTx, 0, 'nothing loaded');
+    assert.equal(res.withheld.length, 1, 'the filing is accounted for, not dropped');
+    assert.equal(res.withheld[0].filingId, 'F-EMPTY');
+    assert.equal(res.withheld[0].state, 'unresolved');
+    assert.match(res.withheld[0].problems.join(' '), /zero rows/);
+  } finally {
+    await cleanup();
+  }
+});
+
+test('a zero-row re-extraction preserves the existing rows for that filing', async () => {
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-cache-'));
+  const { conn, cleanup } = await tempDb();
+  try {
+    await seedMember(conn);
+    writeFiling(cacheRoot, 2024, {
+      filingId: 'F-1', filer: { name: 'Jane Doe', stateDistrict: 'CA12' },
+      transactions: [goodTx()],
+    });
+    await loadPfdYear(2024, memberScope('jane-doe'), { conn, cacheRoot });
+    const before = await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index');
+
+    // The same filing now extracts to zero rows — this must never DELETE.
+    writeFiling(cacheRoot, 2024, {
+      filingId: 'F-1', filer: { name: 'Jane Doe', stateDistrict: 'CA12' },
+      transactions: [],
+    });
+    const res = await loadPfdYear(2024, memberScope('jane-doe'), { conn, cacheRoot });
+    const after = await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index');
+    assert.equal(after, before, 'existing rows survive a zero-row re-extraction');
+    assert.equal(res.withheld.length, 1, 'and the filing is reported, not skipped');
+  } finally {
+    await cleanup();
+  }
+});
+
+test('a filing missing its identity is reported as withheld', async () => {
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-cache-'));
+  const { conn, cleanup } = await tempDb();
+  try {
+    await seedMember(conn);
+    writeFiling(cacheRoot, 2024, {
+      filingId: '', filer: { name: 'Jane Doe', stateDistrict: 'CA12' },
+      transactions: [goodTx()],
+    });
+    const res = await loadPfdYear(2024, memberScope('jane-doe'), { conn, cacheRoot });
+    assert.equal(res.totalTx, 0, 'a filing with no id cannot scope a replacement');
+    assert.equal(res.withheld.length, 1, 'and is not silently dropped');
+    assert.equal(res.withheld[0].state, 'unresolved');
+    assert.match(res.withheld[0].problems.join(' '), /filingId/);
+  } finally {
+    await cleanup();
+  }
+});

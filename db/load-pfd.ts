@@ -194,6 +194,17 @@ export function classifyFiling(rec: any): FilingVerdict {
     };
   }
 
+  // Identity is required before a destructive per-filing replacement: the
+  // DELETE keys on filing_id, so an absent id cannot scope one safely. The
+  // loader used to skip these upstream, which meant they were never reported.
+  if (!String(rec?.filingId ?? '')) {
+    return {
+      state: 'unresolved',
+      verdicts: [],
+      problems: ['filingId: unresolved (absent or blank — cannot scope a replacement)'],
+    };
+  }
+
   const verdicts = txs.map((tx, i) => classifyTransaction(tx, i));
   const rejected = verdicts.filter(v => v.state === 'rejected');
   const unresolved = verdicts.filter(v => v.state === 'unresolved');
@@ -343,10 +354,14 @@ export async function loadPfdYear(
     const stateDistrict = String(filer.stateDistrict ?? '');
     const filingId = String(rec?.filingId ?? '');
     const txs: any[] = rec?.transactions ?? [];
-    if (!filingId || !filerName || txs.length === 0) {
-      // Empty filings are valid PFDs (filer's spouse income only); silent skip.
-      continue;
-    }
+    // A filing that cannot be identified at all (no filer name) cannot be
+    // resolved to a member, so it cannot be attributed to the target and is
+    // not this run's business. Everything else — including a missing filing
+    // id and a zero-row extraction — is routed through the production gate
+    // below so it is REPORTED rather than silently dropped. A silent skip is
+    // indistinguishable from a clean run, which is how 19 launch filings
+    // loaded as legitimately-empty.
+    if (!filerName) continue;
 
     const key = `${filerName}|${stateDistrict}`;
     let resolution = resolutionByKey.get(key);
@@ -385,6 +400,13 @@ export async function loadPfdYear(
     // data actually being good, and preserve on anything less.
     const verdict = classifyFiling(rec);
     if (verdict.state !== 'verified') {
+      // The counters above record what the extraction offered; a withheld
+      // filing loads none of it. Roll them back so `totalTx` reports rows
+      // actually written, not rows attempted — otherwise a run that withheld
+      // everything still reports a healthy transaction count.
+      summary.txCount -= txs.length;
+      totalTx -= txs.length;
+      targetMatched--;
       withheld.push({
         filingId, filerName,
         state: verdict.state === 'rejected' ? 'rejected' : 'unresolved',
