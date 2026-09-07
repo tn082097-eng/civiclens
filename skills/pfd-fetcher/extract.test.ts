@@ -267,3 +267,94 @@ test('multiple rows in one filing are kept distinct (no merging, no duplicates)'
   assert.deepEqual(txs.map(t => t.type), ['purchase', 'sale'], 'same asset, opposite sides — order preserved');
   assert.equal(new Set(txs.map(t => `${t.asset}|${t.type}|${t.date}`)).size, 2, 'rows are distinct');
 });
+
+// ─── A2 repair: case-mangled labels, tickers, and asset types ───────────────
+// The 200xxxxx-era template renders label text with mangled case in the text
+// layer: `D`→`d`, `L`→`l`, `B`→`b`. Fixtures below are transcribed from cached
+// filings — data/caches/pfd-cache/2022/gottheimer-josh-20020154.txt:221-230
+// (Nitori) and the ticker/asset-type forms observed across the frozen 19.
+
+test('spelled DESCRIPTION:/LOCATION: labels populate their fields, not the asset name', () => {
+  const text = [HEAD_LOWER,
+    '     JT    Nitori Holdings Co. Ltd AdR           S (partial)        12/09/2021 01/04/2022   $1,001 - $15,000      c',
+    '           (NCLTY) [OT]',
+    '           FILING STATUS: New',
+    '           SUbHOLdING OF: Morgan Stanley - Select UMA Account # 1',
+    '           LOCATION: US',
+    '           dESCRIPTION: AdR stock',
+    FOOTER].join('\n');
+  const r = parse(text, '20020154');
+  assert.equal(r.kind, 'parsed');
+  if (r.kind !== 'parsed') return;
+  const t = r.record.transactions[0];
+  assert.doesNotMatch(t.asset, /LOCATION|DESCRIPTION/i, 'no label text survives in the asset name');
+  assert.equal(t.asset, 'Nitori Holdings Co. Ltd AdR');
+  assert.equal(t.location, 'US');
+  assert.equal(t.description, 'AdR stock');
+});
+
+test('mangled-case lOCATION: is recognised the same as LOCATION:', () => {
+  const text = [HEAD_LOWER,
+    '     SP    Chubb Limited (Cb)                    P        01/03/2022 01/04/2022   $1,001 - $15,000',
+    '           lOCATION: US',
+    FOOTER].join('\n');
+  const r = parse(text, '20020235');
+  assert.equal(r.kind, 'parsed');
+  if (r.kind !== 'parsed') return;
+  assert.equal(r.record.transactions[0].location, 'US');
+  assert.doesNotMatch(r.record.transactions[0].asset, /LOCATION/i);
+});
+
+test('a DESCRIPTION on the primary row line does not pollute the asset', () => {
+  // gottheimer-josh-20020393 tx 19 — options rows carry the description inline.
+  const text = [HEAD_LOWER,
+    '     JT    Microsoft Corporation                 P        08/16/2022 09/07/2022   $1,001 - $15,000',
+    '           (MSFT) [OP]',
+    '           dESCRIPTION: Call options; Strike Price $145; Expires 9/16/2022',
+    FOOTER].join('\n');
+  const r = parse(text, '20020393');
+  assert.equal(r.kind, 'parsed');
+  if (r.kind !== 'parsed') return;
+  const t = r.record.transactions[0];
+  assert.equal(t.asset, 'Microsoft Corporation');
+  assert.match(t.description, /^Call options; Strike Price \$145/);
+});
+
+test('case-mangled tickers are recovered and normalised to uppercase', () => {
+  // Real forms from the frozen 19: (AAPl) (AMd) (AbbV) (Cb) (TSlA) (luV) (KMb).
+  for (const [raw, want] of [
+    ['(AAPl)', 'AAPL'], ['(AMd)', 'AMD'], ['(AbbV)', 'ABBV'],
+    ['(Cb)', 'CB'], ['(TSlA)', 'TSLA'], ['(luV)', 'LUV'], ['(KMb)', 'KMB'],
+  ] as const) {
+    const text = [HEAD_LOWER,
+      `     SP    Some Holding Company ${raw}            P        01/03/2022 01/04/2022   $1,001 - $15,000`,
+      FOOTER].join('\n');
+    const r = parse(text, '20020235');
+    assert.equal(r.kind, 'parsed', `${raw} parsed`);
+    if (r.kind !== 'parsed') continue;
+    assert.equal(r.record.transactions[0].ticker, want, `${raw} → ${want}`);
+  }
+});
+
+test('case-mangled asset types are recovered and normalised', () => {
+  const text = [HEAD_LOWER,
+    '     JT    AllianceBernstein Holding L.P. units   P        01/03/2022 01/04/2022   $1,001 - $15,000',
+    '           [Ol]',
+    FOOTER].join('\n');
+  const r = parse(text, '20020235');
+  assert.equal(r.kind, 'parsed');
+  if (r.kind !== 'parsed') return;
+  assert.equal(r.record.transactions[0].assetType, 'OL', '[Ol] is [OL] with a mangled L');
+});
+
+test('uppercase tickers and asset types are unchanged by the case-tolerant patterns', () => {
+  const text = [HEAD_LOWER,
+    '     SP    Apple Inc. (AAPL)                      P        01/03/2022 01/04/2022   $1,001 - $15,000',
+    '           [ST]',
+    FOOTER].join('\n');
+  const r = parse(text, '20020235');
+  assert.equal(r.kind, 'parsed');
+  if (r.kind !== 'parsed') return;
+  assert.equal(r.record.transactions[0].ticker, 'AAPL');
+  assert.equal(r.record.transactions[0].assetType, 'ST');
+});

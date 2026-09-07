@@ -343,6 +343,12 @@ function stripCheckboxGlyphs(s: string): string {
 const DESC_START_RE = /^\s+D\s+:\s*(.*)$/;     // "D : <text>"
 const SUB_OWNER_RE  = /\bS\s+O\s*:\s*(.+?)(?:\s+L\s*:|\s*$)/;  // "S O : Marjorie IRA"
 const LOCATION_RE   = /\bL\s*:\s*([A-Z]{2})\b/;                 // "L : US"
+// The same template also spells these labels out, with the same mangled case
+// (`dESCRIPTION:`, `lOCATION:`). Unmatched, they fell through to the
+// asset-name continuation branch and were appended to the asset — the source
+// of the 25 label-polluted assets and of descriptions never being populated.
+const DESC_SPELLED_RE     = /(?:^|\s)DESCRIPTION\s*:\s*(.+?)\s*$/i;
+const LOCATION_SPELLED_RE = /(?:^|\s)LOCATION\s*:\s*(.+?)\s*$/i;
 
 /**
  * Parse a text-layer PTR.
@@ -525,8 +531,11 @@ export function extractPTRResult(text: string, authoritativeFilingId?: string): 
     const so = raw.match(SUB_OWNER_RE) ?? raw.match(SUBHOLDING_RE);
     if (so && !current.subholding) { current.subholding = so[1].trim(); consumed = true; }
 
-    const loc = raw.match(LOCATION_RE);
-    if (loc && !current.location) { current.location = loc[1]; consumed = true; }
+    const loc = raw.match(LOCATION_RE) ?? raw.match(LOCATION_SPELLED_RE);
+    if (loc && !current.location) { current.location = loc[1].trim(); consumed = true; }
+
+    const dsc = raw.match(DESC_SPELLED_RE);
+    if (dsc && !current.description) { current.description = dsc[1].trim(); consumed = true; }
 
     // Asset-name continuation: strip the parts we've consumed and append
     // any remaining alphabetic text to the asset name.
@@ -538,6 +547,8 @@ export function extractPTRResult(text: string, authoritativeFilingId?: string): 
       .replace(SUBHOLDING_RE, '')
       .replace(FILING_STATUS_RE, '')
       .replace(LOCATION_RE, '')
+      .replace(LOCATION_SPELLED_RE, '')
+      .replace(DESC_SPELLED_RE, '')
       .trim();
     // Drop lines that are only checkbox glyphs — `c`, `d e f g`, etc.
     if (leftover && !stripCheckboxGlyphs(leftover)) leftover = '';
