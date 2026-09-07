@@ -315,8 +315,13 @@ const NOTIFICATION_RE = /notification/i;
 // amount-high (`$50,001 -` on the row, `$100,000` on a later line) is still
 // picked up when the checkbox letter lands on the continuation line.
 const AMT_HIGH_RE   = /\$([\d,.]+)\s*[a-z]?\s*$/;
-const TICKER_RE     = /\(([A-Z][A-Z0-9.]*)\)/;  // allow single-letter (e.g. Visa "V")
-const ASSET_TYPE_RE = /\[([A-Z]{2})\]/;
+// Tickers and asset-type codes are uppercase at the source, but the
+// `200xxxxx`-era text layer mangles individual capitals (`D`→`d`, `L`→`l`,
+// `B`→`b`): `(AAPl)`, `(AMd)`, `(AbbV)`, `(Cb)`, `[Ol]`. Match either case and
+// normalise with `.toUpperCase()` at every capture site — never store the
+// mangled form.
+const TICKER_RE     = /\(([A-Za-z][A-Za-z0-9.]*)\)/;  // allow single-letter (e.g. Visa "V")
+const ASSET_TYPE_RE = /\[([A-Za-z]{2})\]/;
 // Matches both the abbreviated `F S :` form and the fully-spelled
 // `FILING STATUS:` form used by the 200xxxxx-era template (any case).
 const FILING_STATUS_RE = /(?:F\s+S|FILING\s+STATUS)\s*:\s*(.+?)\s*$/i;
@@ -461,8 +466,8 @@ export function extractPTRResult(text: string, authoritativeFilingId?: string): 
       current = {
         holder:           HOLDER[primary[1] ?? ''] ?? 'self',
         asset,
-        ticker:           tk?.[1] ?? undefined,
-        assetType:        at?.[1] ?? undefined,
+        ticker:           tk?.[1]?.toUpperCase() ?? undefined,
+        assetType:        at?.[1]?.toUpperCase() ?? undefined,
         type:             TX_TYPE[primary[3]] ?? primary[3],
         date:             usToIso(primary[4]) ?? '',
         notificationDate: usToIso(primary[5]) ?? '',
@@ -509,10 +514,10 @@ export function extractPTRResult(text: string, authoritativeFilingId?: string): 
     let consumed = false;
 
     const tk = raw.match(TICKER_RE);
-    if (tk && !current.ticker) { current.ticker = tk[1]; consumed = true; }
+    if (tk && !current.ticker) { current.ticker = tk[1].toUpperCase(); consumed = true; }
 
     const at = raw.match(ASSET_TYPE_RE);
-    if (at && !current.assetType) { current.assetType = at[1]; consumed = true; }
+    if (at && !current.assetType) { current.assetType = at[1].toUpperCase(); consumed = true; }
 
     const ah = raw.match(AMT_HIGH_RE);
     if (ah && !current.amountHigh) { current.amountHigh = ah[1]; consumed = true; }
