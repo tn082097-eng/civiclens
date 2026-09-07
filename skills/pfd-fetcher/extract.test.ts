@@ -406,3 +406,26 @@ test('a fully-matching multi-row filing satisfies the invariant', () => {
   if (r.kind !== 'parsed') return;
   assert.equal(r.record.transactions.length, 2);
 });
+
+test('a wrapped spelled DESCRIPTION continues into the description, not the asset', () => {
+  // pelosi-nancy-20020515.txt:18-27 — the description runs onto an unlabeled
+  // continuation line. Without continuation handling the tail is appended to
+  // the asset AND the description is truncated mid-sentence: both fields wrong.
+  const text = [HEAD_LOWER,
+    '          SP        AllianceBernstein Holding l.P.            P                 01/27/2022 01/27/2022            $250,001 -',
+    '                    units (AB) [Ol]                                                                              $500,000',
+    '                    FIlINg STATuS: New',
+    '                    lOCATION: New York, NY, uS',
+    '                    DESCRIPTION: Purchased 10,000 units in a global asset management firm providing investment management and research',
+    '                    services worldwide to institutional, high-net-worth and retail investors.',
+    FOOTER].join('\n');
+  const r = parse(text, '20020515');
+  assert.equal(r.kind, 'parsed');
+  if (r.kind !== 'parsed') return;
+  const t = r.record.transactions[0];
+  assert.equal(t.asset, 'AllianceBernstein Holding l.P. units', 'wrapped description text stays out of the asset');
+  assert.match(t.description, /research services worldwide to institutional/, 'description is joined, not truncated');
+  assert.match(t.description, /retail investors\.$/);
+  assert.equal(t.ticker, 'AB');
+  assert.equal(t.assetType, 'OL');
+});

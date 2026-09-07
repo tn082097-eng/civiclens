@@ -546,7 +546,17 @@ export function extractPTRResult(text: string, authoritativeFilingId?: string): 
     if (loc && !current.location) { current.location = loc[1].trim(); consumed = true; }
 
     const dsc = raw.match(DESC_SPELLED_RE);
-    if (dsc && !current.description) { current.description = dsc[1].trim(); consumed = true; }
+    if (dsc && !current.description) {
+      current.description = dsc[1].trim();
+      // A description can wrap onto an unlabeled continuation line. Enter the
+      // same continuation mode the abbreviated `D :` form uses, so the tail
+      // joins the description instead of being appended to the asset name —
+      // which would leave BOTH fields wrong (asset polluted, description cut
+      // mid-sentence).
+      inDescription = true;
+      consumed = true;
+      continue;
+    }
 
     // Asset-name continuation: strip the parts we've consumed and append
     // any remaining alphabetic text to the asset name.
