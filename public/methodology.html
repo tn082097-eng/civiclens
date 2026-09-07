@@ -61,6 +61,19 @@ a.member:hover { border-bottom-color: var(--accent); color: var(--accent); }
 .kv { display: grid; grid-template-columns: 200px 1fr; gap: 6px 16px; margin: 12px 0 24px; font-size: 13px; }
 .kv .k { color: var(--fg-dim); }
 .notice { padding: 10px 14px; background: rgba(121, 184, 255, 0.06); border: 1px solid rgba(121, 184, 255, 0.2); border-radius: 4px; font-size: 13px; color: var(--fg-dim); margin-bottom: 24px; }
+.coverage, .band, .receipt-cap, .distribution-meta, .distribution-axis, .distribution-verdict { color: var(--fg-dim); font-size: 13px; }
+.receipt-distribution { border: 1px solid var(--line); border-radius: 4px; padding: 12px 14px; margin: 14px 0; }
+.receipt-distribution p { margin: 0 0 8px; }
+.receipt-distribution p:last-child { margin-bottom: 0; }
+.receipt-histogram { display: block; width: 100%; max-width: 480px; height: 72px; }
+.receipt-histogram .hist-bar { fill: var(--fg-dim); }
+.receipt-histogram .hist-bar.rare { fill: #f7c948; }
+.distribution-axis { display: flex; justify-content: space-between; max-width: 480px; font-size: 11px; }
+.receipt-cap { margin: 12px 0; }
+.receipt { border-left: 1px solid var(--line); padding: 7px 10px; margin-bottom: 7px; font-size: 13px; }
+.rarity { color: var(--fg-dim); font-size: 11px; }
+.rarity-rare { color: #f7c948; border-left: 2px solid #f7c948; padding-left: 5px; font-weight: 600; }
+.rarity-ordinary { border-left: 1px solid var(--line); padding-left: 5px; }
 .trade-activity { margin: 0 0 24px; }
 .suspicion-badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 500; border: 1px solid var(--line); color: var(--fg-dim); }
 .suspicion-badge.medium { border-color: var(--fg-dim); color: var(--fg); font-weight: 600; }
@@ -139,7 +152,7 @@ footer a { color: var(--fg-dim); }
 <body>
 <header>
   <h1>CivicLens</h1>
-  <div class="sub"><a href="index.html">Corpus</a> · Methodology · generated 2026-07-28 03:44Z</div>
+  <div class="sub"><a href="index.html">Corpus</a> · Methodology · generated 2026-09-07 13:23Z</div>
 </header>
 <main>
 

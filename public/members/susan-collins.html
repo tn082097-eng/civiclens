@@ -61,6 +61,19 @@ a.member:hover { border-bottom-color: var(--accent); color: var(--accent); }
 .kv { display: grid; grid-template-columns: 200px 1fr; gap: 6px 16px; margin: 12px 0 24px; font-size: 13px; }
 .kv .k { color: var(--fg-dim); }
 .notice { padding: 10px 14px; background: rgba(121, 184, 255, 0.06); border: 1px solid rgba(121, 184, 255, 0.2); border-radius: 4px; font-size: 13px; color: var(--fg-dim); margin-bottom: 24px; }
+.coverage, .band, .receipt-cap, .distribution-meta, .distribution-axis, .distribution-verdict { color: var(--fg-dim); font-size: 13px; }
+.receipt-distribution { border: 1px solid var(--line); border-radius: 4px; padding: 12px 14px; margin: 14px 0; }
+.receipt-distribution p { margin: 0 0 8px; }
+.receipt-distribution p:last-child { margin-bottom: 0; }
+.receipt-histogram { display: block; width: 100%; max-width: 480px; height: 72px; }
+.receipt-histogram .hist-bar { fill: var(--fg-dim); }
+.receipt-histogram .hist-bar.rare { fill: #f7c948; }
+.distribution-axis { display: flex; justify-content: space-between; max-width: 480px; font-size: 11px; }
+.receipt-cap { margin: 12px 0; }
+.receipt { border-left: 1px solid var(--line); padding: 7px 10px; margin-bottom: 7px; font-size: 13px; }
+.rarity { color: var(--fg-dim); font-size: 11px; }
+.rarity-rare { color: #f7c948; border-left: 2px solid #f7c948; padding-left: 5px; font-weight: 600; }
+.rarity-ordinary { border-left: 1px solid var(--line); padding-left: 5px; }
 .trade-activity { margin: 0 0 24px; }
 .suspicion-badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 500; border: 1px solid var(--line); color: var(--fg-dim); }
 .suspicion-badge.medium { border-color: var(--fg-dim); color: var(--fg); font-weight: 600; }
@@ -139,7 +152,7 @@ footer a { color: var(--fg-dim); }
 <body>
 <header>
   <h1>CivicLens</h1>
-  <div class="sub"><a href="../index.html">Corpus</a> · Susan Collins · generated 2026-07-28 03:47Z</div>
+  <div class="sub"><a href="../index.html">Corpus</a> · Susan Collins · generated 2026-09-07 17:57Z</div>
 </header>
 <main>
 <h2 id="sec-identity">Susan Collins</h2>
@@ -165,7 +178,7 @@ footer a { color: var(--fg-dim); }
   <div class="glance-cell"><div class="glance-value">0</div><div class="glance-label">Trades within 14d of related vote</div></div>
 </div>
 
-<section class="receipts" id="sec-receipts"><h2>Trade–vote timing</h2><p class="coverage">695 of 1,700 roll-call votes are linked to a specific bill; the rest are procedural and cannot be matched. 28 disclosed trades · 13 theme-mappable · 0 theme-matched receipts.</p><p class="empty">No theme-matched trade→vote pairs on record for this member.</p></section>
+<section class="receipts" id="sec-receipts"><h2>Trade–vote timing</h2><p class="coverage">667 of 1,700 roll-call votes are linked to a specific bill; the rest are procedural and cannot be matched. 28 disclosed trades · 13 theme-mappable · 0 theme-matched receipts.</p><p class="empty">No theme-matched trade→vote pairs on record for this member.</p></section>
 <h2 id="sec-coherence">Per-theme coherence</h2>
 <p class="muted">Not computed yet.</p>
 <h2 id="sec-money-votes">Money &amp; votes</h2>
@@ -252,6 +265,7 @@ footer a { color: var(--fg-dim); }
   </tr></tbody>
 </table>
 <p class="muted">Where concentration and sponsorship meet the detector's thresholds, the flag appears under <a class="row-link" href="#sec-patterns">Patterns</a> with its evidence.</p>
+<p class="muted">CivicLens analysis: themes are built from third-party-coded employer and occupation data derived from public FEC filings.</p>
 <p class="muted" style="font-style:italic;">Not yet computed: the statistical money–vote timing analysis — whether legislative activity clusters around donations beyond what chance predicts — is still in validation and has produced no results for any member. Shared sector concentration is context, not a timing claim, and implies no causation.</p>
 <h2 id="sec-timeline">Timeline</h2>
 <p class="lede" style="margin-bottom:8px;">Votes (circles, top row) and trades (diamonds, bottom row) plotted on the same axis. Hover for detail. One dot per month — most significant vote shown (Nay preferred over Yea).</p>
@@ -1502,14 +1516,17 @@ function showTab(tabGroupId, panelName) {
 <h2 id="sec-outside-spending">Outside spending (Super PACs)</h2>
 
 <p class="lede" style="margin-bottom:8px;">
-  Independent expenditure for or against Susan Collins, 2026 cycle.
+  Independent expenditure for or against Susan Collins, by election cycle.
   Uncapped, not coordinated with the candidate. Funders shown where Schedule A is available.
 </p>
+
+<div class="ie-cycle">
+<h3 style="margin-top:20px;">2026 cycle (in progress)</h3>
 <div class="pac-totals">
   <span class="pac-side support">Supporting: $2.04M</span>
   <span class="pac-side oppose">Opposing: $15.5K</span>
 </div>
-<h3 style="margin-top:16px;">Supporting Super PACs</h3>
+<h4 style="margin-top:12px;">Supporting Super PACs</h4>
 <div class="pac-list"><div class="pac-row">
       <div class="pac-name"><strong>SLF PAC</strong>
         <span class="muted" style="font-size:11px;"> · Super PAC (Independent Expenditure-Only) · Unauthorized</span>
@@ -1535,7 +1552,7 @@ function showTab(tabGroupId, panelName) {
            Top funders: CLEARPATH ACTION FOR CONSERVATIVE ENERGY INC. <span class="muted">$3.00M</span> · CLEARPATH ACTION FOR CONSERVATIVE ENERGY INC. <span class="muted">$1.00M</span>
          </div>
     </div></div>
-<h3 style="margin-top:16px;">Opposing Super PACs</h3>
+<h4 style="margin-top:12px;">Opposing Super PACs</h4>
 <div class="pac-list"><div class="pac-row">
       <div class="pac-name"><strong></strong>
         
@@ -1559,6 +1576,7 @@ function showTab(tabGroupId, panelName) {
            Top funders: GUERNSEY, SHERWOOD <span class="muted">$20.0K</span> · GUERNSEY, SHERWOOD <span class="muted">$20.0K</span> · MALLETT, GEORGE <span class="muted">$6.0K</span>
          </div>
     </div></div>
+</div>
 
 <h2 id="sec-peers">Shared-donor peers in corpus</h2>
 <table>
@@ -1696,37 +1714,25 @@ function showTab(tabGroupId, panelName) {
 <div class="trade-card flag-card intensity-medium">
         <div class="tc-header">
           <div class="tc-asset">Donor sector ↔ sponsorship</div>
-          <div class="tc-meta">1997-03-20 – 2026-04-14</div>
+          <div class="tc-meta">2019-10-31 – 2026-04-14</div>
         </div>
-        <div class="fc-why">Donors in Banks &amp; Finance gave $216,047 (27% of the member&#39;s mapped industry contributions, 2024); the member sponsored 83 focused bills in that policy area: &quot;Federal Reserve Credit Facility Review Act of 2009&quot;, &quot;Financial System Stabilization and Reform Act of 2009&quot;.</div>
+        <div class="fc-why">Donors in Banks &amp; Finance gave $216,047 (27% of the member&#39;s mapped industry contributions, 2024); the member sponsored 11 focused bills in that policy area: &quot;SALT Deduction Fairness Act&quot;, &quot;SIMPLE Plan Modernization Act&quot;.</div>
         <div class="fc-mech">How measured: Flags economic sectors where the member both draws top campaign money and personally sponsors focused legislation, using a hand-curated, version-controlled industry-to-theme crosswalk.</div>
-        <div class="fc-conf"><strong>Based on 86 cited records; not statistically scored against a null model.</strong></div>
+        <div class="fc-conf"><strong>Based on 12 cited records; not statistically scored against a null model.</strong></div>
         
-        <div class="fc-evidence"><div style="margin-top:4px;"><span class="ev-kind">donor</span><a class="ev-chip" href="#sec-donors">Security brokers &amp; investment companies ($58,742)</a> <a class="ev-chip" href="#sec-donors">Insurance companies, brokers &amp; agents ($50,349)</a> <a class="ev-chip" href="#sec-donors">Private Equity &amp; Investment Firms ($44,400)</a></div><div style="margin-top:4px;"><span class="ev-kind">bill</span><span class="ev-chip">Federal Reserve Credit Facility Review Act of 2009</span> <span class="ev-chip">Financial System Stabilization and Reform Act of 2009</span> <span class="ev-chip">A bill to amend title 11, United States Code, to provide for family fishermen, and to make</span> <span class="ev-chip">SALT Deduction Fairness Act</span> <span class="ev-chip">Volunteer Emergency Services Recruitment and Retention Act of 2019</span> <span class="ev-chip">LOSAP CAP Act</span> <span class="ev-chip">Forty Hours Is Full Time Act of 2015</span> <span class="ev-chip">Volunteer Emergency Services Recruitment and Retention Act of 2015</span> <span class="muted">+75 more</span></div></div>
+        <div class="fc-evidence"><div style="margin-top:4px;"><span class="ev-kind">donor</span><a class="ev-chip" href="#sec-donors">Banks &amp; Finance — 3 contributing industries ($153,491)</a></div><div style="margin-top:4px;"><span class="ev-kind">bill</span><span class="ev-chip">SALT Deduction Fairness Act</span> <span class="ev-chip">SIMPLE Plan Modernization Act</span> <span class="ev-chip">Catching Up Family Caregivers Act of 2026</span> <span class="ev-chip">National Fallen Firefighters Memorial Coin Act</span> <span class="ev-chip">SALT Deduction Fairness Act</span> <span class="ev-chip">Military Spouses Retirement Security Act</span> <span class="ev-chip">Improving Retirement Security for Family Caregivers Act of 2026</span> <span class="ev-chip">Military Spouses Retirement Security Act</span> <span class="muted">+3 more</span></div></div>
         <div class="fc-caveat">What this doesn't show: Drawing donations from, and legislating on, the same sector is expected for members who represent that industry. This is alignment, not a quid pro quo.</div>
       </div>
 <div class="trade-card flag-card intensity-medium">
         <div class="tc-header">
           <div class="tc-asset">Donor sector ↔ sponsorship</div>
-          <div class="tc-meta">1998-04-28 – 2026-05-21</div>
+          <div class="tc-meta">2019-04-02 – 2026-05-21</div>
         </div>
-        <div class="fc-why">Donors in Pharma &amp; Health gave $162,779 (21% of the member&#39;s mapped industry contributions, 2024); the member sponsored 121 focused bills in that policy area: &quot;Supporting Seniors with Opioid Use Disorder Act of 2023&quot;, &quot;Alzheimer’s Accountability and Investment Act&quot;.</div>
+        <div class="fc-why">Donors in Pharma &amp; Health gave $162,779 (21% of the member&#39;s mapped industry contributions, 2024); the member sponsored 37 focused bills in that policy area: &quot;Neuroscience Center of Excellence Act of 2021&quot;, &quot;Medical Nutrition Therapy Act of 2023&quot;.</div>
         <div class="fc-mech">How measured: Flags economic sectors where the member both draws top campaign money and personally sponsors focused legislation, using a hand-curated, version-controlled industry-to-theme crosswalk.</div>
-        <div class="fc-conf"><strong>Based on 124 cited records; not statistically scored against a null model.</strong></div>
+        <div class="fc-conf"><strong>Based on 38 cited records; not statistically scored against a null model.</strong></div>
         
-        <div class="fc-evidence"><div style="margin-top:4px;"><span class="ev-kind">donor</span><a class="ev-chip" href="#sec-donors">Nursing homes ($115,917)</a> <a class="ev-chip" href="#sec-donors">Other non-physician health practitioners ($11,504)</a> <a class="ev-chip" href="#sec-donors">Pharmaceutical manufacturing ($10,630)</a></div><div style="margin-top:4px;"><span class="ev-kind">bill</span><span class="ev-chip">Supporting Seniors with Opioid Use Disorder Act of 2023</span> <span class="ev-chip">Alzheimer’s Accountability and Investment Act</span> <span class="ev-chip">Modernizing the Accelerated Approval Pathway Act of 2022</span> <span class="ev-chip">Medical Nutrition Therapy Act of 2021</span> <span class="ev-chip">HEAT Act</span> <span class="ev-chip">Medicare Mental Health Inpatient Equity Act of 2021</span> <span class="ev-chip">Lifespan Respite Care Reauthorization Act of 2019</span> <span class="ev-chip">Medical Nutrition Therapy Act of 2020</span> <span class="muted">+113 more</span></div></div>
-        <div class="fc-caveat">What this doesn't show: Drawing donations from, and legislating on, the same sector is expected for members who represent that industry. This is alignment, not a quid pro quo.</div>
-      </div>
-<div class="trade-card flag-card intensity-low">
-        <div class="tc-header">
-          <div class="tc-asset">Donor sector ↔ sponsorship</div>
-          <div class="tc-meta">1999-04-29 – 2016-03-10</div>
-        </div>
-        <div class="fc-why">Donors in Real Estate gave $198,533 (25% of the member&#39;s mapped industry contributions, 2024); the member sponsored 3 focused bills in that policy area: &quot;A bill to provide housing opportunities for individuals living with HI&quot;, &quot;Homelessness Assistance Funding Fairness Act&quot;.</div>
-        <div class="fc-mech">How measured: Flags economic sectors where the member both draws top campaign money and personally sponsors focused legislation, using a hand-curated, version-controlled industry-to-theme crosswalk.</div>
-        <div class="fc-conf"><strong>Based on 6 cited records; not statistically scored against a null model.</strong></div>
-        
-        <div class="fc-evidence"><div style="margin-top:4px;"><span class="ev-kind">donor</span><a class="ev-chip" href="#sec-donors">Real estate agents ($141,114)</a> <a class="ev-chip" href="#sec-donors">Real estate ($35,315)</a> <a class="ev-chip" href="#sec-donors">Real Estate developers &amp; subdividers ($15,004)</a></div><div style="margin-top:4px;"><span class="ev-kind">bill</span><span class="ev-chip">A bill to provide housing opportunities for individuals living with HIV or AIDS.</span> <span class="ev-chip">Homelessness Assistance Funding Fairness Act</span> <span class="ev-chip">Enterprise Communities Enhancement Act of 2001</span></div></div>
+        <div class="fc-evidence"><div style="margin-top:4px;"><span class="ev-kind">donor</span><a class="ev-chip" href="#sec-donors">Pharma &amp; Health — 3 contributing industries ($138,051)</a></div><div style="margin-top:4px;"><span class="ev-kind">bill</span><span class="ev-chip">Neuroscience Center of Excellence Act of 2021</span> <span class="ev-chip">Medical Nutrition Therapy Act of 2023</span> <span class="ev-chip">BOLD Infrastructure for Alzheimer&#39;s Reauthorization Act of 2024</span> <span class="ev-chip">NAPA Reauthorization Act</span> <span class="ev-chip">Peer Support Services Center of Excellence Act</span> <span class="ev-chip">Increasing Access to Osteoporosis Testing for Medicare Beneficiaries Act of 2021</span> <span class="ev-chip">Premium Reduction Act of 2019</span> <span class="ev-chip">NAPA Reauthorization Act</span> <span class="muted">+29 more</span></div></div>
         <div class="fc-caveat">What this doesn't show: Drawing donations from, and legislating on, the same sector is expected for members who represent that industry. This is alignment, not a quid pro quo.</div>
       </div>
 <h2 id="sec-cosponsor">Co-sponsorship</h2>

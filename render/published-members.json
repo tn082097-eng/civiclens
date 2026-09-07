@@ -7,7 +7,7 @@
       "chamber": "house",
       "state": "UT",
       "stats": {
-        "trades": 40,
+        "trades": 43,
         "votes": 2100,
         "sponsored": 95,
         "cosponsored": 617,
@@ -22,7 +22,7 @@
       "chamber": "house",
       "state": "TX",
       "stats": {
-        "trades": 8,
+        "trades": 16,
         "votes": 2100,
         "sponsored": 91,
         "cosponsored": 1260,
@@ -67,7 +67,7 @@
       "chamber": "house",
       "state": "NJ",
       "stats": {
-        "trades": 1923,
+        "trades": 2027,
         "votes": 2100,
         "sponsored": 196,
         "cosponsored": 3243,
@@ -82,7 +82,7 @@
       "chamber": "house",
       "state": "FL",
       "stats": {
-        "trades": 324,
+        "trades": 388,
         "votes": 2100,
         "sponsored": 92,
         "cosponsored": 2267,
@@ -97,7 +97,7 @@
       "chamber": "house",
       "state": "CA",
       "stats": {
-        "trades": 71,
+        "trades": 85,
         "votes": 2000,
         "sponsored": 173,
         "cosponsored": 5070,
@@ -127,7 +127,7 @@
       "chamber": "senate",
       "state": "RI",
       "stats": {
-        "trades": 120,
+        "trades": 126,
         "votes": 1700,
         "sponsored": 137,
         "cosponsored": 4273,
