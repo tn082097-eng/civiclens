@@ -85,7 +85,7 @@ confirmatory analysis, verify:
 "Onboard one member" means one member at every command boundary. The broad
 enrichment loaders — `load-pfd`, `load-senate-ptr`, `load-fec-ie`,
 `load-opensecrets`, `load-bill-summaries` — REQUIRE an explicit scope: exactly
-one of `--member <slug>`, `--bioguide <id>`, or `--all`.
+one of `--member <slug|name>`, `--bioguide <id>`, or `--all`.
 
 - **No selector fails closed** (usage error). Absence of a selector NEVER means
   `--all`. Supplying both a member selector and `--all` fails.
@@ -94,13 +94,14 @@ one of `--member <slug>`, `--bioguide <id>`, or `--all`.
 - Member mode touches only the target's rows: DELETE/INSERT is member/cycle/
   filing-scoped, live fetches fire only for the target, and no global pass
   (e.g. bill NULL-title refill) runs. Batch remains available only via `--all`.
-- **Chamber branch — the loader set depends on the chamber.** A House member uses
-  `--load-pfd` (House PFDs) plus the district loaders
-  (`--load-district-contracts` / `--load-district-recipients`). A SENATOR uses
-  `--load-senate-ptr` and must **not** run `--load-pfd` and must **not** run the
-  district loaders: senators have no congressional district, and there is no
-  statewide (or any-state) substitute — skip those loaders entirely rather than
-  substituting something else.
+- **Chamber branch — the disclosure loader depends on the chamber.** A House
+  member uses `--load-pfd`; a SENATOR uses `--load-senate-ptr` and must not run
+  `--load-pfd`. Base onboarding omits the district-contract and
+  district-recipient loaders because they do not feed a live page; they remain
+  House-only substrate for a separately authorized detector workflow. Never
+  invent a statewide substitute for a senator.
+- OpenSecrets is optional for a base run. If it is not collected, record
+  `not-collected`; never present that state as evidence that no donor data exists.
 - Routine member onboarding via `pipeline/run-patterns.ts` is timing-SAFE by
   default: the parked timing pair (`trade-vote-alignment`, `spousal-trade-timing`)
   is filtered out, so a new member never gets first timing p-values as a side

@@ -40,18 +40,42 @@ function isScoped(line: string): boolean {
 
 test('SCENARIO one House member: PFD path present, scoped, no scope-less pipeline loaders', { skip: !haveSkills }, () => {
   // House uses --load-pfd, and it must be member-scoped.
-  assert.match(onboard, /--load-pfd <year> --member <slug>/, 'House PFD command is member-scoped');
+  assert.match(onboard, /--load-pfd <year> --bioguide <id>/, 'House PFD command uses canonical bioguide scope');
   for (const line of loaderCommandLines(onboard)) {
     assert.ok(isScoped(line), `loader command must be member-scoped: ${line.trim()}`);
   }
 });
 
 test('SCENARIO one senator: Senate PTR used, House PFD + district loaders forbidden', { skip: !haveSkills }, () => {
-  assert.match(onboard, /--load-senate-ptr --member <slug>/, 'senator uses Senate PTR, scoped');
+  assert.match(onboard, /--load-senate-ptr --bioguide <id>/, 'senator uses Senate PTR with canonical scope');
   assert.match(onboard, /Senator[\s\S]*?do \*\*not\*\* run `--load-pfd`/i, 'senator branch forbids House PFD');
   assert.match(onboard, /district loader[\s\S]*?senator|senators[\s\S]*?district/i, 'district loaders are House-only');
   // No WA-statewide (or any statewide) substitute invented.
   assert.match(onboard, /no WA-statewide.*substitute|no .*any-state.* substitute/i);
+});
+
+test('SCENARIO base onboarding omits district loaders because they do not feed a live page', { skip: !haveSkills }, () => {
+  assert.equal(
+    loaderCommandLines(onboard).filter(line => /--load-district-/.test(line)).length,
+    0,
+    'base onboarding must not invoke district loaders',
+  );
+  assert.match(onboard, /district loaders.*omitted|omit.*district loaders/i);
+});
+
+test('SCENARIO OpenSecrets is optional and an omitted run is recorded as not-collected', { skip: !haveSkills }, () => {
+  assert.match(onboard, /OpenSecrets.*optional/i);
+  assert.match(onboard, /not-collected/i);
+});
+
+test('SCENARIO canonical selector contract is explicit at every command boundary', { skip: !haveSkills }, () => {
+  for (const line of loaderCommandLines(onboard)) {
+    assert.match(line, /--bioguide <id>|--load-(sponsored|cosponsored) <slug>/,
+      `loader command must use bioguide or its documented positional slug: ${line.trim()}`);
+  }
+  assert.match(onboard, /run-patterns\.ts --member <slug>/);
+  assert.match(onboard, /score-theme-gaps\.ts --member <slug>/);
+  assert.match(onboard, /render\/build\.ts --member <slug>/);
 });
 
 test('SCENARIO one-member OpenSecrets harvest: load is member-scoped, browser rules intact', { skip: !haveSkills }, () => {
