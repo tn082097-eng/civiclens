@@ -70,10 +70,11 @@ globally. Execution remains in numerical order with the scanned stratum last.
 | 5 | Current member with no FEC candidate id |
 | 6 | House member with at least one type-P filing whose deterministic probe has no usable text layer |
 
-For strata 3 and 6, order a member's 2025 type-P filings by DocID and download
-only the first as the deterministic probe. `pdftotext` is used only to classify
-the native text layer; OCR is never run. Full filing behavior is tested during
-execution.
+For stratum 3, order a member's 2025 type-P filings by DocID and download only
+the first as the deterministic probe. For stratum 6, order all type-P filings
+by year then DocID and download only the first. `pdftotext` is used only to
+classify the native text layer; OCR is never run. Full filing behavior is tested
+during execution.
 
 Backfill is permitted only for an authoritative pre-run predicate
 disqualification, using the next ranked candidate with the reason recorded.
