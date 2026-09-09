@@ -17,11 +17,31 @@ function memberScope(slug: string): IngestScope {
   return { kind: 'member', slug, bioguideId: 'X', memberId: slug, chamber: 'house' };
 }
 
+function janeIdentity() {
+  return new Map([['X', {
+    bioguide: 'X', officialFull: 'Jane Doe', first: 'Jane', last: 'Doe', nickname: null,
+    fec: [], chamber: 'House' as const, state: 'CA', district: '12',
+    termStart: '2023-01-03', termEnd: '2027-01-03',
+  }]]);
+}
+
 /** Write one PFD filing JSON into <cacheRoot>/<year>/<filingId>.json. */
 function writeFiling(cacheRoot: string, year: number, filing: any): void {
   const dir = join(cacheRoot, String(year));
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${filing.filingId}.json`), JSON.stringify(filing));
+}
+
+function writeIndex(cacheRoot: string, year: number, records: Array<{
+  last: string; first: string; filingType: string; stateDistrict: string; docId: string; recordYear?: number;
+}>): void {
+  const dir = join(cacheRoot, 'index');
+  mkdirSync(dir, { recursive: true });
+  const members = records.map(r => `<Member>
+    <Last>${r.last}</Last><First>${r.first}</First><FilingType>${r.filingType}</FilingType>
+    <StateDst>${r.stateDistrict}</StateDst><Year>${r.recordYear ?? year}</Year><DocID>${r.docId}</DocID>
+  </Member>`).join('\n');
+  writeFileSync(join(dir, `${year}FD.xml`), `<FinancialDisclosure>${members}</FinancialDisclosure>`);
 }
 
 function filing(filingId: string, name: string, sd: string, ticker: string) {
@@ -107,6 +127,158 @@ test('member mode with zero matching target filings is an explicit result, not s
     assert.equal(res.targetMatched, 0, 'zero target filings surfaced explicitly');
     const all = await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index');
     assert.doesNotMatch(all, /F-ROE-1/, 'non-target filing not written under member scope');
+  } finally {
+    cleanup();
+    rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+test('member mode accepts an empty extracted directory only when the authoritative index proves zero PTRs', async () => {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-cache-'));
+  try {
+    await seedTwoMembers(conn);
+    mkdirSync(join(cacheRoot, '2024'), { recursive: true });
+    writeIndex(cacheRoot, 2024, [
+      { last: 'Doe', first: 'Jane', filingType: 'O', stateDistrict: 'CA12', docId: 'ANNUAL-1' },
+    ]);
+
+    const res = await loadPfdYear(2024, memberScope('jane-doe'), {
+      conn, cacheRoot, legislatorIndex: janeIdentity(),
+    });
+    assert.equal(res.verifiedEmpty, true);
+    assert.equal(res.targetMatched, 0);
+    assert.equal(res.totalTx, 0);
+    assert.equal(await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index'), '[]');
+  } finally {
+    cleanup();
+    rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+test('member mode rejects an empty extracted directory when the authoritative index contains a target PTR', async () => {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-cache-'));
+  try {
+    await seedTwoMembers(conn);
+    mkdirSync(join(cacheRoot, '2024'), { recursive: true });
+    writeIndex(cacheRoot, 2024, [
+      { last: 'Doe', first: 'Jane', filingType: 'P', stateDistrict: 'CA12', docId: 'PTR-1' },
+    ]);
+
+    await assert.rejects(
+      () => loadPfdYear(2024, memberScope('jane-doe'), {
+        conn, cacheRoot, legislatorIndex: janeIdentity(),
+      }),
+      /PTR-1.*not extracted|not extracted.*PTR-1/i,
+    );
+  } finally {
+    cleanup();
+    rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+test('a missing authoritative index never counts as proof of zero PTRs', async () => {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-cache-'));
+  try {
+    await seedTwoMembers(conn);
+    mkdirSync(join(cacheRoot, '2024'), { recursive: true });
+    await assert.rejects(
+      () => loadPfdYear(2024, memberScope('jane-doe'), {
+        conn, cacheRoot, legislatorIndex: janeIdentity(),
+      }),
+      /no \*\.json files/i,
+    );
+  } finally {
+    cleanup();
+    rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+test('all-mode can never turn an empty extracted directory into verified-empty', async () => {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-cache-'));
+  try {
+    await seedTwoMembers(conn);
+    mkdirSync(join(cacheRoot, '2024'), { recursive: true });
+    writeIndex(cacheRoot, 2024, []);
+    await assert.rejects(
+      () => loadPfdYear(2024, { kind: 'all' }, { conn, cacheRoot }),
+      /no \*\.json files/i,
+    );
+  } finally {
+    cleanup();
+    rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+test('a generational suffix cannot hide an indexed PTR and produce a false verified-empty', async () => {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-cache-'));
+  try {
+    await insertMember(conn, {
+      memberId: 'donald-beyer-jr', name: 'Donald Sternoff Beyer Jr', chamber: 'house',
+      state: 'VA', district: '8', bioguideId: 'B001292',
+    });
+    mkdirSync(join(cacheRoot, '2024'), { recursive: true });
+    writeIndex(cacheRoot, 2024, [
+      { last: 'Beyer', first: 'Donald', filingType: 'P', stateDistrict: 'VA08', docId: 'PTR-BEYER' },
+    ]);
+    const identity = new Map([['B001292', {
+      bioguide: 'B001292', officialFull: 'Donald Sternoff Beyer Jr.', first: 'Donald', last: 'Beyer',
+      nickname: 'Don', fec: [], chamber: 'House' as const, state: 'VA', district: '8',
+      termStart: '2015-01-06', termEnd: '2027-01-03',
+    }]]);
+    await assert.rejects(
+      () => loadPfdYear(2024, {
+        kind: 'member', slug: 'donald-beyer-jr', bioguideId: 'B001292',
+        memberId: 'donald-beyer-jr', chamber: 'house',
+      }, { conn, cacheRoot, legislatorIndex: identity }),
+      /PTR-BEYER.*not extracted|not extracted.*PTR-BEYER/i,
+    );
+  } finally {
+    cleanup();
+    rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+test('an ambiguous same-district surname record fails closed instead of proving zero', async () => {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-cache-'));
+  try {
+    await seedTwoMembers(conn);
+    mkdirSync(join(cacheRoot, '2024'), { recursive: true });
+    writeIndex(cacheRoot, 2024, [
+      { last: 'Doe', first: 'Janet', filingType: 'P', stateDistrict: 'CA12', docId: 'PTR-AMBIGUOUS' },
+    ]);
+    await assert.rejects(
+      () => loadPfdYear(2024, memberScope('jane-doe'), {
+        conn, cacheRoot, legislatorIndex: janeIdentity(),
+      }),
+      /no \*\.json files/i,
+    );
+  } finally {
+    cleanup();
+    rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+test('record Year, not index filename, determines which cache directory a PTR belongs to', async () => {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-cache-'));
+  try {
+    await seedTwoMembers(conn);
+    mkdirSync(join(cacheRoot, '2024'), { recursive: true });
+    writeIndex(cacheRoot, 2025, [
+      { last: 'Doe', first: 'Jane', filingType: 'P', stateDistrict: 'CA12', docId: 'PTR-PRIOR-YEAR', recordYear: 2024 },
+    ]);
+    await assert.rejects(
+      () => loadPfdYear(2024, memberScope('jane-doe'), {
+        conn, cacheRoot, legislatorIndex: janeIdentity(),
+      }),
+      /PTR-PRIOR-YEAR.*not extracted|not extracted.*PTR-PRIOR-YEAR/i,
+    );
   } finally {
     cleanup();
     rmSync(cacheRoot, { recursive: true, force: true });

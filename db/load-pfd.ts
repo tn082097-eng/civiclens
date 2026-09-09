@@ -19,6 +19,7 @@ import { z } from 'zod';
 import type { DuckDBConnection } from '@duckdb/node-api';
 import { applySchema, getDb } from './init.js';
 import { PFD_CACHE as PFD_CACHE_ROOT } from '../lib/paths.js';
+import { getLegislatorIndex, type LegislatorIdentity } from '../lib/legislators.js';
 import type { IngestScope } from '../lib/ingest-scope.js';
 
 // ─── Validation ─────────────────────────────────────────────────────────────
@@ -219,6 +220,7 @@ export interface PfdDeps {
   dryRun?: boolean;
   conn?: DuckDBConnection;
   cacheRoot?: string;
+  legislatorIndex?: Map<string, LegislatorIdentity>;
 }
 
 // ─── Filer-to-member resolution ─────────────────────────────────────────────
@@ -299,6 +301,80 @@ interface FilerSummary {
   txCount: number;
 }
 
+interface IndexedHouseFiling {
+  year: number | null;
+  last: string;
+  first: string;
+  filingType: string;
+  stateDistrict: string;
+  docId: string;
+}
+
+function xmlValue(block: string, tag: string): string {
+  const match = block.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>|<${tag}\\s*\/>`));
+  return (match?.[1] ?? '').trim();
+}
+
+function parseHouseIndex(xml: string): IndexedHouseFiling[] {
+  return [...xml.matchAll(/<Member>([\s\S]*?)<\/Member>/g)].map(match => ({
+    year: /^\d{4}$/.test(xmlValue(match[1], 'Year')) ? Number(xmlValue(match[1], 'Year')) : null,
+    last: xmlValue(match[1], 'Last'),
+    first: xmlValue(match[1], 'First'),
+    filingType: xmlValue(match[1], 'FilingType'),
+    stateDistrict: xmlValue(match[1], 'StateDst'),
+    docId: xmlValue(match[1], 'DocID'),
+  }));
+}
+
+function normalizeIndexName(value: string): string {
+  return value.toLowerCase().replace(/[.,]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function firstIndexToken(value: string): string {
+  return normalizeIndexName(value).split(' ')[0] ?? '';
+}
+
+async function indexedTargetPtrIds(
+  year: number,
+  scope: IngestScope,
+  cacheRoot: string,
+  legislators: Map<string, LegislatorIdentity>,
+): Promise<string[] | null> {
+  if (scope.kind !== 'member' || scope.chamber !== 'house') return null;
+  const member = legislators.get(scope.bioguideId);
+  if (!member || member.chamber !== 'House' || member.district === null) return null;
+
+  const indexDir = resolve(cacheRoot, 'index');
+  if (!existsSync(indexDir)) return null;
+  const indexFiles = readdirSync(indexDir).filter(file => /^\d{4}FD\.xml$/.test(file)).sort();
+  if (indexFiles.length === 0) return null;
+  const records = indexFiles.flatMap(file =>
+    parseHouseIndex(readFileSync(resolve(indexDir, file), 'utf8')),
+  );
+
+  // Proving a negative requires complete index records. A malformed PTR may
+  // be the target filing, so it invalidates the proof instead of being dropped.
+  if (records.some(record => record.filingType === 'P' && (
+    record.year === null || !record.docId || !record.first || !record.last || !record.stateDistrict
+  ))) return null;
+
+  const stateDistrict = `${member.state}${String(member.district).padStart(2, '0')}`.toUpperCase();
+  const last = firstIndexToken(member.last);
+  const allowedFirst = new Set([member.first, member.nickname ?? ''].map(firstIndexToken).filter(Boolean));
+  if (!last || allowedFirst.size === 0 || !/^[A-Z]{2}\d{2,3}$/.test(stateDistrict)) return null;
+
+  const possibleTargetRecords = records
+    .filter(record => record.filingType === 'P' && record.year === year)
+    .filter(record => record.stateDistrict.toUpperCase().replace(/[^A-Z0-9]/g, '') === stateDistrict)
+    .filter(record => firstIndexToken(record.last) === last);
+
+  // A same-district/surname record whose first name cannot be matched exactly
+  // makes the negative proof ambiguous. Fail closed instead of declaring zero.
+  if (possibleTargetRecords.some(record => !allowedFirst.has(firstIndexToken(record.first)))) return null;
+
+  return [...new Set(possibleTargetRecords.map(record => record.docId))].sort();
+}
+
 /** One filing withheld from production, with the reason. */
 export interface WithheldFiling {
   filingId: string;
@@ -317,6 +393,7 @@ export async function loadPfdYear(
   unmatched: number;
   targetMatched: number;
   withheld: WithheldFiling[];
+  verifiedEmpty: boolean;
 }> {
   const conn = deps.conn ?? (await getDb());
   if (!deps.conn) await applySchema();
@@ -328,6 +405,20 @@ export async function loadPfdYear(
 
   const jsonFiles = readdirSync(dir).filter(f => f.endsWith('.json'));
   if (jsonFiles.length === 0) {
+    const indexedIds = await indexedTargetPtrIds(
+      year, scope, cacheRoot, deps.legislatorIndex ?? getLegislatorIndex(),
+    );
+    if (indexedIds?.length === 0) {
+      return {
+        filers: [], totalTx: 0, unmatched: 0, targetMatched: 0,
+        withheld: [], verifiedEmpty: true,
+      };
+    }
+    if (indexedIds && indexedIds.length > 0) {
+      throw new Error(
+        `authoritative House index contains ${indexedIds.length} target PTR(s) not extracted: ${indexedIds.join(', ')}`,
+      );
+    }
     throw new Error(`no *.json files in ${dir} — did you run extract.ts?`);
   }
 
@@ -468,7 +559,10 @@ export async function loadPfdYear(
     ? [...summaryByKey.values()]
     : [...summaryByKey.values()].filter(f => f.resolution.memberId === scope.memberId);
   const unmatched = relevant.filter(f => f.resolution.memberId === null).length;
-  return { filers: [...summaryByKey.values()], totalTx, unmatched, targetMatched, withheld };
+  return {
+    filers: [...summaryByKey.values()], totalTx, unmatched, targetMatched,
+    withheld, verifiedEmpty: false,
+  };
 }
 
 // ─── Pretty summary printer ─────────────────────────────────────────────────
@@ -479,10 +573,14 @@ function pad(s: string, w: number): string {
 }
 
 export function printSummary(
-  result: { filers: FilerSummary[]; totalTx: number; unmatched: number; withheld?: WithheldFiling[] },
+  result: { filers: FilerSummary[]; totalTx: number; unmatched: number; withheld?: WithheldFiling[]; verifiedEmpty?: boolean },
   opts: { dryRun?: boolean } = {},
 ): void {
   const { filers, totalTx, unmatched } = result;
+  if (result.verifiedEmpty) {
+    console.log('\nVerified empty: the authoritative House index contains zero target PTR filings. DB unchanged.\n');
+    return;
+  }
   const sorted = filers.slice().sort((a, b) => b.txCount - a.txCount);
 
   const filerW = Math.max(28, ...sorted.map(f => `${f.filerName} (${f.stateDistrict})`.length));
