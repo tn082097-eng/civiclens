@@ -305,6 +305,38 @@ test('mangled-case lOCATION: is recognised the same as LOCATION:', () => {
   assert.doesNotMatch(r.record.transactions[0].asset, /LOCATION/i);
 });
 
+test('abbreviated L label preserves a full city, state, and country location', () => {
+  // jackson-jonathan-20022795.txt:18-22. The abbreviated location label can
+  // carry more than a two-letter country code; the whole value belongs in the
+  // location field and none of the label may leak into the asset name.
+  const text = [HEAD_UPPER,
+    '                      3 I Roadwork, Inc. [OL]                S              04/28/2023 05/10/2023        $1,001 - $15,000',
+    '                      F     S        : New',
+    '                      L         : Chicago, IL, US',
+    '                      D            : Roadwork Company',
+    FOOTER].join('\n');
+  const r = parse(text, '20022795');
+  assert.equal(r.kind, 'parsed');
+  if (r.kind !== 'parsed') return;
+  const tx = r.record.transactions[0];
+  assert.equal(tx.asset, '3 I Roadwork, Inc.');
+  assert.equal(tx.location, 'Chicago, IL, US');
+});
+
+test('abbreviated country-only location remains separate from a same-line subholding', () => {
+  const text = [HEAD_UPPER,
+    '          JT    Example Holdings (EX) [ST]           P              04/28/2023 05/10/2023        $1,001 - $15,000',
+    '                S O : Morgan Stanley Trust Account  L : US',
+    FOOTER].join('\n');
+  const r = parse(text, '20022795');
+  assert.equal(r.kind, 'parsed');
+  if (r.kind !== 'parsed') return;
+  const tx = r.record.transactions[0];
+  assert.equal(tx.subholding, 'Morgan Stanley Trust Account');
+  assert.equal(tx.location, 'US');
+  assert.equal(tx.asset, 'Example Holdings');
+});
+
 test('a DESCRIPTION on the primary row line does not pollute the asset', () => {
   // gottheimer-josh-20020393 tx 19 — options rows carry the description inline.
   const text = [HEAD_LOWER,

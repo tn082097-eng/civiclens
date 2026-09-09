@@ -343,8 +343,12 @@ function stripCheckboxGlyphs(s: string): string {
     .trim();
 }
 const DESC_START_RE = /^\s+D\s+:\s*(.*)$/;     // "D : <text>"
-const SUB_OWNER_RE  = /\bS\s+O\s*:\s*(.+?)(?:\s+L\s*:|\s*$)/;  // "S O : Marjorie IRA"
-const LOCATION_RE   = /\bL\s*:\s*([A-Z]{2})\b/;                 // "L : US"
+const SUB_OWNER_RE  = /\bS\s+O\s*:\s*(.+?)(?=\s+L\s*:|\s*$)/;  // "S O : Marjorie IRA"
+// The abbreviated label can contain either a country code (`L : US`) or the
+// full location printed by the form (`L : Chicago, IL, US`). Capture through
+// the end of that labeled field so the remainder cannot fall through into the
+// asset-name continuation path.
+const LOCATION_RE   = /\bL\s*:\s*(.+?)(?=\s+(?:D|F\s+S|S\s+O)\s*:|\s*$)/;
 // The same template also spells these labels out, with the same mangled case
 // (`dESCRIPTION:`, `lOCATION:`). Unmatched, they fell through to the
 // asset-name continuation branch and were appended to the asset — the source
