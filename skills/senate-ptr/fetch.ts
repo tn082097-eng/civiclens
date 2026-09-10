@@ -19,6 +19,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { SENATE_CACHE } from '../../lib/paths.js';
+import { getLegislatorIndex } from '../../lib/legislators.js';
+import { writeCompleteSenateSearchReceipt } from '../../lib/senate-ptr-receipt.js';
 
 // Canonical cache location (data/caches/senate-ptr-cache) — must match the
 // loader side. The old repo-root senate-ptr-cache/ predates the data/ restructure.
@@ -258,14 +260,20 @@ async function fetchPtr(session: Session, ptrId: string): Promise<SenateTransact
 
 export async function fetchSenatePtrs(
   names: string[],
-  opts: { fromYear?: number; toYear?: number } = {},
+  opts: {
+    fromYear?: number;
+    toYear?: number;
+    cacheDir?: string;
+    receiptTargets?: Map<string, { bioguideId: string; canonicalName: string }>;
+  } = {},
 ): Promise<{ fetched: number; cached: number; errors: number }> {
   const fromYear = opts.fromYear ?? 2022;
   const toYear   = opts.toYear   ?? new Date().getFullYear();
   const fromDate = `01/01/${fromYear} 00:00:00`;
   const toDate   = `12/31/${toYear} 23:59:59`;
 
-  mkdirSync(CACHE_DIR, { recursive: true });
+  const cacheDir = opts.cacheDir ?? CACHE_DIR;
+  mkdirSync(cacheDir, { recursive: true });
   console.log(`Fetching Senate PTRs for ${names.length} senator(s) (${fromYear}–${toYear})…`);
 
   let fetched = 0, cached = 0, errors = 0;
@@ -287,20 +295,37 @@ export async function fetchSenatePtrs(
     }
 
     if (refs.length === 0) {
+      const target = opts.receiptTargets?.get(fullName);
+      if (target) {
+        writeCompleteSenateSearchReceipt(cacheDir, {
+          ...target,
+          fromYear,
+          toYear,
+          filingIds: [],
+          completedFilingIds: [],
+          fetchedAt: new Date().toISOString(),
+        });
+      }
       console.log(`  — ${fullName}: no PTRs found (${fromYear}–${toYear})`);
       continue;
     }
 
     const slug = fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     let memberFetched = 0, memberCached = 0;
+    const completedFilingIds: string[] = [];
 
     for (const ref of refs) {
       const year    = ref.dateReceived.slice(0, 4);
-      const dir     = resolve(CACHE_DIR, year);
+      const dir     = resolve(cacheDir, year);
       mkdirSync(dir, { recursive: true });
       const jsonPath = resolve(dir, `${slug}-${ref.id}.json`);
 
-      if (existsSync(jsonPath)) { memberCached++; cached++; continue; }
+      if (existsSync(jsonPath)) {
+        completedFilingIds.push(ref.id);
+        memberCached++;
+        cached++;
+        continue;
+      }
 
       await sleep(DELAY_MS);
       try {
@@ -314,12 +339,25 @@ export async function fetchSenatePtrs(
           transactions,
         };
         writeFileSync(jsonPath, JSON.stringify(record, null, 2));
+        completedFilingIds.push(ref.id);
         memberFetched++;
         fetched++;
       } catch (e: any) {
         console.log(`\n  ✗ ${fullName} ${ref.id}: ${e.message}`);
         errors++;
       }
+    }
+
+    const target = opts.receiptTargets?.get(fullName);
+    if (target) {
+      writeCompleteSenateSearchReceipt(cacheDir, {
+        ...target,
+        fromYear,
+        toYear,
+        filingIds: refs.map(ref => ref.id),
+        completedFilingIds,
+        fetchedAt: new Date().toISOString(),
+      });
     }
 
     console.log(`  ✓ ${fullName}: ${refs.length} PTR(s) (${memberFetched} new, ${memberCached} cached)`);
@@ -334,22 +372,45 @@ async function main() {
   const args  = process.argv.slice(2);
   const get   = (f: string) => { const i = args.indexOf(f); return i >= 0 ? args[i+1] : null; };
 
+  const bioguideArg = get('--bioguide');
   const namesArg = get('--name') ?? get('--names');
-  if (!namesArg) {
+  if (bioguideArg && namesArg) {
+    throw new Error('--bioguide cannot be combined with --name or --names');
+  }
+  if (!namesArg && !bioguideArg) {
     console.error('Usage:');
     console.error('  npx tsx skills/senate-ptr/fetch.ts --name "Susan Collins"');
+    console.error('  npx tsx skills/senate-ptr/fetch.ts --bioguide C001035');
     console.error('  npx tsx skills/senate-ptr/fetch.ts --names names.txt [--from-year 2022] [--to-year 2026]');
     process.exit(1);
   }
 
-  const names: string[] = existsSync(namesArg)
-    ? readFileSync(namesArg, 'utf-8').split('\n').map(s => s.trim()).filter(Boolean)
-    : [namesArg];
+  let receiptTargets: Map<string, { bioguideId: string; canonicalName: string }> | undefined;
+  let names: string[];
+  if (bioguideArg) {
+    const identity = getLegislatorIndex().get(bioguideArg);
+    if (!identity || identity.chamber !== 'Senate') {
+      throw new Error(`unknown Senate bioguide: ${bioguideArg}`);
+    }
+    names = [identity.officialFull];
+    receiptTargets = new Map([[identity.officialFull, {
+      bioguideId: identity.bioguide,
+      canonicalName: identity.officialFull,
+    }]]);
+  } else {
+    names = existsSync(namesArg!)
+      ? readFileSync(namesArg!, 'utf-8').split('\n').map(s => s.trim()).filter(Boolean)
+      : [namesArg!];
+  }
 
   const fromYear = get('--from-year') ? parseInt(get('--from-year')!) : undefined;
   const toYear   = get('--to-year')   ? parseInt(get('--to-year')!)   : undefined;
 
-  const { fetched, cached, errors } = await fetchSenatePtrs(names, { fromYear, toYear });
+  const { fetched, cached, errors } = await fetchSenatePtrs(names, {
+    fromYear,
+    toYear,
+    receiptTargets,
+  });
   console.log(`\nDone: ${fetched} new, ${cached} cached, ${errors} errors`);
   console.log(`Cache: ${CACHE_DIR}`);
   process.exit(errors > 0 ? 1 : 0);

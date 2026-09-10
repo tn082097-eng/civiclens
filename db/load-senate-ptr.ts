@@ -17,6 +17,7 @@ import type { DuckDBConnection } from '@duckdb/node-api';
 import { applySchema, getDb } from './init.js';
 import { SENATE_CACHE } from '../lib/paths.js';
 import type { IngestScope } from '../lib/ingest-scope.js';
+import { readSenateSearchReceipt } from '../lib/senate-ptr-receipt.js';
 
 /** Injected deps: tests pass a temp conn + cache root; prod passes nothing. */
 export interface SenateDeps {
@@ -75,7 +76,13 @@ interface FilerSummary {
 export async function loadSenatePtrs(
   scope: IngestScope,
   deps: SenateDeps = {},
-): Promise<{ filers: FilerSummary[]; totalTx: number; unmatched: number; targetMatched: number }> {
+): Promise<{
+  filers: FilerSummary[];
+  totalTx: number;
+  unmatched: number;
+  targetMatched: number;
+  verifiedEmpty: boolean;
+}> {
   const conn = deps.conn ?? (await getDb());
   if (!deps.conn) await applySchema();
   const cacheRoot = deps.cacheRoot ?? SENATE_CACHE;
@@ -84,14 +91,60 @@ export async function loadSenatePtrs(
     throw new Error(`senate-ptr-cache not found at ${cacheRoot} — run skills/senate-ptr/fetch.ts first`);
   }
 
+  const receipt = scope.kind === 'member'
+    ? readSenateSearchReceipt(cacheRoot, scope.bioguideId)
+    : null;
   const years = readdirSync(cacheRoot).filter(d => /^\d{4}$/.test(d)).sort();
-  if (years.length === 0) throw new Error('No year directories in senate-ptr-cache');
+  if (years.length === 0) {
+    if (scope.kind === 'all') throw new Error('No year directories in senate-ptr-cache');
+    if (!receipt) {
+      throw new Error(
+        `No year directories and no successful Senate PTR search receipt for ${scope.bioguideId}`,
+      );
+    }
+    if (receipt.filingCount > 0) {
+      throw new Error(
+        `Senate PTR indexed filing JSON missing: ${receipt.filingIds.join(', ')}`,
+      );
+    }
+    return { filers: [], totalTx: 0, unmatched: 0, targetMatched: 0, verifiedEmpty: true };
+  }
 
   const fetchedAt = new Date().toISOString();
   const resolutionCache = new Map<string, Resolution>();
   const summaryMap = new Map<string, FilerSummary>();
   let totalTx = 0;
   let targetMatched = 0;
+  const targetFilingIds = new Set<string>();
+
+  // Resolve and validate the complete member batch before the first DELETE.
+  // Otherwise a later unresolved filing could leave earlier filings committed.
+  for (const year of years) {
+    const dir = resolve(cacheRoot, year);
+    const jsonFiles = readdirSync(dir).filter(f => f.endsWith('.json'));
+    for (const f of jsonFiles) {
+      let rec: any;
+      try { rec = JSON.parse(readFileSync(resolve(dir, f), 'utf-8')); }
+      catch { continue; }
+      const firstName = String(rec?.filer?.firstName ?? '');
+      const lastName = String(rec?.filer?.lastName ?? '');
+      const fullName = `${firstName} ${lastName}`.trim();
+      const filingId = String(rec?.filingId ?? '');
+      if (!filingId || !fullName) continue;
+      const key = fullName.toLowerCase();
+      let resolution = resolutionCache.get(key);
+      if (!resolution) {
+        resolution = await resolveSenator(firstName, lastName, conn);
+        resolutionCache.set(key, resolution);
+      }
+      const isTarget = scope.kind === 'all' || resolution.memberId === scope.memberId;
+      if (isTarget && (!Array.isArray(rec?.transactions) || rec.transactions.length === 0)) {
+        throw new Error(
+          `Senate PTR ${filingId} has zero transactions and is unresolved; no target filings were replaced`,
+        );
+      }
+    }
+  }
 
   for (const year of years) {
     const dir      = resolve(cacheRoot, year);
@@ -109,7 +162,7 @@ export async function loadSenatePtrs(
       const ptrUrl     = String(rec?.ptrUrl ?? '');
       const txs: any[] = rec?.transactions ?? [];
 
-      if (!filingId || !fullName || txs.length === 0) continue;
+      if (!filingId || !fullName) continue;
 
       const key = fullName.toLowerCase();
       let resolution = resolutionCache.get(key);
@@ -123,6 +176,11 @@ export async function loadSenatePtrs(
       // filing — never write another senator merely because their file is in a
       // scanned year dir.
       const isTarget = scope.kind === 'all' || resolution.memberId === scope.memberId;
+
+      if (isTarget) {
+        targetFilingIds.add(filingId);
+        // Zero-row target filings were rejected in the preflight above, before writes.
+      }
 
       const summary = summaryMap.get(key) ?? {
         name: fullName, memberId: resolution.memberId,
@@ -176,7 +234,17 @@ export async function loadSenatePtrs(
     ? [...summaryMap.values()]
     : [...summaryMap.values()].filter(f => f.memberId === scope.memberId);
   const unmatched = relevant.filter(f => !f.memberId).length;
-  return { filers: [...summaryMap.values()], totalTx, unmatched, targetMatched };
+  if (scope.kind === 'member' && receipt) {
+    const missing = receipt.filingIds.filter(id => !targetFilingIds.has(id));
+    if (missing.length > 0) {
+      throw new Error(`Senate PTR indexed filing JSON missing: ${missing.join(', ')}`);
+    }
+  }
+  if (scope.kind === 'member' && targetMatched === 0 && !receipt) {
+    throw new Error(`No successful Senate PTR search receipt for ${scope.bioguideId}`);
+  }
+  const verifiedEmpty = scope.kind === 'member' && targetMatched === 0 && receipt?.filingCount === 0;
+  return { filers: [...summaryMap.values()], totalTx, unmatched, targetMatched, verifiedEmpty };
 }
 
 // ─── CLI ──────────────────────────────────────────────────────────────────────
@@ -187,7 +255,7 @@ async function main() {
   const scope = await resolveScope(parseScopeArgs(process.argv.slice(2)));
 
   console.log(`Loading Senate PTRs${dryRun ? ' (dry-run)' : ''}…\n`);
-  const { filers, totalTx, unmatched } = await loadSenatePtrs(scope, { dryRun });
+  const { filers, totalTx, unmatched, verifiedEmpty } = await loadSenatePtrs(scope, { dryRun });
 
   const nameW = Math.max(20, ...filers.map(f => f.name.length));
   const memberW = Math.max(20, ...filers.map(f => (f.memberId ?? 'unmatched').length));
@@ -202,6 +270,9 @@ async function main() {
   }
   console.log(line);
   console.log(`Total: ${filers.length} filer(s), ${totalTx} transactions, ${unmatched} unmatched`);
+  if (verifiedEmpty && scope.kind === 'member') {
+    console.log(`Verified empty: successful EFDS search found zero PTR filings for ${scope.bioguideId}; DB unchanged.`);
+  }
   process.exit(unmatched > 0 ? 1 : 0);
 }
 
