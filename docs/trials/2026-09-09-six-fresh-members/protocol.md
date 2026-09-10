@@ -1,6 +1,8 @@
 # Six-fresh-member Track B certification
 
-**Status:** selection in progress. Local scratch execution only. Production
+**Status:** six local scratch trials completed. Five completed their intended
+technical paths; stratum 4 failed certification because required artifacts were
+incomplete. Production
 database writes, push, publication, deployment, OCR, and confirmatory timing
 runs remain prohibited.
 
@@ -48,3 +50,22 @@ The manifest records every higher-ranked rejection: seven text-layer House
 filings before Eric Burlison, plus John Boozman's 62 and John Fetterman's 22
 Senate PTRs before Chris Van Hollen. The source hashes are frozen in
 `inputs.sha256` and `dynamic-source-files.sha256`.
+
+## Execution outcome
+
+| Stratum | Member | Outcome | Evidence |
+|---|---|---|---|
+| 1 | Tina Smith | pass | `stratum-1-tina-smith.md` |
+| 2 | John W. Mannion | pass | `stratum-2-john-mannion.md` |
+| 3 | Cleo Fields | pass | `stratum-3-cleo-fields.md` |
+| 4 | Chris Van Hollen | **failed** | `stratum-4-chris-van-hollen.md` |
+| 5 | Darline Graham | pass | `stratum-5-darline-graham.md` |
+| 6 | Eric Burlison | pass with source-backed disclosure withholding | `stratum-6-eric-burlison.md` |
+
+The six-stratum certification therefore does **not** pass. No final completion
+or release review has been run. The scratch trials also exposed that a fixed
+reference page is not generally byte-stable after onboarding: member pages
+contain global peer/outside-spending rows, and ignored theme-gap artifacts are
+required to reproduce an older committed page. Reference drift must be
+semantically triaged against a pristine same-input render, not treated as an
+unconditional byte-equality gate.
