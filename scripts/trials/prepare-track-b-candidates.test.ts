@@ -19,6 +19,7 @@ function legislator(overrides: Partial<LegislatorIdentity> & Pick<LegislatorIden
     chamber: 'House',
     state: 'AA',
     district: '1',
+    houseTerms: [{ stateDistrict: 'AA01', start: '2025-01-03', end: '2027-01-03' }],
     termStart: '2025-01-03',
     termEnd: '2027-01-03',
     ...overrides,
@@ -60,6 +61,72 @@ test('candidate preparation matches House PTRs by member identity and excludes f
     probes: {},
   }]);
   assert.deepEqual(result.excluded, [{ bioguide: 'R000002', reasons: ['production-db'] }]);
+});
+
+test('candidate preparation retains PTRs filed under a member historical House district', () => {
+  const current = new Map<string, LegislatorIdentity>([
+    ['D000001', legislator({
+      bioguide: 'D000001',
+      officialFull: 'Jane Doe',
+      first: 'Jane',
+      last: 'Doe',
+      state: 'AA',
+      district: '1',
+      houseTerms: [
+        { stateDistrict: 'AA02', start: '2021-01-03', end: '2023-01-03' },
+        { stateDistrict: 'AA01', start: '2023-01-03', end: '2027-01-03' },
+      ],
+    })],
+  ]);
+  const housePtrs: HousePtrRecord[] = [
+    { year: 2022, docId: '20000001', first: 'Jane', last: 'Doe', stateDistrict: 'AA02' },
+    { year: 2025, docId: '20000002', first: 'Jane', last: 'Doe', stateDistrict: 'AA01' },
+    { year: 2025, docId: '20000003', first: 'Jane', last: 'Doe', stateDistrict: 'BB01' },
+  ];
+
+  const result = buildTrackBCandidates({
+    current,
+    housePtrs,
+    excludedBioguides: new Map(),
+    senateCounts: new Map(),
+    probes: new Map(),
+  });
+
+  assert.deepEqual(result.candidates[0].housePtrDocIdsByYear, {
+    2022: ['20000001'],
+    2025: ['20000002'],
+  });
+});
+
+test('candidate preparation does not attach a filing to a district held only in another year', () => {
+  const current = new Map<string, LegislatorIdentity>([
+    ['D000001', legislator({
+      bioguide: 'D000001',
+      officialFull: 'Jane Doe',
+      first: 'Jane',
+      last: 'Doe',
+      state: 'AA',
+      district: '1',
+      houseTerms: [
+        { stateDistrict: 'AA02', start: '2019-01-03', end: '2021-01-03' },
+        { stateDistrict: 'AA01', start: '2021-01-03', end: '2027-01-03' },
+      ],
+    })],
+  ]);
+  const result = buildTrackBCandidates({
+    current,
+    housePtrs: [
+      { year: 2025, docId: '20000001', first: 'Jane', last: 'Doe', stateDistrict: 'AA02' },
+      { year: 2025, docId: '20000002', first: 'Jane', last: 'Doe', stateDistrict: 'AA01' },
+    ],
+    excludedBioguides: new Map(),
+    senateCounts: new Map(),
+    probes: new Map(),
+  });
+
+  assert.deepEqual(result.candidates[0].housePtrDocIdsByYear, {
+    2025: ['20000002'],
+  });
 });
 
 test('Senate counts and probe evidence are joined by bioguide without changing the eligible pool', () => {

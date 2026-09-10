@@ -22,6 +22,7 @@ function janeIdentity() {
     bioguide: 'X', officialFull: 'Jane Doe', first: 'Jane', last: 'Doe', nickname: null,
     fec: [], chamber: 'House' as const, state: 'CA', district: '12',
     termStart: '2023-01-03', termEnd: '2027-01-03',
+    houseTerms: [{ stateDistrict: 'CA12', start: '2023-01-03', end: '2027-01-03' }],
   }]]);
 }
 
@@ -229,6 +230,7 @@ test('a generational suffix cannot hide an indexed PTR and produce a false verif
       bioguide: 'B001292', officialFull: 'Donald Sternoff Beyer Jr.', first: 'Donald', last: 'Beyer',
       nickname: 'Don', fec: [], chamber: 'House' as const, state: 'VA', district: '8',
       termStart: '2015-01-06', termEnd: '2027-01-03',
+      houseTerms: [{ stateDistrict: 'VA08', start: '2015-01-06', end: '2027-01-03' }],
     }]]);
     await assert.rejects(
       () => loadPfdYear(2024, {

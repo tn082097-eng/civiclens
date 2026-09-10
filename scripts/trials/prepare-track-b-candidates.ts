@@ -87,8 +87,14 @@ function normalizedToken(value: string): string {
 
 function houseRecordMatches(record: HousePtrRecord, member: LegislatorIdentity): boolean {
   if (member.chamber !== 'House' || member.district === null) return false;
-  const expectedDistrict = `${member.state}${String(member.district).padStart(2, '0')}`.toUpperCase();
-  if (record.stateDistrict !== expectedDistrict) return false;
+  const representedInFilingYear = member.houseTerms.some(term => {
+    const startYear = Number(term.start.slice(0, 4));
+    const endYear = Number(term.end.slice(0, 4));
+    return term.stateDistrict === record.stateDistrict &&
+      Number.isInteger(startYear) && Number.isInteger(endYear) &&
+      startYear <= record.year && record.year <= endYear;
+  });
+  if (!representedInFilingYear) return false;
   if (normalizedToken(record.last) !== normalizedToken(member.last)) return false;
   const recordFirst = normalizedToken(record.first);
   const allowedFirst = [member.first, member.nickname ?? '', member.officialFull]
