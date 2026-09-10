@@ -1,0 +1,88 @@
+{
+  "seed": "civiclens-track-b-smoke-2026-09-09-v1",
+  "rankingInput": {
+    "prefix": "smoke-common-house",
+    "separator": "",
+    "suffixField": "bioguide",
+    "encoding": "utf8"
+  },
+  "cutoff": "2026-09-08T21:10:00Z",
+  "candidateFactsSha256": "e8c82586e2a6ae496f6a9c4ec420e035bdb6f61d614ff7951b7e73179d0afe4f",
+  "sourceDatabaseSha256": "a766c8917a0e6b42ddc488758eb0b1a66abb37d24c873a74b4cc9d6fd7e4a38b",
+  "eligibleCount": 131,
+  "priorExposureExclusions": [
+    "A000383",
+    "C001055",
+    "C001096",
+    "G000576",
+    "J000309",
+    "K000393",
+    "M000934",
+    "M001243",
+    "R000395",
+    "S000344",
+    "T000469",
+    "W000805"
+  ],
+  "rankedBackfill": [
+    {
+      "rank": 1,
+      "bioguide": "R000610",
+      "name": "Guy Reschenthaler",
+      "digest": "0077ff8ff434e43a19f63955be28de6491d1580e02f1c559410e89617fca2e54"
+    },
+    {
+      "rank": 2,
+      "bioguide": "M001205",
+      "name": "Carol D. Miller",
+      "digest": "0124c6d6486dae417b73647cca6a0c9490a43ca0cca8bf9925ee20723dec4ce6"
+    },
+    {
+      "rank": 3,
+      "bioguide": "B000668",
+      "name": "Cliff Bentz",
+      "digest": "012a04d631620b304bd6185cf5ef6ea3a4419bc33fcdad6238a5c0f60cabae8e"
+    },
+    {
+      "rank": 4,
+      "bioguide": "T000480",
+      "name": "William R. Timmons IV",
+      "digest": "01c8c60a6226c3ca479e0adc2991f88e61273f6dc92f4b884d086e666ad73789"
+    },
+    {
+      "rank": 5,
+      "bioguide": "F000450",
+      "name": "Virginia Foxx",
+      "digest": "04b45a3f5accdc100c1c22c690048248b2d655983c060d6cd374f257b145ae24"
+    }
+  ],
+  "status": "selected",
+  "selection": {
+    "rank": 1,
+    "bioguide": "R000610",
+    "name": "Guy Reschenthaler",
+    "chamber": "house",
+    "fecIds": [
+      "H8PA18199"
+    ],
+       "digest": "0077ff8ff434e43a19f63955be28de6491d1580e02f1c559410e89617fca2e54",
+    "housePtrDocIdsByYear": {
+      "2025": [
+        "20026547",
+        "20030237",
+        "20030371"
+      ]
+    },
+    "probe": {
+      "year": 2025,
+      "docId": "20026547",
+      "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20026547.pdf",
+      "pdfSha256": "cc1195889ed4a711d3922e04bb53e08fa6d2d8f9c6780b5eac4885a369a2f5dd",
+      "textSha256": "87cfaf303ed3d450e0e6b0d75ad6d13be7f2035833c15be5637002fd379a3ff7",
+      "hasUsableNativeText": true,
+      "visibleTransactionRows": 3,
+      "ocrRan": false
+    }
+  },
+  "backfills": []
+}
