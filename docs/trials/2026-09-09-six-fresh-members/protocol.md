@@ -1,8 +1,10 @@
 # Six-fresh-member Track B certification
 
-**Status:** six local scratch trials completed. Five completed their intended
-technical paths; stratum 4 failed certification because required artifacts were
-incomplete. Production
+**Status:** final-code replay in progress. Six initial local scratch trials
+completed their intended technical paths except stratum 4. Stratum 4 then
+passed after the protocol's one permitted focused generic repair cycle and a
+fresh same-member replay at commit `20f62c0`. The other five strata must now be
+replayed at that same final commit before certification can pass. Production
 database writes, push, publication, deployment, OCR, and confirmatory timing
 runs remain prohibited.
 
@@ -55,17 +57,26 @@ Senate PTRs before Chris Van Hollen. The source hashes are frozen in
 
 | Stratum | Member | Outcome | Evidence |
 |---|---|---|---|
-| 1 | Tina Smith | pass | `stratum-1-tina-smith.md` |
-| 2 | John W. Mannion | pass | `stratum-2-john-mannion.md` |
-| 3 | Cleo Fields | pass | `stratum-3-cleo-fields.md` |
-| 4 | Chris Van Hollen | **failed** | `stratum-4-chris-van-hollen.md` |
-| 5 | Darline Graham | pass | `stratum-5-darline-graham.md` |
-| 6 | Eric Burlison | pass with source-backed disclosure withholding | `stratum-6-eric-burlison.md` |
+| 1 | Tina Smith | initial pass; final-code replay pending | `stratum-1-tina-smith.md` |
+| 2 | John W. Mannion | initial pass; final-code replay pending | `stratum-2-john-mannion.md` |
+| 3 | Cleo Fields | initial pass; final-code replay pending | `stratum-3-cleo-fields.md` |
+| 4 | Chris Van Hollen | pass after one focused generic repair and fresh replay | `stratum-4-chris-van-hollen.md` |
+| 5 | Darline Graham | initial pass; final-code replay pending | `stratum-5-darline-graham.md` |
+| 6 | Eric Burlison | initial pass with source-backed disclosure withholding; final-code replay pending | `stratum-6-eric-burlison.md` |
 
-The six-stratum certification therefore does **not** pass. No final completion
-or release review has been run. The scratch trials also exposed that a fixed
-reference page is not generally byte-stable after onboarding: member pages
-contain global peer/outside-spending rows, and ignored theme-gap artifacts are
-required to reproduce an older committed page. Reference drift must be
-semantically triaged against a pristine same-input render, not treated as an
-unconditional byte-equality gate.
+The six-stratum certification therefore remains **pending** until the five
+remaining final-code replays complete. The first stratum-4 failure is preserved
+in its evidence file; it was not discarded or converted into a pass. The
+generic repair is commit `20f62c0`, independently verified with 313/313 tests
+and a clean TypeScript check before the fresh replay.
+
+The scratch trials also exposed that a fixed reference page is not generally
+byte-stable after onboarding: member pages contain global
+peer/outside-spending rows, and ignored theme-gap artifacts are required to
+reproduce an older committed page. Reference drift must be semantically
+triaged against a pristine same-input render, not treated as an unconditional
+byte-equality gate.
+
+The final bounded review remains a draft in
+`final-certification-review.md`. Certification may be recorded only after all
+six final-code replays are complete.
