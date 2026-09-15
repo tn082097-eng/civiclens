@@ -1,0 +1,525 @@
+TAP version 13
+# Subtest: member mode writes only the target filings; other member rows unchanged
+ok 1 - member mode writes only the target filings; other member rows unchanged
+  ---
+  duration_ms: 125.258562
+  type: 'test'
+  ...
+# Subtest: member mode ignores unrelated unmatched filers (no failure, no writes for them)
+ok 2 - member mode ignores unrelated unmatched filers (no failure, no writes for them)
+  ---
+  duration_ms: 87.349971
+  type: 'test'
+  ...
+# Subtest: member mode with zero matching target filings is an explicit result, not silent success
+ok 3 - member mode with zero matching target filings is an explicit result, not silent success
+  ---
+  duration_ms: 71.664904
+  type: 'test'
+  ...
+# Subtest: member mode accepts an empty extracted directory only when the authoritative index proves zero PTRs
+ok 4 - member mode accepts an empty extracted directory only when the authoritative index proves zero PTRs
+  ---
+  duration_ms: 76.61062
+  type: 'test'
+  ...
+# Subtest: member mode rejects an empty extracted directory when the authoritative index contains a target PTR
+ok 5 - member mode rejects an empty extracted directory when the authoritative index contains a target PTR
+  ---
+  duration_ms: 76.347524
+  type: 'test'
+  ...
+# Subtest: a missing authoritative index never counts as proof of zero PTRs
+ok 6 - a missing authoritative index never counts as proof of zero PTRs
+  ---
+  duration_ms: 71.592925
+  type: 'test'
+  ...
+# Subtest: all-mode can never turn an empty extracted directory into verified-empty
+ok 7 - all-mode can never turn an empty extracted directory into verified-empty
+  ---
+  duration_ms: 68.1406
+  type: 'test'
+  ...
+# Subtest: a generational suffix cannot hide an indexed PTR and produce a false verified-empty
+ok 8 - a generational suffix cannot hide an indexed PTR and produce a false verified-empty
+  ---
+  duration_ms: 70.566868
+  type: 'test'
+  ...
+# Subtest: an ambiguous same-district surname record fails closed instead of proving zero
+ok 9 - an ambiguous same-district surname record fails closed instead of proving zero
+  ---
+  duration_ms: 75.487315
+  type: 'test'
+  ...
+# Subtest: record Year, not index filename, determines which cache directory a PTR belongs to
+ok 10 - record Year, not index filename, determines which cache directory a PTR belongs to
+  ---
+  duration_ms: 74.956152
+  type: 'test'
+  ...
+# Subtest: all mode writes every filer
+ok 11 - all mode writes every filer
+  ---
+  duration_ms: 92.396866
+  type: 'test'
+  ...
+# Subtest: House ingestion rejects missing-indexed before writing any target rows
+ok 12 - House ingestion rejects missing-indexed before writing any target rows
+  ---
+  duration_ms: 66.917196
+  type: 'test'
+  ...
+# Subtest: House ingestion rejects malformed-json before writing any target rows
+ok 13 - House ingestion rejects malformed-json before writing any target rows
+  ---
+  duration_ms: 62.448353
+  type: 'test'
+  ...
+# Subtest: House ingestion rejects missing-identity before writing any target rows
+ok 14 - House ingestion rejects missing-identity before writing any target rows
+  ---
+  duration_ms: 63.284192
+  type: 'test'
+  ...
+# Subtest: House ingestion rejects truncated-index before writing any target rows
+ok 15 - House ingestion rejects truncated-index before writing any target rows
+  ---
+  duration_ms: 61.90375
+  type: 'test'
+  ...
+# Subtest: House ingestion rejects wrong-index-year before writing any target rows
+ok 16 - House ingestion rejects wrong-index-year before writing any target rows
+  ---
+  duration_ms: 64.739843
+  type: 'test'
+  ...
+# Subtest: a malformed index cannot prove an empty House year
+ok 17 - a malformed index cannot prove an empty House year
+  ---
+  duration_ms: 59.016487
+  type: 'test'
+  ...
+# Subtest: an indexed source-bound formatting hold blocks stale JSON without deleting rows
+ok 18 - an indexed source-bound formatting hold blocks stale JSON without deleting rows
+  ---
+  duration_ms: 62.141487
+  type: 'test'
+  ...
+# Subtest: indexed identity preflight rejects ambiguous-index even with extracted JSON present
+ok 19 - indexed identity preflight rejects ambiguous-index even with extracted JSON present
+  ---
+  duration_ms: 65.410525
+  type: 'test'
+  ...
+# Subtest: indexed identity preflight rejects incomplete-index-record even with extracted JSON present
+ok 20 - indexed identity preflight rejects incomplete-index-record even with extracted JSON present
+  ---
+  duration_ms: 61.990139
+  type: 'test'
+  ...
+# Subtest: indexed identity preflight rejects wrong-extracted-member even with extracted JSON present
+ok 21 - indexed identity preflight rejects wrong-extracted-member even with extracted JSON present
+  ---
+  duration_ms: 62.054769
+  type: 'test'
+  ...
+# Subtest: plausible-but-impossible calendar dates are rejected, not coerced
+ok 22 - plausible-but-impossible calendar dates are rejected, not coerced
+  ---
+  duration_ms: 2.238511
+  type: 'test'
+  ...
+# Subtest: well-formed real dates that violate cross-field invariants are rejected
+ok 23 - well-formed real dates that violate cross-field invariants are rejected
+  ---
+  duration_ms: 0.189168
+  type: 'test'
+  ...
+# Subtest: a wrong-but-valid date is NOT caught by the loader — the holdout is what catches it
+ok 24 - a wrong-but-valid date is NOT caught by the loader — the holdout is what catches it
+  ---
+  duration_ms: 0.150888
+  type: 'test'
+  ...
+# Subtest: unknown transaction types are rejected
+ok 25 - unknown transaction types are rejected
+  ---
+  duration_ms: 0.584033
+  type: 'test'
+  ...
+# Subtest: every transaction type present in the real corpus is accepted
+ok 26 - every transaction type present in the real corpus is accepted
+  ---
+  duration_ms: 0.221167
+  type: 'test'
+  ...
+# Subtest: an inverted-but-valid type is NOT caught here — column identity is a geometric check
+ok 27 - an inverted-but-valid type is NOT caught here — column identity is a geometric check
+  ---
+  duration_ms: 0.106759
+  type: 'test'
+  ...
+# Subtest: absent or blank required fields are unresolved, not rejected and not empty-string
+ok 28 - absent or blank required fields are unresolved, not rejected and not empty-string
+  ---
+  duration_ms: 0.173238
+  type: 'test'
+  ...
+#   ⚠ F-1.json [unresolved] → withheld, existing rows preserved: tx[0] date: unresolved (absent or blank)
+# Subtest: unresolved rows never reach production insertion
+ok 29 - unresolved rows never reach production insertion
+  ---
+  duration_ms: 91.924262
+  type: 'test'
+  ...
+#   ⚠ F-1.json [rejected] → withheld, existing rows preserved: tx[1] date: not a real calendar date (YYYY-MM-DD); tx[1] notificationDate: notificationDate 2024-03-15 precedes date 2025-02-30
+# Subtest: a filing is all-or-nothing: one bad row withholds the whole filing
+ok 30 - a filing is all-or-nothing: one bad row withholds the whole filing
+  ---
+  duration_ms: 71.562755
+  type: 'test'
+  ...
+# Subtest: a filing missing identity is unresolved and never inserted
+ok 31 - a filing missing identity is unresolved and never inserted
+  ---
+  duration_ms: 0.377285
+  type: 'test'
+  ...
+#   ⚠ F-1.json [rejected] → withheld, existing rows preserved: tx[0] date: not a real calendar date (YYYY-MM-DD); tx[0] notificationDate: notificationDate 2024-03-15 precedes date 2025-02-30
+# Subtest: invalid re-extraction preserves existing rows (no delete-then-fail)
+ok 32 - invalid re-extraction preserves existing rows (no delete-then-fail)
+  ---
+  duration_ms: 96.67371
+  type: 'test'
+  ...
+#   ⚠ F-1.json [unresolved] → withheld, existing rows preserved: tx[0] notificationDate: unresolved (absent or blank)
+# Subtest: unresolved re-extraction preserves existing rows
+ok 33 - unresolved re-extraction preserves existing rows
+  ---
+  duration_ms: 93.577701
+  type: 'test'
+  ...
+#   ⚠ F-1.json [unresolved] → withheld, existing rows preserved: transactions: unresolved (zero rows — a PTR must disclose at least one)
+# Subtest: empty re-extraction preserves existing rows
+ok 34 - empty re-extraction preserves existing rows
+  ---
+  duration_ms: 97.195144
+  type: 'test'
+  ...
+#   ⚠ F-1.json [unresolved] → withheld, existing rows preserved: tx[1] amountBand: unresolved (absent or blank)
+# Subtest: partial re-extraction preserves existing rows rather than shrinking the filing
+ok 35 - partial re-extraction preserves existing rows rather than shrinking the filing
+  ---
+  duration_ms: 91.165802
+  type: 'test'
+  ...
+# Subtest: fully valid input replaces the filing (replacement path intact)
+ok 36 - fully valid input replaces the filing (replacement path intact)
+  ---
+  duration_ms: 99.572113
+  type: 'test'
+  ...
+# Subtest: valid amount bands pass and malformed ones are rejected
+ok 37 - valid amount bands pass and malformed ones are rejected
+  ---
+  duration_ms: 0.537693
+  type: 'test'
+  ...
+#   ⚠ F-EMPTY.json [unresolved] → withheld, existing rows preserved: transactions: unresolved (zero rows — a PTR must disclose at least one)
+# Subtest: a zero-row filing is reported as withheld, not silently skipped
+ok 38 - a zero-row filing is reported as withheld, not silently skipped
+  ---
+  duration_ms: 78.731052
+  type: 'test'
+  ...
+#   ⚠ F-1.json [unresolved] → withheld, existing rows preserved: transactions: unresolved (zero rows — a PTR must disclose at least one)
+# Subtest: a zero-row re-extraction preserves the existing rows for that filing
+ok 39 - a zero-row re-extraction preserves the existing rows for that filing
+  ---
+  duration_ms: 91.813844
+  type: 'test'
+  ...
+# Subtest: a filing missing its identity fails rather than becoming a formatting hold
+ok 40 - a filing missing its identity fails rather than becoming a formatting hold
+  ---
+  duration_ms: 74.378279
+  type: 'test'
+  ...
+# Subtest: a required family with zero produced artifacts fails instead of scoring 0/0 PASS
+ok 41 - a required family with zero produced artifacts fails instead of scoring 0/0 PASS
+  ---
+  duration_ms: 2.269881
+  type: 'test'
+  ...
+# Subtest: a required family that produced a valid artifact passes
+ok 42 - a required family that produced a valid artifact passes
+  ---
+  duration_ms: 1.58475
+  type: 'test'
+  ...
+# Subtest: a NON-required family with zero artifacts still passes (unchanged behavior)
+ok 43 - a NON-required family with zero artifacts still passes (unchanged behavior)
+  ---
+  duration_ms: 0.79672
+  type: 'test'
+  ...
+# Subtest: a required family with zero artifacts passes only when a source-backed verified-empty record accounts for it
+ok 44 - a required family with zero artifacts passes only when a source-backed verified-empty record accounts for it
+  ---
+  duration_ms: 0.359265
+  type: 'test'
+  ...
+# Subtest: a withheld formatting result is accounted for but cannot pass a required family
+ok 45 - a withheld formatting result is accounted for but cannot pass a required family
+  ---
+  duration_ms: 0.289796
+  type: 'test'
+  ...
+# Subtest: an invalid artifact in a required family still fails (unchanged behavior)
+ok 46 - an invalid artifact in a required family still fails (unchanged behavior)
+  ---
+  duration_ms: 0.952277
+  type: 'test'
+  ...
+# Subtest: required artifacts fail closed for unparseable
+ok 47 - required artifacts fail closed for unparseable
+  ---
+  duration_ms: 0.566403
+  type: 'test'
+  ...
+# Subtest: required artifacts fail closed for missing-in-one-task
+ok 48 - required artifacts fail closed for missing-in-one-task
+  ---
+  duration_ms: 0.78002
+  type: 'test'
+  ...
+# Subtest: required artifacts fail closed for unbacked-empty
+ok 49 - required artifacts fail closed for unbacked-empty
+  ---
+  duration_ms: 0.347225
+  type: 'test'
+  ...
+#   ⚠ member-8219414.txt [needs_manual_formatting:empty-input] → 0 of 0 row(s) from 0 B; table NOT entered — filing withheld; member remains in the formatting queue
+#   ✗ missing-source-8219416.txt: empty text artifact and source PDF is missing
+# Member formatting hold: skip automated publication, keep the member in coverage, and do not count this run as verified-empty or complete.
+# Parsed 0 PTR(s) → 0 transactions; skipped 1 non-PTR; 1 formatting hold(s); 1 errors
+#   ⚠ doe-jane-1000001.txt [needs_manual_formatting:empty-input] → 0 of 0 row(s) from 0 B; table NOT entered — filing withheld; member remains in the formatting queue
+# Member formatting hold: skip automated publication, keep the member in coverage, and do not count this run as verified-empty or complete.
+# Parsed 0 PTR(s) → 0 transactions; skipped 0 non-PTR; 1 formatting hold(s); 0 errors
+#   ✗ unknown.txt: missing filing identity or valid source PDF
+# Parsed 0 PTR(s) → 0 transactions; skipped 0 non-PTR; 0 formatting hold(s); 1 errors
+#   ✗ doe-jane-1000001.txt: text conversion failed
+# Parsed 0 PTR(s) → 0 transactions; skipped 0 non-PTR; 0 formatting hold(s); 1 errors
+#   ✗ doe-jane-1000001.pdf: missing text extraction; fetch/conversion incomplete
+# Parsed 0 PTR(s) → 0 transactions; skipped 0 non-PTR; 0 formatting hold(s); 1 errors
+#   ✗ doe-jane-1000001.txt: missing filing identity or valid source PDF
+# Parsed 0 PTR(s) → 0 transactions; skipped 0 non-PTR; 0 formatting hold(s); 1 errors
+# Subtest: unsupported local PDFs become formatting holds without stopping the remaining batch
+ok 50 - unsupported local PDFs become formatting holds without stopping the remaining batch
+  ---
+  duration_ms: 2.516327
+  type: 'test'
+  ...
+# Subtest: variant 1: trailing checkbox glyph does not break the row
+ok 51 - variant 1: trailing checkbox glyph does not break the row
+  ---
+  duration_ms: 6.787182
+  type: 'test'
+  ...
+# Subtest: variant 1: multi-line checkbox run (c d e f g) never pollutes the asset
+ok 52 - variant 1: multi-line checkbox run (c d e f g) never pollutes the asset
+  ---
+  duration_ms: 40.015473
+  type: 'test'
+  ...
+# Subtest: variant 2: amount high wrapped onto a continuation line is joined
+ok 53 - variant 2: amount high wrapped onto a continuation line is joined
+  ---
+  duration_ms: 1.713638
+  type: 'test'
+  ...
+# Subtest: variant 3: a single exact amount (no range) is preserved verbatim
+ok 54 - variant 3: a single exact amount (no range) is preserved verbatim
+  ---
+  duration_ms: 0.563202
+  type: 'test'
+  ...
+# Subtest: variant 4: a leading numeric row id does not shift the columns
+ok 55 - variant 4: a leading numeric row id does not shift the columns
+  ---
+  duration_ms: 0.175738
+  type: 'test'
+  ...
+# Subtest: transaction type is read from the type column, not from incidental text
+ok 56 - transaction type is read from the type column, not from incidental text
+  ---
+  duration_ms: 0.215197
+  type: 'test'
+  ...
+# Subtest: a readable PTR that yields zero rows is unresolved, not an empty success
+ok 57 - a readable PTR that yields zero rows is unresolved, not an empty success
+  ---
+  duration_ms: 1.412552
+  type: 'test'
+  ...
+# Subtest: blank input is unresolved with reason empty-input
+ok 58 - blank input is unresolved with reason empty-input
+  ---
+  duration_ms: 0.266967
+  type: 'test'
+  ...
+# Subtest: a non-PTR document is unresolved with reason not-a-ptr
+ok 59 - a non-PTR document is unresolved with reason not-a-ptr
+  ---
+  duration_ms: 0.306566
+  type: 'test'
+  ...
+# Subtest: extractPTR (back-compat) returns null rather than a zero-row record
+ok 60 - extractPTR (back-compat) returns null rather than a zero-row record
+  ---
+  duration_ms: 0.79191
+  type: 'test'
+  ...
+# Subtest: authoritative filing id wins over body text
+ok 61 - authoritative filing id wins over body text
+  ---
+  duration_ms: 0.75743
+  type: 'test'
+  ...
+# Subtest: lowercase `Filing Id \#` in body text is still recovered when no id is passed
+ok 62 - lowercase `Filing Id \#` in body text is still recovered when no id is passed
+  ---
+  duration_ms: 0.74626
+  type: 'test'
+  ...
+# Subtest: filer name and state/district parse from the lowercase-label template
+ok 63 - filer name and state/district parse from the lowercase-label template
+  ---
+  duration_ms: 0.75519
+  type: 'test'
+  ...
+# Subtest: the pre-existing capitalised layout produces identical normalized output
+ok 64 - the pre-existing capitalised layout produces identical normalized output
+  ---
+  duration_ms: 0.435714
+  type: 'test'
+  ...
+# Subtest: multiple rows in one filing are kept distinct (no merging, no duplicates)
+ok 65 - multiple rows in one filing are kept distinct (no merging, no duplicates)
+  ---
+  duration_ms: 2.382679
+  type: 'test'
+  ...
+# Subtest: spelled DESCRIPTION:/LOCATION: labels populate their fields, not the asset name
+ok 66 - spelled DESCRIPTION:/LOCATION: labels populate their fields, not the asset name
+  ---
+  duration_ms: 0.81541
+  type: 'test'
+  ...
+# Subtest: mangled-case lOCATION: is recognised the same as LOCATION:
+ok 67 - mangled-case lOCATION: is recognised the same as LOCATION:
+  ---
+  duration_ms: 0.79499
+  type: 'test'
+  ...
+# Subtest: abbreviated L label preserves a full city, state, and country location
+ok 68 - abbreviated L label preserves a full city, state, and country location
+  ---
+  duration_ms: 0.182167
+  type: 'test'
+  ...
+# Subtest: abbreviated country-only location remains separate from a same-line subholding
+ok 69 - abbreviated country-only location remains separate from a same-line subholding
+  ---
+  duration_ms: 0.111709
+  type: 'test'
+  ...
+# Subtest: a DESCRIPTION on the primary row line does not pollute the asset
+ok 70 - a DESCRIPTION on the primary row line does not pollute the asset
+  ---
+  duration_ms: 0.792139
+  type: 'test'
+  ...
+# Subtest: case-mangled tickers are recovered and normalised to uppercase
+ok 71 - case-mangled tickers are recovered and normalised to uppercase
+  ---
+  duration_ms: 4.724649
+  type: 'test'
+  ...
+# Subtest: case-mangled asset types are recovered and normalised
+ok 72 - case-mangled asset types are recovered and normalised
+  ---
+  duration_ms: 0.74084
+  type: 'test'
+  ...
+# Subtest: uppercase tickers and asset types are unchanged by the case-tolerant patterns
+ok 73 - uppercase tickers and asset types are unchanged by the case-tolerant patterns
+  ---
+  duration_ms: 0.737201
+  type: 'test'
+  ...
+# Subtest: a filing whose table rows partially match is unresolved, not partially parsed
+ok 74 - a filing whose table rows partially match is unresolved, not partially parsed
+  ---
+  duration_ms: 0.795039
+  type: 'test'
+  ...
+# Subtest: the row-count invariant ignores date pairs outside the transaction table
+ok 75 - the row-count invariant ignores date pairs outside the transaction table
+  ---
+  duration_ms: 0.74245
+  type: 'test'
+  ...
+# Subtest: a fully-matching multi-row filing satisfies the invariant
+ok 76 - a fully-matching multi-row filing satisfies the invariant
+  ---
+  duration_ms: 0.729391
+  type: 'test'
+  ...
+# Subtest: a wrapped spelled DESCRIPTION continues into the description, not the asset
+ok 77 - a wrapped spelled DESCRIPTION continues into the description, not the asset
+  ---
+  duration_ms: 1.962764
+  type: 'test'
+  ...
+# Subtest: a formatting hold writes source-bound retry evidence and masks an earlier extraction
+ok 78 - a formatting hold writes source-bound retry evidence and masks an earlier extraction
+  ---
+  duration_ms: 0.77766
+  type: 'test'
+  ...
+# Subtest: extractor treats no-identity as failed, not held or skipped
+ok 79 - extractor treats no-identity as failed, not held or skipped
+  ---
+  duration_ms: 0.495813
+  type: 'test'
+  ...
+# Subtest: extractor treats conversion-failed as failed, not held or skipped
+ok 80 - extractor treats conversion-failed as failed, not held or skipped
+  ---
+  duration_ms: 0.372165
+  type: 'test'
+  ...
+# Subtest: extractor treats pdf-without-text as failed, not held or skipped
+ok 81 - extractor treats pdf-without-text as failed, not held or skipped
+  ---
+  duration_ms: 0.252587
+  type: 'test'
+  ...
+# Subtest: extractor treats invalid-pdf as failed, not held or skipped
+ok 82 - extractor treats invalid-pdf as failed, not held or skipped
+  ---
+  duration_ms: 0.348175
+  type: 'test'
+  ...
+1..82
+# tests 82
+# suites 0
+# pass 82
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1713.42644

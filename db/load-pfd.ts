@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 /**
  * PFD ingestion loader. Reads pfd-cache/<year>/*.json (output of
  * skills/pfd-fetcher/extract.ts) and upserts into pfd_transactions, with
@@ -316,6 +317,12 @@ function xmlValue(block: string, tag: string): string {
 }
 
 function parseHouseIndex(xml: string): IndexedHouseFiling[] {
+  const body = xml.replace(/<\?xml[\s\S]*?\?>/, '').trim();
+  if (!/^<FinancialDisclosure(?:\s[^>]*)?>[\s\S]*<\/FinancialDisclosure>$/.test(body)
+      || (body.match(/<Member>/g) ?? []).length !== (body.match(/<\/Member>/g) ?? []).length
+      || (body.match(/<Member>/g) ?? []).length === 0) {
+    throw new Error('malformed or empty authoritative House index');
+  }
   return [...xml.matchAll(/<Member>([\s\S]*?)<\/Member>/g)].map(match => ({
     year: /^\d{4}$/.test(xmlValue(match[1], 'Year')) ? Number(xmlValue(match[1], 'Year')) : null,
     last: xmlValue(match[1], 'Last'),
@@ -356,8 +363,10 @@ async function indexedTargetPtrIds(
   // be the target filing, so it invalidates the proof instead of being dropped.
   if (records.some(record => record.filingType === 'P' && (
     record.year === null || !record.docId || !record.first || !record.last || !record.stateDistrict
-  ))) return null;
+  ))) throw new Error('malformed authoritative House PTR index record');
 
+  const districts = new Set(member.houseTerms.filter(t =>
+    t.start <= `${year}-12-31` && t.end >= `${year}-01-01`).map(t => t.stateDistrict.toUpperCase()));
   const stateDistrict = `${member.state}${String(member.district).padStart(2, '0')}`.toUpperCase();
   const last = firstIndexToken(member.last);
   const allowedFirst = new Set([member.first, member.nickname ?? ''].map(firstIndexToken).filter(Boolean));
@@ -365,13 +374,18 @@ async function indexedTargetPtrIds(
 
   const possibleTargetRecords = records
     .filter(record => record.filingType === 'P' && record.year === year)
-    .filter(record => record.stateDistrict.toUpperCase().replace(/[^A-Z0-9]/g, '') === stateDistrict)
+    .filter(record => districts.has(record.stateDistrict.toUpperCase().replace(/[^A-Z0-9]/g, '')))
     .filter(record => firstIndexToken(record.last) === last);
 
   // A same-district/surname record whose first name cannot be matched exactly
   // makes the negative proof ambiguous. Fail closed instead of declaring zero.
-  if (possibleTargetRecords.some(record => !allowedFirst.has(firstIndexToken(record.first)))) return null;
+  if (possibleTargetRecords.some(record => !allowedFirst.has(firstIndexToken(record.first)))) {
+    throw new Error('ambiguous target identity in authoritative House index (no *.json files can prove absence)');
+  }
 
+  if (possibleTargetRecords.length === 0 && !existsSync(resolve(indexDir, `${year}FD.xml`))) {
+    throw new Error(`missing authoritative House index for ${year}`);
+  }
   return [...new Set(possibleTargetRecords.map(record => record.docId))].sort();
 }
 
@@ -381,6 +395,8 @@ export interface WithheldFiling {
   filerName: string;
   state: 'unresolved' | 'rejected';
   problems: string[];
+  holdFlag?: 'needs_manual_formatting';
+  sourceUrl?: string;
 }
 
 export async function loadPfdYear(
@@ -403,11 +419,57 @@ export async function loadPfdYear(
     throw new Error(`pfd-cache/${year} not found at ${dir}`);
   }
 
-  const jsonFiles = readdirSync(dir).filter(f => f.endsWith('.json'));
-  if (jsonFiles.length === 0) {
-    const indexedIds = await indexedTargetPtrIds(
-      year, scope, cacheRoot, deps.legislatorIndex ?? getLegislatorIndex(),
-    );
+  const jsonFiles = readdirSync(dir).filter(f => f.endsWith('.json') && !f.endsWith('.hold.json')).sort();
+  const indexedIds = await indexedTargetPtrIds(
+    year, scope, cacheRoot, deps.legislatorIndex ?? getLegislatorIndex(),
+  );
+  const holds = new Map<string, WithheldFiling>();
+  for (const file of readdirSync(dir).filter(f => f.endsWith('.hold.json'))) {
+    const receipt = JSON.parse(readFileSync(resolve(dir, file), 'utf8'));
+    if (!indexedIds || !indexedIds.includes(receipt.filingId)) {
+      throw new Error(`hold ${file} lacks authoritative target identity`);
+    }
+    const stem = resolve(dir, file.replace(/\.hold\.json$/, ''));
+    for (const [suffix, expected] of [['.pdf', receipt.pdfSha256], ['.txt', receipt.textSha256]]) {
+      if (!existsSync(stem + suffix) || createHash('sha256').update(readFileSync(stem + suffix)).digest('hex') !== expected) {
+        throw new Error(`hold ${file} source hash mismatch or missing source`);
+      }
+    }
+    if (receipt.outcome !== 'withheld' || receipt.holdFlag !== 'needs_manual_formatting'
+        || !['empty-input', 'no-transaction-rows', 'row-count-mismatch'].includes(receipt.reason)) {
+      throw new Error(`invalid hold receipt ${file}`);
+    }
+    holds.set(receipt.filingId, {
+      filingId: receipt.filingId, filerName: scope.kind === 'member' ? scope.memberId : '',
+      state: 'unresolved', problems: [receipt.reason], holdFlag: 'needs_manual_formatting',
+      sourceUrl: `https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/${year}/${receipt.filingId}.pdf`,
+    });
+  }
+  const records = new Map<string, any>();
+  for (const file of jsonFiles) {
+    let rec: any;
+    try { rec = JSON.parse(readFileSync(resolve(dir, file), 'utf8')); }
+    catch { throw new Error(`malformed extraction ${file}; cannot establish target coverage`); }
+    if (!String(rec?.filer?.name ?? '').trim() || !String(rec?.filingId ?? '').trim()) {
+      throw new Error(`missing identity in extraction ${file}`);
+    }
+    if (records.has(String(rec.filingId))) throw new Error(`duplicate filing identity ${rec.filingId}`);
+    records.set(String(rec.filingId), rec);
+  }
+  if (scope.kind === 'member' && indexedIds) {
+    for (const id of indexedIds) {
+      const rec = records.get(id);
+      if (!rec || holds.has(id)) continue;
+      const resolved = await resolveFiler(String(rec.filer.name), String(rec.filer.stateDistrict ?? ''), conn);
+      if (resolved.memberId !== scope.memberId || resolved.confidence !== 1) {
+        throw new Error(`indexed filing ${id} has ambiguous or mismatched extracted member identity`);
+      }
+    }
+  }
+  if (indexedIds?.some(id => !records.has(id) && !holds.has(id))) {
+    throw new Error(`authoritative House index target PTR(s) not extracted: ${indexedIds.filter(id => !records.has(id) && !holds.has(id)).join(', ')}`);
+  }
+  if (jsonFiles.length === 0 && holds.size === 0) {
     if (indexedIds?.length === 0) {
       return {
         filers: [], totalTx: 0, unmatched: 0, targetMatched: 0,
@@ -427,7 +489,7 @@ export async function loadPfdYear(
   const resolutionByKey = new Map<string, Resolution>();
   const summaryByKey = new Map<string, FilerSummary>();
   const fetchedAt = new Date().toISOString();
-  const withheld: WithheldFiling[] = [];
+  const withheld: WithheldFiling[] = [...holds.values()];
   let totalTx = 0;
   let targetMatched = 0; // filings whose resolved member == the member-scope target
 
@@ -437,13 +499,13 @@ export async function loadPfdYear(
     try {
       rec = JSON.parse(readFileSync(fp, 'utf-8'));
     } catch (e: any) {
-      console.warn(`  ! skipping malformed ${f}: ${e.message}`);
-      continue;
+      throw new Error(`malformed extraction ${f}: ${e.message}`);
     }
     const filer = rec?.filer ?? {};
     const filerName = String(filer.name ?? '');
     const stateDistrict = String(filer.stateDistrict ?? '');
     const filingId = String(rec?.filingId ?? '');
+    if (holds.has(filingId)) continue;
     const txs: any[] = rec?.transactions ?? [];
     // A filing that cannot be identified at all (no filer name) cannot be
     // resolved to a member, so it cannot be attributed to the target and is
@@ -452,7 +514,7 @@ export async function loadPfdYear(
     // below so it is REPORTED rather than silently dropped. A silent skip is
     // indistinguishable from a clean run, which is how 19 launch filings
     // loaded as legitimately-empty.
-    if (!filerName) continue;
+    if (!filerName) throw new Error(`missing identity in extraction ${f}`);
 
     const key = `${filerName}|${stateDistrict}`;
     let resolution = resolutionByKey.get(key);
@@ -478,7 +540,7 @@ export async function loadPfdYear(
     }
     summaryByKey.set(key, summary);
 
-    if (!isTarget || deps.dryRun) continue;
+    if (!isTarget) continue;
 
     // ── Production gate ────────────────────────────────────────────────────
     // Validate BEFORE the DELETE. This ordering is the whole point: the DELETE
@@ -509,6 +571,8 @@ export async function loadPfdYear(
       );
       continue;
     }
+
+    if (deps.dryRun) continue;
 
     // Wipe + reinsert all transactions for this filing. Cheaper than a
     // diff-and-update and matches the "latest fetch wins" semantics used
@@ -558,7 +622,8 @@ export async function loadPfdYear(
   const relevant = scope.kind === 'all'
     ? [...summaryByKey.values()]
     : [...summaryByKey.values()].filter(f => f.resolution.memberId === scope.memberId);
-  const unmatched = relevant.filter(f => f.resolution.memberId === null).length;
+  const unmatched = relevant.filter(f => f.resolution.memberId === null).length
+    + (scope.kind === 'member' && targetMatched === 0 && withheld.length === 0 ? 1 : 0);
   return {
     filers: [...summaryByKey.values()], totalTx, unmatched, targetMatched,
     withheld, verifiedEmpty: false,
@@ -669,12 +734,25 @@ export async function loadPfdYears(
   return { totalTx, totalUnmatched, totalWithheld };
 }
 
+/** Withheld or unmatched target data is accounted for, but not a successful load. */
+export function pfdLoadExitCode(
+  result: { totalUnmatched: number; totalWithheld: number },
+): 0 | 1 {
+  return result.totalUnmatched > 0 || result.totalWithheld > 0 ? 1 : 0;
+}
+
 async function main() {
   const { parseScopeArgs, resolveScope } = await import('../lib/ingest-scope.js');
   const { years, dryRun } = parseArgs(process.argv.slice(2));
   const scope = await resolveScope(parseScopeArgs(process.argv.slice(2)));
-  const { totalUnmatched } = await loadPfdYears(years, scope, { dryRun });
-  process.exit(totalUnmatched > 0 ? 1 : 0);
+  const result = await loadPfdYears(years, scope, { dryRun });
+  if (scope.kind === 'member' && result.totalWithheld > 0) {
+    console.warn(
+      `Member hold: ${scope.memberId} has ${result.totalWithheld} withheld filing(s); ` +
+      'skip automated publication and keep the member in the formatting queue.',
+    );
+  }
+  process.exit(pfdLoadExitCode(result));
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

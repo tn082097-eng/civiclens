@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 /**
  * PFD member-scope tests (Phase 1B.1). A two-member fixture proves that a
  * member-scoped load writes ONLY the target's filings and leaves every other
@@ -304,3 +305,75 @@ test('all mode writes every filer', async () => {
     rmSync(cacheRoot, { recursive: true, force: true });
   }
 });
+
+for (const defect of ['missing-indexed', 'malformed-json', 'missing-identity', 'truncated-index', 'wrong-index-year'] as const) {
+  test(`House ingestion rejects ${defect} before writing any target rows`, async () => {
+    const { conn, cleanup } = await tempDb();
+    const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-preflight-'));
+    try {
+      await seedTwoMembers(conn);
+      writeFiling(cacheRoot, 2024, filing('1000001', 'Hon. Jane Doe', 'CA12', 'AAPL'));
+      writeIndex(cacheRoot, defect === 'wrong-index-year' ? 2023 : 2024, [
+        { last: 'Doe', first: 'Jane', filingType: 'P', stateDistrict: 'CA12', docId: '1000001' },
+        { last: 'Doe', first: 'Jane', filingType: 'P', stateDistrict: 'CA12', docId: '1000002' },
+      ]);
+      if (defect === 'malformed-json') writeFileSync(join(cacheRoot, '2024', '1000002.json'), '{broken');
+      if (defect === 'missing-identity') writeFiling(cacheRoot, 2024, filing('1000002', '', 'CA12', 'MSFT'));
+      if (defect === 'truncated-index') writeFileSync(join(cacheRoot, 'index', '2024FD.xml'), '<FinancialDisclosure><Member>');
+      const before = await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index');
+      await assert.rejects(() => loadPfdYear(2024, memberScope('jane-doe'), { conn, cacheRoot, legislatorIndex: janeIdentity() }));
+      assert.equal(await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index'), before);
+    } finally { cleanup(); rmSync(cacheRoot, { recursive: true, force: true }); }
+  });
+}
+
+test('a malformed index cannot prove an empty House year', async () => {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-index-'));
+  try {
+    await seedTwoMembers(conn);
+    mkdirSync(join(cacheRoot, '2024'));
+    mkdirSync(join(cacheRoot, 'index'));
+    writeFileSync(join(cacheRoot, 'index', '2024FD.xml'), '<html>Service unavailable</html>');
+    await assert.rejects(() => loadPfdYear(2024, memberScope('jane-doe'), { conn, cacheRoot, legislatorIndex: janeIdentity() }));
+  } finally { cleanup(); rmSync(cacheRoot, { recursive: true, force: true }); }
+});
+
+test('an indexed source-bound formatting hold blocks stale JSON without deleting rows', async () => {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-held-'));
+  try {
+    await seedTwoMembers(conn);
+    writeFiling(cacheRoot, 2024, filing('1000001', 'Hon. Jane Doe', 'CA12', 'AAPL'));
+    writeIndex(cacheRoot, 2024, [{ last: 'Doe', first: 'Jane', filingType: 'P', stateDistrict: 'CA12', docId: '1000001' }]);
+    const pdf = '%PDF-1.4\nfixture';
+    writeFileSync(join(cacheRoot, '2024', '1000001.pdf'), pdf);
+    writeFileSync(join(cacheRoot, '2024', '1000001.txt'), '');
+    writeFileSync(join(cacheRoot, '2024', '1000001.hold.json'), JSON.stringify({
+      outcome: 'withheld', holdFlag: 'needs_manual_formatting', filingId: '1000001', reason: 'empty-input',
+      pdfSha256: createHash('sha256').update(pdf).digest('hex'),
+      textSha256: createHash('sha256').update('').digest('hex'),
+    }));
+    const result = await loadPfdYear(2024, memberScope('jane-doe'), { conn, cacheRoot, legislatorIndex: janeIdentity() });
+    assert.equal(result.verifiedEmpty, false);
+    assert.equal(result.withheld.length, 1);
+    assert.equal(result.totalTx, 0);
+    assert.equal(await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index'), '[]');
+    writeFileSync(join(cacheRoot, '2024', '1000001.txt'), 'changed input');
+    await assert.rejects(() => loadPfdYear(2024, memberScope('jane-doe'), { conn, cacheRoot, legislatorIndex: janeIdentity() }), /hash|source/i);
+  } finally { cleanup(); rmSync(cacheRoot, { recursive: true, force: true }); }
+});
+
+for (const defect of ['ambiguous-index', 'incomplete-index-record', 'wrong-extracted-member'] as const) {
+  test(`indexed identity preflight rejects ${defect} even with extracted JSON present`, async () => {
+    const { conn, cleanup } = await tempDb();
+    const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-identity-preflight-'));
+    try {
+      await seedTwoMembers(conn);
+      writeFiling(cacheRoot, 2024, filing('1000001', defect === 'wrong-extracted-member' ? 'John Roe' : 'Jane Doe', defect === 'wrong-extracted-member' ? 'NY03' : 'CA12', 'AAPL'));
+      writeIndex(cacheRoot, 2024, [{ last: 'Doe', first: defect === 'ambiguous-index' ? 'Janet' : 'Jane', filingType: 'P', stateDistrict: 'CA12', docId: defect === 'incomplete-index-record' ? '' : '1000001' }]);
+      await assert.rejects(() => loadPfdYear(2024, memberScope('jane-doe'), { conn, cacheRoot, legislatorIndex: janeIdentity() }));
+      assert.equal(await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index'), '[]');
+    } finally { cleanup(); rmSync(cacheRoot, { recursive: true, force: true }); }
+  });
+}

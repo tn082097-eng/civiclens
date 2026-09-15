@@ -10,11 +10,10 @@
  * an absence of evidence, not evidence of validity.
  *
  * A required family may report PASS with zero artifacts only when it is
- * explicitly accounted for by a corroborated source-backed verified-empty or
- * withheld record under the frozen protocol — the same distinction the Senate
- * PTR loader draws between "a successful search found nothing" and "the search
- * did not complete". Absence is never inferred; it must be asserted with a
- * source.
+ * explicitly accounted for by a corroborated source-backed verified-empty
+ * record. A withheld record remains visible but fails the gate: a formatting
+ * hold is not certification. Absence is never inferred; it must be asserted
+ * with a source.
  *
  * Usage: npx tsx scripts/validate-artifact-corpus.ts
  */
@@ -54,8 +53,8 @@ export const REQUIRED_FAMILIES: readonly string[] = REQUIRED_AGENTS.map(
   a => (a === 'final-reviewer' ? 'final-review' : a));
 
 /**
- * An explicit, source-backed record that a required family is legitimately
- * empty or withheld — the only way zero artifacts may report PASS.
+ * An explicit, source-backed record explaining a zero-artifact family.
+ * `verified-empty` may close it; `withheld` is an accounted failure.
  */
 export interface AccountedEmpty {
   state: 'verified-empty' | 'withheld';
@@ -112,9 +111,7 @@ export function validateCorpus(opts: ValidateCorpusOpts = {}): CorpusReport {
       total++;
       let parsed: unknown;
       try { parsed = JSON.parse(readFileSync(file, 'utf-8')); }
-      catch { unparseable++; continue; } // unparseable JSON is skipped by every
-                                         // live reader today (try/catch); not a
-                                         // schema problem. Reported, not failed.
+      catch { unparseable++; continue; } // Corrupt artifacts fail the gate below.
       const r = schema.safeParse(parsed);
       if (r.success) { pass++; continue; }
       const first = r.error.issues[0];
@@ -124,13 +121,15 @@ export function validateCorpus(opts: ValidateCorpusOpts = {}): CorpusReport {
       signatures.set(sig, e);
     }
 
-    const failed = total - unparseable - pass;
+    const failed = total - pass;
     const isRequired = required.has(agent);
     const accountedEmpty = accounted[agent];
 
-    // The completeness rule. An empty REQUIRED family fails unless a
-    // source-backed record explicitly accounts for it.
-    const missing = isRequired && total === 0 && !accountedEmpty;
+    // The completeness rule. Only verified-empty can close a zero-artifact
+    // required family. Withheld stays visible but cannot turn the gate green.
+    const closesEmpty = accountedEmpty?.state === 'verified-empty'
+      && Boolean(accountedEmpty.sourceUrl?.trim());
+    const missing = isRequired && (total === 0 ? !closesEmpty : total < taskDirs.length);
     const status: 'PASS' | 'FAIL' = failed > 0 || missing ? 'FAIL' : 'PASS';
 
     families.push({
@@ -162,10 +161,15 @@ function main(): void {
   for (const f of report.families) {
     const req = f.required ? ' [required]' : '';
     if (f.missing) {
-      console.log(`${f.status}  ${f.agent.padEnd(14)} 0 artifacts${req} — REQUIRED family produced nothing`);
+      if (f.accountedEmpty?.state === 'withheld') {
+        console.log(`${f.status}  ${f.agent.padEnd(14)} 0 artifacts${req} — accounted withheld`);
+        console.log('       formatting hold recorded; withheld is not a certification pass.');
+        continue;
+      }
+      console.log(`${f.status}  ${f.agent.padEnd(14)} ${f.total} artifacts${req} — REQUIRED family missing from one or more tasks`);
       console.log(`       a required family with zero artifacts is an absence of evidence, not a pass.`);
       console.log(`       to pass, either produce the artifact or record a corroborated`);
-      console.log(`       source-backed verified-empty/withheld result under the frozen protocol.`);
+      console.log(`       source-backed verified-empty result under the frozen protocol.`);
       continue;
     }
     if (f.accountedEmpty && f.total === 0) {
@@ -173,7 +177,7 @@ function main(): void {
         + (f.accountedEmpty.sourceUrl ? ` (${f.accountedEmpty.sourceUrl})` : ''));
       continue;
     }
-    console.log(`${f.status}  ${f.agent.padEnd(14)} ${f.pass}/${f.total - f.unparseable} valid (${f.unparseable} unparseable skipped)${req}`);
+    console.log(`${f.status}  ${f.agent.padEnd(14)} ${f.pass}/${f.total} valid (${f.unparseable} unparseable)${req}`);
     if (f.failed > 0) {
       let shown = 0;
       for (const { sig, count, example } of f.signatures) {

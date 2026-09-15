@@ -8,7 +8,15 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { extractPTRResult, extractPTR } from './extract.js';
+import { existsSync, readFileSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import {
+  extractDirectory,
+  extractionExitCode,
+  extractPTRResult,
+  extractPTR,
+} from './extract.js';
 
 /** Header block shared by the `200xxxxx`-era template (lowercase labels). */
 const HEAD_LOWER = [
@@ -45,6 +53,27 @@ const FOOTER = [
 function parse(text: string, id?: string) {
   return extractPTRResult(text, id);
 }
+
+test('unsupported local PDFs become formatting holds without stopping the remaining batch', () => {
+  const root = mkdtempSync(join(tmpdir(), 'pfd-formatting-hold-'));
+  try {
+    writeFileSync(join(root, 'member-8219414.txt'), '');
+    writeFileSync(join(root, 'member-8219414.pdf'), '%PDF-1.4\nfixture; OCR must not run by default');
+    writeFileSync(join(root, 'annual-8219415.txt'), 'Filing Type: Annual Report\nAnnual financial disclosure');
+    writeFileSync(join(root, 'missing-source-8219416.txt'), '');
+
+    const summary = extractDirectory(root);
+
+    assert.equal(summary.formattingHolds, 1, 'the unreadable PTR is flagged for later formatting work');
+    assert.equal(summary.skippedNonPtrs, 1, 'an unrelated non-PTR is skipped without becoming a hold');
+    assert.equal(summary.errors, 1, 'empty text without its source PDF remains a source error');
+    assert.equal(summary.parsed, 0);
+    assert.equal(extractionExitCode(summary), 1, 'a held member cannot be reported as a successful parse');
+    assert.equal(existsSync(join(root, 'member-8219414.json')), false, 'held input never becomes loadable JSON');
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
 
 // ─── Layout variant 1: trailing cap-gains checkbox glyph ────────────────────
 
@@ -461,3 +490,36 @@ test('a wrapped spelled DESCRIPTION continues into the description, not the asse
   assert.equal(t.ticker, 'AB');
   assert.equal(t.assetType, 'OL');
 });
+
+test('a formatting hold writes source-bound retry evidence and masks an earlier extraction', () => {
+  const root = mkdtempSync(join(tmpdir(), 'pfd-hold-receipt-'));
+  try {
+    writeFileSync(join(root, 'doe-jane-1000001.txt'), '');
+    writeFileSync(join(root, 'doe-jane-1000001.pdf'), '%PDF-1.4\nfixture');
+    writeFileSync(join(root, 'doe-jane-1000001.json'), JSON.stringify({ old: 'extraction' }));
+    const summary = extractDirectory(root);
+    assert.equal(summary.formattingHolds, 1);
+    const receipt = JSON.parse(readFileSync(join(root, 'doe-jane-1000001.hold.json'), 'utf8'));
+    assert.equal(receipt.outcome, 'withheld');
+    assert.equal(receipt.holdFlag, 'needs_manual_formatting');
+    assert.equal(receipt.filingId, '1000001');
+    assert.match(receipt.pdfSha256, /^[a-f0-9]{64}$/);
+    assert.match(receipt.textSha256, /^[a-f0-9]{64}$/);
+    assert.equal(receipt.reason, 'empty-input');
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+for (const defect of ['no-identity', 'conversion-failed', 'pdf-without-text', 'invalid-pdf'] as const) {
+  test(`extractor treats ${defect} as failed, not held or skipped`, () => {
+    const root = mkdtempSync(join(tmpdir(), 'pfd-source-failure-'));
+    try {
+      const stem = defect === 'no-identity' ? 'unknown' : 'doe-jane-1000001';
+      writeFileSync(join(root, stem + '.pdf'), defect === 'invalid-pdf' ? '<html>error</html>' : '%PDF-1.4\nfixture');
+      if (defect !== 'pdf-without-text') writeFileSync(join(root, stem + '.txt'), defect === 'conversion-failed' ? '[pdftotext failed: invalid PDF]' : '');
+      const summary = extractDirectory(root);
+      assert.equal(summary.errors, 1);
+      assert.equal(summary.formattingHolds, 0);
+      assert.equal(extractionExitCode(summary), 1);
+    } finally { rmSync(root, { recursive: true, force: true }); }
+  });
+}

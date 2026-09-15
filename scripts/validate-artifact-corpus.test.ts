@@ -9,8 +9,9 @@
  * Zero produced artifacts for a required family is an absence of evidence, not
  * evidence of validity. These tests pin the distinction between:
  *   - a required family with zero artifacts  → FAIL (absence)
- *   - a family explicitly recorded as source-backed verified-empty/withheld
+ *   - a family explicitly recorded as source-backed verified-empty
  *     under the frozen protocol               → PASS (accounted for)
+ *   - a family recorded as withheld           → FAIL (accounted hold)
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -116,7 +117,7 @@ test('a required family with zero artifacts passes only when a source-backed ver
 
     // The frozen protocol's only escape hatch: a corroborated source-backed
     // record proving the family is legitimately empty (e.g. the Senate
-    // zero-PTR path) or withheld. This is evidence, not an absence.
+    // zero-PTR path). This is evidence, not an absence.
     const accounted = validateCorpus({
       corpusDir: root,
       required: ['summarizer'],
@@ -124,6 +125,26 @@ test('a required family with zero artifacts passes only when a source-backed ver
     });
     assert.equal(accounted.families.find(f => f.agent === 'summarizer')?.status, 'PASS');
     assert.equal(accounted.ok, true);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('a withheld formatting result is accounted for but cannot pass a required family', () => {
+  const root = corpusDir();
+  try {
+    const report = validateCorpus({
+      corpusDir: root,
+      required: ['summarizer'],
+      accountedEmpty: {
+        summarizer: { state: 'withheld', sourceUrl: 'https://example.gov/filing.pdf' },
+      },
+    });
+    const summarizer = report.families.find(f => f.agent === 'summarizer');
+
+    assert.equal(summarizer?.accountedEmpty?.state, 'withheld', 'the hold remains visible');
+    assert.equal(summarizer?.status, 'FAIL', 'withheld is not a certification pass');
+    assert.equal(report.ok, false);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
@@ -143,3 +164,22 @@ test('an invalid artifact in a required family still fails (unchanged behavior)'
     rmSync(root, { recursive: true, force: true });
   }
 });
+
+for (const kind of ['unparseable', 'missing-in-one-task', 'unbacked-empty'] as const) {
+  test(`required artifacts fail closed for ${kind}`, () => {
+    const root = corpusDir();
+    try {
+      let accountedEmpty;
+      if (kind === 'unparseable') {
+        mkdirSync(join(root, 'task-bad'));
+        writeFileSync(join(root, 'task-bad', 'summarizer.json'), '{broken');
+      } else if (kind === 'missing-in-one-task') {
+        writeArtifact(root, 'task-good', 'summarizer', summarizerArtifact());
+        mkdirSync(join(root, 'task-missing'));
+      } else {
+        accountedEmpty = { summarizer: { state: 'verified-empty' as const } };
+      }
+      assert.equal(validateCorpus({ corpusDir: root, required: ['summarizer'], accountedEmpty }).ok, false);
+    } finally { rmSync(root, { recursive: true, force: true }); }
+  });
+}

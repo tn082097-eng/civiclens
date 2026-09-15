@@ -102,6 +102,14 @@ one of `--member <slug|name>`, `--bioguide <id>`, or `--all`.
   invent a statewide substitute for a senator.
 - OpenSecrets is optional for a base run. If it is not collected, record
   `not-collected`; never present that state as evidence that no donor data exists.
+- **Formatting hold and skip.** When an authoritative filing exists but the
+  supported parser cannot recover a complete, validated record, flag the member
+  `needs_manual_formatting` in `docs/pfd-formatting-holds.md` and stop that
+  member's automated onboarding/publication path. Continue with other members;
+  do not improvise member-specific parsing or silently invoke OCR. The held
+  filing remains withheld, the member remains in coverage, and the outcome is
+  neither `verified-empty` nor a certification pass. Clear the hold only after a
+  general parser, OCR, or human-review path is separately approved and replayed.
 - Routine member onboarding via `pipeline/run-patterns.ts` is timing-SAFE by
   default: the parked timing pair (`trade-vote-alignment`, `spousal-trade-timing`)
   is filtered out, so a new member never gets first timing p-values as a side

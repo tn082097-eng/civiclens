@@ -1,10 +1,12 @@
 # Six-fresh-member Track B certification
 
-**Status:** final-code replay in progress. Six initial local scratch trials
+**Status:** final-code replay pending. Six initial local scratch trials
 completed their intended technical paths except stratum 4. Stratum 4 then
 passed after the protocol's one permitted focused generic repair cycle and a
-fresh same-member replay at commit `20f62c0`. The other five strata must now be
-replayed at that same final commit before certification can pass. Production
+fresh same-member replay at commit `20f62c0`. The formatting-hold rule changes
+the certification contract after that replay, so a new final implementation
+commit must be frozen and all six strata replayed there. Eric Burlison remains
+held and cannot pass until the hold is cleared. Production
 database writes, push, publication, deployment, OCR, and confirmatory timing
 runs remain prohibited.
 
@@ -57,15 +59,16 @@ Senate PTRs before Chris Van Hollen. The source hashes are frozen in
 
 | Stratum | Member | Outcome | Evidence |
 |---|---|---|---|
-| 1 | Tina Smith | initial pass; final-code replay pending | `stratum-1-tina-smith.md` |
-| 2 | John W. Mannion | initial pass; final-code replay pending | `stratum-2-john-mannion.md` |
-| 3 | Cleo Fields | initial pass; final-code replay pending | `stratum-3-cleo-fields.md` |
-| 4 | Chris Van Hollen | pass after one focused generic repair and fresh replay | `stratum-4-chris-van-hollen.md` |
-| 5 | Darline Graham | initial pass; final-code replay pending | `stratum-5-darline-graham.md` |
-| 6 | Eric Burlison | initial pass with source-backed disclosure withholding; final-code replay pending | `stratum-6-eric-burlison.md` |
+| 1 | Tina Smith | initial pass; new final-code replay pending | `stratum-1-tina-smith.md` |
+| 2 | John W. Mannion | initial pass; new final-code replay pending | `stratum-2-john-mannion.md` |
+| 3 | Cleo Fields | initial pass; new final-code replay pending | `stratum-3-cleo-fields.md` |
+| 4 | Chris Van Hollen | historical pass at `20f62c0`; new final-code replay pending | `stratum-4-chris-van-hollen.md` |
+| 5 | Darline Graham | initial pass; new final-code replay pending | `stratum-5-darline-graham.md` |
+| 6 | Eric Burlison | `needs_manual_formatting`; held and not passed | `stratum-6-eric-burlison.md` |
 
-The six-stratum certification therefore remains **pending** until the five
-remaining final-code replays complete. The first stratum-4 failure is preserved
+The six-stratum certification therefore remains **pending** until a new final
+implementation commit is frozen, all six strata replay there, and Eric's
+formatting hold is cleared. The first stratum-4 failure is preserved
 in its evidence file; it was not discarded or converted into a pass. The
 generic repair is commit `20f62c0`, independently verified with 313/313 tests
 and a clean TypeScript check before the fresh replay.
@@ -79,4 +82,4 @@ byte-equality gate.
 
 The final bounded review remains a draft in
 `final-certification-review.md`. Certification may be recorded only after all
-six final-code replays are complete.
+six strata pass on the applicable final code; a formatting hold is not a pass.

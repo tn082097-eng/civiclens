@@ -1,13 +1,16 @@
 # Stratum 6 result - Eric Burlison
 
-**Outcome: PASS with source-backed disclosure withholding.** Eric Burlison
-(`eric-burlison`, `B001316`, House) completed the isolated non-OCR path at
-`e7c7bcd`.
+**Outcome: `needs_manual_formatting` — held, not passed.** Eric Burlison
+(`eric-burlison`, `B001316`, House) completed the isolated non-OCR evidence
+capture at `e7c7bcd`, but the member is not complete under the formatting-hold
+rule.
 
 The frozen official Clerk PDF for DocID `8219414` has no usable native text.
 Its `pdftotext -layout` output contains only form-feed separators. The filing
 was recorded as unavailable/withheld; the extractor and loader were not invoked
-and no OCR ran.
+and no OCR ran. The member remains in the frozen certification coverage and in
+`docs/pfd-formatting-holds.md`; automated onboarding/publication is skipped
+until a general approved path can recover and validate the filing.
 
 | Check | Result |
 |---|---|
@@ -33,4 +36,5 @@ records did not change. This exposes a weakness in an unconditional byte-level
 reference gate, not cross-member data corruption.
 
 The source database remained byte-identical. No production or publication
-action occurred.
+action occurred. This evidence accounts for the source limitation but does not
+constitute a certification pass or `verified-empty` result.

@@ -1,21 +1,21 @@
 # Final six-fresh-member certification review
 
-**Verdict: PENDING.** Chris Van Hollen passed a fresh replay at final repair
-commit `20f62c0`, but the frozen protocol requires every stratum to replay at
-the final generic-fix commit. The other five final-code replays remain required;
-their initial passes cannot be mixed with Chris's repaired-build result to
-claim certification.
+**Verdict: PENDING.** Chris Van Hollen passed a fresh replay at repair commit
+`20f62c0`, but the formatting-hold rule changes the certification contract
+after that replay. A new final implementation commit must be frozen and all six
+strata replayed there. Eric Burlison is explicitly held for manual formatting;
+his initial withholding cannot be counted as a pass.
 
 ## Stratum verdicts
 
 | Stratum | Member | Final verdict | Decisive evidence |
 |---|---|---|---|
-| 1 - Senate with PTRs | Tina Smith | final-code replay pending | initial run: 9 indexed filings, 20 transactions, complete local page |
-| 2 - House with zero indexed PTRs | John W. Mannion | final-code replay pending | initial run: four authoritative index years each recorded `verified-empty` |
-| 3 - high-volume text House PTR | Cleo Fields | final-code replay pending | initial run: all 21 filings and 233 visible rows reconciled without OCR |
-| 4 - Senate with zero PTRs | Chris Van Hollen | pass on attempt 2 | source-backed zero PTR; required artifacts complete; 6,912 cosponsorships fetched completely |
-| 5 - frozen source without FEC ID | Darline Graham | final-code replay pending | initial run: normal fallback resolved the ID; zero PTR receipt and FEC result recorded |
-| 6 - scanned House PTR | Eric Burlison | final-code replay pending | initial run: official PDF had no usable native text; OCR remained prohibited and the filing was explicitly withheld |
+| 1 - Senate with PTRs | Tina Smith | new final-code replay pending | initial run: 9 indexed filings, 20 transactions, complete local page |
+| 2 - House with zero indexed PTRs | John W. Mannion | new final-code replay pending | initial run: four authoritative index years each recorded `verified-empty` |
+| 3 - high-volume text House PTR | Cleo Fields | new final-code replay pending | initial run: all 21 filings and 233 visible rows reconciled without OCR |
+| 4 - Senate with zero PTRs | Chris Van Hollen | historical pass at `20f62c0`; new final-code replay pending | source-backed zero PTR; required artifacts complete; 6,912 cosponsorships fetched completely |
+| 5 - frozen source without FEC ID | Darline Graham | new final-code replay pending | initial run: normal fallback resolved the ID; zero PTR receipt and FEC result recorded |
+| 6 - scanned House PTR | Eric Burlison | `needs_manual_formatting`; held, not passed | official PDF had no usable native text; OCR remained prohibited and the filing is explicitly withheld |
 
 ## Repair accounting
 
@@ -44,11 +44,12 @@ recorded raw hash.
 - All six people were selected deterministically from frozen evidence and were
   untouched by prior development trials.
 - Every ingestion step ended as `ok`, `verified-empty`, `not-collected`,
-  `withheld`, or `failed`; no silent missing result was accepted.
+  `withheld`, or `failed`; no silent missing result was accepted. A `withheld`
+  formatting outcome is accounted for but is not a pass.
 - The only failed stratum used exactly one focused generic repair cycle and a
   fresh replay of the same frozen candidate.
 - House text-layer PTRs were source-row reconciled. The scanned-PTR stratum ran
-  no OCR and disclosed the resulting limitation.
+  no OCR and is held in the durable formatting queue.
 - OpenSecrets remained optional and was consistently recorded
   `not-collected`.
 - Routine pattern generation excluded the parked confirmatory timing pair. No
@@ -70,8 +71,9 @@ semantic same-input render triage.
 
 ## Closeout boundary
 
-Track B certification is not complete until the five pending final-code replays
-finish and this draft is reconciled against their evidence. Integrating commit
-`20f62c0`, pushing a branch, changing production data, adding a member to the
-public roster, publishing, and deploying remain separate decisions requiring
-their own review and authorization.
+Track B certification is not complete until a new final implementation commit
+is frozen, all six strata replay there, Eric's formatting hold is cleared, and
+this draft is reconciled against their evidence. Integrating the eventual
+certified branch, pushing it, changing production data, adding a
+member to the public roster, publishing, and deploying remain separate
+decisions requiring their own review and authorization.

@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: a required family with zero produced artifacts fails instead of scoring 0/0 PASS
+ok 1 - a required family with zero produced artifacts fails instead of scoring 0/0 PASS
+  ---
+  duration_ms: 1.684448
+  type: 'test'
+  ...
+# Subtest: a required family that produced a valid artifact passes
+ok 2 - a required family that produced a valid artifact passes
+  ---
+  duration_ms: 1.333082
+  type: 'test'
+  ...
+# Subtest: a NON-required family with zero artifacts still passes (unchanged behavior)
+ok 3 - a NON-required family with zero artifacts still passes (unchanged behavior)
+  ---
+  duration_ms: 1.072756
+  type: 'test'
+  ...
+# Subtest: a required family with zero artifacts passes only when a source-backed verified-empty record accounts for it
+ok 4 - a required family with zero artifacts passes only when a source-backed verified-empty record accounts for it
+  ---
+  duration_ms: 0.278166
+  type: 'test'
+  ...
+# Subtest: a withheld formatting result is accounted for but cannot pass a required family
+ok 5 - a withheld formatting result is accounted for but cannot pass a required family
+  ---
+  duration_ms: 0.204117
+  type: 'test'
+  ...
+# Subtest: an invalid artifact in a required family still fails (unchanged behavior)
+ok 6 - an invalid artifact in a required family still fails (unchanged behavior)
+  ---
+  duration_ms: 0.76997
+  type: 'test'
+  ...
+# Subtest: required artifacts fail closed for unparseable
+ok 7 - required artifacts fail closed for unparseable
+  ---
+  duration_ms: 0.396274
+  type: 'test'
+  ...
+# Subtest: required artifacts fail closed for missing-in-one-task
+ok 8 - required artifacts fail closed for missing-in-one-task
+  ---
+  duration_ms: 0.541813
+  type: 'test'
+  ...
+# Subtest: required artifacts fail closed for unbacked-empty
+ok 9 - required artifacts fail closed for unbacked-empty
+  ---
+  duration_ms: 0.248167
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 145.007046

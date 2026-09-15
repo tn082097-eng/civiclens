@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 /**
  * PFD PTR extractor — turns cached `pdftotext -layout` output into JSON.
  *
@@ -8,6 +9,7 @@
  * Usage:
  *   npx tsx skills/pfd-fetcher/extract.ts <pfd-cache-year-dir>
  *   npx tsx skills/pfd-fetcher/extract.ts ../../pfd-cache/2024
+ *   npx tsx skills/pfd-fetcher/extract.ts <dir> --ocr  # separately authorized
  *
  * Writes a sibling `<basename>.json` next to each `*.txt` whose PDF is a
  * Periodic Transaction Report (detected by header text). Skips Annual etc.
@@ -639,20 +641,43 @@ export function extractPTR(text: string, authoritativeFilingId?: string): PTRRec
 
 // ─── CLI ──────────────────────────────────────────────────────────────────────
 
-function main() {
-  const dir = process.argv[2];
-  if (!dir) {
-    console.error('Usage: extract.ts <pfd-cache-year-dir>');
-    process.exit(1);
-  }
-  const root = resolve(process.cwd(), dir);
-  if (!existsSync(root)) {
-    console.error(`not found: ${root}`);
-    process.exit(1);
-  }
+export interface ExtractionSummary {
+  parsed: number;
+  skippedNonPtrs: number;
+  formattingHolds: number;
+  txTotal: number;
+  errors: number;
+}
 
-  const txtFiles = readdirSync(root).filter(f => f.endsWith('.txt'));
-  let parsed = 0, skipped = 0, txTotal = 0, errored = 0;
+export interface ExtractDirectoryOptions {
+  /** OCR is opt-in. Ordinary onboarding flags unreadable PDFs for later work. */
+  allowOcr?: boolean;
+}
+
+/** A formatting hold is an accounted-for skip, never a successful parse. */
+export function extractionExitCode(summary: ExtractionSummary): 0 | 1 {
+  return summary.formattingHolds > 0 || summary.errors > 0 ? 1 : 0;
+}
+
+/**
+ * Parse every local text artifact in one cache directory. Unsupported layouts
+ * are flagged and skipped while the remaining files continue.
+ */
+export function extractDirectory(
+  root: string,
+  opts: ExtractDirectoryOptions = {},
+): ExtractionSummary {
+
+  const files = readdirSync(root);
+  const txtFiles = files.filter(f => f.endsWith('.txt')).sort();
+  let parsed = 0, skippedNonPtrs = 0, formattingHolds = 0, txTotal = 0, errors = 0;
+
+  for (const pdf of files.filter(f => f.endsWith('.pdf'))) {
+    if (!existsSync(resolve(root, pdf.replace(/\.pdf$/, '.txt')))) {
+      errors++;
+      console.warn(`  ✗ ${pdf}: missing text extraction; fetch/conversion incomplete`);
+    }
+  }
 
   for (const f of txtFiles) {
     const txtPath = resolve(root, f);
@@ -660,8 +685,15 @@ function main() {
     let text = readFileSync(txtPath, 'utf-8');
     let usedOcr = false;
 
-    // If pdftotext returned empty and a PDF exists, fall back to OCR
-    if (!text.trim() && existsSync(pdfPath)) {
+    if (text.startsWith('[pdftotext failed:')) {
+      errors++;
+      console.warn(`  ✗ ${f}: text conversion failed`);
+      continue;
+    }
+
+    // OCR is deliberately opt-in. The ordinary onboarding path records an
+    // unreadable PDF as a formatting hold and moves on to the next filing.
+    if (!text.trim() && existsSync(pdfPath) && opts.allowOcr) {
       process.stdout.write(`  ⟳ ${basename(f)} (empty — running OCR…)\r`);
       text = ocrPdf(pdfPath);
       usedOcr = true;
@@ -683,21 +715,40 @@ function main() {
       // one is what let 19 launch filings load as legitimately-empty.
       if (!rec) {
         if (usedOcr) process.stdout.write('\n');
-        if (result.kind === 'unresolved' &&
-            (result.info.reason === 'no-transaction-rows' ||
-             result.info.reason === 'row-count-mismatch')) {
+        if (result.kind === 'unresolved' && result.info.reason === 'empty-input' && !existsSync(pdfPath)) {
+          errors++;
+          console.warn(`  ✗ ${basename(f)}: empty text artifact and source PDF is missing`);
+          continue;
+        }
+        if (result.kind === 'unresolved' && result.info.reason === 'not-a-ptr') {
+          skippedNonPtrs++;
+          continue;
+        }
+        if (!authoritativeId || !existsSync(pdfPath) || !readFileSync(pdfPath).subarray(0, 5).equals(Buffer.from('%PDF-'))) {
+          errors++;
+          console.warn(`  ✗ ${f}: missing filing identity or valid source PDF`);
+          continue;
+        }
+        writeFileSync(txtPath.replace(/\.txt$/, '.hold.json'), JSON.stringify({
+          outcome: 'withheld', holdFlag: 'needs_manual_formatting',
+          filingId: authoritativeId, reason: result.kind === 'unresolved' ? result.info.reason : 'unsupported-layout',
+          pdfSha256: createHash('sha256').update(readFileSync(pdfPath)).digest('hex'),
+          textSha256: createHash('sha256').update(readFileSync(txtPath)).digest('hex'),
+        }, null, 2));
+        formattingHolds++;
+        if (result.kind === 'unresolved') {
           const ev = result.info.evidence;
           const partial = result.info.reason === 'row-count-mismatch';
           console.warn(
-            `  ⚠ ${basename(f)} [unresolved] → ${ev.rowsMatched} of ${ev.datePairsSeen} row(s) ` +
+            `  ⚠ ${basename(f)} [needs_manual_formatting:${result.info.reason}] → ` +
+            `${ev.rowsMatched} of ${ev.datePairsSeen} row(s) ` +
             `from ${ev.textBytes} B; table${ev.tableEntered ? '' : ' NOT'} entered` +
             (partial
               ? ' — PARTIAL PARSE, filing withheld (replacement must be whole-for-whole)'
               : usedOcr ? ' (scanned table — needs commercial OCR)'
-                        : ' — LAYOUT NOT PARSED, filing withheld'),
+                        : ' — filing withheld; member remains in the formatting queue'),
           );
         }
-        skipped++;
         continue;
       }
       const jsonPath = txtPath.replace(/\.txt$/, '.json');
@@ -707,13 +758,39 @@ function main() {
       if (usedOcr) process.stdout.write('\n');
       console.log(`  ✓ ${basename(f)}${usedOcr ? ' [OCR]' : ''} → ${rec.transactions.length} tx`);
     } catch (e: any) {
-      errored++;
+      errors++;
       if (usedOcr) process.stdout.write('\n');
       console.warn(`  ✗ ${basename(f)}: ${e.message}`);
     }
   }
 
-  console.log(`\nParsed ${parsed} PTR(s) → ${txTotal} transactions; skipped ${skipped} non-PTR; ${errored} errors`);
+  console.log(
+    `\nParsed ${parsed} PTR(s) → ${txTotal} transactions; ` +
+    `skipped ${skippedNonPtrs} non-PTR; ${formattingHolds} formatting hold(s); ${errors} errors`,
+  );
+  if (formattingHolds > 0) {
+    console.warn(
+      'Member formatting hold: skip automated publication, keep the member in coverage, ' +
+      'and do not count this run as verified-empty or complete.',
+    );
+  }
+  return { parsed, skippedNonPtrs, formattingHolds, txTotal, errors };
+}
+
+function main() {
+  const args = process.argv.slice(2);
+  const dir = args.find(a => !a.startsWith('--'));
+  if (!dir) {
+    console.error('Usage: extract.ts <pfd-cache-year-dir> [--ocr]');
+    process.exit(1);
+  }
+  const root = resolve(process.cwd(), dir);
+  if (!existsSync(root)) {
+    console.error(`not found: ${root}`);
+    process.exit(1);
+  }
+  const summary = extractDirectory(root, { allowOcr: args.includes('--ocr') });
+  process.exitCode = extractionExitCode(summary);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

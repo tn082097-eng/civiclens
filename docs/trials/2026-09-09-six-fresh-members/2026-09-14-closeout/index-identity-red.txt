@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: indexed identity preflight rejects ambiguous-index even with extracted JSON present
+not ok 1 - indexed identity preflight rejects ambiguous-index even with extracted JSON present
+  ---
+  duration_ms: 99.177809
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:4:11874'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:375:7)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: indexed identity preflight rejects incomplete-index-record even with extracted JSON present
+not ok 2 - indexed identity preflight rejects incomplete-index-record even with extracted JSON present
+  ---
+  duration_ms: 73.097216
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:4:11874'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:375:7)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: indexed identity preflight rejects wrong-extracted-member even with extracted JSON present
+not ok 3 - indexed identity preflight rejects wrong-extracted-member even with extracted JSON present
+  ---
+  duration_ms: 64.569796
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:4:11874'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:375:7)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 0
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 416.545478

@@ -408,11 +408,17 @@ ${bold('CivicLens Pipeline Runner')}
   if (years.length === 0) { console.error('--load-pfd: years must be numeric'); process.exit(1); }
   const dryRun = process.argv.includes('--dry-run');
   (async () => {
-    const { loadPfdYears } = await import('../db/load-pfd.js');
+    const { loadPfdYears, pfdLoadExitCode } = await import('../db/load-pfd.js');
     const { parseScopeArgs, resolveScope } = await import('../lib/ingest-scope.js');
     const scope = await resolveScope(parseScopeArgs(process.argv.slice(3)));
-    const { totalUnmatched } = await loadPfdYears(years, scope, { dryRun });
-    process.exit(totalUnmatched > 0 ? 1 : 0);
+    const result = await loadPfdYears(years, scope, { dryRun });
+    if (scope.kind === 'member' && result.totalWithheld > 0) {
+      console.warn(
+        `Member hold: ${scope.memberId} has ${result.totalWithheld} withheld filing(s); ` +
+        'skip automated publication and keep the member in the formatting queue.',
+      );
+    }
+    process.exit(pfdLoadExitCode(result));
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(2); });
 } else if (arg === '--load-fec-ie') {
   const dryRun = process.argv.includes('--dry-run');

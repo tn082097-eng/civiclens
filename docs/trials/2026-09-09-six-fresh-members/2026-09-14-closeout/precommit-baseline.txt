@@ -1,0 +1,35 @@
+
+> civiclens-pipeline@1.0.0 verify:baseline
+> tsx scripts/verify-baseline.ts
+
+=== ROSTER (party × chamber) ===
+┌─────────┬───────────────┬──────────┬─────┐
+│ (index) │ 0             │ 1        │ 2   │
+├─────────┼───────────────┼──────────┼─────┤
+│ 0       │ 'Democrat'    │ 'house'  │ 21n │
+│ 1       │ 'Democrat'    │ 'senate' │ 7n  │
+│ 2       │ 'Independent' │ 'senate' │ 1n  │
+│ 3       │ 'Republican'  │ 'house'  │ 17n │
+│ 4       │ 'Republican'  │ 'senate' │ 11n │
+└─────────┴───────────────┴──────────┴─────┘
+=== VOTE->BILL LINKAGE ===
+83445 / 103953 = 80.3% (gate: >=75%)
+=== ROW COUNTS (core tables) ===
+members                  57
+member_aliases           26141
+votes                    103953
+bills                    169818
+bill_summaries           1323
+bill_subjects            37040
+bill_committees          799
+committees               381
+pfd_transactions         5277
+donors                   4443
+donor_industry           13191
+super_pac_ie             305
+super_pac_ie_filings     6985
+lda_filings              42752
+lda_lobbyists            178656
+pattern_hits             65
+theme_bill_match         44
+pipeline_runs            173

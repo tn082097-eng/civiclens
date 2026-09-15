@@ -23,7 +23,9 @@ import { writeFileSync, mkdirSync, existsSync, rmSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 const HOME = process.env.HOME!;
-const VAULT = resolve(HOME, 'NoService/Projects/CivicLens');
+const VAULT = process.env.CIVICLENS_VAULT_DIR
+  ? resolve(process.env.CIVICLENS_VAULT_DIR)
+  : resolve(HOME, 'NoService/Projects/CivicLens');
 const CONN_DIR = join(VAULT, 'Connections');
 const MEM_DIR = join(VAULT, 'Members');
 
