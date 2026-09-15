@@ -49,7 +49,7 @@ index 53a75a1..f317931 100644
 @@ -669,12 +669,25 @@ export async function loadPfdYears(
    return { totalTx, totalUnmatched, totalWithheld };
  }
- 
+
 +/** Withheld or unmatched target data is accounted for, but not a successful load. */
 +export function pfdLoadExitCode(
 +  result: { totalUnmatched: number; totalWithheld: number },
@@ -72,7 +72,7 @@ index 53a75a1..f317931 100644
 +  }
 +  process.exit(pfdLoadExitCode(result));
  }
- 
+
  if (import.meta.url === `file://${process.argv[1]}`) {
 diff --git a/db/load-pfd.validation.test.ts b/db/load-pfd.validation.test.ts
 index 6028065..c2b6e23 100644
@@ -85,7 +85,7 @@ index 6028065..c2b6e23 100644
 -import { loadPfdYear, classifyTransaction, classifyFiling } from './load-pfd.js';
 +import { loadPfdYear, pfdLoadExitCode, classifyTransaction, classifyFiling } from './load-pfd.js';
  import type { IngestScope } from '../lib/ingest-scope.js';
- 
+
  function memberScope(slug: string): IngestScope {
 @@ -143,6 +143,11 @@ test('unresolved rows never reach production insertion', async () => {
      assert.equal(rows, '[]', 'no rows may be inserted');
@@ -98,14 +98,14 @@ index 6028065..c2b6e23 100644
 +    );
    } finally { cleanup(); }
  });
- 
+
 diff --git a/docs/prompts/bulk-download-legislators-and-house-ptrs.md b/docs/prompts/bulk-download-legislators-and-house-ptrs.md
 index 6d60b05..77cebca 100644
 --- a/docs/prompts/bulk-download-legislators-and-house-ptrs.md
 +++ b/docs/prompts/bulk-download-legislators-and-house-ptrs.md
 @@ -27,9 +27,10 @@ Existing cache convention is per-source directories at the project root:
  `pfd-cache/`, `senate-ptr-cache/`, `pfd-cache/fec-ie/`. Match this.
- 
+
  This task is **download + verify only**. Do NOT load into DuckDB. Loading is
 -a separate task (will need new `db/load-legislators.ts` and updates to
 -`db/load-pfd.ts` to read from the bulk ZIP). The deliverable is files on
@@ -114,9 +114,9 @@ index 6d60b05..77cebca 100644
 +must enumerate DocIDs from the index and fetch each PDF from the official
 +per-document endpoint). The deliverable is files on disk + a one-line summary
 +per source.
- 
+
  ## What to download
- 
+
 @@ -54,14 +55,15 @@ disk + a one-line summary per source.
    occasionally returned 403 for default curl UA in the past.
  - Destination: `~/Developer/civiclens/pfd-cache/house-bulk/<year>/`
@@ -134,11 +134,11 @@ index 6d60b05..77cebca 100644
      `FilingType`, `Year`, etc.
 +  - Report the total index rows and the count whose `FilingType` is `P`; do not
 +    claim that any PDFs were included in the ZIP.
- 
+
  ## Constraints
- 
+
 @@ -86,9 +88,9 @@ A 4-6 line summary like:
- 
+
  ```
  ✓ legislators-cache/  (<N> YAML files, last commit <date>)
 -✓ pfd-cache/house-bulk/2023/2023FD.zip  (<size>MB, <N> PDFs extracted)
@@ -149,11 +149,11 @@ index 6d60b05..77cebca 100644
 +✓ pfd-cache/house-bulk/2025/2025FD.zip  (<size>MB, <N> index rows, <P> PTR rows)
  Logs: civiclens/logs/bulk-download-<ts>.log
  ```
- 
+
 @@ -103,6 +105,16 @@ keep going on the rest. Don't abort the whole run for one bad URL.
  - Any DuckDB load step — explicitly the next task, not this one.
  - PDF text extraction — also next-task material.
- 
+
 +### Rule for the follow-on local parse
 +
 +If an indexed member's PDF has no usable native text or its layout cannot be
@@ -165,16 +165,16 @@ index 6d60b05..77cebca 100644
 +certification pass, or remove the member from coverage.
 +
  ## Civic-core compliance
- 
+
  - Source-first: probe URLs live before assuming structure (e.g., check
 diff --git a/docs/trials/2026-09-06/civiclens-completion-plan.md b/docs/trials/2026-09-06/civiclens-completion-plan.md
 index f3f8164..948bda8 100644
 --- a/docs/trials/2026-09-06/civiclens-completion-plan.md
 +++ b/docs/trials/2026-09-06/civiclens-completion-plan.md
 @@ -231,11 +231,18 @@ Reference-page drift is a **triage trigger**, not an automatic stop — shared-d
- 
+
  Stop and attribute before continuing: baseline or tests regress; double-render differs (determinism regression — fix generally, never per-member); unexplained cross-member mutation.
- 
+
 -**Disclosure closes a stratum only** for an inherent, source-backed limitation confirmed by a recorded query and response: authoritative verified-empty, no text layer in the source PDF, or identity absent from both the YAML and OpenFEC. It must render on the member or methodology page and cite its evidence. Console output, handoffs, and vault notes do **not** close a stratum.
 +**Disclosure closes a stratum only** for a source-backed absence: authoritative
 +verified-empty, or identity absent from both the YAML and OpenFEC. A filing with
@@ -183,15 +183,15 @@ index f3f8164..948bda8 100644
 +member's automated onboarding/publication path, keep the member in coverage,
 +and do not count the stratum as passed. Console output, handoffs, and vault
 +notes do **not** close a stratum.
- 
+
  **Must fail and be fixed or rerun** under the frozen manifest: transient network errors, implementation defects, silent skips, parser/template mismatch, cross-member mutation. Same candidate, attempt number recorded.
- 
+
 -**Gate B3:** accept or reject each disclosure closure. **Gate B4:** accept certification, or name the strata that must rerun.
 +**Gate B3:** accept or reject each source-backed absence or formatting hold.
 +**Gate B4:** accept certification, or name the strata that must rerun or remain held.
- 
+
  ---
- 
+
 @@ -265,7 +272,7 @@ Stop and attribute before continuing: baseline or tests regress; double-render d
  | O1 | A | Approve the OpenSecrets compliance plan |
  | B1 | B | Merge Track B prerequisites |
@@ -200,7 +200,7 @@ index f3f8164..948bda8 100644
 +| B3 | B | Accept each source-backed absence or formatting hold classification |
  | B4 | B | Accept certification |
  | Standing | both | ADR 0003 — no confirmatory computation on the parked timing pair |
- 
+
 diff --git a/docs/trials/2026-09-08-run-any-member/plan.md b/docs/trials/2026-09-08-run-any-member/plan.md
 index 420d0db..b6a06cb 100644
 --- a/docs/trials/2026-09-08-run-any-member/plan.md
@@ -221,23 +221,23 @@ index 420d0db..b6a06cb 100644
  9. Re-render a fixed reference member and triage any drift; run the database
 @@ -112,7 +113,8 @@ For every applicable step, record exactly one status: `ok`, `verified-empty`,
  10. Commit the complete evidence record for the stratum.
- 
+
  Scanned PDFs are proved textless with `pdftotext`, are never sent through OCR,
 -and end in the literal `withheld` state unless separately authorized later.
 +and end in the literal `needs_manual_formatting` / `withheld` state unless
 +separately authorized later. That state is skipped for now, not passed.
- 
+
  ## Defect rule and final replay
- 
+
 @@ -132,8 +134,8 @@ evidence. It occurs after all six final replays; the maintainer's disposition is
  recorded in the certification summary.
- 
+
  Gate B4 accepts or rejects the complete certification package, including sample
 -sizes and limitations by stratum. A source-backed limitation may close a
 -stratum; implementation or network failure may not.
 +sizes and limitations by stratum. A source-backed verified absence may close a
 +stratum; a formatting hold, implementation failure, or network failure may not.
- 
+
  The user's 2026-09-08 authorization permits execution through the local B4
  package without intermediate approval pauses. It does not authorize production
 diff --git a/docs/trials/2026-09-09-six-fresh-members/final-certification-review.md b/docs/trials/2026-09-09-six-fresh-members/final-certification-review.md
@@ -246,7 +246,7 @@ index 1c7ead6..e402c12 100644
 +++ b/docs/trials/2026-09-09-six-fresh-members/final-certification-review.md
 @@ -1,21 +1,21 @@
  # Final six-fresh-member certification review
- 
+
 -**Verdict: PENDING.** Chris Van Hollen passed a fresh replay at final repair
 -commit `20f62c0`, but the frozen protocol requires every stratum to replay at
 -the final generic-fix commit. The other five final-code replays remain required;
@@ -257,9 +257,9 @@ index 1c7ead6..e402c12 100644
 +after that replay. A new final implementation commit must be frozen and all six
 +strata replayed there. Eric Burlison is explicitly held for manual formatting;
 +his initial withholding cannot be counted as a pass.
- 
+
  ## Stratum verdicts
- 
+
  | Stratum | Member | Final verdict | Decisive evidence |
  |---|---|---|---|
 -| 1 - Senate with PTRs | Tina Smith | final-code replay pending | initial run: 9 indexed filings, 20 transactions, complete local page |
@@ -274,9 +274,9 @@ index 1c7ead6..e402c12 100644
 +| 4 - Senate with zero PTRs | Chris Van Hollen | historical pass at `20f62c0`; new final-code replay pending | source-backed zero PTR; required artifacts complete; 6,912 cosponsorships fetched completely |
 +| 5 - frozen source without FEC ID | Darline Graham | new final-code replay pending | initial run: normal fallback resolved the ID; zero PTR receipt and FEC result recorded |
 +| 6 - scanned House PTR | Eric Burlison | `needs_manual_formatting`; held, not passed | official PDF had no usable native text; OCR remained prohibited and the filing is explicitly withheld |
- 
+
  ## Repair accounting
- 
+
 @@ -44,11 +44,12 @@ recorded raw hash.
  - All six people were selected deterministically from frozen evidence and were
    untouched by prior development trials.
@@ -293,9 +293,9 @@ index 1c7ead6..e402c12 100644
    `not-collected`.
  - Routine pattern generation excluded the parked confirmatory timing pair. No
 @@ -70,8 +71,9 @@ semantic same-input render triage.
- 
+
  ## Closeout boundary
- 
+
 -Track B certification is not complete until the five pending final-code replays
 -finish and this draft is reconciled against their evidence. Integrating commit
 -`20f62c0`, pushing a branch, changing production data, adding a member to the
@@ -313,7 +313,7 @@ index 8d7918b..369b591 100644
 +++ b/docs/trials/2026-09-09-six-fresh-members/protocol.md
 @@ -1,10 +1,12 @@
  # Six-fresh-member Track B certification
- 
+
 -**Status:** final-code replay in progress. Six initial local scratch trials
 +**Status:** final-code replay pending. Six initial local scratch trials
  completed their intended technical paths except stratum 4. Stratum 4 then
@@ -326,9 +326,9 @@ index 8d7918b..369b591 100644
 +held and cannot pass until the hold is cleared. Production
  database writes, push, publication, deployment, OCR, and confirmatory timing
  runs remain prohibited.
- 
+
 @@ -57,15 +59,16 @@ Senate PTRs before Chris Van Hollen. The source hashes are frozen in
- 
+
  | Stratum | Member | Outcome | Evidence |
  |---|---|---|---|
 -| 1 | Tina Smith | initial pass; final-code replay pending | `stratum-1-tina-smith.md` |
@@ -343,7 +343,7 @@ index 8d7918b..369b591 100644
 +| 4 | Chris Van Hollen | historical pass at `20f62c0`; new final-code replay pending | `stratum-4-chris-van-hollen.md` |
 +| 5 | Darline Graham | initial pass; new final-code replay pending | `stratum-5-darline-graham.md` |
 +| 6 | Eric Burlison | `needs_manual_formatting`; held and not passed | `stratum-6-eric-burlison.md` |
- 
+
 -The six-stratum certification therefore remains **pending** until the five
 -remaining final-code replays complete. The first stratum-4 failure is preserved
 +The six-stratum certification therefore remains **pending** until a new final
@@ -353,7 +353,7 @@ index 8d7918b..369b591 100644
  generic repair is commit `20f62c0`, independently verified with 313/313 tests
  and a clean TypeScript check before the fresh replay.
 @@ -79,4 +82,4 @@ byte-equality gate.
- 
+
  The final bounded review remains a draft in
  `final-certification-review.md`. Certification may be recorded only after all
 -six final-code replays are complete.
@@ -364,7 +364,7 @@ index 51df820..125deb7 100644
 +++ b/docs/trials/2026-09-09-six-fresh-members/stratum-6-eric-burlison.md
 @@ -1,13 +1,16 @@
  # Stratum 6 result - Eric Burlison
- 
+
 -**Outcome: PASS with source-backed disclosure withholding.** Eric Burlison
 -(`eric-burlison`, `B001316`, House) completed the isolated non-OCR path at
 -`e7c7bcd`.
@@ -372,7 +372,7 @@ index 51df820..125deb7 100644
 +(`eric-burlison`, `B001316`, House) completed the isolated non-OCR evidence
 +capture at `e7c7bcd`, but the member is not complete under the formatting-hold
 +rule.
- 
+
  The frozen official Clerk PDF for DocID `8219414` has no usable native text.
  Its `pdftotext -layout` output contains only form-feed separators. The filing
  was recorded as unavailable/withheld; the extractor and loader were not invoked
@@ -380,12 +380,12 @@ index 51df820..125deb7 100644
 +and no OCR ran. The member remains in the frozen certification coverage and in
 +`docs/pfd-formatting-holds.md`; automated onboarding/publication is skipped
 +until a general approved path can recover and validate the filing.
- 
+
  | Check | Result |
  |---|---|
 @@ -33,4 +36,5 @@ records did not change. This exposes a weakness in an unconditional byte-level
  reference gate, not cross-member data corruption.
- 
+
  The source database remained byte-identical. No production or publication
 -action occurred.
 +action occurred. This evidence accounts for the source limitation but does not
@@ -406,7 +406,7 @@ index a7d9d22..3caff83 100644
  import { test } from 'node:test';
  import assert from 'node:assert/strict';
 @@ -116,7 +117,7 @@ test('a required family with zero artifacts passes only when a source-backed ver
- 
+
      // The frozen protocol's only escape hatch: a corroborated source-backed
      // record proving the family is legitimately empty (e.g. the Senate
 -    // zero-PTR path) or withheld. This is evidence, not an absence.
@@ -417,7 +417,7 @@ index a7d9d22..3caff83 100644
 @@ -129,6 +130,26 @@ test('a required family with zero artifacts passes only when a source-backed ver
    }
  });
- 
+
 +test('a withheld formatting result is accounted for but cannot pass a required family', () => {
 +  const root = corpusDir();
 +  try {
@@ -463,7 +463,7 @@ index 399de9d..5991741 100644
   */
 @@ -54,8 +53,8 @@ export const REQUIRED_FAMILIES: readonly string[] = REQUIRED_AGENTS.map(
    a => (a === 'final-reviewer' ? 'final-review' : a));
- 
+
  /**
 - * An explicit, source-backed record that a required family is legitimately
 - * empty or withheld — the only way zero artifacts may report PASS.
@@ -475,7 +475,7 @@ index 399de9d..5991741 100644
 @@ -128,9 +127,10 @@ export function validateCorpus(opts: ValidateCorpusOpts = {}): CorpusReport {
      const isRequired = required.has(agent);
      const accountedEmpty = accounted[agent];
- 
+
 -    // The completeness rule. An empty REQUIRED family fails unless a
 -    // source-backed record explicitly accounts for it.
 -    const missing = isRequired && total === 0 && !accountedEmpty;
@@ -484,7 +484,7 @@ index 399de9d..5991741 100644
 +    const closesEmpty = accountedEmpty?.state === 'verified-empty';
 +    const missing = isRequired && total === 0 && !closesEmpty;
      const status: 'PASS' | 'FAIL' = failed > 0 || missing ? 'FAIL' : 'PASS';
- 
+
      families.push({
 @@ -162,10 +162,15 @@ function main(): void {
    for (const f of report.families) {
@@ -521,13 +521,13 @@ index e91e187..ff17041 100644
 +  extractPTRResult,
 +  extractPTR,
 +} from './extract.js';
- 
+
  /** Header block shared by the `200xxxxx`-era template (lowercase labels). */
  const HEAD_LOWER = [
 @@ -46,6 +54,27 @@ function parse(text: string, id?: string) {
    return extractPTRResult(text, id);
  }
- 
+
 +test('unsupported local PDFs become formatting holds without stopping the remaining batch', () => {
 +  const root = mkdtempSync(join(tmpdir(), 'pfd-formatting-hold-'));
 +  try {
@@ -550,7 +550,7 @@ index e91e187..ff17041 100644
 +});
 +
  // ─── Layout variant 1: trailing cap-gains checkbox glyph ────────────────────
- 
+
  test('variant 1: trailing checkbox glyph does not break the row', () => {
 diff --git a/skills/pfd-fetcher/extract.ts b/skills/pfd-fetcher/extract.ts
 index 938e3ca..d8486eb 100644
@@ -565,9 +565,9 @@ index 938e3ca..d8486eb 100644
   * Writes a sibling `<basename>.json` next to each `*.txt` whose PDF is a
   * Periodic Transaction Report (detected by header text). Skips Annual etc.
 @@ -639,20 +640,35 @@ export function extractPTR(text: string, authoritativeFilingId?: string): PTRRec
- 
+
  // ─── CLI ──────────────────────────────────────────────────────────────────────
- 
+
 -function main() {
 -  const dir = process.argv[2];
 -  if (!dir) {
@@ -605,17 +605,17 @@ index 938e3ca..d8486eb 100644
 +  root: string,
 +  opts: ExtractDirectoryOptions = {},
 +): ExtractionSummary {
- 
+
    const txtFiles = readdirSync(root).filter(f => f.endsWith('.txt'));
 -  let parsed = 0, skipped = 0, txTotal = 0, errored = 0;
 +  let parsed = 0, skippedNonPtrs = 0, formattingHolds = 0, txTotal = 0, errors = 0;
- 
+
    for (const f of txtFiles) {
      const txtPath = resolve(root, f);
 @@ -660,8 +676,9 @@ function main() {
      let text = readFileSync(txtPath, 'utf-8');
      let usedOcr = false;
- 
+
 -    // If pdftotext returned empty and a PDF exists, fall back to OCR
 -    if (!text.trim() && existsSync(pdfPath)) {
 +    // OCR is deliberately opt-in. The ordinary onboarding path records an
@@ -670,7 +670,7 @@ index 938e3ca..d8486eb 100644
        console.warn(`  ✗ ${basename(f)}: ${e.message}`);
      }
    }
- 
+
 -  console.log(`\nParsed ${parsed} PTR(s) → ${txTotal} transactions; skipped ${skipped} non-PTR; ${errored} errors`);
 +  console.log(
 +    `\nParsed ${parsed} PTR(s) → ${txTotal} transactions; ` +
@@ -700,5 +700,5 @@ index 938e3ca..d8486eb 100644
 +  const summary = extractDirectory(root, { allowOcr: args.includes('--ocr') });
 +  process.exitCode = extractionExitCode(summary);
  }
- 
+
  if (import.meta.url === `file://${process.argv[1]}`) {

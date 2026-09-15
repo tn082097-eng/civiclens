@@ -373,9 +373,9 @@ not ok 47 - extractor treats no-identity as failed, not held or skipped
   failureType: 'testCodeFailure'
   error: |-
     Expected values to be strictly equal:
-    
+
     0 !== 1
-    
+
   code: 'ERR_ASSERTION'
   name: 'AssertionError'
   expected: 1
@@ -399,9 +399,9 @@ not ok 48 - extractor treats conversion-failed as failed, not held or skipped
   failureType: 'testCodeFailure'
   error: |-
     Expected values to be strictly equal:
-    
+
     0 !== 1
-    
+
   code: 'ERR_ASSERTION'
   name: 'AssertionError'
   expected: 1
@@ -425,9 +425,9 @@ not ok 49 - extractor treats pdf-without-text as failed, not held or skipped
   failureType: 'testCodeFailure'
   error: |-
     Expected values to be strictly equal:
-    
+
     0 !== 1
-    
+
   code: 'ERR_ASSERTION'
   name: 'AssertionError'
   expected: 1
@@ -451,9 +451,9 @@ not ok 50 - extractor treats invalid-pdf as failed, not held or skipped
   failureType: 'testCodeFailure'
   error: |-
     Expected values to be strictly equal:
-    
+
     0 !== 1
-    
+
   code: 'ERR_ASSERTION'
   name: 'AssertionError'
   expected: 1

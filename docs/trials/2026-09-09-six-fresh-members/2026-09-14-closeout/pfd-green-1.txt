@@ -62,9 +62,9 @@ not ok 10 - record Year, not index filename, determines which cache directory a 
   failureType: 'testCodeFailure'
   error: |-
     The input did not match the regular expression /PTR-PRIOR-YEAR.*not extracted|not extracted.*PTR-PRIOR-YEAR/i. Input:
-    
+
     'Error: missing authoritative House index for 2024'
-    
+
   code: 'ERR_ASSERTION'
   name: 'AssertionError'
   expected:
