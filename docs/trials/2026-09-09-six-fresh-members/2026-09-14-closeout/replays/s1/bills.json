@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-s1-tina-smith",
+  "head": "d2992fda5c7e412e86b3cd47ef0248fd039e8d46",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "agents/pipeline.ts",
+    "--load-bills",
+    "--bioguide",
+    "S001203",
+    "--api-pass"
+  ],
+  "started": "2026-09-16T00:23:46Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-s1-tina-smith/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-s1-tina-smith/data/caches",
+  "dbBefore": "5965dcf9e545d111ee36cbee3b2c49f09e03a7435c2b954b03ef2e2b4935756e",
+  "exit": 0,
+  "output": "Pass 1: backfilling votes.bill_id from question text (regex)\u2026\n  596 filled by regex, 1104 unparseable, 1700 total NULL rows scanned.\n\nPass 2: GovTrack API resolution for remaining NULL bill_ids\u2026\n  GovTrack API: 50 calls, 7 resolved\u2026\n  GovTrack API: 100 calls, 34 resolved\u2026\n  GovTrack API: 150 calls, 41 resolved\u2026\n  GovTrack API: 200 calls, 48 resolved\u2026\n  GovTrack API: 250 calls, 50 resolved\u2026\n  GovTrack API: 300 calls, 51 resolved\u2026\n  GovTrack API: 350 calls, 62 resolved\u2026\n  GovTrack API: 400 calls, 67 resolved\u2026\n  GovTrack API: 450 calls, 70 resolved\u2026\n  GovTrack API: 500 calls, 79 resolved\u2026\n  GovTrack API: 550 calls, 85 resolved\u2026\n  GovTrack API: 600 calls, 85 resolved\u2026\n  GovTrack API: 650 calls, 87 resolved\u2026\n  GovTrack API: 700 calls, 92 resolved\u2026\n  GovTrack API: 750 calls, 97 resolved\u2026\n  GovTrack API: 800 calls, 100 resolved\u2026\n  GovTrack API: 850 calls, 103 resolved\u2026\n  GovTrack API: 900 calls, 106 resolved\u2026\n  GovTrack API: 950 calls, 107 resolved\u2026\n  GovTrack API: 1000 calls, 109 resolved\u2026\n  GovTrack API: 1050 calls, 117 resolved\u2026\n  GovTrack API: 1100 calls, 119 resolved\u2026\n  0 filled by regex, 123 resolved via GovTrack API, 981 still unresolvable.\n\nFetching summaries for 10 distinct bill(s)\u2026\n\n  [1/10] 119-hr-5334  \u2713 Lindsey O. Graham Sanctioning Russia and Iran Act of 2026\n  [2/10] 119-s-4668  \u2713 Protect College Sports Act of 2026\n  [3/10] 119-s-4784  \u2713 National Defense Authorization Act for Fiscal Year 2027\n  [4/10] 119-s-5271  \u2713 (no summary)\n  [5/10] 119-sjres-180  \u2713 (no summary)\n  [6/10] 119-sjres-181  \u2713 (no summary)\n  [7/10] 119-sjres-187  \u2713 A joint resolution providing for congressional disapproval u\n  [8/10] 119-sjres-198  \u2713 (no summary)\n  [9/10] 119-sjres-199  \u2713 A joint resolution providing for congressional disapproval u\n  [10/10] 119-sres-817  \u2713 (no summary)\n\nDone: 10 fetched, 0 already cached, 0 skipped.\n\n(member scope: skipping global NULL-title refill \u2014 not target-originated.)\n",
+  "dbAfter": "5965dcf9e545d111ee36cbee3b2c49f09e03a7435c2b954b03ef2e2b4935756e",
+  "finished": "2026-09-16T00:28:01Z"
+}

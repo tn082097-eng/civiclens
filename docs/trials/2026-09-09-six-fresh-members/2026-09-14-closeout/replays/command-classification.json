@@ -1,0 +1,42 @@
+{
+  "registrySha256": "f9037353bce052e9393be426cfec09997b411462fa5956497194da153fb05274",
+  "registryRows": [
+    "| trade-vote-alignment | docs/2026-07-20-timing-detectors-scoring.md | registered | | (awaiting negative-control gate + confirmatory run) | |",
+    "| spousal-trade-timing | docs/2026-07-20-timing-detectors-scoring.md | registered | | (awaiting negative-control gate + confirmatory run) | |"
+  ],
+  "commands": [
+    {
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "pipeline/run-patterns.ts",
+        "--member",
+        "<slug>"
+      ],
+      "source": "pipeline/run-patterns.ts",
+      "classification": "routine member-scoped onboarding; runOnboardingDetectorsForMember filters parked pair before detect/write/score; no baseline CLI invoked"
+    },
+    {
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "pipeline/score-theme-gaps.ts",
+        "--member",
+        "<slug>"
+      ],
+      "source": "pipeline/score-theme-gaps.ts",
+      "classification": "permitted ADR-0002 member-scoped artifact generation; distinct from parked timing pair"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "verify:baseline"
+      ],
+      "source": "scripts/verify-baseline.ts",
+      "classification": "database integrity verifier only"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "candidate": "d2992fda5c7e412e86b3cd47ef0248fd039e8d46",
+  "worktree": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-s1-tina-smith",
+  "member": "Tina Smith",
+  "bioguide": "S001203",
+  "dbInitialSha256": "a766c8917a0e6b42ddc488758eb0b1a66abb37d24c873a74b4cc9d6fd7e4a38b",
+  "cacheInitiallyAbsent": true,
+  "sources": [
+    {
+      "path": "data/caches/legislators-cache/legislators-current.yaml",
+      "sha256": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2"
+    },
+    {
+      "path": "data/caches/senate-ptr-cache/2023/tina-smith-7c840533-d541-42ab-b8ca-361a1be272d2.json",
+      "sha256": "bbdfcef06d10869063cb2ff1b478bc7c923656b4baf90ee7bcd6481a7fb369e4"
+    },
+    {
+      "path": "data/caches/senate-ptr-cache/2023/tina-smith-de3cd462-f294-4333-a9b3-cccd64e711b2.json",
+      "sha256": "53602802e3d6b6bf1deecc1a767a02aa70a0ea2ef6f8e85652f1041df9a6a631"
+    },
+    {
+      "path": "data/caches/senate-ptr-cache/2024/tina-smith-c337b418-b154-457a-9fd1-147b2dbcb151.json",
+      "sha256": "96a775246985fbe8f7f95688ad269a621dcf2988e07a83a538ae2328133899e6"
+    },
+    {
+      "path": "data/caches/senate-ptr-cache/2024/tina-smith-cf08c60c-6c0f-45ac-b8e9-3ca4c088e705.json",
+      "sha256": "92dba7e7cbd50d08a3b7f00c08d4c8bac35881a85727f0ed6a8e77826e036019"
+    },
+    {
+      "path": "data/caches/senate-ptr-cache/2025/tina-smith-82093483-e915-4a5d-bb4b-e40431d79f99.json",
+      "sha256": "f3cefd75a91487e5efb56559d33c54a66596c6a9e449d76e514c19eb1902e224"
+    },
+    {
+      "path": "data/caches/senate-ptr-cache/2025/tina-smith-ec33423d-b244-4bc3-a96f-da77436cda11.json",
+      "sha256": "a78817725a6a2bb65e9bc6f28f80c8c4a2ceb77e8cc1193b652ee56c99d5959f"
+    },
+    {
+      "path": "data/caches/senate-ptr-cache/2026/tina-smith-3f315067-5f69-42b3-b32d-063ce735957b.json",
+      "sha256": "f27c945c6bebaa15f5a9c6e7c009e0445d8f8cfd74ae8a32f03e5811028b3aeb"
+    },
+    {
+      "path": "data/caches/senate-ptr-cache/2026/tina-smith-5a00d807-84f1-409b-9cb0-566e59553e38.json",
+      "sha256": "81830f1f628ddf8d023fb95ef75394650240f5a72a5a345b1ba8f3dedeaa77f1"
+    },
+    {
+      "path": "data/caches/senate-ptr-cache/2026/tina-smith-a8f2bab8-0feb-49cf-b80f-9826cb4a7a4c.json",
+      "sha256": "48da0694d0fab43667f11659618c32d0ac218331bd23ba85da352982d30c074f"
+    },
+    {
+      "path": "data/caches/senate-ptr-cache/_search-receipts/S001203.json",
+      "sha256": "46b736510320fc315498c518c459a360ab3e390acd9a0d2440109c827e4f3434"
+    }
+  ],
+  "vault": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-s1-tina-smith/trial-vault"
+}

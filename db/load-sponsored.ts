@@ -1,3 +1,4 @@
+import type { DuckDBConnection } from '@duckdb/node-api';
 /**
  * Authoritative sponsored-legislation loader (Congress.gov).
  *
@@ -74,7 +75,7 @@ function normalizeBillStatus(text: string): 'introduced' | 'passed' | 'failed' |
   return 'introduced';
 }
 
-async function fetchAllSponsored(bioguide: string, key: string): Promise<CongressBillItem[]> {
+export async function fetchAllSponsored(bioguide: string, key: string): Promise<CongressBillItem[]> {
   const out: CongressBillItem[] = [];
   let offset = 0;
   while (true) {
@@ -82,10 +83,13 @@ async function fetchAllSponsored(bioguide: string, key: string): Promise<Congres
     const r = await fetch(url, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(120_000) });
     if (!r.ok) throw new Error(`HTTP ${r.status} for ${bioguide} offset=${offset}`);
     const d = await r.json() as any;
-    const batch = (d.sponsoredLegislation ?? []) as CongressBillItem[];
+    if (!Array.isArray(d.sponsoredLegislation)) throw new Error(`malformed sponsored page for ${bioguide}`);
+    const batch = d.sponsoredLegislation as CongressBillItem[];
     out.push(...batch);
     const totalCount = d.pagination?.count;
-    if (batch.length < PAGE_SIZE || (totalCount && out.length >= totalCount)) break;
+    if (totalCount !== undefined && (!Number.isInteger(totalCount) || totalCount < 0 || out.length > totalCount)) throw new Error('invalid sponsored pagination count');
+    if (batch.length < PAGE_SIZE && ((totalCount !== undefined && out.length < totalCount) || d.pagination?.next)) throw new Error('incomplete sponsored pagination');
+    if (batch.length < PAGE_SIZE || out.length === totalCount) break;
     offset += PAGE_SIZE;
     await new Promise(r => setTimeout(r, 100));  // be polite
   }
@@ -93,14 +97,14 @@ async function fetchAllSponsored(bioguide: string, key: string): Promise<Congres
 }
 
 export async function loadSponsored(
-  opts: { memberId?: string | null } = {},
+  opts: { memberId?: string | null; conn?: DuckDBConnection; apiKey?: string } = {},
 ): Promise<{ members: number; billsUpserted: number; subjectsWritten: number }> {
   loadEnvOnce();
-  const key = process.env.CONGRESS_API_KEY;
+  const key = opts.apiKey ?? process.env.CONGRESS_API_KEY;
   if (!key) throw new Error('CONGRESS_API_KEY missing from CivicLens .env (' + ENV_PATH + ')');
 
-  await applySchema();
-  const conn = await getDb();
+  if (!opts.conn) await applySchema();
+  const conn = opts.conn ?? await getDb();
   const targetArg = opts.memberId ?? null;
 
   const memberRows = await (await conn.run(
@@ -124,8 +128,7 @@ export async function loadSponsored(
     try {
       bills = await fetchAllSponsored(bio, key);
     } catch (e) {
-      console.warn(`  ${m.member_id}: fetch failed — ${(e as Error).message}`);
-      continue;
+      throw new Error(`${m.member_id}: sponsored fetch failed — ${(e as Error).message}`);
     }
 
     let upserted = 0, subjects = 0, skipped = 0, noPolicy = 0;
@@ -175,8 +178,7 @@ export async function loadSponsored(
       await conn.run('COMMIT');
     } catch (e) {
       await conn.run('ROLLBACK');
-      console.warn(`  ${m.member_id}: write failed — ${(e as Error).message}`);
-      continue;
+      throw new Error(`${m.member_id}: sponsored write failed — ${(e as Error).message}`);
     }
 
     billsUpserted += upserted;

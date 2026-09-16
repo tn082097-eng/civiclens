@@ -1,0 +1,101 @@
+TAP version 13
+# Subtest: bill resolution distinguishes http-error
+not ok 1 - bill resolution distinguishes http-error
+  ---
+  duration_ms: 211.631084
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/db/source-completeness.test.ts:1:434'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/db/source-completeness.test.ts:15:84)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: bill resolution distinguishes malformed
+not ok 2 - bill resolution distinguishes malformed
+  ---
+  duration_ms: 188.637725
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/db/source-completeness.test.ts:1:434'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/db/source-completeness.test.ts:15:84)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: bill resolution distinguishes verified-empty
+ok 3 - bill resolution distinguishes verified-empty
+  ---
+  duration_ms: 190.192785
+  type: 'test'
+  ...
+# Subtest: summary fallback HTTP failure cannot become an empty summary
+not ok 4 - summary fallback HTTP failure cannot become an empty summary
+  ---
+  duration_ms: 0.881759
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/db/source-completeness.test.ts:1:1243'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/db/source-completeness.test.ts:22:2)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: sponsored pagination must reach the advertised total
+not ok 5 - sponsored pagination must reach the advertised total
+  ---
+  duration_ms: 0.419475
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/db/source-completeness.test.ts:1:1495'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/db/source-completeness.test.ts:27:2)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Loading sponsored legislation for 1 member(s)…
+#   jane-doe: fetch failed — HTTP 503 for X offset=0
+# Done. 0 member(s), 0 sponsor rows upserted, 0 bill_subjects rows written.
+# Subtest: a sponsored fetch failure propagates through the loader
+not ok 6 - a sponsored fetch failure propagates through the loader
+  ---
+  duration_ms: 65.211712
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/db/source-completeness.test.ts:1:1806'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/db/source-completeness.test.ts:34:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 1
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 828.759549

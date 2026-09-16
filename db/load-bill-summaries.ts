@@ -92,21 +92,22 @@ async function fetchGovtrackBillId(sourceUrl: string): Promise<string | null> {
   const parsed = parseGovtrackUrl(sourceUrl);
   if (!parsed) return null;
   const apiUrl = `https://www.govtrack.us/api/v2/vote?congress=${parsed.congress}&session=${parsed.session}&chamber=${parsed.chamber}&number=${parsed.number}&format=json`;
-  try {
-    const res = await fetch(apiUrl, {
-      headers: { 'User-Agent': UA },
-      signal: AbortSignal.timeout(12_000),
-    });
-    if (!res.ok) return null;
-    const data: any = await res.json();
-    const vote = data?.objects?.[0];
-    if (!vote?.related_bill) return null;
-    const bt = GOVTRACK_TYPE_MAP[String(vote.related_bill.bill_type ?? '')];
-    if (!bt) return null;
-    return `${vote.related_bill.congress}-${bt}-${vote.related_bill.number}`;
-  } catch {
-    return null;
+  const res = await fetch(apiUrl, {
+    headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(12_000),
+  });
+  if (!res.ok) throw new Error(`GovTrack bill resolution HTTP ${res.status}`);
+  const data: any = await res.json();
+  if (!Array.isArray(data?.objects) || data.objects.length !== 1
+      || !Object.hasOwn(data.objects[0], 'related_bill')) {
+    throw new Error('malformed or ambiguous GovTrack vote response');
   }
+  const related = data.objects[0].related_bill;
+  if (related === null) return null; // authoritative successful no-bill result
+  const bt = GOVTRACK_TYPE_MAP[String(related.bill_type ?? '')];
+  if (!bt || !Number.isInteger(related.congress) || !Number.isInteger(related.number)) {
+    throw new Error('malformed related bill identity');
+  }
+  return `${related.congress}-${bt}-${related.number}`;
 }
 
 // ─── Backfill votes.bill_id ─────────────────────────────────────────────────
@@ -190,15 +191,14 @@ async function fetchBillTitleFallback(billId: string): Promise<string | null> {
   if (!m) return null;
   const [, congress, type, number] = m;
   const url = `https://api.congress.gov/v3/bill/${congress}/${type}/${number}?format=json&api_key=${CONGRESS_KEY}`;
-  try {
-    const res = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' }, signal: AbortSignal.timeout(15_000) });
-    if (!res.ok) return null;
-    const data: any = await res.json();
-    return data?.bill?.title ?? null;
-  } catch { return null; }
+  const res = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' }, signal: AbortSignal.timeout(15_000) });
+  if (!res.ok) throw new Error(`Congress bill detail HTTP ${res.status} for ${billId}`);
+  const data: any = await res.json();
+  if (typeof data?.bill?.title !== 'string' || !data.bill.title.trim()) throw new Error(`missing authoritative bill title for ${billId}`);
+  return data.bill.title;
 }
 
-async function fetchSummary(billId: string): Promise<{
+export async function fetchSummary(billId: string): Promise<{
   title: string | null;
   summaryHtml: string;
   summaryText: string;
@@ -213,17 +213,18 @@ async function fetchSummary(billId: string): Promise<{
   try {
     res = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' }, signal: AbortSignal.timeout(15_000) });
   } catch (e: any) {
-    return null;
+    throw new Error(`Congress summary fetch failed for ${billId}: ${e.message}`);
   }
   if (!res.ok) {
     if (res.status === 404) {
       const fallbackTitle = await fetchBillTitleFallback(billId);
       return { title: fallbackTitle, summaryHtml: '', summaryText: '', versionCode: '', actionDate: null };
     }
-    return null;
+    throw new Error(`Congress summaries HTTP ${res.status} for ${billId}`);
   }
   const data = await res.json();
-  const summaries: any[] = data?.summaries ?? [];
+  if (!Array.isArray(data?.summaries)) throw new Error(`malformed summaries for ${billId}`);
+  const summaries: any[] = data.summaries;
   if (summaries.length === 0) {
     // No CRS summary published yet — fall back to the bill endpoint title.
     const fallbackTitle = await fetchBillTitleFallback(billId);

@@ -10,6 +10,7 @@
   "db/load-pfd.validation.test.ts",
   "db/load-recipient-ticker.test.ts",
   "db/load-senate-ptr.test.ts",
+  "db/source-completeness.test.ts",
   "lib/donor-crosswalk.test.ts",
   "lib/ingest-scope.test.ts",
   "lib/legislators.test.ts",
@@ -40,12 +41,12 @@
   "render/receipts.test.ts",
   "render/skeleton.golden.test.ts",
   "scripts/confirmatory-guard.test.ts",
-  "scripts/validate-artifact-corpus.test.ts",
-  "skills/onboard-member-guidance.test.ts",
-  "skills/pfd-fetcher/extract.test.ts",
   "scripts/trials/db-delta.test.ts",
   "scripts/trials/fetch-senate-index.test.ts",
   "scripts/trials/prepare-track-b-candidates.test.ts",
   "scripts/trials/select-track-b.test.ts",
+  "scripts/validate-artifact-corpus.test.ts",
+  "skills/onboard-member-guidance.test.ts",
+  "skills/pfd-fetcher/extract.test.ts",
   "skills/researcher/fetch.test.ts"
 ]
