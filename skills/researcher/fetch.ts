@@ -544,10 +544,11 @@ async function fetchUpcomingMeetings(memberCommittees: MemberCommittee[]): Promi
   return out.sort((a, b) => a.date.localeCompare(b.date));
 }
 
-async function fetchGovTrackVotes(
+export async function fetchGovTrackVotes(
   personId: number,
   limit = 8,
   minDateISO?: string,
+  getPage: typeof get = get,
 ): Promise<any[]> {
   // GovTrack's vote_voter offset is hard-capped at 1000 ("Offset > 1000 is
   // not permitted") — purely offset-based pagination tops out at ~1100 votes
@@ -563,30 +564,26 @@ async function fetchGovTrackVotes(
   while (out.length < limit) {
     const want = Math.min(PAGE, limit - out.length);
     const cursorParam = cursor ? `&created__lt=${encodeURIComponent(cursor)}` : '';
-    try {
-      const d = await get(
-        `https://www.govtrack.us/api/v2/vote_voter?person=${personId}&limit=${want}&sort=-created${cursorParam}`,
-        25_000
-      );
-      const objs = d.objects ?? [];
-      if (objs.length === 0) break; // nothing left to fetch
-      out.push(...objs);
-      // Cursor = `created` timestamp of the oldest item in this page (used as
-      // exclusive upper bound for the next page).
-      const oldest = objs[objs.length - 1];
-      const oldestRaw = String(oldest?.created ?? oldest?.vote?.created ?? '');
-      if (!oldestRaw) break; // can't advance the cursor
-      cursor = oldestRaw;
-      if (objs.length < want) break; // truly ran out
-      if (minDateISO) {
-        const oldestDate = oldestRaw.slice(0, 10);
-        if (oldestDate && oldestDate < minDateISO) break;
-      }
-    } catch (e: any) {
-      console.warn(`[researcher/fetch] cursor pagination failed at cursor=${cursor}; result truncated to ${out.length}: ${e?.message ?? e}`);
-      break;
+    // getPage already exhausts the HTTP retry policy. Never turn its failure
+    // into an apparently successful partial record.
+    const d = await getPage(
+      `https://www.govtrack.us/api/v2/vote_voter?person=${personId}&limit=${want}&sort=-created${cursorParam}`,
+      25_000,
+    );
+    if (!Array.isArray(d?.objects)) throw new Error('malformed vote page: objects array missing');
+    const objs = d.objects;
+    if (objs.length === 0) return out;
+    const oldest = objs[objs.length - 1];
+    const oldestRaw = String(oldest?.created ?? oldest?.vote?.created ?? '');
+    if (!oldestRaw || !Number.isFinite(Date.parse(oldestRaw))
+        || (cursor !== null && Date.parse(oldestRaw) >= Date.parse(cursor))) {
+      throw new Error('vote pagination cursor missing, invalid, or not advancing');
     }
+    out.push(...objs);
+    cursor = oldestRaw;
+    if (objs.length < want || (minDateISO && oldestRaw.slice(0, 10) < minDateISO)) return out;
   }
+  if (minDateISO) throw new Error(`vote pagination incomplete: safety cap ${limit} reached before ${minDateISO}`);
   return out;
 }
 
@@ -811,8 +808,7 @@ export async function fetchPolitician(name: string): Promise<LiveFetchResult | n
           : 'https://www.govtrack.us',
         confidence: 0.99,
       }))
-      .filter((v: any) => v.date && v.date <= new Date().toISOString().split('T')[0])
-      .slice(0, 3500);
+      .filter((v: any) => v.date && v.date <= new Date().toISOString().split('T')[0]);
   }
   if (votes.length === 0) warnings.push(`votes: no live vote data for "${canonicalName}"`);
 

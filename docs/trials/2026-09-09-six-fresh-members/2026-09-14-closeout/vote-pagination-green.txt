@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: vote pagination propagates an exhausted later-page failure instead of returning partial votes
+ok 1 - vote pagination propagates an exhausted later-page failure instead of returning partial votes
+  ---
+  duration_ms: 0.854489
+  type: 'test'
+  ...
+# Subtest: vote pagination rejects a non-advancing cursor
+ok 2 - vote pagination rejects a non-advancing cursor
+  ---
+  duration_ms: 0.295276
+  type: 'test'
+  ...
+# Subtest: vote pagination cannot report an exhausted safety cap as a complete date window
+ok 3 - vote pagination cannot report an exhausted safety cap as a complete date window
+  ---
+  duration_ms: 0.168478
+  type: 'test'
+  ...
+# Subtest: vote pagination requires an objects array, not a missing-result empty success
+ok 4 - vote pagination requires an objects array, not a missing-result empty success
+  ---
+  duration_ms: 0.131199
+  type: 'test'
+  ...
+# Subtest: a successful empty page closes pagination and retains earlier rows
+ok 5 - a successful empty page closes pagination and retains earlier rows
+  ---
+  duration_ms: 0.201438
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 188.878489
