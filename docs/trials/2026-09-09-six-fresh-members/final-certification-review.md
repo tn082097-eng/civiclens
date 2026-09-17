@@ -2,7 +2,7 @@
 
 ## Current closeout (2026-09-16): NOT COMPLETE
 
-Candidate `56efb3bc4308206d406553162cd39274df0efc8b`: Tina Smith and John W. Mannion pass their local checks. Cleo Fields and Chris Van Hollen remain failed after their bounded bill-source retries; independent disclosure and integrity checks passed. Darline Graham's permitted retry and subsequent scoped loads succeeded; the real validator passes her successful task while the original failed task stays preserved. Eric Burlison's scoped stages and post-ingestion checks ran, with the official scanned source explicitly withheld and a missing pre-onboarding baseline record. Claude performed the remaining execution; Grok completed one read-only review. No final certification is claimed.
+Candidate `56efb3bc4308206d406553162cd39274df0efc8b`: Tina Smith and John W. Mannion pass their local checks. Cleo Fields and Chris Van Hollen remain failed after their bounded bill-source retries; independent disclosure and integrity checks passed. Darline Graham's permitted retry and subsequent scoped loads succeeded; the real validator passes her successful task while the original failed task stays preserved. Eric Burlison's scoped stages and post-ingestion checks ran, with the official scanned source explicitly withheld and a missing pre-onboarding baseline record. Claude performed the remaining execution; Grok completed one read-only review. A Claude read-only self-audit of the evidence package (`2026-09-14-closeout/replays-v2/analysis/claude-self-audit.md`, 2026-09-16) reached the same NOT CERTIFIED verdict and corrected two documentation defects, but the same agent executed s5 and s6, so it does not satisfy the independent-review requirement. No final certification is claimed, and an independent final certification review remains pending.
 
 The authoritative current evidence and restart boundaries are in
 [`replays-v2/closeout-review.md`](2026-09-14-closeout/replays-v2/closeout-review.md).
@@ -65,7 +65,10 @@ recorded raw hash.
   `not-collected`.
 - Routine pattern generation excluded the parked confirmatory timing pair. No
   confirmatory analysis was consumed.
-- Every selected-member page rendered deterministically twice.
+- Every selected-member page that reached the render stage rendered
+  deterministically twice. At the current candidate that is strata 1, 2, 5,
+  and 6; strata 3 and 4 failed the bills stage before rendering was reached
+  and record `renders` under `stageNotReached` in their `external-failure.json`.
 - No production database write, merge, push, publication, or deployment was
   part of Track B certification.
 

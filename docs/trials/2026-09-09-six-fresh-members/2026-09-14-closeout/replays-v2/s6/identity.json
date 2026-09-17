@@ -3,5 +3,5 @@
   "bioguide": "B001316",
   "chamber": "house",
   "task": "task-1789604336595-31f470a0",
-  "note": "Written from the successful task researcher.json. ingest-v2.py normally emits this, but it asserts exactly one pipeline task; s5 legitimately has two (retained failure + rerun), so stages were run individually."
+  "note": "Written from the successful task researcher.json. ingest-v2.py normally emits this, but s6 was executed stage-by-stage rather than through the single ingest-v2.py driver, so identity was recorded separately. s6 onboarded successfully on the first attempt (onboarding.json exit 0) with exactly one pipeline task and consumed no manual rerun. (Corrected 2026-09-16: the prior note was copied verbatim from s5 and described s5's two-task retained-failure situation, which does not apply to s6. Identity fields themselves were and remain correct.)"
 }
