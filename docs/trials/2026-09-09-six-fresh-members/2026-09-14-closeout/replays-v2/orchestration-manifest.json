@@ -1,0 +1,14 @@
+[
+  {
+    "path": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-2026-09-14-inputs/run-step-v2.py",
+    "sha256": "eeacbea0f39e1465aab191958c37cfd52a3d3e872f9c9f3a55fcff7d14422181"
+  },
+  {
+    "path": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-2026-09-14-inputs/finish-stratum-v2.py",
+    "sha256": "e73ca410e81baf7a72f8836c5a0643aaa8d9ff73c9fc96d05698c0a3bb5fc95b"
+  },
+  {
+    "path": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-2026-09-14-inputs/audit-db-v2.mjs",
+    "sha256": "edad09239d2a71d07d9d904dd1a631c18bf22dfc7b1fbd3829c8f852944541ac"
+  }
+]

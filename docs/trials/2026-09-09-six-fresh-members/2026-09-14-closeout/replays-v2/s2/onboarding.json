@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": "?? node_modules\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "agents/pipeline.ts",
+    "--append",
+    "John W. Mannion"
+  ],
+  "started": "2026-09-16T14:47:32Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion/data/caches",
+  "dbBefore": "a766c8917a0e6b42ddc488758eb0b1a66abb37d24c873a74b4cc9d6fd7e4a38b",
+  "walBefore": null,
+  "exit": 0,
+  "output": "  \u001b[32m\u2713\u001b[0m  \u001b[1mnames.txt         \u001b[0m  \u001b[2mappended \"John W. Mannion\" (total 58)\u001b[0m\n\n\u001b[36m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u001b[0m\n\u001b[1m\u001b[36m  CivicLens Pipeline \u2014 John W. Mannion\u001b[0m\n\u001b[36m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u001b[0m\n\n  \u001b[2mTask ID:\u001b[0m task-1789570053261-814dc4a0\n  \u001b[2mSummarizer model:\u001b[0m claude-sonnet-4-6\n\n  \u001b[36m\u27f3\u001b[0m  \u001b[1mResearcher        \u001b[0m  \u001b[2mfetching live data for John W. Mannion\u2026\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mResearcher        \u001b[0m  \u001b[2mcongress.gov: 10 bills, 669 votes, 100 donors\u001b[0m\n  \u001b[36m\u27f3\u001b[0m  \u001b[1mData Checker      \u001b[0m  \u001b[2mvalidating schema\u2026\u001b[0m\n  \u001b[36m\u203a\u001b[0m  \u001b[1mData Checker      \u001b[0m  \u001b[2mauto-corrected 2 issue(s) before validation\u001b[0m\n     \u001b[36m\u21ba\u001b[0m \u001b[90mbill \"Next Mission Act\": summary missing \u2014 copied from title\u001b[0m\n     \u001b[36m\u21ba\u001b[0m \u001b[90mbill \"READ Act\": summary missing \u2014 copied from title\u001b[0m\n\n  \u001b[32m\u2713\u001b[0m  \u001b[1mData Checker      \u001b[0m  \u001b[2mscore 1.00 \u2014 0 issue(s)\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mPredictor         \u001b[0m  \u001b[2m5 models, best=naive-half (Brier 0.25)\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mTrade Analyst     \u001b[0m  \u001b[2mno discretionary trades before votes \u2014 N/A\u001b[0m\n  \u001b[36m\u27f3\u001b[0m  \u001b[1mSummarizer        \u001b[0m  \u001b[2mdrafting summary via claude-sonnet-4-6 (contract)\u2026\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mSummarizer        \u001b[0m  \u001b[2mbio + 6 key facts\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mCode Checker      \u001b[0m  \u001b[2mscore 1.00\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mFinal Reviewer    \u001b[0m  \u001b[2mAPPROVED \u2014 ready to apply\u001b[0m\n\n\u001b[36m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u001b[0m\n  \u001b[1mDecision:\u001b[0m \u001b[32mAPPROVED\u001b[0m\n  \u001b[2mOutput:\u001b[0m ~/Developer/civiclens/pipeline/task-1789570053261-814dc4a0/\n  \u001b[2mFiles:\u001b[0m researcher.json, data-checker.json, predictor.json, trade-analyst.json, summarizer.json, code-checker.json, final-review.json\n\n  \u001b[36mRebuild site:\u001b[0m \u001b[2mnpx tsx render/build.ts\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mVault             \u001b[0m  \u001b[2mregenerated \u2014 generated:   2026-09-16\u001b[0m\n\n\n  \u001b[36m\u203a\u001b[0m  \u001b[1mIn DuckDB.\u001b[0m \u001b[2mRebuild site: npx tsx render/build.ts\u001b[0m\n",
+  "dbAfter": "7c9afdb3fe89383fc43ae487a49eb2c2dbb1f133114852e40e45c26138d6037e",
+  "finished": "2026-09-16T14:48:10Z",
+  "walAfter": null
+}

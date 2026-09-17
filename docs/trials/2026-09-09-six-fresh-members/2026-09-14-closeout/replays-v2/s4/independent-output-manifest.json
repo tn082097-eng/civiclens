@@ -1,0 +1,62 @@
+[
+  {
+    "path": "data/caches/legislators-cache/legislators-current.yaml",
+    "sha256": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2",
+    "bytes": 1081081
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/H2MD08126/2026-itemized.json",
+    "sha256": "18c53ce76bada79d07dd01d03733b314e9c7484ad89076e60aa5d8b27215c33b",
+    "bytes": 193
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json",
+    "sha256": "faccf341b7474956f57fb071455b3c23459b31a0047fb1223004defcc308cab9",
+    "bytes": 10055
+  },
+  {
+    "path": "data/caches/senate-ptr-cache/_search-receipts/V000128.json",
+    "sha256": "0d984a7504b64954efb42b473ef98e0257edf4ff49fe11d2489c59bb94b483b1",
+    "bytes": 332
+  },
+  {
+    "path": "pipeline/task-1789570440288-f9d00580/code-checker.json",
+    "sha256": "efb8152b124ab0e91340d4d37cbac213a8f6db6c561387f06c6684a63029b87c",
+    "bytes": 236
+  },
+  {
+    "path": "pipeline/task-1789570440288-f9d00580/data-checker.json",
+    "sha256": "0265610d567fc91720a89a24454dda95345783e347b4fc0a1cf97c2f78b38cdd",
+    "bytes": 208
+  },
+  {
+    "path": "pipeline/task-1789570440288-f9d00580/final-review.json",
+    "sha256": "39f4603b4fb3d4ddf434c341669644c5c512d04890b9c02155ea65352fc9368f",
+    "bytes": 588
+  },
+  {
+    "path": "pipeline/task-1789570440288-f9d00580/predictor.json",
+    "sha256": "45a65932158fbf184a2b5655ab1c671ca4c63478ebeb2a7bd738844116cef128",
+    "bytes": 2381
+  },
+  {
+    "path": "pipeline/task-1789570440288-f9d00580/researcher.json",
+    "sha256": "19666736aec8597556b35fcbcce2e3874e502a7b080c7854d14d40308f787837",
+    "bytes": 726024
+  },
+  {
+    "path": "pipeline/task-1789570440288-f9d00580/state.json",
+    "sha256": "d332d3712a070ef1fdfaec5fedf6f1989e8a1216e54dc7b0af6fb8d83898f917",
+    "bytes": 2050
+  },
+  {
+    "path": "pipeline/task-1789570440288-f9d00580/summarizer.json",
+    "sha256": "9f5202a5bd54ea5883858498c3a774b9fc4f85fbc828ad35c5b1730fbb831a63",
+    "bytes": 2543
+  },
+  {
+    "path": "pipeline/task-1789570440288-f9d00580/trade-analyst.json",
+    "sha256": "9b2f22ae5f13abf4dec057e40c1ad13e84d997134d4b91445024cd8eaa71881a",
+    "bytes": 309
+  }
+]

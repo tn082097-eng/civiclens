@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "agents/pipeline.ts",
+    "--load-sponsored",
+    "eric-burlison"
+  ],
+  "started": "2026-09-17T00:28:03Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/caches",
+  "dbBefore": "e6b999f76d7667566a328730be715fe76d015b8a7f97b526aeae59fcced37f22",
+  "walBefore": null,
+  "exit": 0,
+  "output": "Loading sponsored legislation for 1 member(s)\u2026\n\n  eric-burlison (Eric Burlison): 55 fetched, 48 upserted, 48 w/ policyArea, 0 no-policy, 7 skipped\n\nDone. 1 member(s), 48 sponsor rows upserted, 48 bill_subjects rows written.\n",
+  "dbAfter": "e6b999f76d7667566a328730be715fe76d015b8a7f97b526aeae59fcced37f22",
+  "finished": "2026-09-17T00:28:05Z",
+  "walAfter": "f2fc5fdf0c9148e8fbd0a2213f5295d2598e94e764f26a3bf13d6309e466cb43"
+}

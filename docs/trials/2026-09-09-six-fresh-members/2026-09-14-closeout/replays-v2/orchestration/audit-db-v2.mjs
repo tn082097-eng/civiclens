@@ -1,0 +1,31 @@
+import { createRequire } from 'node:module';
+import fs from 'node:fs';
+const [,,worktree,slug,bio]=process.argv;
+if (!worktree.includes('/civiclens-track-b-trials/closeout-v2-s')) throw new Error('wrong checkout');
+const require=createRequire(worktree+'/package.json');
+const {DuckDBInstance}=require('@duckdb/node-api');
+const instance=await DuckDBInstance.create(':memory:');
+const c=await instance.connect();
+const literal=s=>"'"+s.replaceAll("'","''")+"'";
+const ident=s=>'"'+s.replaceAll('"','""')+'"';
+const rows=async sql=>await (await c.run(sql)).getRowObjects();
+await c.run(`ATTACH ${literal('/home/captainanime/Developer/civiclens-track-b-trials/closeout-2026-09-14-inputs/data/civiclens.duckdb')} AS before_db (READ_ONLY)`);
+await c.run(`ATTACH ${literal(worktree+'/data/civiclens.duckdb')} AS after_db (READ_ONLY)`);
+const tables=await rows("SELECT DISTINCT table_name FROM duckdb_tables() WHERE database_name IN ('before_db','after_db') ORDER BY table_name");
+const changes=[];let crossMember=0;
+for(const {table_name:t} of tables){
+ const before='before_db.main.'+ident(t),after='after_db.main.'+ident(t);
+ const removed=await rows(`SELECT to_json(x) AS row FROM (SELECT * FROM ${before} EXCEPT ALL SELECT * FROM ${after}) x`);
+ const added=await rows(`SELECT to_json(x) AS row FROM (SELECT * FROM ${after} EXCEPT ALL SELECT * FROM ${before}) x`);
+ if(!removed.length&&!added.length)continue;
+ const r=removed.map(x=>JSON.parse(x.row)),a=added.map(x=>JSON.parse(x.row));
+ const other=[...r,...a].filter(x=>('member_id' in x && x.member_id!==slug)||('member' in x && x.member!==slug)||('bioguide_id' in x&&x.bioguide_id!==bio));
+ crossMember+=other.length;
+ changes.push({table:t,removed:r,added:a,otherMemberRows:other});
+}
+const identity=await rows(`SELECT member_id,name,bioguide_id,chamber,state,district FROM after_db.main.members WHERE bioguide_id=${literal(bio)}`);
+const timing=await rows(`SELECT * FROM after_db.main.pattern_hits WHERE member=${literal(slug)} AND pattern IN ('trade-vote-alignment','spousal-trade-timing')`);
+const report={identity,crossMemberRows:crossMember,parkedTimingRows:timing,changedTables:changes};
+fs.writeFileSync(1,JSON.stringify(report,(_,v)=>typeof v==='bigint'?v.toString():v,2)+'\n');
+c.closeSync();instance.closeSync();
+process.exit(crossMember||timing.length||identity.length!==1?1:0);

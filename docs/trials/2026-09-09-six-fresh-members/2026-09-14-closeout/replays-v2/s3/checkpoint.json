@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "--input-type=module",
+    "-e",
+    "import {getDb,closeDb} from './db/init.ts';const c=await getDb();await c.run('CHECKPOINT');closeDb();"
+  ],
+  "started": "2026-09-16T15:08:44Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields/data/caches",
+  "dbBefore": "e2b4c3cfdd4df11eeb85a26b5a881a89620ac16ed3cdf289c27488b847582c39",
+  "walBefore": "371586f7f5f4f76372bf4232a37ec4652a29ce9e02a41a52db5c075fbf147ab8",
+  "exit": 0,
+  "output": "",
+  "dbAfter": "6d0218d9722fc3351a512b100ad85ffba1060067fbdf4d803b434269e224e1da",
+  "finished": "2026-09-16T15:08:45Z",
+  "walAfter": null
+}

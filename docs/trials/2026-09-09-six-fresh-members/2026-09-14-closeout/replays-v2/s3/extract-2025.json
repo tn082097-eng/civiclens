@@ -1,0 +1,22 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "skills/pfd-fetcher/extract.ts",
+    "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields/data/caches/pfd-cache/2025"
+  ],
+  "started": "2026-09-16T15:08:33Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields/data/caches",
+  "dbBefore": "e2b4c3cfdd4df11eeb85a26b5a881a89620ac16ed3cdf289c27488b847582c39",
+  "walBefore": "97613f44eea7e36aa1f323f1c7dc35d3692614f411324dd8fcb6c39ca7a044b6",
+  "exit": 0,
+  "output": "  \u2713 fields-cleo-20027855.txt \u2192 1 tx\n  \u2713 fields-cleo-20030472.txt \u2192 44 tx\n  \u2713 fields-cleo-20030803.txt \u2192 58 tx\n  \u2713 fields-cleo-20031017.txt \u2192 38 tx\n  \u2713 fields-cleo-20032106.txt \u2192 21 tx\n  \u2713 fields-cleo-20033326.txt \u2192 8 tx\n  \u2713 fields-cleo-20033424.txt \u2192 11 tx\n  \u2713 fields-cleo-20033493.txt \u2192 4 tx\n  \u2713 fields-cleo-20033559.txt \u2192 2 tx\n  \u2713 fields-cleo-20033616.txt \u2192 15 tx\n\nParsed 10 PTR(s) \u2192 202 transactions; skipped 0 non-PTR; 0 formatting hold(s); 0 errors\n",
+  "dbAfter": "e2b4c3cfdd4df11eeb85a26b5a881a89620ac16ed3cdf289c27488b847582c39",
+  "finished": "2026-09-16T15:08:34Z",
+  "walAfter": "97613f44eea7e36aa1f323f1c7dc35d3692614f411324dd8fcb6c39ca7a044b6"
+}

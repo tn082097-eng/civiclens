@@ -1,0 +1,131 @@
+{
+  "stratum": 5,
+  "member": "Darline Graham",
+  "slug": "darline-graham",
+  "bioguide": "G000608",
+  "chamber": "senate",
+  "sources": {
+    "congress.gov/govtrack (sponsored)": {
+      "outcome": "ok",
+      "detail": "3 fetched, 1 upserted, 1 w/ policyArea, 2 skipped",
+      "evidence": "sponsored.json"
+    },
+    "govtrack (cosponsored)": {
+      "outcome": "ok",
+      "evidence": "cosponsored.json"
+    },
+    "govtrack (bills --api-pass)": {
+      "outcome": "ok",
+      "detail": "10 fetched, 0 already cached, 0 skipped; member scope, no global NULL-title refill",
+      "evidence": "bills.json",
+      "note": "This is the same stage class that failed externally in s3/s4. It succeeded here on its first attempt; no retry was consumed and s3/s4 were NOT retried."
+    },
+    "Senate EFDS (senate-ptr)": {
+      "outcome": "verified-empty",
+      "detail": "successful EFDS search found zero PTR filings for G000608; DB unchanged",
+      "evidence": "senate-ptr.json",
+      "basis": "Authoritative: a successful search, not an absence. Backed by the frozen receipt data/caches/senate-ptr-cache/_search-receipts/G000608.json sha256 95291486cc24434eaeb3aecdef85f83740d6772555fc47db3866c7feef57eafc in setup.json.",
+      "pfdTransactionRows": 0
+    },
+    "FEC 2026 (fec-ie)": {
+      "outcome": "ok",
+      "detail": "1 member-cycle row, 1 with IE, 0 errored",
+      "evidence": "fec-ie.json"
+    },
+    "OpenSecrets": {
+      "outcome": "not-collected",
+      "detail": "optional; not run in any stratum"
+    }
+  },
+  "fecFallbackEvidence": {
+    "question": "Whether the completed FEC fallback path was exercised for Darline Graham.",
+    "fecCandidateId": "S6SC04437",
+    "resolvedFrom": "members.fec_candidate_id",
+    "donors": {
+      "rows": 80,
+      "total": 282229.5,
+      "sourcesPresent": [
+        "fec.gov"
+      ],
+      "note": "All 80 donor rows carry source=fec.gov. These came from the congress.gov/FEC researcher pass during onboarding; the FEC path did produce real rows rather than an empty fallback."
+    },
+    "independentExpenditure": {
+      "cycle": 2026,
+      "committeeId": "C00573733",
+      "committeeName": "SECURITY IS STRENGTH PAC",
+      "committeeType": "Super PAC (Independent Expenditure-Only)",
+      "supportOppose": "S",
+      "totalAmount": 1020591.32,
+      "filingCount": 5
+    },
+    "rowDelta": {
+      "super_pac_ie": 1,
+      "super_pac_ie_filings": 68
+    }
+  },
+  "billsLoaded": {
+    "sponsor": 1,
+    "cosponsor": 49,
+    "bill_summaries": 10,
+    "bill_subjects": 1
+  },
+  "controlAttribution": {
+    "comparedAgainst": "closeout-v2-control-reference/site/members/josh-gottheimer.html (pristine, same candidate)",
+    "normalization": "remove only the single generated timestamp",
+    "identicalAfterNormalization": true,
+    "bytes": [
+      8416514,
+      8416514
+    ],
+    "sha256": {
+      "pristineNormalized": "4eaac42497dfef74ba3a8e1f0cb417e254685b32a478d491c2d13a3a9904125f",
+      "s5Normalized": "4eaac42497dfef74ba3a8e1f0cb417e254685b32a478d491c2d13a3a9904125f"
+    },
+    "darlineGrahamPresentOnControl": false,
+    "sharedDonorPeersOfDarlineGraham": [
+      {
+        "peer": "jason-smith",
+        "shared": 3,
+        "combined": 59000
+      },
+      {
+        "peer": "frank-lucas",
+        "shared": 2,
+        "combined": 28000
+      },
+      {
+        "peer": "dan-crenshaw",
+        "shared": 1,
+        "combined": 20600
+      },
+      {
+        "peer": "john-cornyn",
+        "shared": 1,
+        "combined": 20000
+      },
+      {
+        "peer": "john-thune",
+        "shared": 1,
+        "combined": 15000
+      },
+      {
+        "peer": "tommy-tuberville",
+        "shared": 1,
+        "combined": 14000
+      },
+      {
+        "peer": "elise-stefanik",
+        "shared": 1,
+        "combined": 10000
+      },
+      {
+        "peer": "susan-collins",
+        "shared": 1,
+        "combined": 6000
+      }
+    ],
+    "exactAttribution": "ZERO control drift. josh-gottheimer is not among Darline Graham's 8 shared-donor peers (real findSharedDonors output, source-reconciliation-query-3.json), so no sec-peers row could be inserted on his page. The control HTML is byte-identical to the pristine reference after timestamp normalization, which independently confirms it. This differs from s1/s2, where shared donors did exist and produced attributable sec-peers drift.",
+    "controlRenderLabel": "control-after-serial-post-ingest"
+  },
+  "queryEvidence": "source-reconciliation-query-3.json (used the real db/queries.ts findSharedDonors, not a reimplementation)"
+}

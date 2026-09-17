@@ -1,0 +1,115 @@
+{
+  "filings": [
+    {
+      "filingId": "20027855",
+      "year": 2025,
+      "rows": 1
+    },
+    {
+      "filingId": "20030472",
+      "year": 2025,
+      "rows": 44
+    },
+    {
+      "filingId": "20030803",
+      "year": 2025,
+      "rows": 58
+    },
+    {
+      "filingId": "20031017",
+      "year": 2025,
+      "rows": 38
+    },
+    {
+      "filingId": "20032106",
+      "year": 2025,
+      "rows": 21
+    },
+    {
+      "filingId": "20033326",
+      "year": 2025,
+      "rows": 8
+    },
+    {
+      "filingId": "20033424",
+      "year": 2025,
+      "rows": 11
+    },
+    {
+      "filingId": "20033493",
+      "year": 2025,
+      "rows": 4
+    },
+    {
+      "filingId": "20033559",
+      "year": 2025,
+      "rows": 2
+    },
+    {
+      "filingId": "20033616",
+      "year": 2025,
+      "rows": 15
+    },
+    {
+      "filingId": "20033732",
+      "year": 2026,
+      "rows": 5
+    },
+    {
+      "filingId": "20033858",
+      "year": 2026,
+      "rows": 6
+    },
+    {
+      "filingId": "20034018",
+      "year": 2026,
+      "rows": 6
+    },
+    {
+      "filingId": "20034179",
+      "year": 2026,
+      "rows": 2
+    },
+    {
+      "filingId": "20034295",
+      "year": 2026,
+      "rows": 1
+    },
+    {
+      "filingId": "20034357",
+      "year": 2026,
+      "rows": 1
+    },
+    {
+      "filingId": "20034591",
+      "year": 2026,
+      "rows": 1
+    },
+    {
+      "filingId": "20034800",
+      "year": 2026,
+      "rows": 4
+    },
+    {
+      "filingId": "20034894",
+      "year": 2026,
+      "rows": 3
+    },
+    {
+      "filingId": "20035023",
+      "year": 2026,
+      "rows": 1
+    },
+    {
+      "filingId": "20035345",
+      "year": 2026,
+      "rows": 1
+    }
+  ],
+  "sourceRows": 233,
+  "loadedRows": 233,
+  "fieldChecks": 4194,
+  "mismatches": [],
+  "independentNativeTextEvidence": "../analysis/s3-evidence.md: source-side 233 rows,21 indexed filings,first/last and exceptions inspected before extraction",
+  "crossMemberRows": 0
+}

@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": "?? node_modules\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "agents/pipeline.ts",
+    "--append",
+    "Darline Graham"
+  ],
+  "started": "2026-09-16T15:06:52Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham/data/caches",
+  "dbBefore": "a766c8917a0e6b42ddc488758eb0b1a66abb37d24c873a74b4cc9d6fd7e4a38b",
+  "walBefore": null,
+  "exit": 1,
+  "output": "  \u001b[32m\u2713\u001b[0m  \u001b[1mnames.txt         \u001b[0m  \u001b[2mappended \"Darline Graham\" (total 58)\u001b[0m\n\n\u001b[36m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u001b[0m\n\u001b[1m\u001b[36m  CivicLens Pipeline \u2014 Darline Graham\u001b[0m\n\u001b[36m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u001b[0m\n\n  \u001b[2mTask ID:\u001b[0m task-1789571212455-8282c36b\n  \u001b[2mSummarizer model:\u001b[0m claude-sonnet-4-6\n\n  \u001b[36m\u27f3\u001b[0m  \u001b[1mResearcher        \u001b[0m  \u001b[2mfetching live data for Darline Graham\u2026\u001b[0m\n  \u001b[33m\u26a0\u001b[0m  \u001b[1mResearcher        \u001b[0m  \u001b[2mcommittee-membership: no committee assignments for G000608\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mResearcher        \u001b[0m  \u001b[2mcongress.gov: 1 bills, 41 votes, 80 donors\u001b[0m\n  \u001b[36m\u27f3\u001b[0m  \u001b[1mData Checker      \u001b[0m  \u001b[2mvalidating schema\u2026\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mData Checker      \u001b[0m  \u001b[2mscore 1.00 \u2014 0 issue(s)\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mPredictor         \u001b[0m  \u001b[2m5 models, best=always-yes (Brier 0.0909)\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mTrade Analyst     \u001b[0m  \u001b[2mno discretionary trades before votes \u2014 N/A\u001b[0m\n  \u001b[36m\u27f3\u001b[0m  \u001b[1mSummarizer        \u001b[0m  \u001b[2mdrafting summary via claude-sonnet-4-6 (contract)\u2026\u001b[0m\n  \u001b[31m\u2717\u001b[0m  \u001b[1mSummarizer        \u001b[0m  \u001b[2mclaude CLI exit 1: You've hit your monthly spend limit \u00b7 raise it at claude.ai/settings/usage?from=cc_cli_limit_message \u00b7 your session limit resets 3:40pm (America/New_York)\u001b[0m\n  \u001b[33m\u26a0\u001b[0m  \u001b[1mBrain             \u001b[0m  \u001b[2mSummarizer failed \u2014 retrying (1/2)\u2026\u001b[0m\n  \u001b[36m\u27f3\u001b[0m  \u001b[1mSummarizer        \u001b[0m  \u001b[2mdrafting summary via claude-sonnet-4-6 (contract)\u2026\u001b[0m\n  \u001b[31m\u2717\u001b[0m  \u001b[1mSummarizer        \u001b[0m  \u001b[2mclaude CLI exit 1: You've hit your monthly spend limit \u00b7 raise it at claude.ai/settings/usage?from=cc_cli_limit_message \u00b7 your session limit resets 3:40pm (America/New_York)\u001b[0m\n  \u001b[31m\u2717\u001b[0m  \u001b[1mPipeline          \u001b[0m  \u001b[2mSummarizer failed after retry \u2014 aborting (required artifact)\u001b[0m\n",
+  "dbAfter": "a766c8917a0e6b42ddc488758eb0b1a66abb37d24c873a74b4cc9d6fd7e4a38b",
+  "finished": "2026-09-16T15:07:10Z",
+  "walAfter": "9e4c55c14a45cdcb48c7c94b20d47070f246054c6d977577c42baaa29f68b145"
+}

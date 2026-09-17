@@ -1,0 +1,58 @@
+{
+  "registrySha256": "f9037353bce052e9393be426cfec09997b411462fa5956497194da153fb05274",
+  "registryRows": [
+    "| trade-vote-alignment | docs/2026-07-20-timing-detectors-scoring.md | registered | | (awaiting negative-control gate + confirmatory run) | |",
+    "| spousal-trade-timing | docs/2026-07-20-timing-detectors-scoring.md | registered | | (awaiting negative-control gate + confirmatory run) | |"
+  ],
+  "commands": [
+    {
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "pipeline/run-patterns.ts",
+        "--member",
+        "<slug>"
+      ],
+      "source": "pipeline/run-patterns.ts",
+      "classification": "routine member-scoped onboarding; runOnboardingDetectorsForMember filters parked pair before detect/write/score; no baseline CLI invoked",
+      "sourceSha256": "2b5d0ce4ae6290bf77bff9477e0b0eb0dbcaa90941d078deed52a3c87af79651"
+    },
+    {
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "pipeline/score-theme-gaps.ts",
+        "--member",
+        "<slug>"
+      ],
+      "source": "pipeline/score-theme-gaps.ts",
+      "classification": "permitted ADR-0002 member-scoped artifact generation; distinct from parked timing pair",
+      "sourceSha256": "92ede9d33fcbfe0b7b7697ca2a2318b46504645259ada230aff7932cf87824bc"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "verify:baseline"
+      ],
+      "source": "scripts/verify-baseline.ts",
+      "classification": "database integrity verifier only",
+      "sourceSha256": "deeb9652cec3e9fb3fe566d4376529748cd78b3dd9b2e6c516a619263d48a244"
+    }
+  ],
+  "candidate": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "readOnlyPreflight": {
+    "command": [
+      "npm",
+      "run",
+      "guard:confirmatory",
+      "--",
+      "trade-vote-alignment",
+      "spousal-trade-timing"
+    ],
+    "exit": 0,
+    "output": "\n> civiclens-pipeline@1.0.0 guard:confirmatory\n> tsx scripts/confirmatory-guard.ts trade-vote-alignment spousal-trade-timing\n\nOK: \"trade-vote-alignment\" is registered and its confirmatory run is not yet consumed \u2014 clear to proceed.\nOK: \"spousal-trade-timing\" is registered and its confirmatory run is not yet consumed \u2014 clear to proceed.\n\nconfirmatory guard: clear.\n"
+  }
+}

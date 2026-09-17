@@ -1,0 +1,42 @@
+{
+  "note": "Records listed here were produced BEFORE the scoped ingestion stages required by ingest-v2.py had been run. They are retained unmodified as superseded evidence. The authoritative record for each is the successor label.",
+  "superseded": {
+    "s5": {
+      "patterns": "patterns-post-ingest",
+      "theme-gaps": "theme-gaps-post-ingest-force",
+      "render-det-1": "render-final-1",
+      "render-det-2": "render-final-2",
+      "render-determinism": "render-determinism-final",
+      "render-inputs": "render-inputs-final",
+      "render-1": "render-final-1",
+      "render-2": "render-final-2",
+      "render-warmup": "render-warmup-post-ingest",
+      "corpus-after-rerun-1": "corpus-post-ingest + corpus-selected-task-validator",
+      "corpus": "corpus-post-ingest",
+      "baseline-after": "baseline-post-ingest",
+      "typecheck": "typecheck-post-ingest",
+      "tests": "tests-post-ingest",
+      "checkpoint": "checkpoint-post-ingest",
+      "db-audit-complete": "db-audit-final",
+      "control-after-serial": "control-after-serial-post-ingest",
+      "output-manifest": "output-manifest-final"
+    },
+    "s6": {
+      "patterns": "patterns-post-ingest",
+      "theme-gaps": "theme-gaps-post-ingest-force",
+      "render-det-1": "render-final-1",
+      "render-det-2": "render-final-2",
+      "render-determinism": "render-determinism-final",
+      "render-inputs": "render-inputs-final",
+      "render-warmup": "render-warmup-post-ingest",
+      "corpus": "corpus-post-ingest",
+      "baseline-after": "baseline-post-ingest",
+      "typecheck": "typecheck-post-ingest",
+      "tests": "tests-post-ingest",
+      "checkpoint": "checkpoint-post-ingest",
+      "db-audit-complete": "db-audit-final",
+      "control-after-serial": "control-after-serial-post-ingest",
+      "output-manifest": "output-manifest-final"
+    }
+  }
+}

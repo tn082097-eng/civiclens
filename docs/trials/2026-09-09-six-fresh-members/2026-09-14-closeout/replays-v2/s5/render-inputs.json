@@ -1,0 +1,19 @@
+{
+  "before": {
+    "data/caches/legislators-cache/legislators-current.yaml": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2",
+    "data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json": "faccf341b7474956f57fb071455b3c23459b31a0047fb1223004defcc308cab9",
+    "data/caches/pfd-cache/fec-ie/S6SC04437/2026-funders3.json": "6c4053a39f53a43c795ea0d2b6d94773efc8b19c36e15c95e19a223db41f5eea",
+    "data/caches/pfd-cache/fec-ie/committees/C00573733.json": "d3a4ecc01053f6642a2c3046784571565c576c989347d8ef0e2b6841e34eb713",
+    "data/caches/senate-ptr-cache/_search-receipts/G000608.json": "95291486cc24434eaeb3aecdef85f83740d6772555fc47db3866c7feef57eafc",
+    "pipeline/artifacts/darline-graham.theme-gaps.json": "ad06042c91e2140d98e6ff979e75365a81c35c2fe705daad7ade70ea57c4dba1"
+  },
+  "after": {
+    "data/caches/legislators-cache/legislators-current.yaml": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2",
+    "data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json": "faccf341b7474956f57fb071455b3c23459b31a0047fb1223004defcc308cab9",
+    "data/caches/pfd-cache/fec-ie/S6SC04437/2026-funders3.json": "6c4053a39f53a43c795ea0d2b6d94773efc8b19c36e15c95e19a223db41f5eea",
+    "data/caches/pfd-cache/fec-ie/committees/C00573733.json": "d3a4ecc01053f6642a2c3046784571565c576c989347d8ef0e2b6841e34eb713",
+    "data/caches/senate-ptr-cache/_search-receipts/G000608.json": "95291486cc24434eaeb3aecdef85f83740d6772555fc47db3866c7feef57eafc",
+    "pipeline/artifacts/darline-graham.theme-gaps.json": "ad06042c91e2140d98e6ff979e75365a81c35c2fe705daad7ade70ea57c4dba1"
+  },
+  "equal": true
+}

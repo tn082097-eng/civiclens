@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--input-type=module",
+    "--import",
+    "tsx",
+    "-e",
+    "\nimport {getDb,closeDb} from './db/init.ts';\nimport {findSharedDonors} from './db/queries.ts';\nconst c=await getDb();\nconst j=v=>JSON.stringify(v,(_,x)=>typeof x==='bigint'?x.toString():x);\nconst peers=await findSharedDonors('josh-gottheimer');\nconst hit=peers.filter(p=>p.peer_id==='eric-burlison');\nconsole.log('TOTAL_PEERS', peers.length);\nconsole.log('BURLISON_ENTRY', j(hit));\nconst q=async s=>(await (await c.run(s)).getRowObjects());\nconsole.log('SHARED_DONOR_ROWS', j(await q(\"SELECT a.donor_canonical, a.donor_name, a.amount AS burlison_amt, b.amount AS gottheimer_amt FROM donors a JOIN donors b USING(donor_canonical) WHERE a.member_id='eric-burlison' AND b.member_id='josh-gottheimer' ORDER BY a.donor_canonical\")));\ncloseDb();\n"
+  ],
+  "started": "2026-09-17T00:32:53Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/caches",
+  "dbBefore": "3cb41b9fa5d74307d38da95326959a8b6078087802efe119af433128a4938e8b",
+  "walBefore": null,
+  "exit": 0,
+  "output": "TOTAL_PEERS 35\nBURLISON_ENTRY [{\"peer_id\":\"eric-burlison\",\"peer_name\":\"Eric Burlison\",\"shared_count\":2,\"combined_amount\":50500,\"donor_canonicals\":[]}]\nSHARED_DONOR_ROWS [{\"donor_canonical\":\"AMERICAN ISRAEL PUBLIC AFFAIRS COMMITTEE POLITICAL ACTION COMMITTEE\",\"donor_name\":\"American israel public affairs committee political action committee\",\"burlison_amt\":5000,\"gottheimer_amt\":20500},{\"donor_canonical\":\"CHARTER COMMUNICATIONS INC POLITICAL ACTION COMMITTEE\",\"donor_name\":\"Charter communications inc. political action committee\",\"burlison_amt\":5000,\"gottheimer_amt\":20000}]\n",
+  "dbAfter": "3cb41b9fa5d74307d38da95326959a8b6078087802efe119af433128a4938e8b",
+  "finished": "2026-09-17T00:32:54Z",
+  "walAfter": null
+}

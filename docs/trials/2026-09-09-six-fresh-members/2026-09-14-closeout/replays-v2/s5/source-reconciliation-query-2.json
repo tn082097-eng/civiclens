@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-evidence/\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--input-type=module",
+    "--import",
+    "tsx",
+    "-e",
+    "\nimport {getDb,closeDb} from './db/init.ts';\nconst c=await getDb();\nconst q=async s=>(await (await c.run(s)).getRowObjects());\nconst j=v=>JSON.stringify(v,(_,x)=>typeof x==='bigint'?x.toString():x);\nconsole.log('MEMBER', j(await q(\"SELECT member_id,fec_candidate_id,state,role,in_office FROM members WHERE bioguide_id='G000608'\")));\nconsole.log('IE', j(await q(\"SELECT * FROM super_pac_ie WHERE member_id='darline-graham'\")));\nconsole.log('DONOR_SRC', j(await q(\"SELECT source, count(*) n, sum(amount) total FROM donors WHERE member_id='darline-graham' GROUP BY 1\")));\nconsole.log('SHARED', j(await q(\"SELECT d1.name, d1.amount a1, d2.amount a2 FROM donors d1 JOIN donors d2 ON lower(trim(d1.name))=lower(trim(d2.name)) WHERE d1.member_id='darline-graham' AND d2.member_id='josh-gottheimer'\")));\nconsole.log('PFD', j(await q(\"SELECT count(*) n FROM pfd_transactions WHERE member_id='darline-graham'\")));\nconsole.log('BILLS', j(await q(\"SELECT sponsor_role, count(*) n FROM bills WHERE member_id='darline-graham' GROUP BY 1\")));\ncloseDb();\n"
+  ],
+  "started": "2026-09-17T00:27:10Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham/data/caches",
+  "dbBefore": "b79e9cf018e70f883a807ba90903554c102880c5e08a3a1d8fc57ac421fb4554",
+  "walBefore": null,
+  "exit": 1,
+  "output": "MEMBER [{\"member_id\":\"darline-graham\",\"fec_candidate_id\":\"S6SC04437\",\"state\":\"SC\",\"role\":\"Senator\",\"in_office\":true}]\nIE [{\"member_id\":\"darline-graham\",\"candidate_id\":\"S6SC04437\",\"cycle\":2026,\"committee_id\":\"C00573733\",\"committee_name\":\"SECURITY IS STRENGTH PAC\",\"committee_type\":\"Super PAC (Independent Expenditure-Only)\",\"designation\":\"Unauthorized\",\"party\":null,\"support_oppose\":\"S\",\"total_amount\":1020591.32,\"filing_count\":5,\"fetched_at\":{\"micros\":\"1789604722374000\"}}]\nDONOR_SRC [{\"source\":\"fec.gov\",\"n\":\"80\",\"total\":282229.5000000001}]\nnode:internal/modules/run_main:123\n    triggerUncaughtException(\n    ^\n\n[Error: Binder Error: Table \"d1\" does not have a column named \"name\"\n\nCandidate bindings: : \"amount\", \"latest_date\", \"member_id\"\n\nLINE 1: ... a1, d2.amount a2 FROM donors d1 JOIN donors d2 ON lower(trim(d1.name))=lower(trim(d2.name)) WHERE d1.member_id='darline...\n                                                                         ^]\n\nNode.js v22.22.2\n",
+  "dbAfter": "b79e9cf018e70f883a807ba90903554c102880c5e08a3a1d8fc57ac421fb4554",
+  "finished": "2026-09-17T00:27:11Z",
+  "walAfter": null
+}

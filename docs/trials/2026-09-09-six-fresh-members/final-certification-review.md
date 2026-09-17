@@ -1,5 +1,16 @@
 # Final six-fresh-member certification review
 
+## Current closeout (2026-09-16): NOT COMPLETE
+
+Candidate `56efb3bc4308206d406553162cd39274df0efc8b`: Tina Smith and John W. Mannion pass their local checks. Cleo Fields and Chris Van Hollen remain failed after their bounded bill-source retries; independent disclosure and integrity checks passed. Darline Graham's permitted retry and subsequent scoped loads succeeded; the real validator passes her successful task while the original failed task stays preserved. Eric Burlison's scoped stages and post-ingestion checks ran, with the official scanned source explicitly withheld and a missing pre-onboarding baseline record. Claude performed the remaining execution; Grok completed one read-only review. No final certification is claimed.
+
+The authoritative current evidence and restart boundaries are in
+[`replays-v2/closeout-review.md`](2026-09-14-closeout/replays-v2/closeout-review.md).
+Track B is not certified, and unresolved external failures prevent an
+authority-only blocked verdict. No OCR or publication is authorized here.
+
+## Historical draft below (superseded by the current closeout)
+
 **Verdict: PENDING.** Chris Van Hollen passed a fresh replay at repair commit
 `20f62c0`, but the formatting-hold rule changes the certification contract
 after that replay. A new final implementation commit must be frozen and all six

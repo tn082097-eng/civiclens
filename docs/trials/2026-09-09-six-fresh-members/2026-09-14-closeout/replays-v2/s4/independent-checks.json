@@ -1,0 +1,46 @@
+{
+  "outcomes": [
+    {
+      "step": "senate-ptr",
+      "exit": 0,
+      "existing": false
+    },
+    {
+      "step": "fec-ie",
+      "exit": 0,
+      "existing": false
+    },
+    {
+      "step": "baseline-after",
+      "exit": 0,
+      "existing": false
+    },
+    {
+      "step": "corpus",
+      "exit": 0,
+      "existing": false
+    },
+    {
+      "step": "typecheck",
+      "exit": 0,
+      "existing": false
+    },
+    {
+      "step": "tests",
+      "exit": 0,
+      "existing": false
+    },
+    {
+      "step": "checkpoint",
+      "exit": 0,
+      "existing": false
+    },
+    {
+      "step": "db-audit-complete",
+      "exit": 0,
+      "existing": false
+    }
+  ],
+  "scope": "Independent disclosure and partial-state integrity checks; bill-dependent gates remain pending. This is not a passing stratum.",
+  "openSecrets": "not-collected"
+}

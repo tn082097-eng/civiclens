@@ -1,0 +1,25 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "agents/pipeline.ts",
+    "--load-bills",
+    "--bioguide",
+    "B001316",
+    "--api-pass"
+  ],
+  "started": "2026-09-17T00:28:10Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/caches",
+  "dbBefore": "e6b999f76d7667566a328730be715fe76d015b8a7f97b526aeae59fcced37f22",
+  "walBefore": "59547c628a46f3d1ecd76d94f18cb45d9be13640bf0e8d000f96a80c9bbc459f",
+  "exit": 0,
+  "output": "Pass 1: backfilling votes.bill_id from question text (regex)\u2026\n  1252 filled by regex, 665 unparseable, 1917 total NULL rows scanned.\n\nPass 2: GovTrack API resolution for remaining NULL bill_ids\u2026\n  GovTrack API: 50 calls, 49 resolved\u2026\n  GovTrack API: 100 calls, 98 resolved\u2026\n  GovTrack API: 150 calls, 147 resolved\u2026\n  GovTrack API: 200 calls, 197 resolved\u2026\n  GovTrack API: 250 calls, 244 resolved\u2026\n  GovTrack API: 300 calls, 292 resolved\u2026\n  GovTrack API: 350 calls, 342 resolved\u2026\n  GovTrack API: 400 calls, 392 resolved\u2026\n  GovTrack API: 450 calls, 442 resolved\u2026\n  GovTrack API: 500 calls, 492 resolved\u2026\n  GovTrack API: 550 calls, 535 resolved\u2026\n  GovTrack API: 600 calls, 581 resolved\u2026\n  GovTrack API: 650 calls, 627 resolved\u2026\n  0 filled by regex, 627 resolved via GovTrack API, 38 still unresolvable.\n\nFetching summaries for 46 distinct bill(s)\u2026\n\n  [1/46] 119-hconres-113  \u2713 (no summary)\n  [2/46] 119-hconres-89  \u2713 (no summary)\n  [3/46] 119-hconres-93  \u2713 (no summary)\n  [4/46] 119-hjres-1  \u2713 (no summary)\n  [5/46] 119-hjres-210  \u2713 (no summary)\n  [6/46] 119-hjres-213  \u2713 (no summary)\n  [7/46] 119-hr-10326  \u2713 Preventing Rip-offs and Obtaining Oversight of Funds Act&nbs\n  [8/46] 119-hr-1118  \u2713 Value Over Cost Act of 2025\n  [9/46] 119-hr-1181  \u2713 Protecting Privacy in Purchases Act\n  [10/46] 119-hr-139  \u2713 Sunshine Protection Act of 2025\n  [11/46] 119-hr-1501  \u2713 Protecting Domestic Mining Act of 2025\n  [12/46] 119-hr-2140  \u2713 Diesel Emissions Reduction Act of 2025\n  [13/46] 119-hr-2978  \u2713 (no summary)\n  [14/46] 119-hr-3106  \u2713 Weatherizing Infrastructure in the North and Terrorism Emerg\n  [15/46] 119-hr-3276  \u2713 Local Communities &amp; Bird Habitat Stewardship Act of 2026\n  [16/46] 119-hr-4219  \u2713 National Wildlife Refuge System Invasive Species Strike Team\n  [17/46] 119-hr-4541  \u2713 (no summary)\n  [18/46] 119-hr-4646  \u2713 Whistleblower Protection Act of 2025\n  [19/46] 119-hr-4795  \u2713 Protect Economic and Academic Freedom Act of 2026\n  [20/46] 119-hr-5334  \u2713 Lindsey O. Graham Sanctioning Russia and Iran Act of 2026\n  [21/46] 119-hr-5362  \u2713 (no summary)\n  [22/46] 119-hr-6955  \u2713 Main Street Capital Access Act or the Main Street Act\n  [23/46] 119-hr-7008  \u2713 Stop Insider Trading Act\n  [24/46] 119-hr-8278  \u2713 Fostering the Use of Technology to Uphold Regulatory Effecti\n  [25/46] 119-hr-8595  \u2713 National Security, Department of State, and Related Programs\n  [26/46] 119-hr-8800  \u2713 National Defense Authorization Act for Fiscal Year 2027\n  [27/46] 119-hr-8823  \u2713 Putting Patients First by Strengthening Provider Accountabil\n  [28/46] 119-hr-8884  \u2713 Removing Barriers to Work for Disabled Americans Act\n  [29/46] 119-hr-8897  \u2713 Improving Travel for American Families Act\n  [30/46] 119-hr-9237  \u2713 Take Care of America's Veterans Act\n  [31/46] 119-hr-9340  \u2713 Ratepayer Protection Act\n  [32/46] 119-hr-9436  \u2713 Northeast Lobsterman Protection Act of 2026\n  [33/46] 119-hr-9497  \u2713 Water Resources Development Act of 2026\n  [34/46] 119-hr-9500  \u2713 Tax Relief for Fraud Victims Act\n  [35/46] 119-hr-9576  \u2713 National Fraud Enforcement Division Act of 2026\n  [36/46] 119-hr-9770  \u2713 Continuing Appropriations Act, 2027\n  [37/46] 119-hres-1423  \u2713 (no summary)\n  [38/46] 119-hres-1438  \u2713 (no summary)\n  [39/46] 119-hres-1486  \u2713 (no summary)\n  [40/46] 119-hres-1490  \u2713 (no summary)\n  [41/46] 119-hres-1498  \u2713 (no summary)\n  [42/46] 119-hres-1499  \u2713 (no summary)\n  [43/46] 119-hres-1530  \u2713 Providing for consideration of the bill (H.R. 9576) to estab\n  [44/46] 119-s-2403  \u2713 Retire through Ownership Act\n  [45/46] 119-s-307  \u2713 Prison Staff Safety Enhancement Act\n  [46/46] 119-s-32  \u2713 Local Access to Courts Act or LACA\n\nDone: 46 fetched, 0 already cached, 0 skipped.\n\n(member scope: skipping global NULL-title refill \u2014 not target-originated.)\n",
+  "dbAfter": "e6b999f76d7667566a328730be715fe76d015b8a7f97b526aeae59fcced37f22",
+  "finished": "2026-09-17T00:31:31Z",
+  "walAfter": "6b3c2265bb73eeddb1e1cbd92f19bf5bb4fa35a14b1b8bc8bd8ae169e74c61a1"
+}

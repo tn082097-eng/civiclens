@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s1-tina-smith",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "render/build.ts",
+    "--member",
+    "tina-smith"
+  ],
+  "started": "2026-09-16T08:56:34Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s1-tina-smith/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s1-tina-smith/data/caches",
+  "dbBefore": "3fbf0882eeb420d5b274bee5e48a7cb216b53ca3aca1fa8bb2ee05f5d87a5322",
+  "walBefore": null,
+  "exit": 0,
+  "output": "  \u2713 site/members/tina-smith.html  (15d 20t 19p 35peers)\n",
+  "dbAfter": "3fbf0882eeb420d5b274bee5e48a7cb216b53ca3aca1fa8bb2ee05f5d87a5322",
+  "finished": "2026-09-16T08:56:35Z",
+  "walAfter": null
+}

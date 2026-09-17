@@ -1,0 +1,35 @@
+{
+ "outcome": "withheld",
+ "holdFlag": "needs_manual_formatting",
+ "filingId": "8219414",
+ "reason": "empty-input",
+ "pdfSha256": "517bdde3ed131ecf67631098857fb08c3135fe38f7c6c39e5902fafb46a60f50",
+ "textSha256": "7060584c3e59f0b2f12f34aa0b40faadf4aa5790a0459f3319852bcd63262cbb",
+ "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2023/8219414.pdf",
+ "candidate": "56efb3bc4308206d406553162cd39274df0efc8b",
+ "fullReplay": "completed 2026-09-16 (onboarding, extract 2023-2026, House loader, patterns, theme-gaps, baseline, corpus, 353 tests, tsc, deterministic renders, checkpoint, full row delta)",
+ "houseLoader": {
+  "run": true,
+  "label": "load-house-2023-2026",
+  "years": [
+   2023,
+   2024,
+   2025,
+   2026
+  ],
+  "exit": 1,
+  "outcome": "nonpassing hold (NOT a pass)",
+  "totalTransactions": 0,
+  "totalUnmatched": 0,
+  "totalWithheld": 1,
+  "perYear": {
+   "2023": "1 filing withheld [unresolved/empty-input]; table NOT entered",
+   "2024": "verified-empty (authoritative index)",
+   "2025": "verified-empty (authoritative index)",
+   "2026": "verified-empty (authoritative index)"
+  },
+  "memberHoldWarning": "eric-burlison has 1 withheld filing(s); skip automated publication and keep the member in the formatting queue",
+  "pfdTransactionsRowDelta": 0
+ },
+ "supersedes": "Earlier fields claiming full replay not completed and House loader not run were written while the Claude summarizer provider was quota-limited; that limit has since reset. The withheld/hold facts themselves are unchanged."
+}

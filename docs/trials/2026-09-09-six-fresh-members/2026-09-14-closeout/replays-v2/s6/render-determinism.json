@@ -1,0 +1,14 @@
+{
+  "normalizationRegex": "(?<= \u00b7 generated )\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}Z(?=</div>)",
+  "normalization": "remove only generated timestamp",
+  "raw": [
+    "58363b5d12de17b6be3af3c1b0ab95d1cf3d9fb292a8f321e4a08797950882e7",
+    "58363b5d12de17b6be3af3c1b0ab95d1cf3d9fb292a8f321e4a08797950882e7"
+  ],
+  "normalized": [
+    "b4e9cfda60ab837a324ddbbac6999595163ab4747bbee21a2d8888f9e2bdaf96",
+    "b4e9cfda60ab837a324ddbbac6999595163ab4747bbee21a2d8888f9e2bdaf96"
+  ],
+  "equal": true,
+  "note": "Labels render-det-1/2 used because earlier render-1/render-2 steps were logged without between-render HTML capture; those records are retained unmodified."
+}

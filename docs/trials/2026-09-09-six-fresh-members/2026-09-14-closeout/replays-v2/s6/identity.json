@@ -1,0 +1,7 @@
+{
+  "slug": "eric-burlison",
+  "bioguide": "B001316",
+  "chamber": "house",
+  "task": "task-1789604336595-31f470a0",
+  "note": "Written from the successful task researcher.json. ingest-v2.py normally emits this, but it asserts exactly one pipeline task; s5 legitimately has two (retained failure + rerun), so stages were run individually."
+}

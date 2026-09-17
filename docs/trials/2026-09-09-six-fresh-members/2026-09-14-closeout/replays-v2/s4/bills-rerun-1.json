@@ -1,0 +1,25 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "agents/pipeline.ts",
+    "--load-bills",
+    "--bioguide",
+    "V000128",
+    "--api-pass"
+  ],
+  "started": "2026-09-16T15:04:29Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen/data/caches",
+  "dbBefore": "80568fce5c6125266c26ef95b012437009783605c0f156fad1608464372d488d",
+  "walBefore": "9818403552edab6c8100689391c61862e65d5e05e270dd524db77613e5bca710",
+  "exit": 1,
+  "output": "Pass 1: backfilling votes.bill_id from question text (regex)\u2026\n  0 filled by regex, 1104 unparseable, 1104 total NULL rows scanned.\n\nPass 2: GovTrack API resolution for remaining NULL bill_ids\u2026\n\u001b[31m\nFatal: The operation was aborted due to timeout\u001b[0m\n",
+  "dbAfter": "80568fce5c6125266c26ef95b012437009783605c0f156fad1608464372d488d",
+  "finished": "2026-09-16T15:04:42Z",
+  "walAfter": "f07224de06f479d937d1af7b572a5f8e6af5d9a39df478da4d1cce57f952106e"
+}

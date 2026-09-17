@@ -1,0 +1,22 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": "?? node_modules\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "skills/pfd-fetcher/extract.ts",
+    "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/caches/pfd-cache/2023"
+  ],
+  "started": "2026-09-16T15:09:17Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/caches",
+  "dbBefore": "a766c8917a0e6b42ddc488758eb0b1a66abb37d24c873a74b4cc9d6fd7e4a38b",
+  "walBefore": null,
+  "exit": 1,
+  "output": "  \u26a0 burlison-eric-8219414.txt [needs_manual_formatting:empty-input] \u2192 0 of 0 row(s) from 2 B; table NOT entered \u2014 filing withheld; member remains in the formatting queue\n\nParsed 0 PTR(s) \u2192 0 transactions; skipped 0 non-PTR; 1 formatting hold(s); 0 errors\nMember formatting hold: skip automated publication, keep the member in coverage, and do not count this run as verified-empty or complete.\n",
+  "dbAfter": "a766c8917a0e6b42ddc488758eb0b1a66abb37d24c873a74b4cc9d6fd7e4a38b",
+  "finished": "2026-09-16T15:09:18Z",
+  "walAfter": null
+}

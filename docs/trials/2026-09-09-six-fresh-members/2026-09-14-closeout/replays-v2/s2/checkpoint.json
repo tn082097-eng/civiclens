@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "--input-type=module",
+    "-e",
+    "import {getDb,closeDb} from './db/init.ts'; const c=await getDb();await c.run('CHECKPOINT');closeDb();"
+  ],
+  "started": "2026-09-16T14:50:15Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion/data/caches",
+  "dbBefore": "13ee6d160774dbf4dd0b7dc398dfd31b4330ca58319f8c3a4d15914b77e7be06",
+  "walBefore": null,
+  "exit": 0,
+  "output": "",
+  "dbAfter": "13ee6d160774dbf4dd0b7dc398dfd31b4330ca58319f8c3a4d15914b77e7be06",
+  "finished": "2026-09-16T14:50:16Z",
+  "walAfter": null
+}

@@ -1,0 +1,19 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "./node_modules/.bin/tsc",
+    "--noEmit"
+  ],
+  "started": "2026-09-16T15:08:51Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen/data/caches",
+  "dbBefore": "80568fce5c6125266c26ef95b012437009783605c0f156fad1608464372d488d",
+  "walBefore": "ec4c18efe9f9684ee09dcc5e80cf847f082afb329cca41434e51a39710d7a7ab",
+  "exit": 0,
+  "output": "",
+  "dbAfter": "80568fce5c6125266c26ef95b012437009783605c0f156fad1608464372d488d",
+  "finished": "2026-09-16T15:08:53Z",
+  "walAfter": "ec4c18efe9f9684ee09dcc5e80cf847f082afb329cca41434e51a39710d7a7ab"
+}

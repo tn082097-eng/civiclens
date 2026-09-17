@@ -1,0 +1,7 @@
+{
+  "slug": "darline-graham",
+  "bioguide": "G000608",
+  "chamber": "senate",
+  "task": "task-1789604138913-41f1f4a8",
+  "note": "Written from the successful task researcher.json. ingest-v2.py normally emits this, but it asserts exactly one pipeline task; s5 legitimately has two (retained failure + rerun), so stages were run individually."
+}

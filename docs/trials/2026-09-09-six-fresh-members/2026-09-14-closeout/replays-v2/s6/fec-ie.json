@@ -1,0 +1,25 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "agents/pipeline.ts",
+    "--load-fec-ie",
+    "2026",
+    "--bioguide",
+    "B001316"
+  ],
+  "started": "2026-09-17T00:31:40Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/caches",
+  "dbBefore": "e6b999f76d7667566a328730be715fe76d015b8a7f97b526aeae59fcced37f22",
+  "walBefore": "c3f0e9d25f7889a095f4fc38b4b24d357eb2f1dd9a3c3e024d3faf2979ce185e",
+  "exit": 0,
+  "output": "\nLoading FEC IE for 1 member(s), cycle 2026\u2026\n\nFEC IE load: 1 member-cycle rows, 1 with IE, 0 errored\n",
+  "dbAfter": "e6b999f76d7667566a328730be715fe76d015b8a7f97b526aeae59fcced37f22",
+  "finished": "2026-09-17T00:31:43Z",
+  "walAfter": "4dc374ccf7965421e38e170fdb2ffd46d52058aacff5666705b888278fcceb37"
+}

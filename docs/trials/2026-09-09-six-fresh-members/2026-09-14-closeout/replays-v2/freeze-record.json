@@ -1,0 +1,8 @@
+{
+  "candidate": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "predecessor": "d2992fda5c7e412e86b3cd47ef0248fd039e8d46",
+  "decision": "invalidate predecessor; all six freshly initialized",
+  "changes": "db/load-bill-summaries.ts, db/load-sponsored.ts, db/source-completeness.test.ts",
+  "tests": "353/353; tsc exit 0",
+  "orchestration": "Only replay-root/worktree-name changes; does-not-invalidate; no source or acceptance change"
+}

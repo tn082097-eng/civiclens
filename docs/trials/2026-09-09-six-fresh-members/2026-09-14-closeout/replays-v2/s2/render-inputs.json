@@ -1,0 +1,33 @@
+{
+  "before": {
+    "data/caches/legislators-cache/legislators-current.yaml": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2",
+    "data/caches/pfd-cache/fec-ie/H4NY22085/2026-funders3.json": "6f06037bda35b6588552a5c9a9a81352f23e7e4d334fbc5de1442f0a5aa73076",
+    "data/caches/pfd-cache/fec-ie/H4NY22085/2026-itemized.json": "2574bd0801ea05e8a3553225740f858232ec678228884f619359239abab3ab0a",
+    "data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json": "faccf341b7474956f57fb071455b3c23459b31a0047fb1223004defcc308cab9",
+    "data/caches/pfd-cache/fec-ie/committees/C00350991.json": "079c52cf53099d2b1a1f6ba5dc3766545978f575002dd6bf7643777169540d51",
+    "data/caches/pfd-cache/fec-ie/committees/C00483693.json": "c1b4209384377b97787b144ac58c5be276c28d229140ed2e5e19df02aa6b4c89",
+    "data/caches/pfd-cache/fec-ie/committees/C00489799.json": "d3a4ecc01053f6642a2c3046784571565c576c989347d8ef0e2b6841e34eb713",
+    "data/caches/pfd-cache/fec-ie/committees/C00606962.json": "8e169de01e4a9408077b447c3e8f4437260b48103167ade2c6faad7ae25ea992",
+    "data/caches/pfd-cache/index/2023FD.xml": "60e5dcf86ec483f428a371abbe7894f72124fc03d3e5b6351507b40ec8f8c10d",
+    "data/caches/pfd-cache/index/2024FD.xml": "99576a8c58e100fc35e14af597b184f0421650cf6de1e11379a784189d5c5f9e",
+    "data/caches/pfd-cache/index/2025FD.xml": "0b0b0cd2b288938a00b38bcee4f1c5f7686139a32920e2e9c38a7291844c0814",
+    "data/caches/pfd-cache/index/2026FD.xml": "3d010744d0db9b91a1d8f8132c43c3c2567c5a5b16c100648f5f99e9ff3217d9",
+    "pipeline/artifacts/john-w-mannion.theme-gaps.json": "223361c1ba692f9f61256eacfb8c2ae19de1bc577e55a7d7ac0bbb2c2f051a0d"
+  },
+  "after": {
+    "data/caches/legislators-cache/legislators-current.yaml": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2",
+    "data/caches/pfd-cache/fec-ie/H4NY22085/2026-funders3.json": "6f06037bda35b6588552a5c9a9a81352f23e7e4d334fbc5de1442f0a5aa73076",
+    "data/caches/pfd-cache/fec-ie/H4NY22085/2026-itemized.json": "2574bd0801ea05e8a3553225740f858232ec678228884f619359239abab3ab0a",
+    "data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json": "faccf341b7474956f57fb071455b3c23459b31a0047fb1223004defcc308cab9",
+    "data/caches/pfd-cache/fec-ie/committees/C00350991.json": "079c52cf53099d2b1a1f6ba5dc3766545978f575002dd6bf7643777169540d51",
+    "data/caches/pfd-cache/fec-ie/committees/C00483693.json": "c1b4209384377b97787b144ac58c5be276c28d229140ed2e5e19df02aa6b4c89",
+    "data/caches/pfd-cache/fec-ie/committees/C00489799.json": "d3a4ecc01053f6642a2c3046784571565c576c989347d8ef0e2b6841e34eb713",
+    "data/caches/pfd-cache/fec-ie/committees/C00606962.json": "8e169de01e4a9408077b447c3e8f4437260b48103167ade2c6faad7ae25ea992",
+    "data/caches/pfd-cache/index/2023FD.xml": "60e5dcf86ec483f428a371abbe7894f72124fc03d3e5b6351507b40ec8f8c10d",
+    "data/caches/pfd-cache/index/2024FD.xml": "99576a8c58e100fc35e14af597b184f0421650cf6de1e11379a784189d5c5f9e",
+    "data/caches/pfd-cache/index/2025FD.xml": "0b0b0cd2b288938a00b38bcee4f1c5f7686139a32920e2e9c38a7291844c0814",
+    "data/caches/pfd-cache/index/2026FD.xml": "3d010744d0db9b91a1d8f8132c43c3c2567c5a5b16c100648f5f99e9ff3217d9",
+    "pipeline/artifacts/john-w-mannion.theme-gaps.json": "223361c1ba692f9f61256eacfb8c2ae19de1bc577e55a7d7ac0bbb2c2f051a0d"
+  },
+  "equal": true
+}

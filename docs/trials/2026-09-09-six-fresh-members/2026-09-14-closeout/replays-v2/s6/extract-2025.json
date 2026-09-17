@@ -1,0 +1,22 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "skills/pfd-fetcher/extract.ts",
+    "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/caches/pfd-cache/2025"
+  ],
+  "started": "2026-09-17T00:19:54Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/caches",
+  "dbBefore": "18045d40e3a6fd8bd67b47c0c687f0d666926c3bf12422725033f43588cda224",
+  "walBefore": null,
+  "exit": 0,
+  "output": "\nParsed 0 PTR(s) \u2192 0 transactions; skipped 0 non-PTR; 0 formatting hold(s); 0 errors\n",
+  "dbAfter": "18045d40e3a6fd8bd67b47c0c687f0d666926c3bf12422725033f43588cda224",
+  "finished": "2026-09-17T00:19:55Z",
+  "walAfter": null
+}

@@ -1,0 +1,132 @@
+[
+  {
+    "path": "data/caches/legislators-cache/legislators-current.yaml",
+    "sha256": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2",
+    "bytes": 1081081
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json",
+    "sha256": "faccf341b7474956f57fb071455b3c23459b31a0047fb1223004defcc308cab9",
+    "bytes": 10055
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/S8MN00578/2026-funders3.json",
+    "sha256": "7a78d8b3d40c53ac9e42d577ae19ee50aced00a90f5dc80afbe3fac3e81b3f20",
+    "bytes": 8248
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/S8MN00578/2026-itemized.json",
+    "sha256": "f9020b5280f29b49e192e0bdc7d26f3fba68307a68650fb11597b3e8dd15c696",
+    "bytes": 1233
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/committees/C00004036.json",
+    "sha256": "c3ec4e3f93d52b2822c4b60ce3de4f5cd8ea1ae7a735b371c37ff2c5e1e8a2d1",
+    "bytes": 92
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/committees/C00489799.json",
+    "sha256": "d3a4ecc01053f6642a2c3046784571565c576c989347d8ef0e2b6841e34eb713",
+    "bytes": 106
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/committees/C00684530.json",
+    "sha256": "d3a4ecc01053f6642a2c3046784571565c576c989347d8ef0e2b6841e34eb713",
+    "bytes": 106
+  },
+  {
+    "path": "data/caches/senate-ptr-cache/2023/tina-smith-7c840533-d541-42ab-b8ca-361a1be272d2.json",
+    "sha256": "bbdfcef06d10869063cb2ff1b478bc7c923656b4baf90ee7bcd6481a7fb369e4",
+    "bytes": 1299
+  },
+  {
+    "path": "data/caches/senate-ptr-cache/2023/tina-smith-de3cd462-f294-4333-a9b3-cccd64e711b2.json",
+    "sha256": "53602802e3d6b6bf1deecc1a767a02aa70a0ea2ef6f8e85652f1041df9a6a631",
+    "bytes": 1253
+  },
+  {
+    "path": "data/caches/senate-ptr-cache/2024/tina-smith-c337b418-b154-457a-9fd1-147b2dbcb151.json",
+    "sha256": "96a775246985fbe8f7f95688ad269a621dcf2988e07a83a538ae2328133899e6",
+    "bytes": 641
+  },
+  {
+    "path": "data/caches/senate-ptr-cache/2024/tina-smith-cf08c60c-6c0f-45ac-b8e9-3ca4c088e705.json",
+    "sha256": "92dba7e7cbd50d08a3b7f00c08d4c8bac35881a85727f0ed6a8e77826e036019",
+    "bytes": 840
+  },
+  {
+    "path": "data/caches/senate-ptr-cache/2025/tina-smith-82093483-e915-4a5d-bb4b-e40431d79f99.json",
+    "sha256": "f3cefd75a91487e5efb56559d33c54a66596c6a9e449d76e514c19eb1902e224",
+    "bytes": 592
+  },
+  {
+    "path": "data/caches/senate-ptr-cache/2025/tina-smith-ec33423d-b244-4bc3-a96f-da77436cda11.json",
+    "sha256": "a78817725a6a2bb65e9bc6f28f80c8c4a2ceb77e8cc1193b652ee56c99d5959f",
+    "bytes": 836
+  },
+  {
+    "path": "data/caches/senate-ptr-cache/2026/tina-smith-3f315067-5f69-42b3-b32d-063ce735957b.json",
+    "sha256": "f27c945c6bebaa15f5a9c6e7c009e0445d8f8cfd74ae8a32f03e5811028b3aeb",
+    "bytes": 1386
+  },
+  {
+    "path": "data/caches/senate-ptr-cache/2026/tina-smith-5a00d807-84f1-409b-9cb0-566e59553e38.json",
+    "sha256": "81830f1f628ddf8d023fb95ef75394650240f5a72a5a345b1ba8f3dedeaa77f1",
+    "bytes": 840
+  },
+  {
+    "path": "data/caches/senate-ptr-cache/2026/tina-smith-a8f2bab8-0feb-49cf-b80f-9826cb4a7a4c.json",
+    "sha256": "48da0694d0fab43667f11659618c32d0ac218331bd23ba85da352982d30c074f",
+    "bytes": 916
+  },
+  {
+    "path": "data/caches/senate-ptr-cache/_search-receipts/S001203.json",
+    "sha256": "46b736510320fc315498c518c459a360ab3e390acd9a0d2440109c827e4f3434",
+    "bytes": 724
+  },
+  {
+    "path": "pipeline/artifacts/tina-smith.theme-gaps.json",
+    "sha256": "62d050e5edf191c7136b69c038a93666d19a97fa350a534348175e0a71cbbc80",
+    "bytes": 6078
+  },
+  {
+    "path": "pipeline/task-1789548354062-c9e76e09/code-checker.json",
+    "sha256": "99baa8773699c99a668e6c10efa0dad80a3f5bd7382a2503cf90284f86ce584d",
+    "bytes": 236
+  },
+  {
+    "path": "pipeline/task-1789548354062-c9e76e09/data-checker.json",
+    "sha256": "278114aa648ca43fc6cdbe0f129285dd89a7fb33cbfd6213e6f7ff5e927b4675",
+    "bytes": 208
+  },
+  {
+    "path": "pipeline/task-1789548354062-c9e76e09/final-review.json",
+    "sha256": "fe2ea667214c181616c845a2c6f8882649237b3d2330b3ef4dadd71a7c310eb6",
+    "bytes": 576
+  },
+  {
+    "path": "pipeline/task-1789548354062-c9e76e09/predictor.json",
+    "sha256": "d29343bac7a2285e7b07bda615dc9df6ed8157acfd60988109d0086a348c80f3",
+    "bytes": 2366
+  },
+  {
+    "path": "pipeline/task-1789548354062-c9e76e09/researcher.json",
+    "sha256": "121ba0de7c08788d9049135cf6ab2dd5ffd10ed387e025fabfe9ac6808a623b6",
+    "bytes": 758326
+  },
+  {
+    "path": "pipeline/task-1789548354062-c9e76e09/state.json",
+    "sha256": "b3c8ffee1195c29b8a031e46160c3da9a4835a9e72ab9edabc6764455be3e6ad",
+    "bytes": 2038
+  },
+  {
+    "path": "pipeline/task-1789548354062-c9e76e09/summarizer.json",
+    "sha256": "7c41ee628835465bf327e990d695909f5a4ffc1ef4ec5ebc71160867a52874c2",
+    "bytes": 2656
+  },
+  {
+    "path": "pipeline/task-1789548354062-c9e76e09/trade-analyst.json",
+    "sha256": "933de66f0615af820a34071aaf65807e14f283445e4cb8c9e0833f778dcd03a1",
+    "bytes": 309
+  }
+]

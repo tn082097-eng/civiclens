@@ -1,0 +1,80 @@
+{
+  "recordedAt": "2026-09-17T00:41:29.025Z",
+  "phase": "before evidence commit",
+  "candidate": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "centralDb": "cc752c5cb51a8084506c6fb04d61f175969c4fc179825a77dcae18d640619bce",
+  "productionDb": "a766c8917a0e6b42ddc488758eb0b1a66abb37d24c873a74b4cc9d6fd7e4a38b",
+  "registrySha256": "f9037353bce052e9393be426cfec09997b411462fa5956497194da153fb05274",
+  "strata": [
+    {
+      "stratum": 1,
+      "worktree": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s1-tina-smith",
+      "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+      "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/",
+      "dbSha256": "3fbf0882eeb420d5b274bee5e48a7cb216b53ca3aca1fa8bb2ee05f5d87a5322",
+      "walSha256": null,
+      "finalAudit": "docs/trials/2026-09-09-six-fresh-members/2026-09-14-closeout/replays-v2/s1/db-audit-complete.json",
+      "crossMemberRows": 0,
+      "parkedTimingRows": 0
+    },
+    {
+      "stratum": 2,
+      "worktree": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion",
+      "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+      "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/",
+      "dbSha256": "13ee6d160774dbf4dd0b7dc398dfd31b4330ca58319f8c3a4d15914b77e7be06",
+      "walSha256": null,
+      "finalAudit": "docs/trials/2026-09-09-six-fresh-members/2026-09-14-closeout/replays-v2/s2/db-audit-complete.json",
+      "crossMemberRows": 0,
+      "parkedTimingRows": 0
+    },
+    {
+      "stratum": 3,
+      "worktree": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields",
+      "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+      "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/",
+      "dbSha256": "6d0218d9722fc3351a512b100ad85ffba1060067fbdf4d803b434269e224e1da",
+      "walSha256": null,
+      "finalAudit": "docs/trials/2026-09-09-six-fresh-members/2026-09-14-closeout/replays-v2/s3/db-audit-complete.json",
+      "crossMemberRows": 0,
+      "parkedTimingRows": 0
+    },
+    {
+      "stratum": 4,
+      "worktree": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen",
+      "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+      "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/",
+      "dbSha256": "f52913fad84851bd7ee328ba43761dd5ed2aef18441e93b81321cf8275c62441",
+      "walSha256": null,
+      "finalAudit": "docs/trials/2026-09-09-six-fresh-members/2026-09-14-closeout/replays-v2/s4/db-audit-complete.json",
+      "crossMemberRows": 0,
+      "parkedTimingRows": 0
+    },
+    {
+      "stratum": 5,
+      "worktree": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham",
+      "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+      "gitStatus": " M names.txt\n?? node_modules\n?? trial-evidence/\n?? trial-vault/",
+      "dbSha256": "b79e9cf018e70f883a807ba90903554c102880c5e08a3a1d8fc57ac421fb4554",
+      "walSha256": null,
+      "finalAudit": "docs/trials/2026-09-09-six-fresh-members/2026-09-14-closeout/replays-v2/s5/db-audit-final.json",
+      "crossMemberRows": 0,
+      "parkedTimingRows": 0
+    },
+    {
+      "stratum": 6,
+      "worktree": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison",
+      "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+      "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/",
+      "dbSha256": "3cb41b9fa5d74307d38da95326959a8b6078087802efe119af433128a4938e8b",
+      "walSha256": null,
+      "finalAudit": "docs/trials/2026-09-09-six-fresh-members/2026-09-14-closeout/replays-v2/s6/db-audit-final.json",
+      "crossMemberRows": 0,
+      "parkedTimingRows": 0
+    }
+  ],
+  "centralDirtyState": " M docs/prompts/bulk-download-legislators-and-house-ptrs.md\n M docs/trials/2026-09-06/civiclens-completion-plan.md\n M docs/trials/2026-09-08-run-any-member/plan.md\n M docs/trials/2026-09-09-six-fresh-members/final-certification-review.md\n?? docs/trials/2026-09-09-six-fresh-members/2026-09-14-closeout/replays-v2/",
+  "outcome": "NOT COMPLETE",
+  "replayWriters": "all completed; no process lease remains",
+  "postFreezeDecision": "does-not-invalidate implementation: only trial evidence and external verification orchestration changed; no source code, acceptance rules, selections, or pipeline model changes"
+}

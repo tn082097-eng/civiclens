@@ -1,0 +1,26 @@
+{
+  "stratum": 3,
+  "member": "Cleo Fields",
+  "bioguide": "F000110",
+  "stage": "bills (--load-bills --bioguide F000110 --api-pass)",
+  "outcome": "failed",
+  "classification": "external source unavailability, not an implementation defect",
+  "attempts": [
+    {"label": "bills", "exit": 1, "note": "Pass 1 regex backfill 391 filled/309 unparseable/700 scanned; Pass 2 GovTrack API 50 calls, 49 resolved, then Fatal: fetch failed"},
+    {"label": "bills-rerun-1", "exit": 1, "note": "single authorized manual rerun, unchanged member/inputs/acceptance rule; Pass 1 0 filled/254 unparseable/254 scanned; Pass 2 Fatal: fetch failed"}
+  ],
+  "rerunPolicy": "exactly one manual rerun used; no ad hoc retry loop added; no acceptance rule, member, or input changed",
+  "dbIntegrity": {
+    "dbShaBeforeAndAfterBothAttempts": "e2b4c3cfdd4df11eeb85a26b5a881a89620ac16ed3cdf289c27488b847582c39",
+    "note": "main DB file hash unchanged across both failed attempts; loader failed closed"
+  },
+  "readOnlyReachabilityProbe": {
+    "https://www.govtrack.us/": "HTTP 200 in 0.271s",
+    "https://www.govtrack.us/api/v2/vote?limit=1": "no response, curl code 000, timed out at 25s",
+    "https://api.congress.gov/": "HTTP 200",
+    "interpretation": "GovTrack site is up but its /api/v2 endpoint is unreachable; the failure is source-side. Congress.gov is reachable, so this is not local network loss."
+  },
+  "notASourceBoundLimitation": "A transient external failure is not a source-backed limitation and cannot close this stratum. Stratum 3 is NOT a pass and NOT verified-empty.",
+  "artifactsPreserved": ["s3/bills.json", "s3/bills-rerun-1.json"],
+  "stageNotReached": ["extract-*", "house-pfd", "fec-ie", "patterns", "theme-gaps", "baseline-after", "corpus", "typecheck", "tests", "renders", "checkpoint", "db-audit-complete", "control-after-serial"]
+}

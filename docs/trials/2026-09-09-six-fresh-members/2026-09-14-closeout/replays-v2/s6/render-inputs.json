@@ -1,0 +1,31 @@
+{
+  "before": {
+    "data/caches/legislators-cache/legislators-current.yaml": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2",
+    "data/caches/pfd-cache/2023/burlison-eric-8219414.hold.json": "990e4c4bbba5f6f3aeea9eb36acd0557c47820d2e6cd00eb844c45fb92f259db",
+    "data/caches/pfd-cache/2023/burlison-eric-8219414.pdf": "517bdde3ed131ecf67631098857fb08c3135fe38f7c6c39e5902fafb46a60f50",
+    "data/caches/pfd-cache/2023/burlison-eric-8219414.txt": "7060584c3e59f0b2f12f34aa0b40faadf4aa5790a0459f3319852bcd63262cbb",
+    "data/caches/pfd-cache/fec-ie/H2MO07143/2026-funders3.json": "13430c0b8e00fd3a7e523b3da6d2abcaee0bfd0ac6908f4de1c4166dd6e4b25e",
+    "data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json": "faccf341b7474956f57fb071455b3c23459b31a0047fb1223004defcc308cab9",
+    "data/caches/pfd-cache/fec-ie/committees/C00552851.json": "436875f59a14b8386b1d0ff078435328868bccaa06164f669a024e1c037845b0",
+    "data/caches/pfd-cache/index/2023FD.xml": "60e5dcf86ec483f428a371abbe7894f72124fc03d3e5b6351507b40ec8f8c10d",
+    "data/caches/pfd-cache/index/2024FD.xml": "99576a8c58e100fc35e14af597b184f0421650cf6de1e11379a784189d5c5f9e",
+    "data/caches/pfd-cache/index/2025FD.xml": "0b0b0cd2b288938a00b38bcee4f1c5f7686139a32920e2e9c38a7291844c0814",
+    "data/caches/pfd-cache/index/2026FD.xml": "3d010744d0db9b91a1d8f8132c43c3c2567c5a5b16c100648f5f99e9ff3217d9",
+    "pipeline/artifacts/eric-burlison.theme-gaps.json": "1972f8a96247364e2fb424c8714370db66015d3d67a38873e799ffbfb6ccd0de"
+  },
+  "after": {
+    "data/caches/legislators-cache/legislators-current.yaml": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2",
+    "data/caches/pfd-cache/2023/burlison-eric-8219414.hold.json": "990e4c4bbba5f6f3aeea9eb36acd0557c47820d2e6cd00eb844c45fb92f259db",
+    "data/caches/pfd-cache/2023/burlison-eric-8219414.pdf": "517bdde3ed131ecf67631098857fb08c3135fe38f7c6c39e5902fafb46a60f50",
+    "data/caches/pfd-cache/2023/burlison-eric-8219414.txt": "7060584c3e59f0b2f12f34aa0b40faadf4aa5790a0459f3319852bcd63262cbb",
+    "data/caches/pfd-cache/fec-ie/H2MO07143/2026-funders3.json": "13430c0b8e00fd3a7e523b3da6d2abcaee0bfd0ac6908f4de1c4166dd6e4b25e",
+    "data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json": "faccf341b7474956f57fb071455b3c23459b31a0047fb1223004defcc308cab9",
+    "data/caches/pfd-cache/fec-ie/committees/C00552851.json": "436875f59a14b8386b1d0ff078435328868bccaa06164f669a024e1c037845b0",
+    "data/caches/pfd-cache/index/2023FD.xml": "60e5dcf86ec483f428a371abbe7894f72124fc03d3e5b6351507b40ec8f8c10d",
+    "data/caches/pfd-cache/index/2024FD.xml": "99576a8c58e100fc35e14af597b184f0421650cf6de1e11379a784189d5c5f9e",
+    "data/caches/pfd-cache/index/2025FD.xml": "0b0b0cd2b288938a00b38bcee4f1c5f7686139a32920e2e9c38a7291844c0814",
+    "data/caches/pfd-cache/index/2026FD.xml": "3d010744d0db9b91a1d8f8132c43c3c2567c5a5b16c100648f5f99e9ff3217d9",
+    "pipeline/artifacts/eric-burlison.theme-gaps.json": "1972f8a96247364e2fb424c8714370db66015d3d67a38873e799ffbfb6ccd0de"
+  },
+  "equal": true
+}

@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "pipeline/score-theme-gaps.ts",
+    "--member",
+    "eric-burlison"
+  ],
+  "started": "2026-09-17T00:20:24Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/caches",
+  "dbBefore": "18045d40e3a6fd8bd67b47c0c687f0d666926c3bf12422725033f43588cda224",
+  "walBefore": "075beb6e2aa6030b1dd3fe32f76e7e17f8fdfee9d07a105bf3a5454614dbf41a",
+  "exit": 0,
+  "output": "eric-burlison [insufficient-data]: trades=0 receipts=0 -> pipeline/artifacts/eric-burlison.theme-gaps.json\n",
+  "dbAfter": "e6b999f76d7667566a328730be715fe76d015b8a7f97b526aeae59fcced37f22",
+  "finished": "2026-09-17T00:20:25Z",
+  "walAfter": null
+}

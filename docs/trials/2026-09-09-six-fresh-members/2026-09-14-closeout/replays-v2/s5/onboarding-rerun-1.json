@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "agents/pipeline.ts",
+    "--append",
+    "Darline Graham"
+  ],
+  "started": "2026-09-17T00:15:38Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham/data/caches",
+  "dbBefore": "a766c8917a0e6b42ddc488758eb0b1a66abb37d24c873a74b4cc9d6fd7e4a38b",
+  "walBefore": "9e4c55c14a45cdcb48c7c94b20d47070f246054c6d977577c42baaa29f68b145",
+  "exit": 0,
+  "output": "  \u001b[32m\u2713\u001b[0m  \u001b[1mnames.txt         \u001b[0m  \u001b[2m\"Darline Graham\" already present \u2014 skipping append\u001b[0m\n\n\u001b[36m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u001b[0m\n\u001b[1m\u001b[36m  CivicLens Pipeline \u2014 Darline Graham\u001b[0m\n\u001b[36m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u001b[0m\n\n  \u001b[2mTask ID:\u001b[0m task-1789604138913-41f1f4a8\n  \u001b[2mSummarizer model:\u001b[0m claude-sonnet-4-6\n\n  \u001b[36m\u27f3\u001b[0m  \u001b[1mResearcher        \u001b[0m  \u001b[2mfetching live data for Darline Graham\u2026\u001b[0m\n  \u001b[33m\u26a0\u001b[0m  \u001b[1mResearcher        \u001b[0m  \u001b[2mcommittee-membership: no committee assignments for G000608\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mResearcher        \u001b[0m  \u001b[2mcongress.gov: 1 bills, 41 votes, 80 donors\u001b[0m\n  \u001b[36m\u27f3\u001b[0m  \u001b[1mData Checker      \u001b[0m  \u001b[2mvalidating schema\u2026\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mData Checker      \u001b[0m  \u001b[2mscore 1.00 \u2014 0 issue(s)\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mPredictor         \u001b[0m  \u001b[2m5 models, best=always-yes (Brier 0.0909)\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mTrade Analyst     \u001b[0m  \u001b[2mno discretionary trades before votes \u2014 N/A\u001b[0m\n  \u001b[36m\u27f3\u001b[0m  \u001b[1mSummarizer        \u001b[0m  \u001b[2mdrafting summary via claude-sonnet-4-6 (contract)\u2026\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mSummarizer        \u001b[0m  \u001b[2mbio + 4 key facts, 2 unverified dropped\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mCode Checker      \u001b[0m  \u001b[2mscore 1.00\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mFinal Reviewer    \u001b[0m  \u001b[2mAPPROVED \u2014 ready to apply\u001b[0m\n\n\u001b[36m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u001b[0m\n  \u001b[1mDecision:\u001b[0m \u001b[32mAPPROVED\u001b[0m\n  \u001b[2mOutput:\u001b[0m ~/Developer/civiclens/pipeline/task-1789604138913-41f1f4a8/\n  \u001b[2mFiles:\u001b[0m researcher.json, data-checker.json, predictor.json, trade-analyst.json, summarizer.json, code-checker.json, final-review.json\n\n  \u001b[36mRebuild site:\u001b[0m \u001b[2mnpx tsx render/build.ts\u001b[0m\n  \u001b[32m\u2713\u001b[0m  \u001b[1mVault             \u001b[0m  \u001b[2mregenerated \u2014 generated:   2026-09-17\u001b[0m\n\n\n  \u001b[36m\u203a\u001b[0m  \u001b[1mIn DuckDB.\u001b[0m \u001b[2mRebuild site: npx tsx render/build.ts\u001b[0m\n",
+  "dbAfter": "eb0603d03ef09b6bc81bbda94825ef628c26f4a031b49d4acc577a745e5d671d",
+  "finished": "2026-09-17T00:16:44Z",
+  "walAfter": null
+}

@@ -1,0 +1,25 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "agents/pipeline.ts",
+    "--load-pfd",
+    "2023,2024,2025,2026",
+    "--bioguide",
+    "F000110"
+  ],
+  "started": "2026-09-16T15:08:35Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields/data/caches",
+  "dbBefore": "e2b4c3cfdd4df11eeb85a26b5a881a89620ac16ed3cdf289c27488b847582c39",
+  "walBefore": "97613f44eea7e36aa1f323f1c7dc35d3692614f411324dd8fcb6c39ca7a044b6",
+  "exit": 0,
+  "output": "\nLoading PFDs for 2023\u2026\n\nVerified empty: the authoritative House index contains zero target PTR filings. DB unchanged.\n\n\nLoading PFDs for 2024\u2026\n\nVerified empty: the authoritative House index contains zero target PTR filings. DB unchanged.\n\n\nLoading PFDs for 2025\u2026\n\nFiler                        Member               Conf  Method               Tx\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nCleo Fields (LA06)           cleo-fields          1.00  exact_state_lastname 202\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nTotal: 1 filers, 10 filings, 202 transactions, 0 unmatched\n\n\nLoading PFDs for 2026\u2026\n\nFiler                        Member               Conf  Method               Tx\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nCleo Fields (LA06)           cleo-fields          1.00  exact_state_lastname  31\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nTotal: 1 filers, 11 filings, 31 transactions, 0 unmatched\n\n\nGrand total across 4 years: 233 transactions, 0 unmatched, 0 filings withheld.\n\n",
+  "dbAfter": "e2b4c3cfdd4df11eeb85a26b5a881a89620ac16ed3cdf289c27488b847582c39",
+  "finished": "2026-09-16T15:08:36Z",
+  "walAfter": "d37452f05ae47a1a6946147d44179804b7bcc7e778ed3d116b426890659e67fc"
+}
