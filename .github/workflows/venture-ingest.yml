@@ -33,14 +33,21 @@ jobs:
       - name: Ingest live extract
         run: npx --yes tsx@4.7.0 ventures/govcon/ingest.ts --out ventures/govcon/data
 
+      - name: Build static site
+        run: npx --yes tsx@4.7.0 ventures/govcon/build-site.ts --data ventures/govcon/data --out ventures/govcon/site --origin "${SITE_ORIGIN:-https://example.github.io}"
+
       - name: Report output size
         run: |
-          ls -la ventures/govcon/data
-          echo "--- gzipped ---"
-          gzip -9 -c ventures/govcon/data/opportunities.json | wc -c
+          echo "--- data ---"; ls -la ventures/govcon/data
+          echo "--- site ---"; du -sh ventures/govcon/site
+          echo "pages: $(find ventures/govcon/site -name '*.html' | wc -l)"
+          echo "search-index gz: $(gzip -9 -c ventures/govcon/site/search-index.json | wc -c) bytes"
+          echo "home gz: $(gzip -9 -c ventures/govcon/site/index.html | wc -c) bytes"
+          echo "--- sample of generated routes ---"
+          find ventures/govcon/site -name index.html | head -25
 
       - uses: actions/upload-artifact@v4
         with:
-          name: govcon-data
-          path: ventures/govcon/data/
+          name: govcon-site
+          path: ventures/govcon/site/
           retention-days: 5
