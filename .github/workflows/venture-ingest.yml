@@ -1,0 +1,46 @@
+# Ingests the SAM.gov public extract and reports what it actually contains.
+#
+# Runs on a runner because the dev container has no egress. Uploads the
+# resulting JSON as an artifact so the site design can be based on real volume
+# rather than a guess. Publishes nothing.
+
+name: venture-ingest
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/revenue-opportunity-research-kuc8fm]
+    paths:
+      - 'ventures/govcon/**'
+      - '.github/workflows/venture-ingest.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Unit tests
+        run: npx --yes tsx@4.7.0 --test ventures/govcon/*.test.ts
+
+      - name: Ingest live extract
+        run: npx --yes tsx@4.7.0 ventures/govcon/ingest.ts --out ventures/govcon/data
+
+      - name: Report output size
+        run: |
+          ls -la ventures/govcon/data
+          echo "--- gzipped ---"
+          gzip -9 -c ventures/govcon/data/opportunities.json | wc -c
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: govcon-data
+          path: ventures/govcon/data/
+          retention-days: 5
