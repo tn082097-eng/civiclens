@@ -54,3 +54,7 @@ graphify-out/
 
 # Local Claude Code project config/skills — personal tooling, not part of CivicLens
 .claude/
+
+# ventures: generated data is rebuilt by CI, never committed
+ventures/govcon/data/
+ventures/govcon/site/

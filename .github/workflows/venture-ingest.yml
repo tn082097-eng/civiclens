@@ -1,0 +1,53 @@
+# Ingests the SAM.gov public extract and reports what it actually contains.
+#
+# Runs on a runner because the dev container has no egress. Uploads the
+# resulting JSON as an artifact so the site design can be based on real volume
+# rather than a guess. Publishes nothing.
+
+name: venture-ingest
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/revenue-opportunity-research-kuc8fm]
+    paths:
+      - 'ventures/govcon/**'
+      - '.github/workflows/venture-ingest.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Unit tests
+        run: npx --yes tsx@4.7.0 --test ventures/govcon/*.test.ts
+
+      - name: Ingest live extract
+        run: npx --yes tsx@4.7.0 ventures/govcon/ingest.ts --out ventures/govcon/data
+
+      - name: Build static site
+        run: npx --yes tsx@4.7.0 ventures/govcon/build-site.ts --data ventures/govcon/data --out ventures/govcon/site --origin "${SITE_ORIGIN:-https://example.github.io}"
+
+      - name: Report output size
+        run: |
+          echo "--- data ---"; ls -la ventures/govcon/data
+          echo "--- site ---"; du -sh ventures/govcon/site
+          echo "pages: $(find ventures/govcon/site -name '*.html' | wc -l)"
+          echo "search-index gz: $(gzip -9 -c ventures/govcon/site/search-index.json | wc -c) bytes"
+          echo "home gz: $(gzip -9 -c ventures/govcon/site/index.html | wc -c) bytes"
+          echo "--- sample of generated routes ---"
+          find ventures/govcon/site -name index.html -print | sed -n '1,25p'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: govcon-site
+          path: ventures/govcon/site/
+          retention-days: 5

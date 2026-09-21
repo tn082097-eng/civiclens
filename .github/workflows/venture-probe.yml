@@ -1,0 +1,74 @@
+# Data-source probe for the ventures/ GovCon experiment.
+#
+# WHY THIS EXISTS: the dev container has no outbound network except npm and
+# GitHub, so the only way to learn the real shape of a public dataset is to ask
+# a runner. This workflow makes no changes and publishes nothing — it curls a
+# list of candidate public endpoints and prints status, size, type and a small
+# byte range of each, so the ingestion design is based on observed responses
+# rather than assumptions.
+#
+# Delete once ventures/ ingestion is settled.
+
+name: venture-probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/revenue-opportunity-research-kuc8fm]
+    paths: ['.github/workflows/venture-probe.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe candidate public data sources
+        run: |
+          set +e
+          TODAY=$(date -u +%Y%m%d)
+          YDAY=$(date -u -d 'yesterday' +%Y%m%d)
+
+          probe() {
+            local label="$1" url="$2"
+            echo "=============================================================="
+            echo "### $label"
+            echo "URL: $url"
+            # -r asks for only the first 1500 bytes so a multi-GB CSV costs nothing.
+            curl -sSL -r 0-1500 \
+                 -w '\n--- status=%{http_code} type=%{content_type} len=%{size_download} final=%{url_effective}\n' \
+                 -o /tmp/body.txt "$url" 2>/tmp/err.txt
+            echo "curl-exit=$?"
+            [ -s /tmp/err.txt ] && echo "stderr: $(head -c 300 /tmp/err.txt)"
+            echo "--- first bytes ---"
+            head -c 1200 /tmp/body.txt | tr -d '\000'
+            echo
+          }
+
+          echo "##### SAM.gov contract opportunities — public bulk extracts #####"
+          probe "SAM datagov FullCSV" \
+            "https://sam.gov/api/prod/fileextractservices/v1/api/download/Contract%20Opportunities/datagov/ContractOpportunitiesFullCSV.csv?privacy=Public"
+          probe "SAM Archived FY25 CSV" \
+            "https://sam.gov/api/prod/fileextractservices/v1/api/download/Contract%20Opportunities/Archived%20Data/FY2025_archived_opportunities.csv?privacy=Public"
+          probe "SAM falextracts daily $YDAY" \
+            "https://falextracts.s3.amazonaws.com/Contract%20Opportunities/Daily%20Archive/opportunities_$YDAY.json"
+
+          echo "##### SAM.gov API (expect auth failure — documents the 10/day limit) #####"
+          probe "SAM opportunities v2 (no key)" \
+            "https://api.sam.gov/opportunities/v2/search?limit=1&postedFrom=01/01/2026&postedTo=01/02/2026"
+
+          echo "##### USAspending (open, no key) #####"
+          probe "USAspending toptier agencies" \
+            "https://api.usaspending.gov/api/v2/references/toptier_agencies/"
+
+          echo "##### data.gov catalog (discovery — finds the real extract URLs) #####"
+          probe "data.gov package_search" \
+            "https://catalog.data.gov/api/3/action/package_search?q=contract+opportunities&rows=3"
+
+          echo "##### Grants.gov public XML extract (fallback candidate D) #####"
+          probe "Grants.gov extract $TODAY" \
+            "https://prod-grants-gov-chatbot.s3.amazonaws.com/extracts/GrantsDBExtract${TODAY}v2.zip"
+
+          echo "=============================================================="
+          echo "probe complete"

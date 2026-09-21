@@ -1,0 +1,66 @@
+# Daily build + deploy for SetAside.
+#
+# NOT ACTIVE IN THIS REPOSITORY. CivicLens's own Pages deployment is kept
+# deliberately dormant and manual by ADR 0002, and this venture must not take it
+# over. Copy this file to .github/workflows/deploy.yml in the repository that
+# actually hosts the site.
+#
+# Set the SITE_ORIGIN repository variable to the deployed origin
+# (e.g. https://<owner>.github.io/<repo>, or a custom domain) so canonical URLs
+# and the sitemap are correct. Without it the build still succeeds but emits
+# placeholder canonicals, which would hurt search.
+
+name: deploy
+
+on:
+  schedule:
+    # 09:20 UTC daily — after SAM.gov refreshes the nightly extract.
+    - cron: '20 9 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Guards the deploy: a parser or schema regression fails here, before
+      # anything reaches the live site.
+      - name: Unit tests
+        run: npx --yes tsx@4.7.0 --test ventures/govcon/*.test.ts
+
+      - name: Ingest
+        run: npx --yes tsx@4.7.0 ventures/govcon/ingest.ts --out ventures/govcon/data
+
+      - name: Build
+        env:
+          SITE_ORIGIN: ${{ vars.SITE_ORIGIN }}
+        run: |
+          npx --yes tsx@4.7.0 ventures/govcon/build-site.ts \
+            --data ventures/govcon/data \
+            --out ventures/govcon/site \
+            --origin "${SITE_ORIGIN:-https://example.github.io}"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ventures/govcon/site/
+      - id: deployment
+        uses: actions/deploy-pages@v4
