@@ -44,7 +44,7 @@ jobs:
           echo "search-index gz: $(gzip -9 -c ventures/govcon/site/search-index.json | wc -c) bytes"
           echo "home gz: $(gzip -9 -c ventures/govcon/site/index.html | wc -c) bytes"
           echo "--- sample of generated routes ---"
-          find ventures/govcon/site -name index.html | head -25
+          find ventures/govcon/site -name index.html -print | sed -n '1,25p'
 
       - uses: actions/upload-artifact@v4
         with:
