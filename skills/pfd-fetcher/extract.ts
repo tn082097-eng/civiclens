@@ -103,28 +103,269 @@ function isPTR(text: string): boolean {
   return /Periodic Transaction Report/.test(text) && !/Filing Type:\s*Annual/.test(text);
 }
 
+// ─── OCR trigger ──────────────────────────────────────────────────────────────
+// `pdftotext` on a scanned PDF does not always return an empty string: ~5
+// cached filings carry 51–83 bytes of junk (stray glyphs, form feeds), which
+// is truthy, so the old `!text.trim()` test silently skipped OCR for them.
+
+/** Below this many non-whitespace characters a text layer is too thin to trust. */
+export const MIN_TEXT_LAYER_CHARS = 200;
+/** Below this many 3+-letter words a text layer has no usable structure. */
+export const MIN_TEXT_LAYER_WORDS = 20;
+
+/**
+ * True when a `pdftotext` result is too thin or structureless to parse and
+ * the PDF should be OCR'd instead. Conservative in the other direction: any
+ * real text-layer PTR runs to thousands of characters and hundreds of words,
+ * so it never trips either threshold.
+ */
+export function textLayerNeedsOcr(text: string): boolean {
+  const nonWs = text.replace(/\s+/g, '').length;
+  if (nonWs < MIN_TEXT_LAYER_CHARS) return true;
+  const words = text.match(/[A-Za-z]{3,}/g)?.length ?? 0;
+  return words < MIN_TEXT_LAYER_WORDS;
+}
+
+// ─── OCR page orientation ─────────────────────────────────────────────────────
+// The scanned PTRs are frequently rotated, and orientation is a property of
+// the page, not the file (docs/2026-07-28-pfd-ocr-rotation-finding.md).
+//
+// Angle convention: counter-clockwise quarter turns, the same convention as
+// PIL's `Image.rotate`, which the probes used. "+90" there is the direction
+// that made sideways scans readable; rotating the other way (-90 = 270 here)
+// produces MIRRORED text that looks almost plausible and is silently wrong.
+//
+// The finding doc records that `--psm 0` OSD is unreliable on this bilevel
+// corpus (one page reported 180°/"Cyrillic" at 0.20 confidence). So OSD only
+// proposes an angle: a low-confidence answer is ignored in favour of the
+// page-shape prior, and every angle is accepted only on keyword evidence in
+// the psm-6 output. Byte count is deliberately NOT a signal — mirrored output
+// measured larger than correct output on at least one page.
+
+export type QuarterTurn = 0 | 90 | 180 | 270;
+
+export interface OsdResult {
+  /** `Orientation in degrees:` — how far the page content is turned. */
+  orientation: QuarterTurn;
+  /** `Rotate:` — counter-clockwise turn that makes the page upright. */
+  rotate: QuarterTurn;
+  confidence: number;
+  script: string | null;
+  scriptConfidence: number | null;
+}
+
+const QUARTER_TURNS: readonly QuarterTurn[] = [0, 90, 180, 270];
+
+function asQuarterTurn(n: number): QuarterTurn | null {
+  return (QUARTER_TURNS as readonly number[]).includes(n) ? (n as QuarterTurn) : null;
+}
+
+/**
+ * Parse `tesseract <img> - --psm 0` output. Returns null when OSD produced no
+ * usable answer (e.g. "Too few characters"), so the caller falls back to the
+ * page-shape prior rather than to a default angle.
+ */
+export function parseOsd(out: string): OsdResult | null {
+  const num = (label: string): number | null => {
+    const m = out.match(new RegExp(`^\\s*${label}:\\s*(-?\\d+(?:\\.\\d+)?)\\s*$`, 'mi'));
+    return m ? Number(m[1]) : null;
+  };
+  const orientation = asQuarterTurn(num('Orientation in degrees') ?? NaN);
+  const rotate = asQuarterTurn(num('Rotate') ?? NaN);
+  const confidence = num('Orientation confidence');
+  if (orientation === null || rotate === null || confidence === null) return null;
+  return {
+    orientation,
+    rotate,
+    confidence,
+    script: out.match(/^\s*Script:\s*(\S+)\s*$/mi)?.[1] ?? null,
+    scriptConfidence: num('Script confidence'),
+  };
+}
+
+/**
+ * OSD answers below this are ignored. The only two measured answers on this
+ * corpus are 0.82 (plausible) and 0.20 (a wrong 180°), so this is a floor
+ * between them, not a calibrated value.
+ */
+export const OSD_MIN_CONFIDENCE = 0.5;
+
+export type OrientationSource = 'osd' | 'page-shape' | 'fallback';
+
+export interface RotationCandidate { angle: QuarterTurn; source: OrientationSource }
+
+/**
+ * Ordered angles to try for one rasterized page. Confident OSD first, then
+ * the page-shape prior from the page's own pixel dimensions (never `pdfinfo`,
+ * which can disagree with the page images), then the remaining angles.
+ *
+ * Shape prior, measured on cached McCaul/Khanna scans: landscape pixels ⇒ 0°,
+ * portrait pixels ⇒ 90°. It is evidence for those strata only, which is why
+ * it is a candidate to validate rather than a rule.
+ */
+export function rotationCandidates(
+  osd: OsdResult | null, width: number, height: number,
+): RotationCandidate[] {
+  const out: RotationCandidate[] = [];
+  const add = (angle: QuarterTurn, source: OrientationSource) => {
+    if (!out.some(c => c.angle === angle)) out.push({ angle, source });
+  };
+  if (osd && osd.confidence >= OSD_MIN_CONFIDENCE) add(osd.rotate, 'osd');
+  add(width > height ? 0 : 90, 'page-shape');
+  for (const a of QUARTER_TURNS) add(a, 'fallback');
+  return out;
+}
+
+/**
+ * PTR header phrases that only read correctly at the right angle. Loose
+ * spacing and one wildcard vowel absorb OCR noise (`Poriodic`).
+ */
+const ORIENTATION_KEYWORDS: readonly RegExp[] = [
+  /p.riodic\s*transaction\s*report/i,
+  /full\s*asset\s*name/i,
+  /amount\s*of\s*transaction/i,
+  /transaction\s*type/i,
+  /date\s*(?:of\s*)?transaction/i,
+];
+
+/** Number of distinct orientation keywords present in OCR output. */
+export function scoreOrientationKeywords(text: string): number {
+  return ORIENTATION_KEYWORDS.filter(re => re.test(text)).length;
+}
+
+/** Hits at which an angle is accepted without trying the rest. */
+export const ORIENTATION_EARLY_ACCEPT_HITS = 2;
+
+export interface OrientationAttempt extends RotationCandidate { keywordHits: number }
+
+export interface OrientationChoice extends OrientationAttempt {
+  /** False when no angle produced any keyword: the angle is a guess. */
+  validated: boolean;
+}
+
+/**
+ * Pick the angle from attempts made in candidate order: most keyword hits,
+ * ties going to the earlier (better-supported) candidate. With no hits
+ * anywhere the first candidate is kept and marked unvalidated — the page's
+ * text still flows to the parser, which will report it unresolved.
+ */
+export function pickOrientation(attempts: readonly OrientationAttempt[]): OrientationChoice {
+  if (attempts.length === 0) throw new Error('pickOrientation: no attempts');
+  let best = attempts[0];
+  for (const a of attempts) if (a.keywordHits > best.keywordHits) best = a;
+  return { ...best, validated: best.keywordHits > 0 };
+}
+
+/**
+ * Rotate a binary PGM (P5, 8-bit) by a counter-clockwise quarter turn.
+ * Pure TS because ImageMagick is not installed on the pipeline host.
+ */
+export function rotatePgm(pgm: Buffer, angle: QuarterTurn): Buffer {
+  const { width: w, height: h, maxval, offset } = parsePgmHeader(pgm);
+  if (angle === 0) return pgm;
+  const src = pgm.subarray(offset, offset + w * h);
+  if (src.length < w * h) throw new Error('rotatePgm: truncated pixel data');
+  const [nw, nh] = angle === 180 ? [w, h] : [h, w];
+  const dst = Buffer.alloc(nw * nh);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      let dx: number, dy: number;
+      if (angle === 90)       { dx = y;         dy = w - 1 - x; }
+      else if (angle === 180) { dx = w - 1 - x; dy = h - 1 - y; }
+      else                    { dx = h - 1 - y; dy = x; }
+      dst[dy * nw + dx] = src[y * w + x];
+    }
+  }
+  return Buffer.concat([Buffer.from(`P5\n${nw} ${nh}\n${maxval}\n`, 'ascii'), dst]);
+}
+
+export function parsePgmHeader(pgm: Buffer): { width: number; height: number; maxval: number; offset: number } {
+  let i = 0;
+  const token = (): string => {
+    for (;;) {
+      while (i < pgm.length && /\s/.test(String.fromCharCode(pgm[i]))) i++;
+      if (pgm[i] === 0x23) { while (i < pgm.length && pgm[i] !== 0x0a) i++; continue; } // '#' comment
+      break;
+    }
+    const start = i;
+    while (i < pgm.length && !/\s/.test(String.fromCharCode(pgm[i]))) i++;
+    return pgm.toString('ascii', start, i);
+  };
+  if (token() !== 'P5') throw new Error('parsePgmHeader: not a binary PGM (P5)');
+  const width = Number(token()), height = Number(token()), maxval = Number(token());
+  if (!(width > 0 && height > 0)) throw new Error('parsePgmHeader: bad dimensions');
+  if (!(maxval > 0 && maxval < 256)) throw new Error('parsePgmHeader: only 8-bit PGM supported');
+  return { width, height, maxval, offset: i + 1 }; // single whitespace byte precedes pixels
+}
+
+/** What was done to one page, written alongside the filing's extracted values. */
+export interface OcrPageRecord {
+  page: number;          // 1-based
+  width: number;         // rasterized pixels, before rotation
+  height: number;
+  osd: OsdResult | null;
+  angle: QuarterTurn;    // counter-clockwise turn actually applied
+  source: OrientationSource;
+  keywordHits: number;
+  validated: boolean;
+  anglesTried: QuarterTurn[];
+}
+
+export interface OcrResult { text: string; pages: OcrPageRecord[] }
+
 // ─── OCR fallback ─────────────────────────────────────────────────────────────
-// Used when pdftotext returns empty (scanned image PDFs).
-// Converts each page to a PPM via pdftoppm, runs tesseract, returns full text.
-export function ocrPdf(pdfPath: string, dpi = 250): string {
+// Used when the text layer is missing or junk (scanned image PDFs). Rasterizes
+// each page, detects its orientation, rotates it, then runs the psm-6 pass.
+//
+// 200 dpi matches the scans' native 200 ppi CCITT fax images; the old 250
+// upsampled a bilevel image, and the only configuration measured readable was
+// `-r 200` + rotation + psm 6.
+function tesseractStdout(args: string[]): string {
+  const r = spawnSync('tesseract', args, { encoding: 'utf-8', maxBuffer: 64 * 1024 * 1024 });
+  return r.status === 0 ? (r.stdout ?? '') : '';
+}
+
+export function ocrPdfDetailed(pdfPath: string, dpi = 200): OcrResult {
   const tmpDir = resolve(os.tmpdir(), `civiclens-ocr-${crypto.randomBytes(6).toString('hex')}`);
   mkdirSync(tmpDir, { recursive: true });
   try {
-    spawnSync('pdftoppm', ['-r', String(dpi), pdfPath, resolve(tmpDir, 'page')], { stdio: 'ignore' });
-    const pages = readdirSync(tmpDir).filter(f => f.endsWith('.ppm')).sort();
+    spawnSync('pdftoppm', ['-r', String(dpi), '-gray', pdfPath, resolve(tmpDir, 'page')], { stdio: 'ignore' });
+    const pageFiles = readdirSync(tmpDir).filter(f => f.endsWith('.pgm')).sort();
     const parts: string[] = [];
-    for (const page of pages) {
-      const imgPath = resolve(tmpDir, page);
-      const outBase = imgPath.replace(/\.ppm$/, '');
-      // psm 6 = uniform block of text — preserves column pipe structure better
-      spawnSync('tesseract', [imgPath, outBase, '--psm', '6'], { stdio: 'ignore' });
-      const txtPath = `${outBase}.txt`;
-      if (existsSync(txtPath)) parts.push(readFileSync(txtPath, 'utf-8'));
-    }
-    return parts.join('\n');
+    const pages: OcrPageRecord[] = [];
+    pageFiles.forEach((file, idx) => {
+      const imgPath = resolve(tmpDir, file);
+      const pgm = readFileSync(imgPath);
+      const { width, height } = parsePgmHeader(pgm);
+      const osd = parseOsd(tesseractStdout([imgPath, '-', '--psm', '0']));
+
+      const attempts: (OrientationAttempt & { text: string })[] = [];
+      for (const c of rotationCandidates(osd, width, height)) {
+        const rotPath = resolve(tmpDir, `rot-${c.angle}-${file}`);
+        writeFileSync(rotPath, rotatePgm(pgm, c.angle));
+        // psm 6 = uniform block of text — preserves column pipe structure better
+        const text = tesseractStdout([rotPath, '-', '--psm', '6']);
+        attempts.push({ ...c, keywordHits: scoreOrientationKeywords(text), text });
+        if (attempts.at(-1)!.keywordHits >= ORIENTATION_EARLY_ACCEPT_HITS) break;
+      }
+      const choice = pickOrientation(attempts);
+      parts.push(attempts.find(a => a.angle === choice.angle)!.text);
+      pages.push({
+        page: idx + 1, width, height, osd,
+        angle: choice.angle, source: choice.source,
+        keywordHits: choice.keywordHits, validated: choice.validated,
+        anglesTried: attempts.map(a => a.angle),
+      });
+    });
+    return { text: parts.join('\n'), pages };
   } finally {
     spawnSync('rm', ['-rf', tmpDir], { stdio: 'ignore' });
   }
+}
+
+/** Text-only wrapper kept for existing callers. */
+export function ocrPdf(pdfPath: string, dpi = 200): string {
+  return ocrPdfDetailed(pdfPath, dpi).text;
 }
 
 // ─── OCR-aware PTR parser ─────────────────────────────────────────────────────
@@ -635,6 +876,11 @@ export function extractPTR(text: string, authoritativeFilingId?: string): PTRRec
 
 // ─── CLI ──────────────────────────────────────────────────────────────────────
 
+/** `p1:90°/osd p2:0°/page-shape? …` — `?` marks an angle no keyword confirmed. */
+export function describeOcrPages(pages: readonly OcrPageRecord[]): string {
+  return pages.map(p => `p${p.page}:${p.angle}°/${p.source}${p.validated ? '' : '?'}`).join(' ');
+}
+
 function main() {
   const dir = process.argv[2];
   if (!dir) {
@@ -655,11 +901,22 @@ function main() {
     const pdfPath = txtPath.replace(/\.txt$/, '.pdf');
     let text = readFileSync(txtPath, 'utf-8');
     let usedOcr = false;
+    let ocrPages: OcrPageRecord[] = [];
 
-    // If pdftotext returned empty and a PDF exists, fall back to OCR
-    if (!text.trim() && existsSync(pdfPath)) {
-      process.stdout.write(`  ⟳ ${basename(f)} (empty — running OCR…)\r`);
-      text = ocrPdf(pdfPath);
+    // A missing OR junk text layer falls back to OCR — see textLayerNeedsOcr.
+    if (textLayerNeedsOcr(text) && existsSync(pdfPath)) {
+      process.stdout.write(`  ⟳ ${basename(f)} (${text.trim().length} B text layer — running OCR…)\r`);
+      let ocr: OcrResult;
+      try {
+        ocr = ocrPdfDetailed(pdfPath);
+      } catch (e: any) {
+        // One bad raster must not abort the rest of the year directory.
+        errored++;
+        console.warn(`\n  ✗ ${basename(f)}: OCR failed: ${e.message}`);
+        continue;
+      }
+      text = ocr.text;
+      ocrPages = ocr.pages;
       usedOcr = true;
     }
 
@@ -693,15 +950,19 @@ function main() {
                         : ' — LAYOUT NOT PARSED, filing withheld'),
           );
         }
+        if (usedOcr) console.warn(`    OCR pages: ${describeOcrPages(ocrPages)}`);
         skipped++;
         continue;
       }
       const jsonPath = txtPath.replace(/\.txt$/, '.json');
-      writeFileSync(jsonPath, JSON.stringify(rec, null, 2));
+      // OCR'd filings carry the per-page angle actually applied, so a later
+      // session can reconcile a result without re-deriving the orientation.
+      // Extra top-level keys are ignored by db/load-pfd.ts.
+      writeFileSync(jsonPath, JSON.stringify(usedOcr ? { ...rec, ocr: { pages: ocrPages } } : rec, null, 2));
       parsed++;
       txTotal += rec.transactions.length;
       if (usedOcr) process.stdout.write('\n');
-      console.log(`  ✓ ${basename(f)}${usedOcr ? ' [OCR]' : ''} → ${rec.transactions.length} tx`);
+      console.log(`  ✓ ${basename(f)}${usedOcr ? ` [OCR ${describeOcrPages(ocrPages)}]` : ''} → ${rec.transactions.length} tx`);
     } catch (e: any) {
       errored++;
       if (usedOcr) process.stdout.write('\n');

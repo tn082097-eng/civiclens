@@ -17,6 +17,13 @@ Run only the stage/member you're working on; full rebuild stays available.
 - Full site: `npx tsx render/build.ts`.
 - Data loaders are per-stage flags on `agents/pipeline.ts` (`--load-bills`, `--load-pfd`, … see `--help`); many accept a member slug or `--limit`.
 
+## Workflows and agents
+
+Scan stages use the `scanner` agent (Haiku 5.5, read-only); edit stages use
+`patcher` (Sonnet 5.5, one isolated worktree per edit). Every finding gets an
+independent `verifier` agent before it is reported, and fix loops stop after two
+rounds in a row with no progress.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
