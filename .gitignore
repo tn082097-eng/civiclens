@@ -52,5 +52,9 @@ names.txt.bak
 # Ad-hoc graph/probe output
 graphify-out/
 
-# Local Claude Code project config/skills — personal tooling, not part of CivicLens
-.claude/
+# Local Claude Code project config/skills — personal tooling, not part of CivicLens.
+# Exception: shared session settings, agent definitions and saved workflows are tracked.
+.claude/*
+!.claude/settings.json
+!.claude/agents/
+!.claude/workflows/
