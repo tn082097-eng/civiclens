@@ -906,7 +906,15 @@ function main() {
     // A missing OR junk text layer falls back to OCR — see textLayerNeedsOcr.
     if (textLayerNeedsOcr(text) && existsSync(pdfPath)) {
       process.stdout.write(`  ⟳ ${basename(f)} (${text.trim().length} B text layer — running OCR…)\r`);
-      const ocr = ocrPdfDetailed(pdfPath);
+      let ocr: OcrResult;
+      try {
+        ocr = ocrPdfDetailed(pdfPath);
+      } catch (e: any) {
+        // One bad raster must not abort the rest of the year directory.
+        errored++;
+        console.warn(`\n  ✗ ${basename(f)}: OCR failed: ${e.message}`);
+        continue;
+      }
       text = ocr.text;
       ocrPages = ocr.pages;
       usedOcr = true;
