@@ -39,7 +39,7 @@ Write `pipeline/<task-id>/researcher.json`:
     "bioSourceUrl":"https://en.wikipedia.org/...",
     "inOffice":   true,
     "bills":      [{ "title": "", "summary": "", "status": "", "introducedAt": "", "source": "congress.gov", "sourceUrl": "", "confidence": 0.98 }],
-    "votes":      [{ "billTitle": "", "vote": "yea|nay|abstain|absent", "date": "", "source": "govtrack.us", "sourceUrl": "", "confidence": 0.99 }],
+    "votes":      [{ "billTitle": "", "vote": "yea|nay|abstain|absent|other", "date": "", "source": "clerk.house.gov|senate.gov", "sourceUrl": "", "confidence": 1 }],
     "donors":     [{ "name": "", "type": "individual|pac|corporation", "amount": 0, "date": "", "source": "fec.gov", "sourceUrl": "", "confidence": 0.96 }],
     "committees":      [{ "name": "", "code": "", "chamber": "senate|house|joint", "role": "Chair|Ranking Member|Member", "isSubcommittee": false, "parentCode": null, "sourceUrl": "" }],
     "upcomingMeetings":[{ "eventId": "", "date": "YYYY-MM-DD", "title": "", "type": "Hearing|Markup|Meeting|Other", "status": "Scheduled", "committees": [{ "name": "", "code": "" }], "sourceUrl": "" }],
@@ -59,7 +59,7 @@ bioguide ID is found — the pipeline fails the task rather than falling back.
 | Identity, party, state, chamber, role | Congress.gov `/member/{bioguideId}` | — (no fallback allowed) |
 | Bio | Congress.gov member record (deterministically constructed: role, state[-district], party, first-elected year, current Congress) | — (no fallback; Wikipedia is not allowed) |
 | Bills (sponsored) | Congress.gov `/member/{bioguideId}/sponsored-legislation` | — |
-| Votes | GovTrack `/vote_voter?person=` (Congress.gov v3 has no clean member-votes endpoint) | — |
+| Votes | Official House Clerk / Senate LIS XML, parsed by the pinned `unitedstates/congress` collector | — |
 | Donors | OpenFEC `/schedules/schedule_a/` aggregated by contributor_name | — |
 | Committee assignments | `unitedstates/congress-legislators` YAMLs (`committees-current`, `committee-membership-current`), inverted bioguide→committees | — |
 | Upcoming committee meetings | Congress.gov `/committee-meeting/{congress}/{chamber}` + per-event detail, filtered to member's committees | — |
@@ -75,10 +75,10 @@ new sites for their own sake is forbidden.
    state name from `member.state`. The schema requires exactly 2 chars.
 3. **Set `sourceUrl` on every bill, vote, and donor record** — provenance is
    non-optional.
-4. **Normalize vote values** to `yea|nay|abstain|absent`.
+4. **Normalize vote values** to `yea|nay|abstain|absent|other`; preserve verbatim `rawPosition` and never turn an unsupported position into absence.
 5. **Aggregate donors by contributor name** (client-side: uppercase, merge
    duplicates, sum contributions). Return top 20 by amount.
-6. **Record warnings** for any source that returns nothing, with a specific
+6. **Record warnings** for optional sources that return nothing, with a specific
    reason when available (e.g., `"OpenFEC: schedule_a: HTTP 503"`).
 
 ## MUST NOT
@@ -86,7 +86,7 @@ new sites for their own sake is forbidden.
 1. Do not inject aggregate rows (e.g., "Total campaign receipts") into the
    donors array — they false-match across politicians in the Mapper.
 2. Do not invent bills, votes, or donors when a source returns nothing —
-   emit an empty array with a warning.
+   optional sources may emit an empty array with a warning. Official vote failures throw `OfficialVoteFailure` with stage/code and fail the member; they never become empty success.
 3. Do not use an LLM to generate or fill in any factual field. The Researcher
    calls no models.
 4. Do not fall back to `stub-data.json` or any synthetic dataset.
@@ -112,3 +112,26 @@ new sites for their own sake is forbidden.
 | OpenFEC returns no rows | schedule_a timeout, invalid params, or genuinely no itemized donations | emit empty donors array with specific warning |
 | Bio fields missing (no firstElectedYear, no district) | member.terms array empty or malformed | still emit bio with what IS available; warn if the constructed string is less than the schema minimum |
 | State is full name ("Texas") instead of code ("TX") | using top-level `member.state` instead of `terms[last].stateCode` | **bug** — fix code, don't paper over |
+
+## Official vote contract (2026-10-16)
+
+`collectOfficialVotes` calls the official runtime with Bioguide identity,
+`house|senate`, today's UTC date and `source: {mode: 'live'}`. The complete
+48-calendar-month window is acquired and validated by the pinned collector.
+There is no GovTrack API fallback; historical GovTrack URLs remain readable.
+
+Each official vote includes `rollKey`, `chamber`, `congress`, `session`, `roll`,
+`question`, `rawPosition`, `sourceSha256`, and `resolution`, alongside the
+existing title, normalized vote, date, source URL and confidence fields.
+These fields are required together. Canonical identity must agree with the
+chamber source URL. `resolution` retains the explicit outcome, bill ID or
+non-bill subtype, amendment and reason; unresolved records do not acquire a
+bill link from narrative text. `other` preserves Speaker candidate choices.
+
+`data.voteCoverage` retains the complete `VoteCoverage` receipt (window,
+counts, not-recorded keys, acquisition/collector/identity provenance).
+Failures retain `OfficialVoteFailure.stage/code`. An official empty vote batch
+requires a fully validated successful coverage receipt; a legacy empty batch
+preserves stored votes. Persistence validates the complete batch before any
+member write, then replaces votes transactionally. Official rows own their
+bill linkage, including NULL for non-bill and unresolved outcomes.

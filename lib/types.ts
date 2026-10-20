@@ -1,3 +1,4 @@
+import type { OfficialVoteResolution, VoteCoverage } from './official-vote-types.js';
 // Shared types across all CivicLens pipeline agents
 
 export type AgentName =
@@ -66,6 +67,7 @@ export interface PoliticianData {
   inOffice: boolean;
   bills: BillData[];
   votes: VoteData[];
+  voteCoverage?: VoteCoverage;
   donors: DonorData[];
   controversies: ControversyData[];
   connections: ConnectionData[];
@@ -83,7 +85,16 @@ export interface BillData {
 
 export interface VoteData {
   billTitle: string;
-  vote: 'yea' | 'nay' | 'abstain' | 'absent';
+  vote: 'yea' | 'nay' | 'abstain' | 'absent' | 'other';
+  rawPosition?: string;
+  sourceSha256?: string;
+  rollKey?: string;
+  chamber?: 'house' | 'senate';
+  congress?: number;
+  session?: 1 | 2;
+  roll?: number;
+  question?: string;
+  resolution?: OfficialVoteResolution;
   date: string;
   source: string;
   sourceUrl?: string;

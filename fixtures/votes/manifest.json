@@ -1,0 +1,164 @@
+{
+  "version": 2,
+  "purpose": "Frozen official samples for contract tests only; not certification, not complete coverage.",
+  "official_samples": [
+    {
+      "path": "official-samples/senate-119-1-roll00001.xml",
+      "url": "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1191/vote_119_1_00001.xml",
+      "http_status": 200,
+      "content_type": "text/xml",
+      "bytes": 28670,
+      "sha256": "9d71d78a54c83522babd743209ca4a1a27baa2df122d6830c50ec2aa512ea17e",
+      "captured_in": "NoService/Projects/CivicLens/Specs/2026-09-26-reliability-evidence/source-receipts.json",
+      "contract_role": "Senate document/identity classification sample (119th Congress, session 1, roll 1; S. 5 cloture)"
+    },
+    {
+      "path": "house-acquisition/2025-page036.html",
+      "url": "https://clerk.house.gov/Votes/MemberVotes?CongressNum=119&Session=1st&Page=36",
+      "http_status": 200,
+      "content_type": null,
+      "content_type_note": "not recorded in source receipt",
+      "bytes": 42352,
+      "sha256": "a07a63ee5dbae93662d40fc0197b7d8bb72aee819b4b2f0f6d534e2616832086",
+      "captured_in": "house-acquisition/manifest.json",
+      "contract_role": "House vote page index (sample)"
+    },
+    {
+      "path": "house-acquisition/2025-page037.html",
+      "url": "https://clerk.house.gov/Votes/MemberVotes?CongressNum=119&Session=1st&Page=37",
+      "http_status": 200,
+      "content_type": null,
+      "content_type_note": "not recorded in source receipt",
+      "bytes": 12240,
+      "sha256": "e8c0420c9d204bb2c3e0c79983c190b9af1ac057c91feb7bf2bbd26052065ee2",
+      "captured_in": "house-acquisition/manifest.json",
+      "contract_role": "House vote page index (sample)"
+    },
+    {
+      "path": "house-acquisition/2023-page001.html",
+      "url": "https://clerk.house.gov/Votes/MemberVotes?CongressNum=118&Session=1st&Page=1",
+      "http_status": 200,
+      "content_type": null,
+      "content_type_note": "not recorded in source receipt",
+      "bytes": 42872,
+      "sha256": "254ebaf6b4a4071f78db8b8cbd06a0bfeff026b59b9881b420e054c5c3ad3fe5",
+      "captured_in": "house-acquisition/manifest.json",
+      "contract_role": "House vote page index (sample)"
+    },
+    {
+      "path": "house-acquisition/house-2025-roll001.xml",
+      "url": "https://clerk.house.gov/evs/2025/roll001.xml",
+      "http_status": 200,
+      "content_type": "text/xml",
+      "bytes": 84949,
+      "sha256": "876aa39e6cfe58942eb5a3b24628975b288e6c5fca8d8e0257dfcd7d180163fd",
+      "captured_in": "NoService/Projects/CivicLens/Specs/2026-09-26-reliability-evidence/source-receipts.json",
+      "contract_role": "House identity/position sample (119th Congress, session 1, roll 1; QUORUM call by states, authoritative non-bill quorum)"
+    },
+    {
+      "path": "house-acquisition/2023-page072.html",
+      "url": "https://clerk.house.gov/Votes/MemberVotes?CongressNum=118&Session=1st&Page=72",
+      "http_status": 200,
+      "content_type": null,
+      "content_type_note": "not recorded in source receipt",
+      "bytes": 33968,
+      "sha256": "c74b65061285ce4e3d23d7d23b9ddd494b41fe1bdbe8b63a3ed5df636563a977",
+      "captured_in": "house-acquisition/manifest.json",
+      "contract_role": "House vote page index (sample)"
+    },
+    {
+      "path": "official-samples/house-speaker-2025-roll002.xml",
+      "url": "https://clerk.house.gov/evs/2025/roll002.xml",
+      "http_status": 200,
+      "content_type": "application/xml; charset=UTF-8",
+      "bytes": 96942,
+      "sha256": "a452d484b1a1219dd61061fe870ab9c3fa087de512b24033ff6db86a2b38c0c4",
+      "captured_at": "2026-10-16T13:11:27.834639+00:00",
+      "captured_in": "artifacts/govtrack-replacement-2026-10-16-0907/source-packet/receipts.json (ignored run dir)",
+      "contract_role": "House Speaker election (119th Congress, session 1, roll 2; 3 Jan 2025). Candidate-name positions; empty legis-num."
+    },
+    {
+      "path": "official-samples/house-bill-2025-roll006.xml",
+      "url": "https://clerk.house.gov/evs/2025/roll006.xml",
+      "http_status": 200,
+      "content_type": "application/xml; charset=UTF-8",
+      "bytes": 94574,
+      "sha256": "58c75e9750226a49c55712812dc40dda0e67a192e5e18f4a49cbf32e3346ed6e",
+      "captured_at": "2026-10-16T13:11:27.834868+00:00",
+      "captured_in": "artifacts/govtrack-replacement-2026-10-16-0907/source-packet/receipts.json (ignored run dir)",
+      "contract_role": "House bill passage (119th Congress, session 1, roll 6; H R 29 On Passage; 7 Jan 2025)."
+    },
+    {
+      "path": "official-samples/senate-nomination-119-1-roll00655.xml",
+      "url": "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1191/vote_119_1_00655.xml",
+      "http_status": 200,
+      "content_type": "text/xml",
+      "bytes": 104536,
+      "sha256": "edf44e13beb93b2010b809f36cdab594ad159c81a0ad992cdaf8806a07ac66c5",
+      "captured_at": "2026-10-16T13:11:27.835199+00:00",
+      "captured_in": "artifacts/govtrack-replacement-2026-10-16-0907/source-packet/receipts.json (ignored run dir)",
+      "contract_role": "Senate nomination (119/1 roll 655; PN416-9; 18 Dec 2025)."
+    },
+    {
+      "path": "official-samples/senate-amendment-119-1-roll00003.xml",
+      "url": "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1191/vote_119_1_00003.xml",
+      "http_status": 200,
+      "content_type": "text/xml",
+      "bytes": 28532,
+      "sha256": "f099e753743dc41ebd73aeb6164bb69cb1a52033859c1123fc8ea9ffe77fe94d",
+      "captured_at": "2026-10-16T13:11:28.026639+00:00",
+      "captured_in": "artifacts/govtrack-replacement-2026-10-16-0907/source-packet/receipts.json (ignored run dir)",
+      "contract_role": "Senate amendment vote (119/1 roll 3; S.Amdt. 14 to S.Amdt. 8 to S. 5; document_type \"S.Amdt.\" with empty number; 15 Jan 2025)."
+    },
+    {
+      "path": "official-samples/senate-bill-119-1-roll00570.xml",
+      "url": "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1191/vote_119_1_00570.xml",
+      "http_status": 200,
+      "content_type": "text/xml",
+      "bytes": 29078,
+      "sha256": "abf2ebf8da845213e464d9eec4d258b90394efd90d5c66d915f41cc48da7ae7a",
+      "captured_at": "2026-10-16T13:11:28.063437+00:00",
+      "captured_in": "artifacts/govtrack-replacement-2026-10-16-0907/source-packet/receipts.json (ignored run dir)",
+      "contract_role": "Senate bill passage (119/1 roll 570; S. 2296 On Passage of the Bill; 9 Oct 2025)."
+    },
+    {
+      "path": "official-samples/senate-menu-119-1.xml",
+      "url": "https://www.senate.gov/legislative/LIS/roll_call_lists/vote_menu_119_1.xml",
+      "http_status": 200,
+      "content_type": "text/xml",
+      "bytes": 419112,
+      "sha256": "bbf37be1e0fe327fb6cd623cc7b2ed56253f5410ec0066831ba5eba605244a0c",
+      "captured_at": "2026-09-26 (date of the reliability-evidence capture; per-request timestamp not recorded)",
+      "captured_in": "NoService/Projects/CivicLens/Specs/2026-09-26-reliability-evidence/source-receipts.json (sources/senate-index.xml)",
+      "contract_role": "Senate 119/1 vote menu (659 votes) for Senate discovery parsing tests; capture-time snapshot only."
+    }
+  ],
+  "house_acquisition_manifest": {
+    "path": "house-acquisition/manifest.json",
+    "sha256": "903b82328c349bc7f0df0879ea890fb796277860c65ad1194bbaf07172615a18"
+  },
+  "synthetic": "Every failure/small-inventory/election/nomination/treaty case in lib/vote-source.test.ts, skills/researcher/official-votes.test.ts, tools/congress-collector/test_adapter.py and tools/congress-collector/make_interop_manifest.py is SYNTHETIC and constructed in code, never official evidence.",
+  "not_frozen": "No frozen official treaty XML, House amendment XML, or House journal/adjourn/motion XML exists in this package. Senate menus other than 119/1 and House listing pages other than those listed are not frozen.",
+  "identity_snapshot": {
+    "repository": "https://github.com/unitedstates/congress-legislators",
+    "commit": "d5af3d2d2490f8c6532c9490b1f47a76cacca699",
+    "license": "CC0-1.0 (LICENSE sha256 a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499)",
+    "inputs": [
+      {
+        "name": "legislators-current.yaml",
+        "url": "https://raw.githubusercontent.com/unitedstates/congress-legislators/d5af3d2d2490f8c6532c9490b1f47a76cacca699/legislators-current.yaml",
+        "bytes": 1081187,
+        "sha256": "bd32e62b1c89e9585e4ec49df5676563510e9435d779c061ff50139833f73a49"
+      },
+      {
+        "name": "legislators-historical.yaml",
+        "url": "https://raw.githubusercontent.com/unitedstates/congress-legislators/d5af3d2d2490f8c6532c9490b1f47a76cacca699/legislators-historical.yaml",
+        "bytes": 8997407,
+        "sha256": "9641615f336b3113d6f89152e3441128cbdc3f61ccf87c65da3a015076c78c91",
+        "note": "complete second fetch after documented 8 MiB cap; the first .partial response (8388609 bytes, sha256 09244e2c...) is incomplete and must never be parsed"
+      }
+    ],
+    "raw_yaml_committed": false,
+    "derived_mapping": "fixtures/votes/identity/ (written by the derivation script; hash recorded there)"
+  }
+}

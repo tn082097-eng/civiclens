@@ -364,7 +364,7 @@ ${bold('CivicLens Pipeline Runner')}
   ${cyan('npx tsx agents/pipeline.ts --load-senate-ptr (--member <slug>|--bioguide <id>|--all) [--dry-run]')} Senate EFDS PTRs
   ${cyan('npx tsx agents/pipeline.ts --load-fec-ie <cycle[,cycle]> (--member <slug>|--bioguide <id>|--all) [--dry-run]')} FEC Super PAC IE
   ${cyan('npx tsx agents/pipeline.ts --load-opensecrets <cycle[,cycle]> (--member <slug>|--bioguide <id>|--all) [--dry-run]')} cached OpenSecrets HTML
-  ${cyan('npx tsx agents/pipeline.ts --load-bills (--member <slug>|--bioguide <id>|--all) [--api-pass] [--api-limit N] [--limit N]')} votes.bill_id + summaries
+  ${cyan('npx tsx agents/pipeline.ts --load-bills (--member <slug>|--bioguide <id>|--all) [--official-pass|--api-pass] [--api-limit N] [--limit N]')} votes.bill_id + summaries
   ${cyan('npx tsx agents/pipeline.ts --load-sponsored [member-id]')} authoritative sponsor rows + inline policyArea (run AFTER load-from-tasks)
   ${cyan('npx tsx agents/pipeline.ts --load-lda [args...]')}        Senate LDA lobbying (full options in db/load-lda.ts; use --years 2018-2026 etc)
   ${cyan('npx tsx agents/pipeline.ts --load-district-contracts [member-id] [--cy 2023,2024,2025] [--force] [--dry-run]')} USAspending NAICS rollups per House district
@@ -455,9 +455,9 @@ ${bold('CivicLens Pipeline Runner')}
     const apiLimitIdx = pargs.indexOf('--api-limit');
     const limit       = limitIdx    >= 0 ? parseInt(pargs[limitIdx    + 1] ?? '', 10) : undefined;
     const apiLimit    = apiLimitIdx >= 0 ? parseInt(pargs[apiLimitIdx + 1] ?? '', 10) : undefined;
-    const apiPass     = pargs.includes('--api-pass');
+    const officialPass = pargs.includes('--official-pass') || pargs.includes('--api-pass');
     const scope = await resolveScope(parseScopeArgs(process.argv.slice(3)));
-    await loadBills(scope, { limit, apiPass, apiLimit });
+    await loadBills(scope, { limit, officialPass, apiLimit });
     process.exit(0);
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
 } else if (arg === '--load-ticker-sectors') {

@@ -13,11 +13,12 @@
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { ZodTypeAny } from 'zod';
+import type { DuckDBConnection } from '@duckdb/node-api';
 import { applySchema, getDb } from './init.js';
 import { committeeCanonical } from './load-bill-committees.js';
 import { PIPE_DIR } from '../lib/paths.js';
 import {
-  ResearcherArtifactSchema, FinalReviewReportSchema, SummarizerOutputSchema,
+  ResearcherArtifactSchema, FinalReviewReportSchema, SummarizerOutputSchema, VoteSchema, VoteCoverageSchema,
   TradeAnalystOutputSchema, PredictorOutputSchema,
 } from '../lib/schemas.js';
 
@@ -94,6 +95,111 @@ function voteIdFromUrl(url: string | undefined): string | null {
   return m?.[1] ?? null;
 }
 
+/** All validation errors are reported before any member write is attempted. */
+export class VoteBatchError extends Error {
+  constructor(readonly problems: string[]) {
+    super(`invalid vote batch: ${problems.join('; ')}`);
+    this.name = 'VoteBatchError';
+  }
+}
+export interface VoteBatchPlan {
+  memberId: string;
+  mode: 'preserve' | 'legacy' | 'official';
+  rows: Array<{
+    voteId: string;
+    date: string | null;
+    question: string | null;
+    position: string | null;
+    billId: string | null;
+    category: string | null;
+    partyPosition: string | null;
+    billNumber: string | null;
+    sourceUrl: string | null;
+  }>;
+}
+export function planVoteBatch(memberId: string, votes: unknown, coverage?: unknown): VoteBatchPlan {
+  const problems: string[] = [];
+  if (!memberId)
+    problems.push('member identity is required');
+  if (!Array.isArray(votes))
+    throw new VoteBatchError([...problems, 'votes must be an array']);
+  const officialCount = votes.filter(v => v && typeof v === 'object' && v.rollKey !== undefined).length;
+  if (officialCount && officialCount !== votes.length)
+    problems.push('mixed official and legacy rows');
+  let official = officialCount > 0;
+  if (coverage !== undefined) {
+    const checked = VoteCoverageSchema.safeParse(coverage);
+    if (!checked.success)
+      problems.push(...checked.error.issues.map(i => `coverage ${i.path.join('.')}: ${i.message}`));
+    else {
+      if (checked.data.recorded !== votes.length)
+        problems.push('coverage recorded count differs from batch');
+      for (const v of votes)
+        if (v?.chamber !== checked.data.chamber)
+          problems.push('coverage chamber differs from vote row');
+    }
+    if (votes.length === 0)
+      official = true;
+    else if (!officialCount)
+      problems.push('official coverage supplied for legacy rows');
+  }
+  const rows: VoteBatchPlan['rows'] = [];
+  const seen = new Set<string>();
+  votes.forEach((v: any, index: number) => {
+    const checked = VoteSchema.safeParse(v);
+    if (!checked.success) {
+      problems.push(...checked.error.issues.map(i => `row ${index} ${i.path.join('.')}: ${i.message}`));
+      return;
+    }
+    const voteId = official ? v.rollKey : voteIdFromUrl(v.sourceUrl);
+    if (!voteId)
+      return; // historical id-less rows were not persisted
+    if (official && seen.has(voteId))
+      problems.push(`row ${index}: duplicate rollKey ${voteId}`);
+    seen.add(voteId);
+    rows.push({
+      voteId, date: asDate(v.date), question: official ? v.question : (v.billTitle ?? v.question ?? null), position: v.vote ?? v.position ?? null,
+      billId: official && v.resolution.outcome === 'resolved_bill' ? v.resolution.billId : null,
+      category: v.category ?? null, partyPosition: v.partyPosition ?? null, billNumber: v.billNumber ?? null, sourceUrl: v.sourceUrl ?? null
+    });
+  });
+  if (problems.length)
+    throw new VoteBatchError(problems);
+  return { memberId, mode: official ? 'official' : votes.length ? 'legacy' : 'preserve', rows };
+}
+/** Replace votes atomically. Official rows own linkage; only legacy rows restore it. */
+export async function applyVoteBatch(conn: DuckDBConnection, memberId: string, plan: VoteBatchPlan, opts: {
+  fetchedAt?: string;
+} = {}): Promise<number> {
+  if (plan.memberId !== memberId)
+    throw new VoteBatchError(['plan member differs from target']);
+  if (plan.mode === 'preserve')
+    return 0;
+  const fetchedAt = opts.fetchedAt ?? new Date().toISOString();
+  await conn.run('BEGIN TRANSACTION');
+  try {
+    if (plan.mode === 'legacy')
+      await conn.run(`CREATE OR REPLACE TEMP TABLE _vote_link AS
+      SELECT vote_id,bill_id FROM votes WHERE member_id=? AND bill_id IS NOT NULL`, [memberId]);
+    await conn.run('DELETE FROM votes WHERE member_id=?', [memberId]);
+    for (const row of plan.rows)
+      await conn.run(`INSERT OR REPLACE INTO votes
+      (member_id,vote_id,date,question,position,bill_id,category,party_position,bill_number,source_url,fetched_at)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?)`, [memberId, row.voteId, row.date, row.question, row.position, row.billId, row.category, row.partyPosition, row.billNumber, row.sourceUrl, fetchedAt]);
+    if (plan.mode === 'legacy') {
+      await conn.run(`UPDATE votes SET bill_id=_vote_link.bill_id FROM _vote_link
+        WHERE votes.member_id=? AND votes.vote_id=_vote_link.vote_id AND votes.bill_id IS NULL`, [memberId]);
+      await conn.run('DROP TABLE _vote_link');
+    }
+    await conn.run('COMMIT');
+  }
+  catch (error) {
+    await conn.run('ROLLBACK');
+    throw error;
+  }
+  return plan.rows.length;
+}
+
 function billIdFromUrl(url: string | undefined): string | null {
   if (!url) return null;
   // https://www.congress.gov/bill/119th-congress/house-bill/4  ->  119/hr/4
@@ -139,13 +245,14 @@ export function usableDonors(donors: unknown): any[] {
   return donors.filter((dn: any) => dn?.name && canonicalDonor(dn.name));
 }
 
-export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: number; bills: number; committees: number; controversies: number }> {
-  const conn = await getDb();
+export async function loadOne(pick: TaskPick, opts: {conn?:DuckDBConnection} = {}): Promise<{ donors: number; votes: number; bills: number; committees: number; controversies: number }> {
+  const conn = opts.conn ?? await getDb();
   const researcherPath = resolve(pick.taskDir, 'researcher.json');
   if (!existsSync(researcherPath)) return { donors: 0, votes: 0, bills: 0, committees: 0, controversies: 0 };
   const r = parseArtifact(researcherPath, ResearcherArtifactSchema, 'researcher');
   const d = r.data ?? {};
   const memberId = d.id;
+  const votePlan = planVoteBatch(memberId, d.votes, d.voteCoverage);
   if (!memberId) return { donors: 0, votes: 0, bills: 0, committees: 0, controversies: 0 };
 
   const fetchedAt = r.fetchedAt ?? new Date().toISOString();
@@ -212,30 +319,7 @@ export async function loadOne(pick: TaskPick): Promise<{ donors: number; votes: 
     donorCount++;
   }
 
-  // votes — snapshot vote→bill linkage before the wipe; it's owned by the
-  // bill loader's api-pass, not by task data, and must survive a re-sync.
-  await conn.run(`CREATE OR REPLACE TEMP TABLE _vote_link AS
-    SELECT vote_id, bill_id FROM votes WHERE member_id = ? AND bill_id IS NOT NULL`, [memberId]);
-  await conn.run(`DELETE FROM votes WHERE member_id = ?`, [memberId]);
-  let voteCount = 0;
-  for (const v of d.votes ?? []) {
-    const voteId = voteIdFromUrl(v.sourceUrl);
-    if (!voteId) continue;
-    await conn.run(
-      `INSERT OR REPLACE INTO votes
-       (member_id, vote_id, date, question, position, category, party_position, bill_number, source_url, fetched_at)
-       VALUES (?,?,?,?,?,?,?,?,?,?)`,
-      [
-        memberId, voteId, asDate(v.date), v.billTitle ?? v.question ?? null,
-        v.vote ?? v.position ?? null, v.category ?? null, v.partyPosition ?? null,
-        v.billNumber ?? null, v.sourceUrl ?? null, fetchedAt,
-      ]
-    );
-    voteCount++;
-  }
-  await conn.run(`UPDATE votes SET bill_id = _vote_link.bill_id FROM _vote_link
-    WHERE votes.member_id = ? AND votes.vote_id = _vote_link.vote_id AND votes.bill_id IS NULL`, [memberId]);
-  await conn.run(`DROP TABLE _vote_link`);
+  const voteCount = await applyVoteBatch(conn, memberId, votePlan, {fetchedAt});
 
   // bills — task data carries only sponsored bills; cosponsor rows are owned
   // by db/load-cosponsored.ts and must not be clobbered by a re-sync.

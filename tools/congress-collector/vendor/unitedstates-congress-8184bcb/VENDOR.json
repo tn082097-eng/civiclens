@@ -1,0 +1,28 @@
+{
+  "repository": "https://github.com/unitedstates/congress",
+  "commit": "8184bcb13160da2389dea4c902de67817db681fc",
+  "archive_url": "https://codeload.github.com/unitedstates/congress/tar.gz/8184bcb13160da2389dea4c902de67817db681fc",
+  "archive_sha256": "bbd159e67fd0c9c451636eeaad5e1981cd38e148560ad211e3d0f54b437f3ff5",
+  "files": {
+    "LICENSE": {
+      "bytes": 7048,
+      "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499"
+    },
+    "congress/__init__.py": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "congress/tasks/__init__.py": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "congress/tasks/utils.py": {
+      "bytes": 30191,
+      "sha256": "dd8aa097396fb78a39285f4a47d635a7cd955e715c83762c56406cc065ecb29a"
+    },
+    "congress/tasks/vote_info.py": {
+      "bytes": 28018,
+      "sha256": "fad8948d3c044b575b30267d0979be3f7e5667d01e32c38bed6a8fd4dee28732"
+    }
+  }
+}

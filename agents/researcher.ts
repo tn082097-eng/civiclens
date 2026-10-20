@@ -48,6 +48,7 @@ export async function runResearcher(task: PipelineTask): Promise<boolean> {
     inOffice: live.inOffice,
     bills:    live.bills,
     votes:    live.votes,
+    voteCoverage: live.voteCoverage,
     donors:   live.donors,
     controversies: [] as any[],
     connections:   [] as any[],
