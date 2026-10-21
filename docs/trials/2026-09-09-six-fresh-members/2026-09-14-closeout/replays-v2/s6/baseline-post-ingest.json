@@ -1,0 +1,20 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "npm",
+    "run",
+    "verify:baseline"
+  ],
+  "started": "2026-09-17T00:31:50Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/caches",
+  "dbBefore": "3cb41b9fa5d74307d38da95326959a8b6078087802efe119af433128a4938e8b",
+  "walBefore": null,
+  "exit": 0,
+  "output": "\n> civiclens-pipeline@1.0.0 verify:baseline\n> tsx scripts/verify-baseline.ts\n\n=== ROSTER (party \u00d7 chamber) ===\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 (index) \u2502 0             \u2502 1        \u2502 2   \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 0       \u2502 'Democrat'    \u2502 'house'  \u2502 21n \u2502\n\u2502 1       \u2502 'Democrat'    \u2502 'senate' \u2502 7n  \u2502\n\u2502 2       \u2502 'Independent' \u2502 'senate' \u2502 1n  \u2502\n\u2502 3       \u2502 'Republican'  \u2502 'house'  \u2502 18n \u2502\n\u2502 4       \u2502 'Republican'  \u2502 'senate' \u2502 11n \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2518\n=== VOTE->BILL LINKAGE ===\n85324 / 105870 = 80.6% (gate: >=75%)\n=== ROW COUNTS (core tables) ===\nmembers                  58\nmember_aliases           26141\nvotes                    105870\nbills                    170267\nbill_summaries           1369\nbill_subjects            37088\nbill_committees          799\ncommittees               389\npfd_transactions         5277\ndonors                   4543\ndonor_industry           13191\nsuper_pac_ie             306\nsuper_pac_ie_filings     7047\nlda_filings              42752\nlda_lobbyists            178656\npattern_hits             65\ntheme_bill_match         44\npipeline_runs            174\n",
+  "dbAfter": "3cb41b9fa5d74307d38da95326959a8b6078087802efe119af433128a4938e8b",
+  "finished": "2026-09-17T00:31:50Z",
+  "walAfter": null
+}

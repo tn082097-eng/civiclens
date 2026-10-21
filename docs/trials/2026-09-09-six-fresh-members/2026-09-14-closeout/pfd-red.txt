@@ -1,0 +1,479 @@
+TAP version 13
+# Subtest: member mode writes only the target filings; other member rows unchanged
+ok 1 - member mode writes only the target filings; other member rows unchanged
+  ---
+  duration_ms: 117.749318
+  type: 'test'
+  ...
+# Subtest: member mode ignores unrelated unmatched filers (no failure, no writes for them)
+ok 2 - member mode ignores unrelated unmatched filers (no failure, no writes for them)
+  ---
+  duration_ms: 73.936864
+  type: 'test'
+  ...
+# Subtest: member mode with zero matching target filings is an explicit result, not silent success
+ok 3 - member mode with zero matching target filings is an explicit result, not silent success
+  ---
+  duration_ms: 62.828438
+  type: 'test'
+  ...
+# Subtest: member mode accepts an empty extracted directory only when the authoritative index proves zero PTRs
+ok 4 - member mode accepts an empty extracted directory only when the authoritative index proves zero PTRs
+  ---
+  duration_ms: 62.508692
+  type: 'test'
+  ...
+# Subtest: member mode rejects an empty extracted directory when the authoritative index contains a target PTR
+ok 5 - member mode rejects an empty extracted directory when the authoritative index contains a target PTR
+  ---
+  duration_ms: 59.847267
+  type: 'test'
+  ...
+# Subtest: a missing authoritative index never counts as proof of zero PTRs
+ok 6 - a missing authoritative index never counts as proof of zero PTRs
+  ---
+  duration_ms: 60.289141
+  type: 'test'
+  ...
+# Subtest: all-mode can never turn an empty extracted directory into verified-empty
+ok 7 - all-mode can never turn an empty extracted directory into verified-empty
+  ---
+  duration_ms: 61.696973
+  type: 'test'
+  ...
+# Subtest: a generational suffix cannot hide an indexed PTR and produce a false verified-empty
+ok 8 - a generational suffix cannot hide an indexed PTR and produce a false verified-empty
+  ---
+  duration_ms: 58.964939
+  type: 'test'
+  ...
+# Subtest: an ambiguous same-district surname record fails closed instead of proving zero
+ok 9 - an ambiguous same-district surname record fails closed instead of proving zero
+  ---
+  duration_ms: 61.193029
+  type: 'test'
+  ...
+# Subtest: record Year, not index filename, determines which cache directory a PTR belongs to
+ok 10 - record Year, not index filename, determines which cache directory a PTR belongs to
+  ---
+  duration_ms: 60.37204
+  type: 'test'
+  ...
+# Subtest: all mode writes every filer
+ok 11 - all mode writes every filer
+  ---
+  duration_ms: 81.157571
+  type: 'test'
+  ...
+# Subtest: House ingestion rejects missing-indexed before writing any target rows
+not ok 12 - House ingestion rejects missing-indexed before writing any target rows
+  ---
+  duration_ms: 74.042783
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:4:8715'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:323:7)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+#   ! skipping malformed 1000002.json: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+# Subtest: House ingestion rejects malformed-json before writing any target rows
+not ok 13 - House ingestion rejects malformed-json before writing any target rows
+  ---
+  duration_ms: 74.609976
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:4:8715'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:323:7)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: House ingestion rejects missing-identity before writing any target rows
+not ok 14 - House ingestion rejects missing-identity before writing any target rows
+  ---
+  duration_ms: 72.718781
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:4:8715'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:323:7)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: House ingestion rejects truncated-index before writing any target rows
+not ok 15 - House ingestion rejects truncated-index before writing any target rows
+  ---
+  duration_ms: 72.167958
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:4:8715'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:323:7)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: House ingestion rejects wrong-index-year before writing any target rows
+not ok 16 - House ingestion rejects wrong-index-year before writing any target rows
+  ---
+  duration_ms: 72.244657
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:4:8715'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:323:7)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: a malformed index cannot prove an empty House year
+not ok 17 - a malformed index cannot prove an empty House year
+  ---
+  duration_ms: 61.15577
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:4:9859'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/db/load-pfd.test.ts:337:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+#   ⚠ member-8219414.txt [needs_manual_formatting:empty-input] → 0 of 0 row(s) from 0 B; table NOT entered — filing withheld; member remains in the formatting queue
+#   ✗ missing-source-8219416.txt: empty text artifact and source PDF is missing
+# Member formatting hold: skip automated publication, keep the member in coverage, and do not count this run as verified-empty or complete.
+# Parsed 0 PTR(s) → 0 transactions; skipped 1 non-PTR; 1 formatting hold(s); 1 errors
+#   ⚠ doe-jane-1000001.txt [needs_manual_formatting:empty-input] → 0 of 0 row(s) from 0 B; table NOT entered — filing withheld; member remains in the formatting queue
+# Member formatting hold: skip automated publication, keep the member in coverage, and do not count this run as verified-empty or complete.
+# Parsed 0 PTR(s) → 0 transactions; skipped 0 non-PTR; 1 formatting hold(s); 0 errors
+#   ⚠ unknown.txt [needs_manual_formatting:empty-input] → 0 of 0 row(s) from 0 B; table NOT entered — filing withheld; member remains in the formatting queue
+# Parsed 0 PTR(s) → 0 transactions; skipped 0 non-PTR; 1 formatting hold(s); 0 errors
+# Member formatting hold: skip automated publication, keep the member in coverage, and do not count this run as verified-empty or complete.
+# Parsed 0 PTR(s) → 0 transactions; skipped 1 non-PTR; 0 formatting hold(s); 0 errors
+# Parsed 0 PTR(s) → 0 transactions; skipped 0 non-PTR; 0 formatting hold(s); 0 errors
+#   ⚠ doe-jane-1000001.txt [needs_manual_formatting:empty-input] → 0 of 0 row(s) from 0 B; table NOT entered — filing withheld; member remains in the formatting queue
+# Member formatting hold: skip automated publication, keep the member in coverage, and do not count this run as verified-empty or complete.
+# Parsed 0 PTR(s) → 0 transactions; skipped 0 non-PTR; 1 formatting hold(s); 0 errors
+# Subtest: unsupported local PDFs become formatting holds without stopping the remaining batch
+ok 18 - unsupported local PDFs become formatting holds without stopping the remaining batch
+  ---
+  duration_ms: 2.298071
+  type: 'test'
+  ...
+# Subtest: variant 1: trailing checkbox glyph does not break the row
+ok 19 - variant 1: trailing checkbox glyph does not break the row
+  ---
+  duration_ms: 5.36384
+  type: 'test'
+  ...
+# Subtest: variant 1: multi-line checkbox run (c d e f g) never pollutes the asset
+ok 20 - variant 1: multi-line checkbox run (c d e f g) never pollutes the asset
+  ---
+  duration_ms: 32.858695
+  type: 'test'
+  ...
+# Subtest: variant 2: amount high wrapped onto a continuation line is joined
+ok 21 - variant 2: amount high wrapped onto a continuation line is joined
+  ---
+  duration_ms: 1.56687
+  type: 'test'
+  ...
+# Subtest: variant 3: a single exact amount (no range) is preserved verbatim
+ok 22 - variant 3: a single exact amount (no range) is preserved verbatim
+  ---
+  duration_ms: 0.436455
+  type: 'test'
+  ...
+# Subtest: variant 4: a leading numeric row id does not shift the columns
+ok 23 - variant 4: a leading numeric row id does not shift the columns
+  ---
+  duration_ms: 0.110848
+  type: 'test'
+  ...
+# Subtest: transaction type is read from the type column, not from incidental text
+ok 24 - transaction type is read from the type column, not from incidental text
+  ---
+  duration_ms: 0.147628
+  type: 'test'
+  ...
+# Subtest: a readable PTR that yields zero rows is unresolved, not an empty success
+ok 25 - a readable PTR that yields zero rows is unresolved, not an empty success
+  ---
+  duration_ms: 0.80456
+  type: 'test'
+  ...
+# Subtest: blank input is unresolved with reason empty-input
+ok 26 - blank input is unresolved with reason empty-input
+  ---
+  duration_ms: 0.167218
+  type: 'test'
+  ...
+# Subtest: a non-PTR document is unresolved with reason not-a-ptr
+ok 27 - a non-PTR document is unresolved with reason not-a-ptr
+  ---
+  duration_ms: 0.205247
+  type: 'test'
+  ...
+# Subtest: extractPTR (back-compat) returns null rather than a zero-row record
+ok 28 - extractPTR (back-compat) returns null rather than a zero-row record
+  ---
+  duration_ms: 0.76501
+  type: 'test'
+  ...
+# Subtest: authoritative filing id wins over body text
+ok 29 - authoritative filing id wins over body text
+  ---
+  duration_ms: 0.75461
+  type: 'test'
+  ...
+# Subtest: lowercase `Filing Id \#` in body text is still recovered when no id is passed
+ok 30 - lowercase `Filing Id \#` in body text is still recovered when no id is passed
+  ---
+  duration_ms: 0.74807
+  type: 'test'
+  ...
+# Subtest: filer name and state/district parse from the lowercase-label template
+ok 31 - filer name and state/district parse from the lowercase-label template
+  ---
+  duration_ms: 0.727781
+  type: 'test'
+  ...
+# Subtest: the pre-existing capitalised layout produces identical normalized output
+ok 32 - the pre-existing capitalised layout produces identical normalized output
+  ---
+  duration_ms: 0.416504
+  type: 'test'
+  ...
+# Subtest: multiple rows in one filing are kept distinct (no merging, no duplicates)
+ok 33 - multiple rows in one filing are kept distinct (no merging, no duplicates)
+  ---
+  duration_ms: 2.354739
+  type: 'test'
+  ...
+# Subtest: spelled DESCRIPTION:/LOCATION: labels populate their fields, not the asset name
+ok 34 - spelled DESCRIPTION:/LOCATION: labels populate their fields, not the asset name
+  ---
+  duration_ms: 0.80621
+  type: 'test'
+  ...
+# Subtest: mangled-case lOCATION: is recognised the same as LOCATION:
+ok 35 - mangled-case lOCATION: is recognised the same as LOCATION:
+  ---
+  duration_ms: 0.77102
+  type: 'test'
+  ...
+# Subtest: abbreviated L label preserves a full city, state, and country location
+ok 36 - abbreviated L label preserves a full city, state, and country location
+  ---
+  duration_ms: 0.179848
+  type: 'test'
+  ...
+# Subtest: abbreviated country-only location remains separate from a same-line subholding
+ok 37 - abbreviated country-only location remains separate from a same-line subholding
+  ---
+  duration_ms: 0.107669
+  type: 'test'
+  ...
+# Subtest: a DESCRIPTION on the primary row line does not pollute the asset
+ok 38 - a DESCRIPTION on the primary row line does not pollute the asset
+  ---
+  duration_ms: 0.7838
+  type: 'test'
+  ...
+# Subtest: case-mangled tickers are recovered and normalised to uppercase
+ok 39 - case-mangled tickers are recovered and normalised to uppercase
+  ---
+  duration_ms: 4.751139
+  type: 'test'
+  ...
+# Subtest: case-mangled asset types are recovered and normalised
+ok 40 - case-mangled asset types are recovered and normalised
+  ---
+  duration_ms: 0.718811
+  type: 'test'
+  ...
+# Subtest: uppercase tickers and asset types are unchanged by the case-tolerant patterns
+ok 41 - uppercase tickers and asset types are unchanged by the case-tolerant patterns
+  ---
+  duration_ms: 0.724061
+  type: 'test'
+  ...
+# Subtest: a filing whose table rows partially match is unresolved, not partially parsed
+ok 42 - a filing whose table rows partially match is unresolved, not partially parsed
+  ---
+  duration_ms: 0.77419
+  type: 'test'
+  ...
+# Subtest: the row-count invariant ignores date pairs outside the transaction table
+ok 43 - the row-count invariant ignores date pairs outside the transaction table
+  ---
+  duration_ms: 0.729241
+  type: 'test'
+  ...
+# Subtest: a fully-matching multi-row filing satisfies the invariant
+ok 44 - a fully-matching multi-row filing satisfies the invariant
+  ---
+  duration_ms: 0.72067
+  type: 'test'
+  ...
+# Subtest: a wrapped spelled DESCRIPTION continues into the description, not the asset
+ok 45 - a wrapped spelled DESCRIPTION continues into the description, not the asset
+  ---
+  duration_ms: 1.927805
+  type: 'test'
+  ...
+# Subtest: a formatting hold writes source-bound retry evidence and masks an earlier extraction
+not ok 46 - a formatting hold writes source-bound retry evidence and masks an earlier extraction
+  ---
+  duration_ms: 0.608392
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/skills/pfd-fetcher/extract.test.ts:1:18017'
+  failureType: 'testCodeFailure'
+  error: "ENOENT: no such file or directory, open '/tmp/pfd-hold-receipt-M5WVg4/doe-jane-1000001.hold.json'"
+  code: 'ENOENT'
+  stack: |-
+    readFileSync (node:fs:440:20)
+    TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/skills/pfd-fetcher/extract.test.ts:502:32)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: extractor treats no-identity as failed, not held or skipped
+not ok 47 - extractor treats no-identity as failed, not held or skipped
+  ---
+  duration_ms: 2.29859
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/skills/pfd-fetcher/extract.test.ts:1:18969'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    0 !== 1
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/skills/pfd-fetcher/extract.test.ts:520:14)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: extractor treats conversion-failed as failed, not held or skipped
+not ok 48 - extractor treats conversion-failed as failed, not held or skipped
+  ---
+  duration_ms: 0.459444
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/skills/pfd-fetcher/extract.test.ts:1:18969'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    0 !== 1
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/skills/pfd-fetcher/extract.test.ts:520:14)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: extractor treats pdf-without-text as failed, not held or skipped
+not ok 49 - extractor treats pdf-without-text as failed, not held or skipped
+  ---
+  duration_ms: 0.336506
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/skills/pfd-fetcher/extract.test.ts:1:18969'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    0 !== 1
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/skills/pfd-fetcher/extract.test.ts:520:14)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: extractor treats invalid-pdf as failed, not held or skipped
+not ok 50 - extractor treats invalid-pdf as failed, not held or skipped
+  ---
+  duration_ms: 0.834249
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/skills/pfd-fetcher/extract.test.ts:1:18969'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    0 !== 1
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/skills/pfd-fetcher/extract.test.ts:520:14)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..50
+# tests 50
+# suites 0
+# pass 39
+# fail 11
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1366.276045

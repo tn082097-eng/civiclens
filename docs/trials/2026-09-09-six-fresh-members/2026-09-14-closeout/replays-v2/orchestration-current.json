@@ -1,0 +1,37 @@
+[
+  {
+    "source": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-2026-09-14-inputs/run-step-v2.py",
+    "trackedCopy": "docs/trials/2026-09-09-six-fresh-members/2026-09-14-closeout/replays-v2/orchestration/run-step-v2.py",
+    "sha256": "eeacbea0f39e1465aab191958c37cfd52a3d3e872f9c9f3a55fcff7d14422181"
+  },
+  {
+    "source": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-2026-09-14-inputs/run-control.py",
+    "trackedCopy": "docs/trials/2026-09-09-six-fresh-members/2026-09-14-closeout/replays-v2/orchestration/run-control.py",
+    "sha256": "8b6636afb690095b6dc7c41afbdf8db27e98307c79d5acaca9deb0b4c5bc4f3d"
+  },
+  {
+    "source": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-2026-09-14-inputs/ingest-v2.py",
+    "trackedCopy": "docs/trials/2026-09-09-six-fresh-members/2026-09-14-closeout/replays-v2/orchestration/ingest-v2.py",
+    "sha256": "716ba6bf94b306ac959d21695b4f2a8d8150c0133dd42916e82d3d20afad76d4"
+  },
+  {
+    "source": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-2026-09-14-inputs/finish-stratum-v2.py",
+    "trackedCopy": "docs/trials/2026-09-09-six-fresh-members/2026-09-14-closeout/replays-v2/orchestration/finish-stratum-v2.py",
+    "sha256": "2bc602bb1338bae5c48f7a48325a79c2e4842d323167cfade7913d0c39300fad"
+  },
+  {
+    "source": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-2026-09-14-inputs/independent-checks.py",
+    "trackedCopy": "docs/trials/2026-09-09-six-fresh-members/2026-09-14-closeout/replays-v2/orchestration/independent-checks.py",
+    "sha256": "45cbc9231985980c8bbaf03648770d8f157507e2c6ac4841a116501ba4d6031f"
+  },
+  {
+    "source": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-2026-09-14-inputs/audit-db-v2.mjs",
+    "trackedCopy": "docs/trials/2026-09-09-six-fresh-members/2026-09-14-closeout/replays-v2/orchestration/audit-db-v2.mjs",
+    "sha256": "8ae2c5c71e4bc593243f5800ec7372cae44e37f6c8b71463fb20409ae9960e96"
+  },
+  {
+    "source": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-2026-09-14-inputs/record-closeout.mjs",
+    "trackedCopy": "docs/trials/2026-09-09-six-fresh-members/2026-09-14-closeout/replays-v2/orchestration/record-closeout.mjs",
+    "sha256": "290ec6a40deb567d492efdd39e40ee61bd9a78bd42ddfa4e416ba1da90ce9e8d"
+  }
+]

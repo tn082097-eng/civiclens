@@ -1,0 +1,16 @@
+{
+  "candidate": "d2992fda5c7e412e86b3cd47ef0248fd039e8d46",
+  "node": "v22.22.2",
+  "copiedEnvKeysOnly": [
+    "CONGRESS_API_KEY",
+    "OPENFEC_API_KEY",
+    "XAI_API_KEY",
+    "ANTHROPIC_API_KEY",
+    "LLM_MODEL",
+    "LLM_SUMMARIZER_MODEL",
+    "LLM_TRADE_MODEL",
+    "LLM_REVIEWER_MODEL"
+  ],
+  "openSecrets": "not-collected",
+  "normalization": "Remove only generated timestamp in <div class=\"sub\">, preserving all other bytes."
+}

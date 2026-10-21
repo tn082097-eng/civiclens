@@ -1,0 +1,20 @@
+{
+  "candidate": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "worktree": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham",
+  "member": "Darline Graham",
+  "bioguide": "G000608",
+  "dbInitialSha256": "a766c8917a0e6b42ddc488758eb0b1a66abb37d24c873a74b4cc9d6fd7e4a38b",
+  "cacheInitiallyAbsent": true,
+  "sources": [
+    {
+      "path": "data/caches/legislators-cache/legislators-current.yaml",
+      "sha256": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2"
+    },
+    {
+      "path": "data/caches/senate-ptr-cache/_search-receipts/G000608.json",
+      "sha256": "95291486cc24434eaeb3aecdef85f83740d6772555fc47db3866c7feef57eafc"
+    }
+  ],
+  "vault": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham/trial-vault",
+  "sourceCopy": "Only frozen manifest files copied from superseded worktree; no runtime or derived outputs copied."
+}

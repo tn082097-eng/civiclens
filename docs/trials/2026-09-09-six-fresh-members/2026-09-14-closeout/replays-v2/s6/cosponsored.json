@@ -1,0 +1,22 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "db/load-cosponsored.ts",
+    "eric-burlison"
+  ],
+  "started": "2026-09-17T00:28:05Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/caches",
+  "dbBefore": "e6b999f76d7667566a328730be715fe76d015b8a7f97b526aeae59fcced37f22",
+  "walBefore": "f2fc5fdf0c9148e8fbd0a2213f5295d2598e94e764f26a3bf13d6309e466cb43",
+  "exit": 0,
+  "output": "Loading cosponsors for 1 member(s)\u2026\n\n  eric-burlison (Eric Burlison): 394 fetched, 394 inserted, 0 dup/skipped\n\nDone. 394 cosponsor rows inserted, 0 member(s) not loaded.\nBills table now: [\n  { sponsor_role: 'cosponsor', n: 153856 },\n  { sponsor_role: null, n: 179 },\n  { sponsor_role: 'sponsor', n: 16232 }\n]\n",
+  "dbAfter": "e6b999f76d7667566a328730be715fe76d015b8a7f97b526aeae59fcced37f22",
+  "finished": "2026-09-17T00:28:07Z",
+  "walAfter": "59547c628a46f3d1ecd76d94f18cb45d9be13640bf0e8d000f96a80c9bbc459f"
+}

@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "agents/pipeline.ts",
+    "--load-sponsored",
+    "chris-van-hollen"
+  ],
+  "started": "2026-09-16T14:59:29Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen/data/caches",
+  "dbBefore": "80568fce5c6125266c26ef95b012437009783605c0f156fad1608464372d488d",
+  "walBefore": null,
+  "exit": 0,
+  "output": "Loading sponsored legislation for 1 member(s)\u2026\n\n  chris-van-hollen (Chris Van Hollen): 632 fetched, 384 upserted, 380 w/ policyArea, 4 no-policy, 248 skipped\n\nDone. 1 member(s), 384 sponsor rows upserted, 380 bill_subjects rows written.\n",
+  "dbAfter": "80568fce5c6125266c26ef95b012437009783605c0f156fad1608464372d488d",
+  "finished": "2026-09-16T14:59:31Z",
+  "walAfter": "bbfadfa9cd5397bb0ac4e6914081ad0206dbf49570dad19a3d512fb3fc9396bb"
+}

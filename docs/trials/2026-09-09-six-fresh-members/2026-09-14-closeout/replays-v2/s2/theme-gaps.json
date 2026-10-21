@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "pipeline/score-theme-gaps.ts",
+    "--member",
+    "john-w-mannion"
+  ],
+  "started": "2026-09-16T14:50:02Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion/data/caches",
+  "dbBefore": "7c9afdb3fe89383fc43ae487a49eb2c2dbb1f133114852e40e45c26138d6037e",
+  "walBefore": "acc738291dd404d30247e66c9b816d3f205f3ccd6d8f886485e91f7224f66cc9",
+  "exit": 0,
+  "output": "john-w-mannion [insufficient-data]: trades=0 receipts=0 -> pipeline/artifacts/john-w-mannion.theme-gaps.json\n",
+  "dbAfter": "13ee6d160774dbf4dd0b7dc398dfd31b4330ca58319f8c3a4d15914b77e7be06",
+  "finished": "2026-09-16T14:50:02Z",
+  "walAfter": null
+}

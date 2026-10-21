@@ -33,6 +33,7 @@ import { runSummarizer } from './summarizer.js';
 import { runCodeChecker } from './code-checker.js';
 import { runFinalReviewer } from './final-reviewer.js';
 import { FinalReviewReportSchema } from '../lib/schemas.js';
+import { requiredAgentFailures, pipelineExitCode } from './required-agents.js';
 
 loadHermesEnv();
 
@@ -111,7 +112,10 @@ function showStatus(taskId: string) {
 }
 
 // ─── Main pipeline orchestrator ───────────────────────────────────────────────
-async function runPipeline(targetName: string, opts: { force?: boolean; skipVaultRegen?: boolean } = {}) {
+async function runPipeline(
+  targetName: string,
+  opts: { force?: boolean; skipVaultRegen?: boolean } = {},
+): Promise<number> {
   const cached = !opts.force && findFreshTask(targetName);
   if (cached) {
     header(`CivicLens Pipeline — ${targetName}`);
@@ -126,7 +130,7 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
     console.log(`  ${dim('Task:')} ${cached}`);
     console.log(`  ${dim('Rebuild site:')} ${dim('npx tsx render/build.ts')}`);
     console.log();
-    return;
+    return 0;
   }
 
   const taskId = `task-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`;
@@ -141,7 +145,8 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
   const researchOk = await runResearcher(task);
   if (!researchOk) {
     fail('Pipeline', 'Researcher failed — aborting');
-    return;
+    setStatus(task, 'failed');
+    return 1;
   }
   try { await syncTask(task.taskId); }
   catch (e: any) { warn('DB', `sync-task failed: ${e.message}`); }
@@ -156,7 +161,7 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
     if (!checkOk) {
       fail('Pipeline', 'Data Checker failed after retry — aborting');
       setStatus(task, 'failed');
-      return;
+      return 1;
     }
   }
 
@@ -172,9 +177,16 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
     warn('Brain', 'Trade Analyst failed — continuing without trade section');
   }
 
-  // Summarizer is a semantic sidecar: its narrative ships nowhere on the public
-  // site (facts render from DuckDB), so it must never block deterministic facts
-  // from publishing. Soft like the Trade Analyst; skippable via env.
+  // The summarizer produces a REQUIRED artifact. It is skippable only by
+  // explicit operator opt-out (CIVICLENS_SUMMARIZER=0), which is a recorded
+  // decision; an unplanned failure is not.
+  //
+  // This was previously treated as a soft sidecar that "must never block
+  // deterministic facts from publishing". Stratum 4 showed the cost: the CLI
+  // timed out twice and the run still reached APPROVED / ready-to-apply with no
+  // summary on disk, and the corpus gate reported the family as 0/0 PASS. An
+  // absent required artifact is now a hard stop — the run fails closed rather
+  // than shipping a member whose required outputs silently went missing.
   if (process.env.CIVICLENS_SUMMARIZER === '0') {
     markAgent(task, 'summarizer', 'skipped');
     warn('Brain', 'Summarizer skipped (CIVICLENS_SUMMARIZER=0)');
@@ -186,7 +198,11 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
       task.agents.summarizer.retries++;
       sumOk = await runSummarizer(task);
       if (!sumOk) {
-        warn('Brain', 'Summarizer failed after retry — continuing without summary');
+        // Retry exhausted. Stop here: continuing would run the code checker and
+        // final reviewer against a missing artifact, and both would approve.
+        fail('Pipeline', 'Summarizer failed after retry — aborting (required artifact)');
+        setStatus(task, 'failed');
+        return 1;
       }
     }
   }
@@ -226,16 +242,30 @@ async function runPipeline(targetName: string, opts: { force?: boolean; skipVaul
     console.log(`  ${dim('→ Add to FEC_OVERRIDES in db/backfill-fec-candidate.ts, or retry sync after FEC is reachable.')}`);
   }
 
+  // Backstop: catch any required artifact that went missing without tripping an
+  // earlier gate. The decision above is advisory until this passes — a reviewer
+  // can only approve what was actually produced.
+  const missing = requiredAgentFailures(task);
+  if (missing.length > 0) {
+    console.log();
+    fail('Pipeline', `required artifact(s) missing: ${missing.join(', ')} — run failed`);
+    setStatus(task, 'failed');
+    if (!opts.skipVaultRegen) regenerateVault();
+    console.log();
+    return pipelineExitCode(task);
+  }
+
   if (finalReview.readyToApply) {
     console.log(`\n  ${cyan('Rebuild site:')} ${dim('npx tsx render/build.ts')}`);
   }
 
   if (!opts.skipVaultRegen) regenerateVault();
   console.log();
+  return 0;
 }
 
 // ─── Batch runner ─────────────────────────────────────────────────────────────
-async function runBatch(namesArg: string, concurrency = 3) {
+async function runBatch(namesArg: string, concurrency = 3): Promise<number> {
   let names: string[];
   if (fs.existsSync(namesArg)) {
     names = fs.readFileSync(namesArg, 'utf-8')
@@ -260,8 +290,9 @@ async function runBatch(namesArg: string, concurrency = 3) {
       const name = queue.shift();
       if (!name) break;
       try {
-        await runPipeline(name, { skipVaultRegen: true });
-        results.push({ name, ok: true });
+        const code = await runPipeline(name, { skipVaultRegen: true });
+        if (code === 0) results.push({ name, ok: true });
+        else results.push({ name, ok: false, error: 'required artifact(s) missing' });
       } catch (e: any) {
         results.push({ name, ok: false, error: e.message });
       }
@@ -282,10 +313,11 @@ async function runBatch(namesArg: string, concurrency = 3) {
 
   if (results.some(r => r.ok)) regenerateVault();
   console.log();
+  return results.every(r => r.ok) ? 0 : 1;
 }
 
 // ─── Append + run + auto-apply ────────────────────────────────────────────────
-async function appendAndRun(name: string) {
+async function appendAndRun(name: string): Promise<number> {
   const namesPath = NAMES_PATH;
   const existing = fs.existsSync(namesPath)
     ? fs.readFileSync(namesPath, 'utf-8').split('\n').map(s => s.trim()).filter(Boolean)
@@ -299,16 +331,19 @@ async function appendAndRun(name: string) {
     ok('names.txt', `appended "${name}" (total ${existing.length + 1})`);
   }
 
-  await runPipeline(name);
+  const code = await runPipeline(name);
+  // A failed run is never advertised as ready to publish.
+  if (code !== 0) return code;
 
   const taskId = findFreshTask(name);
   if (!taskId) {
     warn('append', 'no approved task for this name');
-    return;
+    return 1;
   }
   // The member is already in DuckDB via syncTask (inside runPipeline). The
   // legacy seed.ts apply step is gone — rebuild the static site to publish.
   console.log(`\n  ${cyan('›')}  ${bold('In DuckDB.')} ${dim('Rebuild site: npx tsx render/build.ts')}`);
+  return 0;
 }
 
 // ─── Entry point ──────────────────────────────────────────────────────────────
@@ -329,7 +364,7 @@ ${bold('CivicLens Pipeline Runner')}
   ${cyan('npx tsx agents/pipeline.ts --load-senate-ptr (--member <slug>|--bioguide <id>|--all) [--dry-run]')} Senate EFDS PTRs
   ${cyan('npx tsx agents/pipeline.ts --load-fec-ie <cycle[,cycle]> (--member <slug>|--bioguide <id>|--all) [--dry-run]')} FEC Super PAC IE
   ${cyan('npx tsx agents/pipeline.ts --load-opensecrets <cycle[,cycle]> (--member <slug>|--bioguide <id>|--all) [--dry-run]')} cached OpenSecrets HTML
-  ${cyan('npx tsx agents/pipeline.ts --load-bills (--member <slug>|--bioguide <id>|--all) [--api-pass] [--api-limit N] [--limit N]')} votes.bill_id + summaries
+  ${cyan('npx tsx agents/pipeline.ts --load-bills (--member <slug>|--bioguide <id>|--all) [--official-pass|--api-pass] [--api-limit N] [--limit N]')} votes.bill_id + summaries
   ${cyan('npx tsx agents/pipeline.ts --load-sponsored [member-id]')} authoritative sponsor rows + inline policyArea (run AFTER load-from-tasks)
   ${cyan('npx tsx agents/pipeline.ts --load-lda [args...]')}        Senate LDA lobbying (full options in db/load-lda.ts; use --years 2018-2026 etc)
   ${cyan('npx tsx agents/pipeline.ts --load-district-contracts [member-id] [--cy 2023,2024,2025] [--force] [--dry-run]')} USAspending NAICS rollups per House district
@@ -373,11 +408,17 @@ ${bold('CivicLens Pipeline Runner')}
   if (years.length === 0) { console.error('--load-pfd: years must be numeric'); process.exit(1); }
   const dryRun = process.argv.includes('--dry-run');
   (async () => {
-    const { loadPfdYears } = await import('../db/load-pfd.js');
+    const { loadPfdYears, pfdLoadExitCode } = await import('../db/load-pfd.js');
     const { parseScopeArgs, resolveScope } = await import('../lib/ingest-scope.js');
     const scope = await resolveScope(parseScopeArgs(process.argv.slice(3)));
-    const { totalUnmatched } = await loadPfdYears(years, scope, { dryRun });
-    process.exit(totalUnmatched > 0 ? 1 : 0);
+    const result = await loadPfdYears(years, scope, { dryRun });
+    if (scope.kind === 'member' && result.totalWithheld > 0) {
+      console.warn(
+        `Member hold: ${scope.memberId} has ${result.totalWithheld} withheld filing(s); ` +
+        'skip automated publication and keep the member in the formatting queue.',
+      );
+    }
+    process.exit(pfdLoadExitCode(result));
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(2); });
 } else if (arg === '--load-fec-ie') {
   const dryRun = process.argv.includes('--dry-run');
@@ -414,9 +455,9 @@ ${bold('CivicLens Pipeline Runner')}
     const apiLimitIdx = pargs.indexOf('--api-limit');
     const limit       = limitIdx    >= 0 ? parseInt(pargs[limitIdx    + 1] ?? '', 10) : undefined;
     const apiLimit    = apiLimitIdx >= 0 ? parseInt(pargs[apiLimitIdx + 1] ?? '', 10) : undefined;
-    const apiPass     = pargs.includes('--api-pass');
+    const officialPass = pargs.includes('--official-pass') || pargs.includes('--api-pass');
     const scope = await resolveScope(parseScopeArgs(process.argv.slice(3)));
-    await loadBills(scope, { limit, apiPass, apiLimit });
+    await loadBills(scope, { limit, officialPass, apiLimit });
     process.exit(0);
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
 } else if (arg === '--load-ticker-sectors') {
@@ -474,7 +515,7 @@ ${bold('CivicLens Pipeline Runner')}
     const { loadSenatePtrs } = await import('../db/load-senate-ptr.js');
     const { parseScopeArgs, resolveScope } = await import('../lib/ingest-scope.js');
     const scope = await resolveScope(parseScopeArgs(process.argv.slice(3)));
-    const { filers, totalTx, unmatched } = await loadSenatePtrs(scope, { dryRun });
+    const { filers, totalTx, unmatched, verifiedEmpty } = await loadSenatePtrs(scope, { dryRun });
     const nameW = Math.max(20, ...filers.map((f: any) => f.name.length));
     const memberW = Math.max(20, ...filers.map((f: any) => (f.memberId ?? 'unmatched').length));
     const line = '─'.repeat(nameW + memberW + 30);
@@ -486,24 +527,27 @@ ${bold('CivicLens Pipeline Runner')}
     }
     console.log(line);
     console.log(`Total: ${filers.length} filer(s), ${totalTx} transactions, ${unmatched} unmatched`);
+    if (verifiedEmpty && scope.kind === 'member') {
+      console.log(`Verified empty: successful EFDS search found zero PTR filings for ${scope.bioguideId}; DB unchanged.`);
+    }
     process.exit(unmatched > 0 ? 1 : 0);
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
 } else if (arg === '--append') {
   if (!arg2) { console.error('Usage: --append "Politician Name"'); process.exit(1); }
-  appendAndRun(arg2).catch(e => {
+  appendAndRun(arg2).then(code => process.exit(code)).catch(e => {
     console.error(red(`\nFatal: ${e.message}`));
     process.exit(1);
   });
 } else if (arg === '--batch') {
   if (!arg2) { console.error('Usage: --batch "A,B,C" [concurrency]  OR  --batch names.txt [concurrency]'); process.exit(1); }
   const concurrency = arg3 ? Math.max(1, parseInt(arg3, 10)) : 3;
-  runBatch(arg2, concurrency).catch(e => {
+  runBatch(arg2, concurrency).then(code => process.exit(code)).catch(e => {
     console.error(red(`\nFatal: ${e.message}`));
     process.exit(1);
   });
 } else {
   const force = process.argv.includes('--force');
-  runPipeline(arg, { force }).catch(e => {
+  runPipeline(arg, { force }).then(code => process.exit(code)).catch(e => {
     console.error(red(`\nFatal: ${e.message}`));
     process.exit(1);
   });

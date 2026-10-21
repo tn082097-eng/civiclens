@@ -1,0 +1,392 @@
+[
+  {
+    "path": "data/caches/legislators-cache/legislators-current.yaml",
+    "sha256": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2",
+    "bytes": 1081081
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20027855.json",
+    "sha256": "204ecfa44199f7836cdd55429987f6cb1e7604dcffb7034a9a2d4f255d8bfbee",
+    "bytes": 614
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20027855.pdf",
+    "sha256": "4dd806a65b4328bbd6ae976cd09fd09c8188f07b0599a5ebb1de7fdef67a2fe3",
+    "bytes": 64405
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20027855.txt",
+    "sha256": "4ef5f2078cfe06a00750b1628f615d7fb13996182b9746991d6aae9ec432495f",
+    "bytes": 1858
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20030472.json",
+    "sha256": "adbcea3e061a01600e8983b77135dbeaf672b810f926149c5657cfd11a6ca92e",
+    "bytes": 18280
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20030472.pdf",
+    "sha256": "b7792e8b4cd473b26e4a1b749f28aa62f85ec8e5d46ea3742e0956e5b7da3804",
+    "bytes": 106079
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20030472.txt",
+    "sha256": "7ff5b2db9f33b190e0aadedb5510e757ee1d949ee96d180fe0731efdc5d0bf41",
+    "bytes": 15801
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20030803.json",
+    "sha256": "e0cbf54143eef6fb00dd9f677d6a080eb15eae2905cc45b040a4b79d1f14d787",
+    "bytes": 23622
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20030803.pdf",
+    "sha256": "05a5d833c10e73a34aee70cfc4266a6f4db4ce055ca86298f523efd689d7d8e9",
+    "bytes": 118387
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20030803.txt",
+    "sha256": "8dc4b4aed8c589131d4409601f7ae0338a181c1d06322f50de140015450c29b6",
+    "bytes": 19906
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20031017.json",
+    "sha256": "740efd22f8f50fc29b600e0a31707643c1c17fdaf5be70cf43642b665eb397f1",
+    "bytes": 15556
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20031017.pdf",
+    "sha256": "cd6cbe0c14d3b0c727deb8cd2dc74ce90ecaa5c62d44ba1c8f3bff9204a52d71",
+    "bytes": 99809
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20031017.txt",
+    "sha256": "afee650b81741c8531f6ea3a98766b6acfb15e0ad405a61d43829a69e0ad1563",
+    "bytes": 14341
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20032106.json",
+    "sha256": "7deb063a46b2accfb36a5e19fe31f8a0c42dd7a1cdafbe623aab156169ec8eb7",
+    "bytes": 8642
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20032106.pdf",
+    "sha256": "606edc1951553ca8d3be8ebd242e6a44af6557d40f6968295f84cdb27d21b68b",
+    "bytes": 85465
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20032106.txt",
+    "sha256": "c28c54e2bbc919b4f84a2fddda4c4496e75df442fbfd5ad57d4e0cb702fedb41",
+    "bytes": 8769
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20033326.json",
+    "sha256": "1f7a9214bca14c0c157be32e9893328b0a8e5ca5533bad7b52c6e9104006f60b",
+    "bytes": 3427
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20033326.pdf",
+    "sha256": "b090e0bd9de1c30f0b9a3a4838b45282400a60a3e1c7b0810eec1f374d9b2e1b",
+    "bytes": 72662
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20033326.txt",
+    "sha256": "9aa2df95a1cec2ffb27839162953c58365986180ef43cbb21b4e1ed01f1298c1",
+    "bytes": 4344
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20033424.json",
+    "sha256": "d64ed57275d09cf845a870f8a674b251b7143931cc3439e8c09831b3bde85819",
+    "bytes": 4640
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20033424.pdf",
+    "sha256": "d77920ed17da4938c5664fe81d29b164e51658edc8c77c71fc15e9f37a85d1dd",
+    "bytes": 74927
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20033424.txt",
+    "sha256": "490f5fc021f693cd27a97809f7afdbdd73bc5b10b777228f359cd61d2a2b154f",
+    "bytes": 5802
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20033493.json",
+    "sha256": "2aeca5a5a8bfa0c06e65bb37836f2c8c7a5f85aed60d79e6dc23c0908e59b7d2",
+    "bytes": 1791
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20033493.pdf",
+    "sha256": "97820221489caecfdc0e704231134fd98a2525876344135627ab53fb72ed226a",
+    "bytes": 67655
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20033493.txt",
+    "sha256": "39e85e1a0f0514c4aeb1b897aab50fcfdec3c2e9f3c39ad7c057299cfbd5cc53",
+    "bytes": 2889
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20033559.json",
+    "sha256": "5d2b447b0e5f98a2b2a6802605e0247559b29c09637ff461b1683fb6eff66dde",
+    "bytes": 1026
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20033559.pdf",
+    "sha256": "4d86a13b1c30f447ceb63613220afcd6eb3b0710f30db3146cd86564a32dc811",
+    "bytes": 65674
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20033559.txt",
+    "sha256": "cc74bcc853d76897e44e3f2d1bc076c3e1be853c6c238feee3e255daff18333d",
+    "bytes": 2315
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20033616.json",
+    "sha256": "0fbf2c5fcdfc942b1e24d509d21921fe13cd4b64380fe9eff03b8e8c17c744f5",
+    "bytes": 6260
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20033616.pdf",
+    "sha256": "b4a14090190553474a8ccc7b0489611025fa5f40ca601ef5959102ab902998c8",
+    "bytes": 78859
+  },
+  {
+    "path": "data/caches/pfd-cache/2025/fields-cleo-20033616.txt",
+    "sha256": "ba474cb1241e5d8a5db3f0299fb4e98cd34770c472a0fb05bc9fad4ef21bd5c6",
+    "bytes": 6087
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20033732.json",
+    "sha256": "715acddeb21483d30aa8851c5d4dd8131649d36d0f3d2e64172693e721508b7d",
+    "bytes": 2189
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20033732.pdf",
+    "sha256": "13d21ea4878ef3ed529a011152bf17d0f416f187b2950d135883be4d4f12b3d5",
+    "bytes": 69348
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20033732.txt",
+    "sha256": "6e8ac44f7c49f64d704458b9a55186ce0059919b8140898193255b3fd44d1476",
+    "bytes": 3310
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20033858.json",
+    "sha256": "3f8faa1c414e497b79955b274c12dccbc094dedad462b1bf460f65e1431c15d4",
+    "bytes": 2641
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20033858.pdf",
+    "sha256": "c5cbb249a101d4a6802bcb56da073a234310aa86333da2376bd3a9d86f2b2a4b",
+    "bytes": 69716
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20033858.txt",
+    "sha256": "90ad2a0bea7fbf47ced0f96aa4df979e0861d5ab35ba26bc06f3e60a5d7db102",
+    "bytes": 3823
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034018.json",
+    "sha256": "ccaa0cef61e47ccdc39d3572771e3b417dbacdbb5a99dda06d57c5e5caca333d",
+    "bytes": 2629
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034018.pdf",
+    "sha256": "2bf197ff45c31c34919daff21ac9f89d705f3b78655158170cb19e7a4d4b81f0",
+    "bytes": 69391
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034018.txt",
+    "sha256": "7e139e2835d3484144366a99346da4267b54799f60e8a17a892ca5bfc18f1867",
+    "bytes": 3405
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034179.json",
+    "sha256": "61ddda766682c80b8d225dd1dcc8e860c46f6c081b4ced109fca483405b80ee4",
+    "bytes": 1036
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034179.pdf",
+    "sha256": "de338645e1f2e7546b906c688c1b1b733d527a66d474e4be9ec05025c889414a",
+    "bytes": 65601
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034179.txt",
+    "sha256": "a7cd0cef27a1f96fada7b09b9bc9f5cc14f9170736ea214b8c7823eec16f286e",
+    "bytes": 2162
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034295.json",
+    "sha256": "9d889aad47a2b99f28151dec98234276dd9ad8f50ff2a862de71ccaa4c3b9bec",
+    "bytes": 612
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034295.pdf",
+    "sha256": "4b7c672633351bc9993a42c81c68285553d2e00124b2b578b26ce49c3d096053",
+    "bytes": 64752
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034295.txt",
+    "sha256": "4703c78bab7cf63637044f52cfb4d5320aeed365643aa059c415e2086c05f021",
+    "bytes": 1789
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034357.json",
+    "sha256": "f1f46c74effbf10ba4fee03359611afe450feba815364ef4929d82986a26ff69",
+    "bytes": 621
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034357.pdf",
+    "sha256": "72fa8c0202baeec2622022cc6b3386513286820b1b6aa7d342e82fd2bb2219d0",
+    "bytes": 64442
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034357.txt",
+    "sha256": "52789ea01dbccea9fa95ff448552454f8308f3cbc95637cd14953ab0ba63faac",
+    "bytes": 1837
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034591.json",
+    "sha256": "c3f775d836295627888129eedaf50a2a6d90c67330434e1582d5b4be3d0df427",
+    "bytes": 600
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034591.pdf",
+    "sha256": "564ce40c050199985019f83ce2ad895200bbc27f976de77d8a8aa5402039800b",
+    "bytes": 64221
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034591.txt",
+    "sha256": "092fd1dc14f4d28d3511e96c8cc8849866663240ee99f59bbc292ff481fb1a7e",
+    "bytes": 1782
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034800.json",
+    "sha256": "86a174dc7de7c2477286b4d110f69384ec1aeb7d35d4b2acdd471710fc50c4ac",
+    "bytes": 1844
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034800.pdf",
+    "sha256": "aab374c3fb3f99ac9daf7c26a3a1e1ee365b6febf104e09559312431a2f5e0e8",
+    "bytes": 67851
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034800.txt",
+    "sha256": "304143c369196ed90d06869f8b7bed1170fb39ad796abbd5681a778dda96f515",
+    "bytes": 2714
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034894.json",
+    "sha256": "9271771c46cf2bb4db9cf133af77504e31420e275261aa0a59a6f3259819a87a",
+    "bytes": 1431
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034894.pdf",
+    "sha256": "608b5187192c389d67a0bc033458d4fac3215194821982049102a5bab2a2df9b",
+    "bytes": 67561
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20034894.txt",
+    "sha256": "9c8efbea6464a38a0a7b043478a6970d4687deadf751f167a4407c18459432c0",
+    "bytes": 2459
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20035023.json",
+    "sha256": "19b8c031dae6011ef6c0884309aedc771516ee5ca0c5be1032c8f4dafdc8656f",
+    "bytes": 621
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20035023.pdf",
+    "sha256": "4ac0adc4bead48b10c0cdd3a4b832211c08e67dc538180d365257201570cc940",
+    "bytes": 63989
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20035023.txt",
+    "sha256": "df776534964fc255bbcfdc6ca5295367aca73406a4da8bf4adf522473d54bb3d",
+    "bytes": 1837
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20035345.json",
+    "sha256": "e4a0867ab72ea4ab7ece42e611851f87b5dcccf741597c4cd5e7deb90fd2e7f5",
+    "bytes": 600
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20035345.pdf",
+    "sha256": "91bba9a2be22622ad127278cf9611536fbbb52046568238e89c25c1d7f0076f7",
+    "bytes": 64224
+  },
+  {
+    "path": "data/caches/pfd-cache/2026/fields-cleo-20035345.txt",
+    "sha256": "7caa6bfc92678158d33c56aa92b1272453216a40713f15b6acc16104ae737c68",
+    "bytes": 1782
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/H4LA06211/2026-itemized.json",
+    "sha256": "8ce2d25410e8fb2002f667423f34f86aaf2fce0dcca1c1cb668708180508fbbd",
+    "bytes": 193
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json",
+    "sha256": "faccf341b7474956f57fb071455b3c23459b31a0047fb1223004defcc308cab9",
+    "bytes": 10055
+  },
+  {
+    "path": "data/caches/pfd-cache/index/2023FD.xml",
+    "sha256": "60e5dcf86ec483f428a371abbe7894f72124fc03d3e5b6351507b40ec8f8c10d",
+    "bytes": 650480
+  },
+  {
+    "path": "data/caches/pfd-cache/index/2024FD.xml",
+    "sha256": "99576a8c58e100fc35e14af597b184f0421650cf6de1e11379a784189d5c5f9e",
+    "bytes": 625362
+  },
+  {
+    "path": "data/caches/pfd-cache/index/2025FD.xml",
+    "sha256": "0b0b0cd2b288938a00b38bcee4f1c5f7686139a32920e2e9c38a7291844c0814",
+    "bytes": 793323
+  },
+  {
+    "path": "data/caches/pfd-cache/index/2026FD.xml",
+    "sha256": "3d010744d0db9b91a1d8f8132c43c3c2567c5a5b16c100648f5f99e9ff3217d9",
+    "bytes": 431311
+  },
+  {
+    "path": "pipeline/task-1789570284455-43b03a16/code-checker.json",
+    "sha256": "8fc3469db91424620edbec507853b47385ae1ae78f1cf04bf71a567e247cd126",
+    "bytes": 236
+  },
+  {
+    "path": "pipeline/task-1789570284455-43b03a16/data-checker.json",
+    "sha256": "16328497599be7fda62380f1ffd7c2f4bdc08bb066821921d1d16a3ecb7411b2",
+    "bytes": 208
+  },
+  {
+    "path": "pipeline/task-1789570284455-43b03a16/final-review.json",
+    "sha256": "50e41af5ab0b6208611d8ce97e3c02128fc57e9e9ea59a87ce58f5c12646cb02",
+    "bytes": 578
+  },
+  {
+    "path": "pipeline/task-1789570284455-43b03a16/predictor.json",
+    "sha256": "47f96cccaaf0ffd1d09f890daf21d508fbadcb3c63cd55a72f5951c4cfd5f9de",
+    "bytes": 2363
+  },
+  {
+    "path": "pipeline/task-1789570284455-43b03a16/researcher.json",
+    "sha256": "05d16cd79d9276879c7557304da68fdfb014ca228e461f446ac720c999cc115b",
+    "bytes": 275934
+  },
+  {
+    "path": "pipeline/task-1789570284455-43b03a16/state.json",
+    "sha256": "483db056eb79e5596c46958a7f20164fa485432cec78f6e81afd5fec0131ab9a",
+    "bytes": 2039
+  },
+  {
+    "path": "pipeline/task-1789570284455-43b03a16/summarizer.json",
+    "sha256": "25eea1990544181129b6c5cdd5f4ad01d54bfcd2ce9d456d734ae08b8cb7169e",
+    "bytes": 2622
+  },
+  {
+    "path": "pipeline/task-1789570284455-43b03a16/trade-analyst.json",
+    "sha256": "47076f4687e701ebbb4c8719c9a5d4be83414c045bccf437d87028d67f394b1e",
+    "bytes": 309
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-evidence/\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "--input-type=module",
+    "-e",
+    "\nimport {validateCorpus} from './scripts/validate-artifact-corpus.ts';\nconst r=validateCorpus({corpusDir:'/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham/trial-evidence/corpus-selected'});\nfor(const f of r.families) console.log(f.status.padEnd(5), f.agent.padEnd(14), f.pass+'/'+f.total, 'valid', '('+f.unparseable+' unparseable)', f.required?'[required]':'');\nconsole.log('ok:', r.ok);\nprocess.exit(r.ok?0:1);\n"
+  ],
+  "started": "2026-09-17T00:25:55Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham/data/caches",
+  "dbBefore": "b79e9cf018e70f883a807ba90903554c102880c5e08a3a1d8fc57ac421fb4554",
+  "walBefore": null,
+  "exit": 0,
+  "output": "PASS  researcher     1/1 valid (0 unparseable) [required]\nPASS  data-checker   1/1 valid (0 unparseable) [required]\nPASS  code-checker   1/1 valid (0 unparseable) \nPASS  trade-analyst  1/1 valid (0 unparseable) \nPASS  summarizer     1/1 valid (0 unparseable) [required]\nPASS  predictor      1/1 valid (0 unparseable) \nPASS  final-review   1/1 valid (0 unparseable) \nok: true\n",
+  "dbAfter": "b79e9cf018e70f883a807ba90903554c102880c5e08a3a1d8fc57ac421fb4554",
+  "finished": "2026-09-17T00:25:56Z",
+  "walAfter": null
+}

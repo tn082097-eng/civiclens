@@ -1,0 +1,2135 @@
+TAP version 13
+# Subtest: the summarizer is a required agent
+ok 1 - the summarizer is a required agent
+  ---
+  duration_ms: 0.709451
+  type: 'test'
+  ...
+# Subtest: a summarizer that failed after its retry is reported as a required failure
+ok 2 - a summarizer that failed after its retry is reported as a required failure
+  ---
+  duration_ms: 7.817951
+  type: 'test'
+  ...
+# Subtest: an exhausted-retry summarizer failure makes the pipeline exit non-zero
+ok 3 - an exhausted-retry summarizer failure makes the pipeline exit non-zero
+  ---
+  duration_ms: 0.177427
+  type: 'test'
+  ...
+# Subtest: a required agent that never ran (pending) also fails the run — no silent absence
+ok 4 - a required agent that never ran (pending) also fails the run — no silent absence
+  ---
+  duration_ms: 0.113038
+  type: 'test'
+  ...
+# Subtest: an explicitly skipped summarizer (CIVICLENS_SUMMARIZER=0) is not a required failure
+ok 5 - an explicitly skipped summarizer (CIVICLENS_SUMMARIZER=0) is not a required failure
+  ---
+  duration_ms: 0.174698
+  type: 'test'
+  ...
+# Subtest: a failed SOFT sidecar does not fail the run
+ok 6 - a failed SOFT sidecar does not fail the run
+  ---
+  duration_ms: 1.063996
+  type: 'test'
+  ...
+# Subtest: a fully complete run exits zero
+ok 7 - a fully complete run exits zero
+  ---
+  duration_ms: 0.145468
+  type: 'test'
+  ...
+# Subtest: readPipe without a schema returns raw JSON (back-compat)
+ok 8 - readPipe without a schema returns raw JSON (back-compat)
+  ---
+  duration_ms: 1.968986
+  type: 'test'
+  ...
+# Subtest: readPipe with a schema accepts a valid artifact and returns the RAW object
+ok 9 - readPipe with a schema accepts a valid artifact and returns the RAW object
+  ---
+  duration_ms: 1.697599
+  type: 'test'
+  ...
+# Subtest: readPipe error names the task, agent, and offending field
+ok 10 - readPipe error names the task, agent, and offending field
+  ---
+  duration_ms: 1.288933
+  type: 'test'
+  ...
+# Subtest: member mode regex backfill updates only the target member votes
+ok 11 - member mode regex backfill updates only the target member votes
+  ---
+  duration_ms: 220.827245
+  type: 'test'
+  ...
+# Subtest: member worklist is only bills referenced by the target votes
+ok 12 - member worklist is only bills referenced by the target votes
+  ---
+  duration_ms: 204.483421
+  type: 'test'
+  ...
+# Subtest: member mode does no global NULL-title refill (other members untouched)
+ok 13 - member mode does no global NULL-title refill (other members untouched)
+  ---
+  duration_ms: 233.06887
+  type: 'test'
+  ...
+# Subtest: all mode backfills every member
+ok 14 - all mode backfills every member
+  ---
+  duration_ms: 158.122755
+  type: 'test'
+  ...
+# Subtest: a fetch that terminates mid-pagination fails the member and is not reported as loaded
+ok 15 - a fetch that terminates mid-pagination fails the member and is not reported as loaded
+  ---
+  duration_ms: 289.477119
+  type: 'test'
+  ...
+# Subtest: a short page while upstream reports more rows is incomplete, not a successful end-of-results
+ok 16 - a short page while upstream reports more rows is incomplete, not a successful end-of-results
+  ---
+  duration_ms: 182.019645
+  type: 'test'
+  ...
+# Subtest: a complete multi-page fetch loads every row and exits zero
+ok 17 - a complete multi-page fetch loads every row and exits zero
+  ---
+  duration_ms: 293.790245
+  type: 'test'
+  ...
+# Subtest: a genuine zero-result fetch is a verified-empty success, not a failure
+ok 18 - a genuine zero-result fetch is a verified-empty success, not a failure
+  ---
+  duration_ms: 194.160251
+  type: 'test'
+  ...
+# Subtest: a member with no bioguide is reported, not silently skipped
+ok 19 - a member with no bioguide is reported, not silently skipped
+  ---
+  duration_ms: 184.996007
+  type: 'test'
+  ...
+# Loading FEC IE for 1 member(s), cycle 2024…
+# Loading FEC IE for 1 member(s), cycle 2024…
+# Subtest: member mode fetches only the target candidate/cycle; other rows unchanged
+ok 20 - member mode fetches only the target candidate/cycle; other rows unchanged
+  ---
+  duration_ms: 180.200107
+  type: 'test'
+  ...
+# Subtest: missing fec_candidate_id for the selected member fails loud (no roster pass)
+ok 21 - missing fec_candidate_id for the selected member fails loud (no roster pass)
+  ---
+  duration_ms: 142.236936
+  type: 'test'
+  ...
+# Loading FEC IE for 1 member(s), cycle 2024…
+# Loading FEC IE for 1 member(s), cycle 2024…
+# Subtest: empty aggregates array preserves existing super_pac_ie rows for that member/cycle
+ok 22 - empty aggregates array preserves existing super_pac_ie rows for that member/cycle
+  ---
+  duration_ms: 169.866418
+  type: 'test'
+  ...
+# Loading FEC IE for 1 member(s), cycle 2024…
+# Loading FEC IE for 1 member(s), cycle 2024…
+# Subtest: empty filings array preserves existing super_pac_ie_filings rows
+ok 23 - empty filings array preserves existing super_pac_ie_filings rows
+  ---
+  duration_ms: 191.638973
+  type: 'test'
+  ...
+# Loading FEC IE for 1 member(s), cycle 2024…
+# Loading FEC IE for 1 member(s), cycle 2024…
+# Subtest: non-empty aggregates fully replace old rows — no stale duplicates left behind
+ok 24 - non-empty aggregates fully replace old rows — no stale duplicates left behind
+  ---
+  duration_ms: 235.978664
+  type: 'test'
+  ...
+# Loading FEC IE for 1 member(s), cycle 2024…
+# Loading FEC IE for 1 member(s), cycle 2024…
+# Subtest: independence: non-empty aggregates + empty filings in one run → aggregates replaced AND filings preserved
+ok 25 - independence: non-empty aggregates + empty filings in one run → aggregates replaced AND filings preserved
+  ---
+  duration_ms: 161.081798
+  type: 'test'
+  ...
+# Loading FEC IE for 1 member(s), cycle 2024…
+# Loading FEC IE for 1 member(s), cycle 2024…
+# Subtest: filings: undefined (non-itemized fetch) preserves existing filings and is distinguishable from filings: []
+ok 26 - filings: undefined (non-itemized fetch) preserves existing filings and is distinguishable from filings: []
+  ---
+  duration_ms: 127.798768
+  type: 'test'
+  ...
+# Loading FEC IE for 2 member(s), cycle 2024…
+# Subtest: all mode fetches every member with a FEC id
+ok 27 - all mode fetches every member with a FEC id
+  ---
+  duration_ms: 90.651157
+  type: 'test'
+  ...
+# Subtest: usableDonors: keeps named rows, drops nameless/blank ones
+ok 28 - usableDonors: keeps named rows, drops nameless/blank ones
+  ---
+  duration_ms: 0.876939
+  type: 'test'
+  ...
+# Subtest: usableDonors: non-array input is empty, never a crash
+ok 29 - usableDonors: non-array input is empty, never a crash
+  ---
+  duration_ms: 0.567643
+  type: 'test'
+  ...
+# Subtest: empty fetch PRESERVES existing donor rows (the Frankel regression)
+ok 30 - empty fetch PRESERVES existing donor rows (the Frankel regression)
+  ---
+  duration_ms: 173.59906
+  type: 'test'
+  ...
+# Subtest: non-empty fetch still REPLACES the previous rows (latest fetch wins)
+ok 31 - non-empty fetch still REPLACES the previous rows (latest fetch wins)
+  ---
+  duration_ms: 201.812124
+  type: 'test'
+  ...
+# Subtest: an empty fetch for one member never touches another member
+ok 32 - an empty fetch for one member never touches another member
+  ---
+  duration_ms: 203.179368
+  type: 'test'
+  ...
+# Loading OpenSecrets industries for john-roe, cycle 2024…
+# Loading OpenSecrets industries for jane-doe, cycle 2024…
+# Subtest: member mode loads only the target file; other member-cycle unchanged
+ok 33 - member mode loads only the target file; other member-cycle unchanged
+  ---
+  duration_ms: 183.94435
+  type: 'test'
+  ...
+# Loading OpenSecrets industries for jane-doe, cycle 2024…
+# Subtest: member mode never rewrites another cached member-cycle (only opens target file)
+ok 34 - member mode never rewrites another cached member-cycle (only opens target file)
+  ---
+  duration_ms: 171.26291
+  type: 'test'
+  ...
+# Subtest: member mode with a missing target file is an explicit result, not a roster scan
+ok 35 - member mode with a missing target file is an explicit result, not a roster scan
+  ---
+  duration_ms: 157.977747
+  type: 'test'
+  ...
+# Loading OpenSecrets industries for jane-doe, cycle 2024…
+# Loading OpenSecrets industries for jane-doe, cycle 2024…
+# Subtest: a challenged/corrupt page (zero rows, no dt-empty marker) errors out instead of deleting existing donor_industry rows
+ok 36 - a challenged/corrupt page (zero rows, no dt-empty marker) errors out instead of deleting existing donor_industry rows
+  ---
+  duration_ms: 188.165587
+  type: 'test'
+  ...
+# Loading OpenSecrets industries for 2 member file(s), cycle 2024…
+# Subtest: all mode loads every cached file
+ok 37 - all mode loads every cached file
+  ---
+  duration_ms: 238.278084
+  type: 'test'
+  ...
+# Subtest: member mode writes only the target filings; other member rows unchanged
+ok 38 - member mode writes only the target filings; other member rows unchanged
+  ---
+  duration_ms: 218.488254
+  type: 'test'
+  ...
+# Subtest: member mode ignores unrelated unmatched filers (no failure, no writes for them)
+ok 39 - member mode ignores unrelated unmatched filers (no failure, no writes for them)
+  ---
+  duration_ms: 166.914745
+  type: 'test'
+  ...
+# Subtest: member mode with zero matching target filings is an explicit result, not silent success
+ok 40 - member mode with zero matching target filings is an explicit result, not silent success
+  ---
+  duration_ms: 144.944812
+  type: 'test'
+  ...
+# Subtest: member mode accepts an empty extracted directory only when the authoritative index proves zero PTRs
+ok 41 - member mode accepts an empty extracted directory only when the authoritative index proves zero PTRs
+  ---
+  duration_ms: 173.894796
+  type: 'test'
+  ...
+# Subtest: member mode rejects an empty extracted directory when the authoritative index contains a target PTR
+ok 42 - member mode rejects an empty extracted directory when the authoritative index contains a target PTR
+  ---
+  duration_ms: 182.662166
+  type: 'test'
+  ...
+# Subtest: a missing authoritative index never counts as proof of zero PTRs
+ok 43 - a missing authoritative index never counts as proof of zero PTRs
+  ---
+  duration_ms: 183.192039
+  type: 'test'
+  ...
+# Subtest: all-mode can never turn an empty extracted directory into verified-empty
+ok 44 - all-mode can never turn an empty extracted directory into verified-empty
+  ---
+  duration_ms: 121.585677
+  type: 'test'
+  ...
+# Subtest: a generational suffix cannot hide an indexed PTR and produce a false verified-empty
+ok 45 - a generational suffix cannot hide an indexed PTR and produce a false verified-empty
+  ---
+  duration_ms: 84.678322
+  type: 'test'
+  ...
+# Subtest: an ambiguous same-district surname record fails closed instead of proving zero
+ok 46 - an ambiguous same-district surname record fails closed instead of proving zero
+  ---
+  duration_ms: 79.437368
+  type: 'test'
+  ...
+# Subtest: record Year, not index filename, determines which cache directory a PTR belongs to
+ok 47 - record Year, not index filename, determines which cache directory a PTR belongs to
+  ---
+  duration_ms: 80.024171
+  type: 'test'
+  ...
+# Subtest: all mode writes every filer
+ok 48 - all mode writes every filer
+  ---
+  duration_ms: 109.192742
+  type: 'test'
+  ...
+# Subtest: House ingestion rejects missing-indexed before writing any target rows
+ok 49 - House ingestion rejects missing-indexed before writing any target rows
+  ---
+  duration_ms: 65.600182
+  type: 'test'
+  ...
+# Subtest: House ingestion rejects malformed-json before writing any target rows
+ok 50 - House ingestion rejects malformed-json before writing any target rows
+  ---
+  duration_ms: 64.029092
+  type: 'test'
+  ...
+# Subtest: House ingestion rejects missing-identity before writing any target rows
+ok 51 - House ingestion rejects missing-identity before writing any target rows
+  ---
+  duration_ms: 64.010682
+  type: 'test'
+  ...
+# Subtest: House ingestion rejects truncated-index before writing any target rows
+ok 52 - House ingestion rejects truncated-index before writing any target rows
+  ---
+  duration_ms: 62.135896
+  type: 'test'
+  ...
+# Subtest: House ingestion rejects wrong-index-year before writing any target rows
+ok 53 - House ingestion rejects wrong-index-year before writing any target rows
+  ---
+  duration_ms: 64.005492
+  type: 'test'
+  ...
+# Subtest: a malformed index cannot prove an empty House year
+ok 54 - a malformed index cannot prove an empty House year
+  ---
+  duration_ms: 60.747933
+  type: 'test'
+  ...
+# Subtest: an indexed source-bound formatting hold blocks stale JSON without deleting rows
+ok 55 - an indexed source-bound formatting hold blocks stale JSON without deleting rows
+  ---
+  duration_ms: 62.817558
+  type: 'test'
+  ...
+# Subtest: indexed identity preflight rejects ambiguous-index even with extracted JSON present
+ok 56 - indexed identity preflight rejects ambiguous-index even with extracted JSON present
+  ---
+  duration_ms: 64.161061
+  type: 'test'
+  ...
+# Subtest: indexed identity preflight rejects incomplete-index-record even with extracted JSON present
+ok 57 - indexed identity preflight rejects incomplete-index-record even with extracted JSON present
+  ---
+  duration_ms: 63.822315
+  type: 'test'
+  ...
+# Subtest: indexed identity preflight rejects wrong-extracted-member even with extracted JSON present
+ok 58 - indexed identity preflight rejects wrong-extracted-member even with extracted JSON present
+  ---
+  duration_ms: 65.064299
+  type: 'test'
+  ...
+# Subtest: plausible-but-impossible calendar dates are rejected, not coerced
+ok 59 - plausible-but-impossible calendar dates are rejected, not coerced
+  ---
+  duration_ms: 3.278818
+  type: 'test'
+  ...
+# Subtest: well-formed real dates that violate cross-field invariants are rejected
+ok 60 - well-formed real dates that violate cross-field invariants are rejected
+  ---
+  duration_ms: 0.272787
+  type: 'test'
+  ...
+# Subtest: a wrong-but-valid date is NOT caught by the loader — the holdout is what catches it
+ok 61 - a wrong-but-valid date is NOT caught by the loader — the holdout is what catches it
+  ---
+  duration_ms: 0.211508
+  type: 'test'
+  ...
+# Subtest: unknown transaction types are rejected
+ok 62 - unknown transaction types are rejected
+  ---
+  duration_ms: 0.880769
+  type: 'test'
+  ...
+# Subtest: every transaction type present in the real corpus is accepted
+ok 63 - every transaction type present in the real corpus is accepted
+  ---
+  duration_ms: 0.299266
+  type: 'test'
+  ...
+# Subtest: an inverted-but-valid type is NOT caught here — column identity is a geometric check
+ok 64 - an inverted-but-valid type is NOT caught here — column identity is a geometric check
+  ---
+  duration_ms: 0.150128
+  type: 'test'
+  ...
+# Subtest: absent or blank required fields are unresolved, not rejected and not empty-string
+ok 65 - absent or blank required fields are unresolved, not rejected and not empty-string
+  ---
+  duration_ms: 0.249276
+  type: 'test'
+  ...
+#   ⚠ F-1.json [unresolved] → withheld, existing rows preserved: tx[0] date: unresolved (absent or blank)
+# Subtest: unresolved rows never reach production insertion
+ok 66 - unresolved rows never reach production insertion
+  ---
+  duration_ms: 166.062056
+  type: 'test'
+  ...
+#   ⚠ F-1.json [rejected] → withheld, existing rows preserved: tx[1] date: not a real calendar date (YYYY-MM-DD); tx[1] notificationDate: notificationDate 2024-03-15 precedes date 2025-02-30
+# Subtest: a filing is all-or-nothing: one bad row withholds the whole filing
+ok 67 - a filing is all-or-nothing: one bad row withholds the whole filing
+  ---
+  duration_ms: 169.884258
+  type: 'test'
+  ...
+# Subtest: a filing missing identity is unresolved and never inserted
+ok 68 - a filing missing identity is unresolved and never inserted
+  ---
+  duration_ms: 0.579433
+  type: 'test'
+  ...
+#   ⚠ F-1.json [rejected] → withheld, existing rows preserved: tx[0] date: not a real calendar date (YYYY-MM-DD); tx[0] notificationDate: notificationDate 2024-03-15 precedes date 2025-02-30
+# Subtest: invalid re-extraction preserves existing rows (no delete-then-fail)
+ok 69 - invalid re-extraction preserves existing rows (no delete-then-fail)
+  ---
+  duration_ms: 212.236623
+  type: 'test'
+  ...
+#   ⚠ F-1.json [unresolved] → withheld, existing rows preserved: tx[0] notificationDate: unresolved (absent or blank)
+# Subtest: unresolved re-extraction preserves existing rows
+ok 70 - unresolved re-extraction preserves existing rows
+  ---
+  duration_ms: 197.143383
+  type: 'test'
+  ...
+#   ⚠ F-1.json [unresolved] → withheld, existing rows preserved: transactions: unresolved (zero rows — a PTR must disclose at least one)
+# Subtest: empty re-extraction preserves existing rows
+ok 71 - empty re-extraction preserves existing rows
+  ---
+  duration_ms: 243.101153
+  type: 'test'
+  ...
+#   ⚠ F-1.json [unresolved] → withheld, existing rows preserved: tx[1] amountBand: unresolved (absent or blank)
+# Subtest: partial re-extraction preserves existing rows rather than shrinking the filing
+ok 72 - partial re-extraction preserves existing rows rather than shrinking the filing
+  ---
+  duration_ms: 167.510857
+  type: 'test'
+  ...
+# Subtest: fully valid input replaces the filing (replacement path intact)
+ok 73 - fully valid input replaces the filing (replacement path intact)
+  ---
+  duration_ms: 118.456346
+  type: 'test'
+  ...
+# Subtest: valid amount bands pass and malformed ones are rejected
+ok 74 - valid amount bands pass and malformed ones are rejected
+  ---
+  duration_ms: 0.672121
+  type: 'test'
+  ...
+#   ⚠ F-EMPTY.json [unresolved] → withheld, existing rows preserved: transactions: unresolved (zero rows — a PTR must disclose at least one)
+# Subtest: a zero-row filing is reported as withheld, not silently skipped
+ok 75 - a zero-row filing is reported as withheld, not silently skipped
+  ---
+  duration_ms: 77.911387
+  type: 'test'
+  ...
+#   ⚠ F-1.json [unresolved] → withheld, existing rows preserved: transactions: unresolved (zero rows — a PTR must disclose at least one)
+# Subtest: a zero-row re-extraction preserves the existing rows for that filing
+ok 76 - a zero-row re-extraction preserves the existing rows for that filing
+  ---
+  duration_ms: 94.982782
+  type: 'test'
+  ...
+# Subtest: a filing missing its identity fails rather than becoming a formatting hold
+ok 77 - a filing missing its identity fails rather than becoming a formatting hold
+  ---
+  duration_ms: 89.881986
+  type: 'test'
+  ...
+# Subtest: parses a valid row
+ok 78 - parses a valid row
+  ---
+  duration_ms: 1.343223
+  type: 'test'
+  ...
+# Subtest: rejects: bad column count, empty evidence, bad basis, lowercase ticker, bad date, dup key
+ok 79 - rejects: bad column count, empty evidence, bad basis, lowercase ticker, bad date, dup key
+  ---
+  duration_ms: 0.261057
+  type: 'test'
+  ...
+# Subtest: header-only file parses to zero rows, zero errors
+ok 80 - header-only file parses to zero rows, zero errors
+  ---
+  duration_ms: 0.118178
+  type: 'test'
+  ...
+# Subtest: senate member mode writes only the target; other senator rows unchanged
+ok 81 - senate member mode writes only the target; other senator rows unchanged
+  ---
+  duration_ms: 225.090551
+  type: 'test'
+  ...
+# Subtest: senate member mode cannot write another senator (no cross-write across year dirs)
+ok 82 - senate member mode cannot write another senator (no cross-write across year dirs)
+  ---
+  duration_ms: 175.453747
+  type: 'test'
+  ...
+# Subtest: senate all mode writes every senator
+ok 83 - senate all mode writes every senator
+  ---
+  duration_ms: 217.759093
+  type: 'test'
+  ...
+# Subtest: member mode accepts a source-verified empty Senate PTR search and changes no rows
+ok 84 - member mode accepts a source-verified empty Senate PTR search and changes no rows
+  ---
+  duration_ms: 156.378638
+  type: 'test'
+  ...
+# Subtest: member mode rejects an empty cache without a successful search receipt
+ok 85 - member mode rejects an empty cache without a successful search receipt
+  ---
+  duration_ms: 155.487508
+  type: 'test'
+  ...
+# Subtest: member mode rejects a verified-empty receipt for another bioguide
+ok 86 - member mode rejects a verified-empty receipt for another bioguide
+  ---
+  duration_ms: 144.30454
+  type: 'test'
+  ...
+# Subtest: all mode cannot use a member receipt to treat an empty cache as verified empty
+ok 87 - all mode cannot use a member receipt to treat an empty cache as verified empty
+  ---
+  duration_ms: 111.596233
+  type: 'test'
+  ...
+# Subtest: member mode rejects a receipt whose indexed filing JSON is missing
+ok 88 - member mode rejects a receipt whose indexed filing JSON is missing
+  ---
+  duration_ms: 81.365783
+  type: 'test'
+  ...
+# Subtest: member mode reports a zero-transaction indexed filing as unresolved
+ok 89 - member mode reports a zero-transaction indexed filing as unresolved
+  ---
+  duration_ms: 80.495164
+  type: 'test'
+  ...
+# Subtest: a zero-transaction filing is rejected before an earlier target filing can commit
+ok 90 - a zero-transaction filing is rejected before an earlier target filing can commit
+  ---
+  duration_ms: 81.062887
+  type: 'test'
+  ...
+# Subtest: every observed industry maps to at most one theme (no cross-theme double counting)
+ok 91 - every observed industry maps to at most one theme (no cross-theme double counting)
+  ---
+  duration_ms: 28.485461
+  type: 'test'
+  ...
+# Subtest: collision fixes land on the intended single theme
+ok 92 - collision fixes land on the intended single theme
+  ---
+  duration_ms: 7.433977
+  type: 'test'
+  ...
+# Subtest: union money never maps to a tradable-industry theme
+ok 93 - union money never maps to a tradable-industry theme
+  ---
+  duration_ms: 0.553293
+  type: 'test'
+  ...
+# Subtest: previously unmapped tradable industries now map
+ok 94 - previously unmapped tradable industries now map
+  ---
+  duration_ms: 1.226174
+  type: 'test'
+  ...
+# Subtest: deliberately unmapped categories stay unmapped
+ok 95 - deliberately unmapped categories stay unmapped
+  ---
+  duration_ms: 1.346383
+  type: 'test'
+  ...
+# Subtest: crosswalk patterns are well-formed (non-empty, known themes)
+ok 96 - crosswalk patterns are well-formed (non-empty, known themes)
+  ---
+  duration_ms: 0.155228
+  type: 'test'
+  ...
+# Subtest: no selector fails closed (never means all)
+ok 97 - no selector fails closed (never means all)
+  ---
+  duration_ms: 1.035067
+  type: 'test'
+  ...
+# Subtest: --all is explicit
+ok 98 - --all is explicit
+  ---
+  duration_ms: 0.551413
+  type: 'test'
+  ...
+# Subtest: --member captures the selector
+ok 99 - --member captures the selector
+  ---
+  duration_ms: 0.109799
+  type: 'test'
+  ...
+# Subtest: --bioguide captures the id
+ok 100 - --bioguide captures the id
+  ---
+  duration_ms: 0.096339
+  type: 'test'
+  ...
+# Subtest: --member and --all together fails
+ok 101 - --member and --all together fails
+  ---
+  duration_ms: 0.116958
+  type: 'test'
+  ...
+# Subtest: --member without a value fails
+ok 102 - --member without a value fails
+  ---
+  duration_ms: 0.084169
+  type: 'test'
+  ...
+# Subtest: repeated --member is ambiguous and fails (no silent last-wins)
+ok 103 - repeated --member is ambiguous and fails (no silent last-wins)
+  ---
+  duration_ms: 0.204318
+  type: 'test'
+  ...
+# Subtest: repeated --bioguide is ambiguous and fails
+ok 104 - repeated --bioguide is ambiguous and fails
+  ---
+  duration_ms: 0.133879
+  type: 'test'
+  ...
+# Subtest: resolveScope(all) passes through
+ok 105 - resolveScope(all) passes through
+  ---
+  duration_ms: 0.728621
+  type: 'test'
+  ...
+# Subtest: resolveScope resolves a slug/name to one canonical member
+ok 106 - resolveScope resolves a slug/name to one canonical member
+  ---
+  duration_ms: 0.400385
+  type: 'test'
+  ...
+# Subtest: resolveScope resolves a stored member slug before human-name resolution
+ok 107 - resolveScope resolves a stored member slug before human-name resolution
+  ---
+  duration_ms: 0.129738
+  type: 'test'
+  ...
+# Subtest: resolveScope resolves by bioguide directly
+ok 108 - resolveScope resolves by bioguide directly
+  ---
+  duration_ms: 0.131438
+  type: 'test'
+  ...
+# Subtest: unknown member fails before work
+ok 109 - unknown member fails before work
+  ---
+  duration_ms: 0.154688
+  type: 'test'
+  ...
+# Subtest: ambiguous member fails before work
+ok 110 - ambiguous member fails before work
+  ---
+  duration_ms: 0.606692
+  type: 'test'
+  ...
+# Subtest: resolved-but-not-in-DB member fails loud (member must exist first)
+ok 111 - resolved-but-not-in-DB member fails loud (member must exist first)
+  ---
+  duration_ms: 0.195467
+  type: 'test'
+  ...
+# Subtest: buildIndex keys by bioguide and derives chamber/terms
+ok 112 - buildIndex keys by bioguide and derives chamber/terms
+  ---
+  duration_ms: 3.96032
+  type: 'test'
+  ...
+# Subtest: normalizeName lowercases, drops punctuation and single-letter initials
+ok 113 - normalizeName lowercases, drops punctuation and single-letter initials
+  ---
+  duration_ms: 0.225057
+  type: 'test'
+  ...
+# Subtest: buildAliasMap yields nickname/official/comma forms → one bioguide
+ok 114 - buildAliasMap yields nickname/official/comma forms → one bioguide
+  ---
+  duration_ms: 0.84632
+  type: 'test'
+  ...
+# Subtest: buildAliasMap records a genuine collision as two bioguides in one set
+ok 115 - buildAliasMap records a genuine collision as two bioguides in one set
+  ---
+  duration_ms: 0.706301
+  type: 'test'
+  ...
+# Subtest: no surname-only alias is emitted
+ok 116 - no surname-only alias is emitted
+  ---
+  duration_ms: 3.0859
+  type: 'test'
+  ...
+# Subtest: observed probe codes resolve to the intended theme
+ok 117 - observed probe codes resolve to the intended theme
+  ---
+  duration_ms: 0.826699
+  type: 'test'
+  ...
+# Subtest: longest prefix wins over shorter overlapping prefixes
+ok 118 - longest prefix wins over shorter overlapping prefixes
+  ---
+  duration_ms: 0.112158
+  type: 'test'
+  ...
+# Subtest: seeded prefixes are unique (PRIMARY KEY invariant, pre-DB)
+ok 119 - seeded prefixes are unique (PRIMARY KEY invariant, pre-DB)
+  ---
+  duration_ms: 0.097198
+  type: 'test'
+  ...
+# Subtest: every seeded theme is one of the existing crosswalk themes
+ok 120 - every seeded theme is one of the existing crosswalk themes
+  ---
+  duration_ms: 0.199717
+  type: 'test'
+  ...
+# Subtest: normCorpName strips punctuation, suffixes, whitespace
+ok 121 - normCorpName strips punctuation, suffixes, whitespace
+  ---
+  duration_ms: 1.56998
+  type: 'test'
+  ...
+# Subtest: normCorpName is the probe norm — suffix list is a single global pass
+ok 122 - normCorpName is the probe norm — suffix list is a single global pass
+  ---
+  duration_ms: 0.104178
+  type: 'test'
+  ...
+# Subtest: buildNameIndex: first title wins per normalized name (probe setdefault)
+ok 123 - buildNameIndex: first title wins per normalized name (probe setdefault)
+  ---
+  duration_ms: 0.129598
+  type: 'test'
+  ...
+# Subtest: matchTicker: own name first, then parent
+ok 124 - matchTicker: own name first, then parent
+  ---
+  duration_ms: 0.555073
+  type: 'test'
+  ...
+# Subtest: suffix-collision trap survives as candidate-only (documented, not fixed)
+ok 125 - suffix-collision trap survives as candidate-only (documented, not fixed)
+  ---
+  duration_ms: 0.181378
+  type: 'test'
+  ...
+# Subtest: exact first-last resolves
+ok 126 - exact first-last resolves
+  ---
+  duration_ms: 1.253604
+  type: 'test'
+  ...
+# Subtest: nickname resolves to the same person
+ok 127 - nickname resolves to the same person
+  ---
+  duration_ms: 0.172638
+  type: 'test'
+  ...
+# Subtest: comma form resolves
+ok 128 - comma form resolves
+  ---
+  duration_ms: 0.145618
+  type: 'test'
+  ...
+# Subtest: middle initial is ignored
+ok 129 - middle initial is ignored
+  ---
+  duration_ms: 0.133388
+  type: 'test'
+  ...
+# Subtest: raw bioguide short-circuits
+ok 130 - raw bioguide short-circuits
+  ---
+  duration_ms: 0.108239
+  type: 'test'
+  ...
+# Subtest: unknown name is unresolved, never guessed
+ok 131 - unknown name is unresolved, never guessed
+  ---
+  duration_ms: 0.169118
+  type: 'test'
+  ...
+# Subtest: a colliding alias is ambiguous, not first-match
+ok 132 - a colliding alias is ambiguous, not first-match
+  ---
+  duration_ms: 0.490724
+  type: 'test'
+  ...
+# Subtest: resolveMember preserves an existing DB slug
+ok 133 - resolveMember preserves an existing DB slug
+  ---
+  duration_ms: 0.206787
+  type: 'test'
+  ...
+# Subtest: resolveMember derives first-last for a member with no DB row
+ok 134 - resolveMember derives first-last for a member with no DB row
+  ---
+  duration_ms: 0.257827
+  type: 'test'
+  ...
+# Subtest: resolveMember derives a slug from the injected index when no DB row
+ok 135 - resolveMember derives a slug from the injected index when no DB row
+  ---
+  duration_ms: 0.443065
+  type: 'test'
+  ...
+# Subtest: resolveMember rejects an unknown name via the injected index
+ok 136 - resolveMember rejects an unknown name via the injected index
+  ---
+  duration_ms: 0.137128
+  type: 'test'
+  ...
+# Subtest: deriveSlug is first-last, punctuation collapsed
+ok 137 - deriveSlug is first-last, punctuation collapsed
+  ---
+  duration_ms: 0.125258
+  type: 'test'
+  ...
+# Subtest: a successful Senate PTR search is recorded as a target- and range-specific receipt
+ok 138 - a successful Senate PTR search is recorded as a target- and range-specific receipt
+  ---
+  duration_ms: 1.889176
+  type: 'test'
+  ...
+# Subtest: a malformed Senate search receipt is rejected rather than treated as evidence
+ok 139 - a malformed Senate search receipt is rejected rather than treated as evidence
+  ---
+  duration_ms: 0.440155
+  type: 'test'
+  ...
+# Subtest: an incomplete PTR download does not replace an earlier successful receipt
+ok 140 - an incomplete PTR download does not replace an earlier successful receipt
+  ---
+  duration_ms: 0.676021
+  type: 'test'
+  ...
+# Subtest: parked timing patterns are exactly the scored pair
+ok 141 - parked timing patterns are exactly the scored pair
+  ---
+  duration_ms: 0.886779
+  type: 'test'
+  ...
+# Subtest: onboarding-safe detectors exclude both parked timing detectors
+ok 142 - onboarding-safe detectors exclude both parked timing detectors
+  ---
+  duration_ms: 0.155128
+  type: 'test'
+  ...
+# Subtest: onboarding-safe detectors keep every non-parked detector
+ok 143 - onboarding-safe detectors keep every non-parked detector
+  ---
+  duration_ms: 0.097988
+  type: 'test'
+  ...
+#   donor-sector-vote-alignment: 0 hit(s) [—]
+# Subtest: default onboarding path never runs, deletes, writes, or scores the parked timing pair
+ok 144 - default onboarding path never runs, deletes, writes, or scores the parked timing pair
+  ---
+  duration_ms: 92.416754
+  type: 'test'
+  ...
+# Subtest: the real registry filter excludes exactly the parked pair (no accidental keep)
+ok 145 - the real registry filter excludes exactly the parked pair (no accidental keep)
+  ---
+  duration_ms: 0.251527
+  type: 'test'
+  ...
+# Subtest: default result (no candidates arg) excludes exactly the parked pair
+ok 146 - default result (no candidates arg) excludes exactly the parked pair
+  ---
+  duration_ms: 0.580413
+  type: 'test'
+  ...
+# Subtest: the CLI (run-patterns main) routes through the safe boundary, not the raw loop
+ok 147 - the CLI (run-patterns main) routes through the safe boundary, not the raw loop
+  ---
+  duration_ms: 0.620462
+  type: 'test'
+  ...
+# Subtest: same-theme vote inside the window yields the day gap
+ok 148 - same-theme vote inside the window yields the day gap
+  ---
+  duration_ms: 0.756771
+  type: 'test'
+  ...
+# Subtest: vote BEFORE the trade does not count (one-directional)
+ok 149 - vote BEFORE the trade does not count (one-directional)
+  ---
+  duration_ms: 0.120529
+  type: 'test'
+  ...
+# Subtest: vote outside the window does not count
+ok 150 - vote outside the window does not count
+  ---
+  duration_ms: 0.093069
+  type: 'test'
+  ...
+# Subtest: different theme does not count
+ok 151 - different theme does not count
+  ---
+  duration_ms: 0.136368
+  type: 'test'
+  ...
+# Subtest: nearest same-theme vote wins when several are in range
+ok 152 - nearest same-theme vote wins when several are in range
+  ---
+  duration_ms: 0.102498
+  type: 'test'
+  ...
+# Subtest: vote exactly windowDays after trade IS counted (inclusive boundary)
+ok 153 - vote exactly windowDays after trade IS counted (inclusive boundary)
+  ---
+  duration_ms: 0.166298
+  type: 'test'
+  ...
+# Subtest: vote windowDays+1 after trade is NOT counted (one past boundary)
+ok 154 - vote windowDays+1 after trade is NOT counted (one past boundary)
+  ---
+  duration_ms: 0.107999
+  type: 'test'
+  ...
+# Subtest: tight 1-day gap under calendar null scores p < 0.2
+ok 155 - tight 1-day gap under calendar null scores p < 0.2
+  ---
+  duration_ms: 2.933103
+  type: 'test'
+  ...
+# Subtest: calendar mode without window bounds throws (no silent NaN)
+ok 156 - calendar mode without window bounds throws (no silent NaN)
+  ---
+  duration_ms: 0.501474
+  type: 'test'
+  ...
+# Subtest: committee vote within window counts the trade
+ok 157 - committee vote within window counts the trade
+  ---
+  duration_ms: 0.829429
+  type: 'test'
+  ...
+# Subtest: ticker-named bill within window counts the trade
+ok 158 - ticker-named bill within window counts the trade
+  ---
+  duration_ms: 0.154638
+  type: 'test'
+  ...
+# Subtest: day-14 is inside, day-15 is outside
+ok 159 - day-14 is inside, day-15 is outside
+  ---
+  duration_ms: 0.116559
+  type: 'test'
+  ...
+# Subtest: same-day (0 days) counts
+ok 160 - same-day (0 days) counts
+  ---
+  duration_ms: 0.143598
+  type: 'test'
+  ...
+# Subtest: trade AFTER the vote does not count (negative offset)
+ok 161 - trade AFTER the vote does not count (negative offset)
+  ---
+  duration_ms: 0.140348
+  type: 'test'
+  ...
+# Subtest: broad-market ETF ticker never counts
+ok 162 - broad-market ETF ticker never counts
+  ---
+  duration_ms: 0.095059
+  type: 'test'
+  ...
+# Subtest: ticker path requires the trade ticker to be named, committee=false
+ok 163 - ticker path requires the trade ticker to be named, committee=false
+  ---
+  duration_ms: 1.808888
+  type: 'test'
+  ...
+# Subtest: one trade matching many votes is counted once
+ok 164 - one trade matching many votes is counted once
+  ---
+  duration_ms: 0.158368
+  type: 'test'
+  ...
+# Subtest: counts distinct qualifying trades
+ok 165 - counts distinct qualifying trades
+  ---
+  duration_ms: 0.259956
+  type: 'test'
+  ...
+# Subtest: countNexusIndexed matches countNexus on the same inputs
+ok 166 - countNexusIndexed matches countNexus on the same inputs
+  ---
+  duration_ms: 0.371535
+  type: 'test'
+  ...
+# Subtest: indexed path: day-14 inside, day-15 outside
+ok 167 - indexed path: day-14 inside, day-15 outside
+  ---
+  duration_ms: 0.651162
+  type: 'test'
+  ...
+# Subtest: indexed path: ETF excluded, ticker path respected
+ok 168 - indexed path: ETF excluded, ticker path respected
+  ---
+  duration_ms: 0.117059
+  type: 'test'
+  ...
+# Subtest: same seed yields identical result (idempotency)
+ok 169 - same seed yields identical result (idempotency)
+  ---
+  duration_ms: 1.720548
+  type: 'test'
+  ...
+# Subtest: expected is the mean of draws; observed above max -> p=0, z>0
+ok 170 - expected is the mean of draws; observed above max -> p=0, z>0
+  ---
+  duration_ms: 1.164765
+  type: 'test'
+  ...
+# Subtest: p-value is fraction of draws >= observed
+ok 171 - p-value is fraction of draws >= observed
+  ---
+  duration_ms: 0.640412
+  type: 'test'
+  ...
+# Subtest: calendarDraw returns a nexus count
+ok 172 - calendarDraw returns a nexus count
+  ---
+  duration_ms: 0.362536
+  type: 'test'
+  ...
+# Subtest: volumeShuffleDraw returns a nexus count
+ok 173 - volumeShuffleDraw returns a nexus count
+  ---
+  duration_ms: 0.219657
+  type: 'test'
+  ...
+# Subtest: same seed yields identical sequence
+ok 174 - same seed yields identical sequence
+  ---
+  duration_ms: 0.948658
+  type: 'test'
+  ...
+# Subtest: different seeds diverge
+ok 175 - different seeds diverge
+  ---
+  duration_ms: 0.117049
+  type: 'test'
+  ...
+# Subtest: outputs are in [0,1)
+ok 176 - outputs are in [0,1)
+  ---
+  duration_ms: 0.358306
+  type: 'test'
+  ...
+# Subtest: seedFrom is deterministic per string
+ok 177 - seedFrom is deterministic per string
+  ---
+  duration_ms: 0.131248
+  type: 'test'
+  ...
+# Subtest: spine: assembleTradeVote + countNexus equals hand-computed distinct-trade count
+ok 178 - spine: assembleTradeVote + countNexus equals hand-computed distinct-trade count
+  ---
+  duration_ms: 0.974398
+  type: 'test'
+  ...
+# Subtest: dedupe: rows differing only by instrument case collapse to one trade
+ok 179 - dedupe: rows differing only by instrument case collapse to one trade
+  ---
+  duration_ms: 0.179477
+  type: 'test'
+  ...
+# Subtest: spousal: votes are committee-only, namedTickers always empty
+ok 180 - spousal: votes are committee-only, namedTickers always empty
+  ---
+  duration_ms: 0.599452
+  type: 'test'
+  ...
+# Subtest: trade-vote: common-word ticker is excluded from namedTickers
+ok 181 - trade-vote: common-word ticker is excluded from namedTickers
+  ---
+  duration_ms: 0.125098
+  type: 'test'
+  ...
+# Subtest: trade-vote: real named ticker is added to namedTickers (guard control)
+ok 182 - trade-vote: real named ticker is added to namedTickers (guard control)
+  ---
+  duration_ms: 0.255647
+  type: 'test'
+  ...
+# Subtest: tradeIdentityKey uppercases the instrument (dedupe-key reconciliation)
+ok 183 - tradeIdentityKey uppercases the instrument (dedupe-key reconciliation)
+  ---
+  duration_ms: 0.637502
+  type: 'test'
+  ...
+# Subtest: tradeIdentityKey keeps distinct trades distinct
+ok 184 - tradeIdentityKey keeps distinct trades distinct
+  ---
+  duration_ms: 0.128598
+  type: 'test'
+  ...
+# Subtest: tradeIntensity is best-score / 100, capped at 1
+ok 185 - tradeIntensity is best-score / 100, capped at 1
+  ---
+  duration_ms: 0.108689
+  type: 'test'
+  ...
+# Subtest: spousalIntensity: base 0.5 + 0.3*proximity + 0.2*volume, capped at 1
+ok 186 - spousalIntensity: base 0.5 + 0.3*proximity + 0.2*volume, capped at 1
+  ---
+  duration_ms: 0.150168
+  type: 'test'
+  ...
+# Subtest: donor evidence publishes one CivicLens theme summary without raw industry labels
+ok 187 - donor evidence publishes one CivicLens theme summary without raw industry labels
+  ---
+  duration_ms: 15.286517
+  type: 'test'
+  ...
+# Subtest: donor evidence uses a singular industry label
+ok 188 - donor evidence uses a singular industry label
+  ---
+  duration_ms: 0.198917
+  type: 'test'
+  ...
+# Subtest: ubiquity: strictly greater than 1/3 of roster districts excludes
+ok 189 - ubiquity: strictly greater than 1/3 of roster districts excludes
+  ---
+  duration_ms: 1.186585
+  type: 'test'
+  ...
+# Subtest: ubiquity boundary: exactly 1/3 is NOT excluded
+ok 190 - ubiquity boundary: exactly 1/3 is NOT excluded
+  ---
+  duration_ms: 0.227127
+  type: 'test'
+  ...
+# Subtest: districtTickerDollars: confirmed only, excluded dropped, dollars summed
+ok 191 - districtTickerDollars: confirmed only, excluded dropped, dollars summed
+  ---
+  duration_ms: 0.184618
+  type: 'test'
+  ...
+# Subtest: rosterStats: S1 breadth ($500 == $5B), S2 exposure
+ok 192 - rosterStats: S1 breadth ($500 == $5B), S2 exposure
+  ---
+  duration_ms: 0.299136
+  type: 'test'
+  ...
+# Subtest: scramble preserves marginals: ticker multiset + recipient keys unchanged
+ok 193 - scramble preserves marginals: ticker multiset + recipient keys unchanged
+  ---
+  duration_ms: 0.219738
+  type: 'test'
+  ...
+# Subtest: scramble is deterministic under a fixed seed
+ok 194 - scramble is deterministic under a fixed seed
+  ---
+  duration_ms: 0.197178
+  type: 'test'
+  ...
+# Subtest: scored pattern with hits: writeHits then re-score leaves stats non-NULL (wipeout regression)
+ok 195 - scored pattern with hits: writeHits then re-score leaves stats non-NULL (wipeout regression)
+  ---
+  duration_ms: 74.390872
+  type: 'test'
+  ...
+# Subtest: non-scored pattern: writeHits only, scorer never invoked, stats stay NULL
+ok 196 - non-scored pattern: writeHits only, scorer never invoked, stats stay NULL
+  ---
+  duration_ms: 59.375561
+  type: 'test'
+  ...
+# Subtest: scored pattern with ZERO hits: writeHits clears rows, scorer not invoked
+ok 197 - scored pattern with ZERO hits: writeHits clears rows, scorer not invoked
+  ---
+  duration_ms: 32.189964
+  type: 'test'
+  ...
+# Subtest: spousal observed: committee vote inside 14d window counts
+ok 198 - spousal observed: committee vote inside 14d window counts
+  ---
+  duration_ms: 1.372793
+  type: 'test'
+  ...
+# Subtest: spousal observed: committee vote outside 14d window does not count
+ok 199 - spousal observed: committee vote outside 14d window does not count
+  ---
+  duration_ms: 0.296746
+  type: 'test'
+  ...
+# Subtest: spousal observed: same-day vote counts
+ok 200 - spousal observed: same-day vote counts
+  ---
+  duration_ms: 0.272696
+  type: 'test'
+  ...
+# Subtest: spousal observed: a second vote on the same trade does not double count
+ok 201 - spousal observed: a second vote on the same trade does not double count
+  ---
+  duration_ms: 0.256157
+  type: 'test'
+  ...
+# Subtest: determinism: same fixture + same seed -> deep-equal ScoreResult
+ok 202 - determinism: same fixture + same seed -> deep-equal ScoreResult
+  ---
+  duration_ms: 4.198157
+  type: 'test'
+  ...
+# Subtest: seed sensitivity: different seed -> different expected/pValue
+ok 203 - seed sensitivity: different seed -> different expected/pValue
+  ---
+  duration_ms: 2.33021
+  type: 'test'
+  ...
+# Subtest: dispatch: 49 trades -> calendar null model
+ok 204 - dispatch: 49 trades -> calendar null model
+  ---
+  duration_ms: 0.533873
+  type: 'test'
+  ...
+# Subtest: dispatch: 50 trades -> volume-shuffle null model
+ok 205 - dispatch: 50 trades -> volume-shuffle null model
+  ---
+  duration_ms: 2.094663
+  type: 'test'
+  ...
+# Subtest: SCORED_PATTERNS lists both live detectors in order
+ok 206 - SCORED_PATTERNS lists both live detectors in order
+  ---
+  duration_ms: 0.234547
+  type: 'test'
+  ...
+# Subtest: bandFor: power bands by disclosed-trade count
+ok 207 - bandFor: power bands by disclosed-trade count
+  ---
+  duration_ms: 0.636942
+  type: 'test'
+  ...
+# Subtest: insufficient-data band emits receipts with null p, chronological
+ok 208 - insufficient-data band emits receipts with null p, chronological
+  ---
+  duration_ms: 9.972654
+  type: 'test'
+  ...
+# Subtest: ranked band sorts by pPair ascending
+ok 209 - ranked band sorts by pPair ascending
+  ---
+  duration_ms: 0.294457
+  type: 'test'
+  ...
+# Subtest: safeJson neutralizes </script> breakout
+ok 210 - safeJson neutralizes </script> breakout
+  ---
+  duration_ms: 1.390023
+  type: 'test'
+  ...
+# Subtest: safeJson neutralizes HTML-comment open
+ok 211 - safeJson neutralizes HTML-comment open
+  ---
+  duration_ms: 0.178198
+  type: 'test'
+  ...
+# Subtest: safeJson escapes U+2028/U+2029 line separators
+ok 212 - safeJson escapes U+2028/U+2029 line separators
+  ---
+  duration_ms: 0.132299
+  type: 'test'
+  ...
+# Subtest: safeJson is identity for clean data
+ok 213 - safeJson is identity for clean data
+  ---
+  duration_ms: 2.165143
+  type: 'test'
+  ...
+# Subtest: safeUrl allows http/https absolute URLs unchanged
+ok 214 - safeUrl allows http/https absolute URLs unchanged
+  ---
+  duration_ms: 0.204938
+  type: 'test'
+  ...
+# Subtest: safeUrl allows same-page anchors
+ok 215 - safeUrl allows same-page anchors
+  ---
+  duration_ms: 0.096319
+  type: 'test'
+  ...
+# Subtest: safeUrl rejects dangerous or malformed schemes
+ok 216 - safeUrl rejects dangerous or malformed schemes
+  ---
+  duration_ms: 0.163778
+  type: 'test'
+  ...
+# Subtest: safeUrl falls back on null/undefined/empty
+ok 217 - safeUrl falls back on null/undefined/empty
+  ---
+  duration_ms: 0.109219
+  type: 'test'
+  ...
+# Subtest: safeUrl passes \# fallback values through
+ok 218 - safeUrl passes \# fallback values through
+  ---
+  duration_ms: 2.207062
+  type: 'test'
+  ...
+# Subtest: memberHref builds .html links only from clean slugs
+ok 219 - memberHref builds .html links only from clean slugs
+  ---
+  duration_ms: 0.378365
+  type: 'test'
+  ...
+# Subtest: esc(safeUrl(x)) pairing neutralizes attribute breakout in a valid URL
+ok 220 - esc(safeUrl(x)) pairing neutralizes attribute breakout in a valid URL
+  ---
+  duration_ms: 0.134068
+  type: 'test'
+  ...
+# Subtest: timeline client script guards source_url hrefs with a scheme allowlist
+ok 221 - timeline client script guards source_url hrefs with a scheme allowlist
+  ---
+  duration_ms: 0.368665
+  type: 'test'
+  ...
+# Subtest: revolving empty shell is present with neutral copy and the id
+ok 222 - revolving empty shell is present with neutral copy and the id
+  ---
+  duration_ms: 1.017517
+  type: 'test'
+  ...
+# Subtest: outside-spending shell distinguishes unavailable from empty
+ok 223 - outside-spending shell distinguishes unavailable from empty
+  ---
+  duration_ms: 0.247847
+  type: 'test'
+  ...
+# Subtest: orderIeCycles returns every cycle, newest first
+ok 224 - orderIeCycles returns every cycle, newest first
+  ---
+  duration_ms: 1.202325
+  type: 'test'
+  ...
+# Subtest: orderIeCycles keeps a lone cycle and dedupes
+ok 225 - orderIeCycles keeps a lone cycle and dedupes
+  ---
+  duration_ms: 0.172178
+  type: 'test'
+  ...
+# Subtest: orderIeCycles on no rows yields no cycles
+ok 226 - orderIeCycles on no rows yields no cycles
+  ---
+  duration_ms: 0.093899
+  type: 'test'
+  ...
+# Subtest: orderIeCycles ignores magnitude — dan-crenshaw case
+ok 227 - orderIeCycles ignores magnitude — dan-crenshaw case
+  ---
+  duration_ms: 0.081739
+  type: 'test'
+  ...
+# Subtest: ieCycleLabel marks the in-progress cycle
+ok 228 - ieCycleLabel marks the in-progress cycle
+  ---
+  duration_ms: 0.125989
+  type: 'test'
+  ...
+# Subtest: ieFetchOutcome: every requested cycle rendered → complete
+ok 229 - ieFetchOutcome: every requested cycle rendered → complete
+  ---
+  duration_ms: 0.188148
+  type: 'test'
+  ...
+# Subtest: ieFetchOutcome: some cycles failed → partial, names the missing ones
+ok 230 - ieFetchOutcome: some cycles failed → partial, names the missing ones
+  ---
+  duration_ms: 0.143988
+  type: 'test'
+  ...
+# Subtest: ieFetchOutcome: failure of the money cycle is reported, not hidden
+ok 231 - ieFetchOutcome: failure of the money cycle is reported, not hidden
+  ---
+  duration_ms: 0.128788
+  type: 'test'
+  ...
+# Subtest: ieFetchOutcome: all cycles failed → total, distinct from genuinely-empty
+ok 232 - ieFetchOutcome: all cycles failed → total, distinct from genuinely-empty
+  ---
+  duration_ms: 0.282496
+  type: 'test'
+  ...
+# Subtest: ieFetchOutcome: nothing requested → complete, never a false failure
+ok 233 - ieFetchOutcome: nothing requested → complete, never a false failure
+  ---
+  duration_ms: 0.338786
+  type: 'test'
+  ...
+# Subtest: ieFetchOutcome: failed list is newest-first regardless of arg order
+ok 234 - ieFetchOutcome: failed list is newest-first regardless of arg order
+  ---
+  duration_ms: 0.103559
+  type: 'test'
+  ...
+# Subtest: ieUnavailableNote names each failed cycle
+ok 235 - ieUnavailableNote names each failed cycle
+  ---
+  duration_ms: 0.188147
+  type: 'test'
+  ...
+# Subtest: ieUnavailableNote says unavailable, never claims absence of spending
+ok 236 - ieUnavailableNote says unavailable, never claims absence of spending
+  ---
+  duration_ms: 0.166978
+  type: 'test'
+  ...
+# Subtest: ieUnavailableNote on no failures is empty
+ok 237 - ieUnavailableNote on no failures is empty
+  ---
+  duration_ms: 0.071519
+  type: 'test'
+  ...
+# Subtest: renderLanding: member card carries name, sub-line, formatted inventory numbers, link
+ok 238 - renderLanding: member card carries name, sub-line, formatted inventory numbers, link
+  ---
+  duration_ms: 14.101163
+  type: 'test'
+  ...
+# Subtest: renderLanding: inventory language only — no detector/signal claims on the front door
+ok 239 - renderLanding: inventory language only — no detector/signal claims on the front door
+  ---
+  duration_ms: 0.367295
+  type: 'test'
+  ...
+# Subtest: renderLanding: escapes member fields
+ok 240 - renderLanding: escapes member fields
+  ---
+  duration_ms: 0.242937
+  type: 'test'
+  ...
+# Subtest: renderLanding: rejects unsafe slugs and malformed dates (href/attr safety)
+ok 241 - renderLanding: rejects unsafe slugs and malformed dates (href/attr safety)
+  ---
+  duration_ms: 0.392035
+  type: 'test'
+  ...
+# Subtest: renderLanding: rejects non-integer or negative counts
+ok 242 - renderLanding: rejects non-integer or negative counts
+  ---
+  duration_ms: 0.210047
+  type: 'test'
+  ...
+# Subtest: renderLanding: empty manifest fails loudly, count line pluralizes
+ok 243 - renderLanding: empty manifest fails loudly, count line pluralizes
+  ---
+  duration_ms: 0.221308
+  type: 'test'
+  ...
+# Subtest: renderLanding: null dataThrough renders without a data-through claim
+ok 244 - renderLanding: null dataThrough renders without a data-through claim
+  ---
+  duration_ms: 0.187358
+  type: 'test'
+  ...
+# Subtest: missing artifact returns a valid empty sentinel
+ok 245 - missing artifact returns a valid empty sentinel
+  ---
+  duration_ms: 0.7908
+  type: 'test'
+  ...
+# Subtest: registry lists the 13 sections in fixed order
+ok 246 - registry lists the 13 sections in fixed order
+  ---
+  duration_ms: 1.268444
+  type: 'test'
+  ...
+# Subtest: sectionShell emits an h2 with the id and escapes the title
+ok 247 - sectionShell emits an h2 with the id and escapes the title
+  ---
+  duration_ms: 0.303516
+  type: 'test'
+  ...
+# Subtest: reservedStub renders the not-computed-yet empty state
+ok 248 - reservedStub renders the not-computed-yet empty state
+  ---
+  duration_ms: 0.166698
+  type: 'test'
+  ...
+# Subtest: renderMoneyVotesSection: empty data gets explicit empty-state AND the not-computed notice
+ok 249 - renderMoneyVotesSection: empty data gets explicit empty-state AND the not-computed notice
+  ---
+  duration_ms: 0.167868
+  type: 'test'
+  ...
+# Subtest: renderMoneyVotesSection: themes render as rows, escaped, with the not-computed notice
+ok 250 - renderMoneyVotesSection: themes render as rows, escaped, with the not-computed notice
+  ---
+  duration_ms: 0.348506
+  type: 'test'
+  ...
+# Subtest: stored trade-activity prose is suppressed because it can become stale after data refreshes
+ok 251 - stored trade-activity prose is suppressed because it can become stale after data refreshes
+  ---
+  duration_ms: 0.135859
+  type: 'test'
+  ...
+# Subtest: assembleMemberBody emits each section id exactly once, in order
+ok 252 - assembleMemberBody emits each section id exactly once, in order
+  ---
+  duration_ms: 0.258277
+  type: 'test'
+  ...
+# Subtest: assembleMemberBody throws when a slot is missing
+ok 253 - assembleMemberBody throws when a slot is missing
+  ---
+  duration_ms: 0.330716
+  type: 'test'
+  ...
+# Subtest: patternIntensityClass: scored-null cap and existing tiers
+ok 254 - patternIntensityClass: scored-null cap and existing tiers
+  ---
+  duration_ms: 0.710711
+  type: 'test'
+  ...
+# Subtest: coverage strip states the linked/total split honestly
+ok 255 - coverage strip states the linked/total split honestly
+  ---
+  duration_ms: 14.592116
+  type: 'test'
+  ...
+# Subtest: coverage strip shows all three trade counts (disclosed / mappable / receipts)
+ok 256 - coverage strip shows all three trade counts (disclosed / mappable / receipts)
+  ---
+  duration_ms: 0.220047
+  type: 'test'
+  ...
+# Subtest: zero receipts renders an explicit empty state, not omission
+ok 257 - zero receipts renders an explicit empty state, not omission
+  ---
+  duration_ms: 0.181237
+  type: 'test'
+  ...
+# Subtest: insufficient-data shows the n-trades reason and no p-values
+ok 258 - insufficient-data shows the n-trades reason and no p-values
+  ---
+  duration_ms: 0.507853
+  type: 'test'
+  ...
+# Subtest: ranked receipt shows the day-gap juxtaposition and a frequency band, with all three cite links
+ok 259 - ranked receipt shows the day-gap juxtaposition and a frequency band, with all three cite links
+  ---
+  duration_ms: 0.461994
+  type: 'test'
+  ...
+# Subtest: receipt card collapses non-http(s) source URLs to \# (scheme allowlist)
+ok 260 - receipt card collapses non-http(s) source URLs to \# (scheme allowlist)
+  ---
+  duration_ms: 0.207928
+  type: 'test'
+  ...
+# Subtest: ranked receipts summarize the full scored distribution against chance
+ok 261 - ranked receipts summarize the full scored distribution against chance
+  ---
+  duration_ms: 0.750391
+  type: 'test'
+  ...
+# Subtest: receipt cards are capped at 20 and the truncation is disclosed
+ok 262 - receipt cards are capped at 20 and the truncation is disclosed
+  ---
+  duration_ms: 0.420265
+  type: 'test'
+  ...
+# Subtest: ordinary and unscored receipts never print raw p-values
+ok 263 - ordinary and unscored receipts never print raw p-values
+  ---
+  duration_ms: 0.415915
+  type: 'test'
+  ...
+# Subtest: assembleMemberBody is byte-stable across repeated renders
+ok 264 - assembleMemberBody is byte-stable across repeated renders
+  ---
+  duration_ms: 0.7715
+  type: 'test'
+  ...
+# Subtest: every registry id appears exactly once in assembled output
+ok 265 - every registry id appears exactly once in assembled output
+  ---
+  duration_ms: 0.170848
+  type: 'test'
+  ...
+# Subtest: parseRegistry: extracts data rows, skips header/separator/prose
+ok 266 - parseRegistry: extracts data rows, skips header/separator/prose
+  ---
+  duration_ms: 4.77324
+  type: 'test'
+  ...
+# Subtest: checkDetectors: consumed + not invalidated => blocked (stop-consumed)
+ok 267 - checkDetectors: consumed + not invalidated => blocked (stop-consumed)
+  ---
+  duration_ms: 0.301316
+  type: 'test'
+  ...
+# Subtest: checkDetectors: registered + not consumed => ok (ok-registered)
+ok 268 - checkDetectors: registered + not consumed => ok (ok-registered)
+  ---
+  duration_ms: 0.136519
+  type: 'test'
+  ...
+# Subtest: checkDetectors: consumed but documented-invalidation link => ok (replacement permitted through supported workflow)
+ok 269 - checkDetectors: consumed but documented-invalidation link => ok (replacement permitted through supported workflow)
+  ---
+  duration_ms: 0.178778
+  type: 'test'
+  ...
+# Subtest: checkDetectors: status=invalidated with EMPTY link => BLOCKED (fails closed, ADR 0003 §4)
+ok 270 - checkDetectors: status=invalidated with EMPTY link => BLOCKED (fails closed, ADR 0003 §4)
+  ---
+  duration_ms: 0.128468
+  type: 'test'
+  ...
+# Subtest: checkDetectors: status=invalidated WITH documented link => ok (replacement permitted through supported workflow)
+ok 271 - checkDetectors: status=invalidated WITH documented link => ok (replacement permitted through supported workflow)
+  ---
+  duration_ms: 0.123338
+  type: 'test'
+  ...
+# Subtest: checkDetectors: unknown detector id fails closed => blocked (stop-unknown)
+ok 272 - checkDetectors: unknown detector id fails closed => blocked (stop-unknown)
+  ---
+  duration_ms: 0.176947
+  type: 'test'
+  ...
+# Subtest: assertConfirmatoryAllowed: throws ConfirmatoryGuardError on a consumed detector
+ok 273 - assertConfirmatoryAllowed: throws ConfirmatoryGuardError on a consumed detector
+  ---
+  duration_ms: 0.624562
+  type: 'test'
+  ...
+# Subtest: assertConfirmatoryAllowed: returns results (no throw) on a clear detector
+ok 274 - assertConfirmatoryAllowed: returns results (no throw) on a clear detector
+  ---
+  duration_ms: 3.478207
+  type: 'test'
+  ...
+# Subtest: assertConfirmatoryAllowed: mixed set with one consumed => throws (fails the whole batch)
+ok 275 - assertConfirmatoryAllowed: mixed set with one consumed => throws (fails the whole batch)
+  ---
+  duration_ms: 0.491934
+  type: 'test'
+  ...
+# Subtest: db-delta reports deterministic table hashes and isolates changed tables
+ok 276 - db-delta reports deterministic table hashes and isolates changed tables
+  ---
+  duration_ms: 457.926754
+  type: 'test'
+  ...
+# Subtest: extractPtrRefs counts only PTR links and preserves authoritative ids and dates
+ok 277 - extractPtrRefs counts only PTR links and preserves authoritative ids and dates
+  ---
+  duration_ms: 2.173272
+  type: 'test'
+  ...
+# Subtest: extractPtrRefs rejects a non-ok EFDS payload
+ok 278 - extractPtrRefs rejects a non-ok EFDS payload
+  ---
+  duration_ms: 0.390915
+  type: 'test'
+  ...
+# Subtest: parseHouseIndex keeps only periodic reports and preserves authoritative DocIDs
+ok 279 - parseHouseIndex keeps only periodic reports and preserves authoritative DocIDs
+  ---
+  duration_ms: 1.349083
+  type: 'test'
+  ...
+# Subtest: candidate preparation matches House PTRs by member identity and excludes frozen roster members
+ok 280 - candidate preparation matches House PTRs by member identity and excludes frozen roster members
+  ---
+  duration_ms: 5.731218
+  type: 'test'
+  ...
+# Subtest: candidate preparation retains PTRs filed under a member historical House district
+ok 281 - candidate preparation retains PTRs filed under a member historical House district
+  ---
+  duration_ms: 0.204877
+  type: 'test'
+  ...
+# Subtest: candidate preparation does not attach a filing to a district held only in another year
+ok 282 - candidate preparation does not attach a filing to a district held only in another year
+  ---
+  duration_ms: 0.171078
+  type: 'test'
+  ...
+# Subtest: Senate counts and probe evidence are joined by bioguide without changing the eligible pool
+ok 283 - Senate counts and probe evidence are joined by bioguide without changing the eligible pool
+  ---
+  duration_ms: 0.222747
+  type: 'test'
+  ...
+# Subtest: exclusions union production members with every current alias match and retain unresolved names
+ok 284 - exclusions union production members with every current alias match and retain unresolved names
+  ---
+  duration_ms: 0.323946
+  type: 'test'
+  ...
+# Subtest: rankForStratum is the literal HMAC digest order with a bioguide tiebreaker
+ok 285 - rankForStratum is the literal HMAC digest order with a bioguide tiebreaker
+  ---
+  duration_ms: 8.045618
+  type: 'test'
+  ...
+# Subtest: selection CLI accepts the prepared candidate evidence envelope
+ok 286 - selection CLI accepts the prepared candidate evidence envelope
+  ---
+  duration_ms: 0.269156
+  type: 'test'
+  ...
+# Subtest: selected rank is measured before predicate disqualifications, not renumbered afterward
+ok 287 - selected rank is measured before predicate disqualifications, not renumbered afterward
+  ---
+  duration_ms: 0.404915
+  type: 'test'
+  ...
+# Subtest: selection uses order 1,2,6,3,4,5 and never selects one person twice
+ok 288 - selection uses order 1,2,6,3,4,5 and never selects one person twice
+  ---
+  duration_ms: 0.626482
+  type: 'test'
+  ...
+# Subtest: the scanned stratum claims an overlapping no-FEC candidate before stratum 5
+ok 289 - the scanned stratum claims an overlapping no-FEC candidate before stratum 5
+  ---
+  duration_ms: 0.453385
+  type: 'test'
+  ...
+# Subtest: overlap exhaustion is a selection conflict, never a false no-candidate closure
+ok 290 - overlap exhaustion is a selection conflict, never a false no-candidate closure
+  ---
+  duration_ms: 0.243257
+  type: 'test'
+  ...
+# Subtest: a required family with zero produced artifacts fails instead of scoring 0/0 PASS
+ok 291 - a required family with zero produced artifacts fails instead of scoring 0/0 PASS
+  ---
+  duration_ms: 2.849964
+  type: 'test'
+  ...
+# Subtest: a required family that produced a valid artifact passes
+ok 292 - a required family that produced a valid artifact passes
+  ---
+  duration_ms: 1.371992
+  type: 'test'
+  ...
+# Subtest: a NON-required family with zero artifacts still passes (unchanged behavior)
+ok 293 - a NON-required family with zero artifacts still passes (unchanged behavior)
+  ---
+  duration_ms: 0.76168
+  type: 'test'
+  ...
+# Subtest: a required family with zero artifacts passes only when a source-backed verified-empty record accounts for it
+ok 294 - a required family with zero artifacts passes only when a source-backed verified-empty record accounts for it
+  ---
+  duration_ms: 0.369425
+  type: 'test'
+  ...
+# Subtest: a withheld formatting result is accounted for but cannot pass a required family
+ok 295 - a withheld formatting result is accounted for but cannot pass a required family
+  ---
+  duration_ms: 0.258976
+  type: 'test'
+  ...
+# Subtest: an invalid artifact in a required family still fails (unchanged behavior)
+ok 296 - an invalid artifact in a required family still fails (unchanged behavior)
+  ---
+  duration_ms: 1.188855
+  type: 'test'
+  ...
+# Subtest: required artifacts fail closed for unparseable
+ok 297 - required artifacts fail closed for unparseable
+  ---
+  duration_ms: 1.142575
+  type: 'test'
+  ...
+# Subtest: required artifacts fail closed for missing-in-one-task
+ok 298 - required artifacts fail closed for missing-in-one-task
+  ---
+  duration_ms: 0.712551
+  type: 'test'
+  ...
+# Subtest: required artifacts fail closed for unbacked-empty
+ok 299 - required artifacts fail closed for unbacked-empty
+  ---
+  duration_ms: 0.313376
+  type: 'test'
+  ...
+# Subtest: SCENARIO one House member: PFD path present, scoped, no scope-less pipeline loaders
+ok 300 - SCENARIO one House member: PFD path present, scoped, no scope-less pipeline loaders
+  ---
+  duration_ms: 0.890079
+  type: 'test'
+  ...
+# Subtest: SCENARIO one senator: Senate PTR used, House PFD + district loaders forbidden
+ok 301 - SCENARIO one senator: Senate PTR used, House PFD + district loaders forbidden
+  ---
+  duration_ms: 0.471614
+  type: 'test'
+  ...
+# Subtest: SCENARIO base onboarding omits district loaders because they do not feed a live page
+ok 302 - SCENARIO base onboarding omits district loaders because they do not feed a live page
+  ---
+  duration_ms: 0.217047
+  type: 'test'
+  ...
+# Subtest: SCENARIO OpenSecrets is optional and an omitted run is recorded as not-collected
+ok 303 - SCENARIO OpenSecrets is optional and an omitted run is recorded as not-collected
+  ---
+  duration_ms: 0.135068
+  type: 'test'
+  ...
+# Subtest: SCENARIO canonical selector contract is explicit at every command boundary
+ok 304 - SCENARIO canonical selector contract is explicit at every command boundary
+  ---
+  duration_ms: 0.276327
+  type: 'test'
+  ...
+# Subtest: SCENARIO one-member OpenSecrets harvest: load is member-scoped, browser rules intact
+ok 305 - SCENARIO one-member OpenSecrets harvest: load is member-scoped, browser rules intact
+  ---
+  duration_ms: 0.512874
+  type: 'test'
+  ...
+# Subtest: SCENARIO no member specified: scope-less loaders fail closed (skill says so, never --all default)
+ok 306 - SCENARIO no member specified: scope-less loaders fail closed (skill says so, never --all default)
+  ---
+  duration_ms: 0.154868
+  type: 'test'
+  ...
+# Subtest: SCENARIO multiple members / batch: rejected — one member at a time
+ok 307 - SCENARIO multiple members / batch: rejected — one member at a time
+  ---
+  duration_ms: 0.215967
+  type: 'test'
+  ...
+# Subtest: SCENARIO parked-timing execution/scoring: prohibited in onboarding
+ok 308 - SCENARIO parked-timing execution/scoring: prohibited in onboarding
+  ---
+  duration_ms: 0.244537
+  type: 'test'
+  ...
+# Subtest: SCENARIO onboarding + publishing: publishing stays separate, onboarding never publishes
+ok 309 - SCENARIO onboarding + publishing: publishing stays separate, onboarding never publishes
+  ---
+  duration_ms: 0.301466
+  type: 'test'
+  ...
+#   ⚠ member-8219414.txt [needs_manual_formatting:empty-input] → 0 of 0 row(s) from 0 B; table NOT entered — filing withheld; member remains in the formatting queue
+#   ✗ missing-source-8219416.txt: empty text artifact and source PDF is missing
+# Member formatting hold: skip automated publication, keep the member in coverage, and do not count this run as verified-empty or complete.
+# Parsed 0 PTR(s) → 0 transactions; skipped 1 non-PTR; 1 formatting hold(s); 1 errors
+#   ⚠ doe-jane-1000001.txt [needs_manual_formatting:empty-input] → 0 of 0 row(s) from 0 B; table NOT entered — filing withheld; member remains in the formatting queue
+# Member formatting hold: skip automated publication, keep the member in coverage, and do not count this run as verified-empty or complete.
+# Parsed 0 PTR(s) → 0 transactions; skipped 0 non-PTR; 1 formatting hold(s); 0 errors
+#   ✗ unknown.txt: missing filing identity or valid source PDF
+# Parsed 0 PTR(s) → 0 transactions; skipped 0 non-PTR; 0 formatting hold(s); 1 errors
+#   ✗ doe-jane-1000001.txt: text conversion failed
+# Parsed 0 PTR(s) → 0 transactions; skipped 0 non-PTR; 0 formatting hold(s); 1 errors
+#   ✗ doe-jane-1000001.pdf: missing text extraction; fetch/conversion incomplete
+# Parsed 0 PTR(s) → 0 transactions; skipped 0 non-PTR; 0 formatting hold(s); 1 errors
+#   ✗ doe-jane-1000001.txt: missing filing identity or valid source PDF
+# Parsed 0 PTR(s) → 0 transactions; skipped 0 non-PTR; 0 formatting hold(s); 1 errors
+# Subtest: unsupported local PDFs become formatting holds without stopping the remaining batch
+ok 310 - unsupported local PDFs become formatting holds without stopping the remaining batch
+  ---
+  duration_ms: 3.330478
+  type: 'test'
+  ...
+# Subtest: variant 1: trailing checkbox glyph does not break the row
+ok 311 - variant 1: trailing checkbox glyph does not break the row
+  ---
+  duration_ms: 6.155522
+  type: 'test'
+  ...
+# Subtest: variant 1: multi-line checkbox run (c d e f g) never pollutes the asset
+ok 312 - variant 1: multi-line checkbox run (c d e f g) never pollutes the asset
+  ---
+  duration_ms: 39.992575
+  type: 'test'
+  ...
+# Subtest: variant 2: amount high wrapped onto a continuation line is joined
+ok 313 - variant 2: amount high wrapped onto a continuation line is joined
+  ---
+  duration_ms: 1.986705
+  type: 'test'
+  ...
+# Subtest: variant 3: a single exact amount (no range) is preserved verbatim
+ok 314 - variant 3: a single exact amount (no range) is preserved verbatim
+  ---
+  duration_ms: 0.657212
+  type: 'test'
+  ...
+# Subtest: variant 4: a leading numeric row id does not shift the columns
+ok 315 - variant 4: a leading numeric row id does not shift the columns
+  ---
+  duration_ms: 0.154348
+  type: 'test'
+  ...
+# Subtest: transaction type is read from the type column, not from incidental text
+ok 316 - transaction type is read from the type column, not from incidental text
+  ---
+  duration_ms: 0.157648
+  type: 'test'
+  ...
+# Subtest: a readable PTR that yields zero rows is unresolved, not an empty success
+ok 317 - a readable PTR that yields zero rows is unresolved, not an empty success
+  ---
+  duration_ms: 1.105546
+  type: 'test'
+  ...
+# Subtest: blank input is unresolved with reason empty-input
+ok 318 - blank input is unresolved with reason empty-input
+  ---
+  duration_ms: 0.176768
+  type: 'test'
+  ...
+# Subtest: a non-PTR document is unresolved with reason not-a-ptr
+ok 319 - a non-PTR document is unresolved with reason not-a-ptr
+  ---
+  duration_ms: 0.228327
+  type: 'test'
+  ...
+# Subtest: extractPTR (back-compat) returns null rather than a zero-row record
+ok 320 - extractPTR (back-compat) returns null rather than a zero-row record
+  ---
+  duration_ms: 0.920828
+  type: 'test'
+  ...
+# Subtest: authoritative filing id wins over body text
+ok 321 - authoritative filing id wins over body text
+  ---
+  duration_ms: 0.81562
+  type: 'test'
+  ...
+# Subtest: lowercase `Filing Id \#` in body text is still recovered when no id is passed
+ok 322 - lowercase `Filing Id \#` in body text is still recovered when no id is passed
+  ---
+  duration_ms: 0.79872
+  type: 'test'
+  ...
+# Subtest: filer name and state/district parse from the lowercase-label template
+ok 323 - filer name and state/district parse from the lowercase-label template
+  ---
+  duration_ms: 0.84381
+  type: 'test'
+  ...
+# Subtest: the pre-existing capitalised layout produces identical normalized output
+ok 324 - the pre-existing capitalised layout produces identical normalized output
+  ---
+  duration_ms: 0.461374
+  type: 'test'
+  ...
+# Subtest: multiple rows in one filing are kept distinct (no merging, no duplicates)
+ok 325 - multiple rows in one filing are kept distinct (no merging, no duplicates)
+  ---
+  duration_ms: 4.282665
+  type: 'test'
+  ...
+# Subtest: spelled DESCRIPTION:/LOCATION: labels populate their fields, not the asset name
+ok 326 - spelled DESCRIPTION:/LOCATION: labels populate their fields, not the asset name
+  ---
+  duration_ms: 1.526201
+  type: 'test'
+  ...
+# Subtest: mangled-case lOCATION: is recognised the same as LOCATION:
+ok 327 - mangled-case lOCATION: is recognised the same as LOCATION:
+  ---
+  duration_ms: 0.997607
+  type: 'test'
+  ...
+# Subtest: abbreviated L label preserves a full city, state, and country location
+ok 328 - abbreviated L label preserves a full city, state, and country location
+  ---
+  duration_ms: 0.276026
+  type: 'test'
+  ...
+# Subtest: abbreviated country-only location remains separate from a same-line subholding
+ok 329 - abbreviated country-only location remains separate from a same-line subholding
+  ---
+  duration_ms: 0.150688
+  type: 'test'
+  ...
+# Subtest: a DESCRIPTION on the primary row line does not pollute the asset
+ok 330 - a DESCRIPTION on the primary row line does not pollute the asset
+  ---
+  duration_ms: 1.424102
+  type: 'test'
+  ...
+# Subtest: case-mangled tickers are recovered and normalised to uppercase
+ok 331 - case-mangled tickers are recovered and normalised to uppercase
+  ---
+  duration_ms: 7.012052
+  type: 'test'
+  ...
+# Subtest: case-mangled asset types are recovered and normalised
+ok 332 - case-mangled asset types are recovered and normalised
+  ---
+  duration_ms: 0.821279
+  type: 'test'
+  ...
+# Subtest: uppercase tickers and asset types are unchanged by the case-tolerant patterns
+ok 333 - uppercase tickers and asset types are unchanged by the case-tolerant patterns
+  ---
+  duration_ms: 1.303344
+  type: 'test'
+  ...
+# Subtest: a filing whose table rows partially match is unresolved, not partially parsed
+ok 334 - a filing whose table rows partially match is unresolved, not partially parsed
+  ---
+  duration_ms: 0.889459
+  type: 'test'
+  ...
+# Subtest: the row-count invariant ignores date pairs outside the transaction table
+ok 335 - the row-count invariant ignores date pairs outside the transaction table
+  ---
+  duration_ms: 0.889249
+  type: 'test'
+  ...
+# Subtest: a fully-matching multi-row filing satisfies the invariant
+ok 336 - a fully-matching multi-row filing satisfies the invariant
+  ---
+  duration_ms: 0.79705
+  type: 'test'
+  ...
+# Subtest: a wrapped spelled DESCRIPTION continues into the description, not the asset
+ok 337 - a wrapped spelled DESCRIPTION continues into the description, not the asset
+  ---
+  duration_ms: 2.058194
+  type: 'test'
+  ...
+# Subtest: a formatting hold writes source-bound retry evidence and masks an earlier extraction
+ok 338 - a formatting hold writes source-bound retry evidence and masks an earlier extraction
+  ---
+  duration_ms: 0.81941
+  type: 'test'
+  ...
+# Subtest: extractor treats no-identity as failed, not held or skipped
+ok 339 - extractor treats no-identity as failed, not held or skipped
+  ---
+  duration_ms: 0.485033
+  type: 'test'
+  ...
+# Subtest: extractor treats conversion-failed as failed, not held or skipped
+ok 340 - extractor treats conversion-failed as failed, not held or skipped
+  ---
+  duration_ms: 0.485964
+  type: 'test'
+  ...
+# Subtest: extractor treats pdf-without-text as failed, not held or skipped
+ok 341 - extractor treats pdf-without-text as failed, not held or skipped
+  ---
+  duration_ms: 0.360555
+  type: 'test'
+  ...
+# Subtest: extractor treats invalid-pdf as failed, not held or skipped
+ok 342 - extractor treats invalid-pdf as failed, not held or skipped
+  ---
+  duration_ms: 0.374025
+  type: 'test'
+  ...
+# Subtest: vote pagination propagates an exhausted later-page failure instead of returning partial votes
+ok 343 - vote pagination propagates an exhausted later-page failure instead of returning partial votes
+  ---
+  duration_ms: 0.862999
+  type: 'test'
+  ...
+# Subtest: vote pagination rejects a non-advancing cursor
+ok 344 - vote pagination rejects a non-advancing cursor
+  ---
+  duration_ms: 0.188998
+  type: 'test'
+  ...
+# Subtest: vote pagination cannot report an exhausted safety cap as a complete date window
+ok 345 - vote pagination cannot report an exhausted safety cap as a complete date window
+  ---
+  duration_ms: 0.170008
+  type: 'test'
+  ...
+# Subtest: vote pagination requires an objects array, not a missing-result empty success
+ok 346 - vote pagination requires an objects array, not a missing-result empty success
+  ---
+  duration_ms: 0.140008
+  type: 'test'
+  ...
+# Subtest: a successful empty page closes pagination and retains earlier rows
+ok 347 - a successful empty page closes pagination and retains earlier rows
+  ---
+  duration_ms: 0.187967
+  type: 'test'
+  ...
+1..347
+# tests 347
+# suites 0
+# pass 347
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2664.572541

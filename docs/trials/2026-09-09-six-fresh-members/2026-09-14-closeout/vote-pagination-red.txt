@@ -1,0 +1,85 @@
+TAP version 13
+# [researcher/fetch] cursor pagination failed at cursor=2026-08-01T12:10:00; result truncated to 100: upstream unavailable
+# Subtest: vote pagination propagates an exhausted later-page failure instead of returning partial votes
+not ok 1 - vote pagination propagates an exhausted later-page failure instead of returning partial votes
+  ---
+  duration_ms: 1.708025
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/skills/researcher/fetch.test.ts:1:396'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/skills/researcher/fetch.test.ts:9:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: vote pagination rejects a non-advancing cursor
+not ok 2 - vote pagination rejects a non-advancing cursor
+  ---
+  duration_ms: 0.26163
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/skills/researcher/fetch.test.ts:1:698'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/skills/researcher/fetch.test.ts:16:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: vote pagination cannot report an exhausted safety cap as a complete date window
+not ok 3 - vote pagination cannot report an exhausted safety cap as a complete date window
+  ---
+  duration_ms: 0.191981
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/skills/researcher/fetch.test.ts:1:876'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/skills/researcher/fetch.test.ts:20:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: vote pagination requires an objects array, not a missing-result empty success
+not ok 4 - vote pagination requires an objects array, not a missing-result empty success
+  ---
+  duration_ms: 0.149451
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/skills/researcher/fetch.test.ts:1:1085'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/skills/researcher/fetch.test.ts:24:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: a successful empty page closes pagination and retains earlier rows
+ok 5 - a successful empty page closes pagination and retains earlier rows
+  ---
+  duration_ms: 0.22665
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 1
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 201.051851

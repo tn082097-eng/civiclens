@@ -1,0 +1,25 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "db/load-pfd.ts",
+    "--year",
+    "2023,2024,2025,2026",
+    "--member",
+    "eric-burlison"
+  ],
+  "started": "2026-09-17T00:20:13Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/caches",
+  "dbBefore": "18045d40e3a6fd8bd67b47c0c687f0d666926c3bf12422725033f43588cda224",
+  "walBefore": null,
+  "exit": 1,
+  "output": "\nLoading PFDs for 2023\u2026\n\nFiler                        Member               Conf  Method               Tx\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nTotal: 0 filers, 0 filings, 0 transactions, 0 unmatched\nWithheld from production: 1 filing(s) \u2014 1 unresolved, 0 rejected. Existing rows preserved.\n  \u00b7 8219414 (eric-burlison) [unresolved]\n      empty-input\n\n\nLoading PFDs for 2024\u2026\n\nVerified empty: the authoritative House index contains zero target PTR filings. DB unchanged.\n\n\nLoading PFDs for 2025\u2026\n\nVerified empty: the authoritative House index contains zero target PTR filings. DB unchanged.\n\n\nLoading PFDs for 2026\u2026\n\nVerified empty: the authoritative House index contains zero target PTR filings. DB unchanged.\n\n\nGrand total across 4 years: 0 transactions, 0 unmatched, 1 filings withheld.\n\nMember hold: eric-burlison has 1 withheld filing(s); skip automated publication and keep the member in the formatting queue.\n",
+  "dbAfter": "18045d40e3a6fd8bd67b47c0c687f0d666926c3bf12422725033f43588cda224",
+  "finished": "2026-09-17T00:20:14Z",
+  "walAfter": "075beb6e2aa6030b1dd3fe32f76e7e17f8fdfee9d07a105bf3a5454614dbf41a"
+}

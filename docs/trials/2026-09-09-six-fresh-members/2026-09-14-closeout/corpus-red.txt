@@ -1,0 +1,124 @@
+TAP version 13
+# Subtest: a required family with zero produced artifacts fails instead of scoring 0/0 PASS
+ok 1 - a required family with zero produced artifacts fails instead of scoring 0/0 PASS
+  ---
+  duration_ms: 1.51499
+  type: 'test'
+  ...
+# Subtest: a required family that produced a valid artifact passes
+ok 2 - a required family that produced a valid artifact passes
+  ---
+  duration_ms: 1.072836
+  type: 'test'
+  ...
+# Subtest: a NON-required family with zero artifacts still passes (unchanged behavior)
+ok 3 - a NON-required family with zero artifacts still passes (unchanged behavior)
+  ---
+  duration_ms: 0.609902
+  type: 'test'
+  ...
+# Subtest: a required family with zero artifacts passes only when a source-backed verified-empty record accounts for it
+ok 4 - a required family with zero artifacts passes only when a source-backed verified-empty record accounts for it
+  ---
+  duration_ms: 0.277906
+  type: 'test'
+  ...
+# Subtest: a withheld formatting result is accounted for but cannot pass a required family
+ok 5 - a withheld formatting result is accounted for but cannot pass a required family
+  ---
+  duration_ms: 0.598582
+  type: 'test'
+  ...
+# Subtest: an invalid artifact in a required family still fails (unchanged behavior)
+ok 6 - an invalid artifact in a required family still fails (unchanged behavior)
+  ---
+  duration_ms: 0.7817
+  type: 'test'
+  ...
+# Subtest: required artifacts fail closed for unparseable
+not ok 7 - required artifacts fail closed for unparseable
+  ---
+  duration_ms: 1.474251
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/scripts/validate-artifact-corpus.test.ts:1:4651'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    true !== false
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/scripts/validate-artifact-corpus.test.ts:182:14)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: required artifacts fail closed for missing-in-one-task
+not ok 8 - required artifacts fail closed for missing-in-one-task
+  ---
+  duration_ms: 0.619312
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/scripts/validate-artifact-corpus.test.ts:1:4651'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    true !== false
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/scripts/validate-artifact-corpus.test.ts:182:14)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: required artifacts fail closed for unbacked-empty
+not ok 9 - required artifacts fail closed for unbacked-empty
+  ---
+  duration_ms: 0.321096
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-track-b/scripts/validate-artifact-corpus.test.ts:1:4651'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    true !== false
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/captainanime/Developer/civiclens-track-b/scripts/validate-artifact-corpus.test.ts:182:14)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 6
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 142.295801

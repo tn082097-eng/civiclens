@@ -1,0 +1,25 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "agents/pipeline.ts",
+    "--load-bills",
+    "--bioguide",
+    "M001231",
+    "--api-pass"
+  ],
+  "started": "2026-09-16T14:48:22Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion/data/caches",
+  "dbBefore": "7c9afdb3fe89383fc43ae487a49eb2c2dbb1f133114852e40e45c26138d6037e",
+  "walBefore": "1ab921fbe8ac1eb0d23465e5c562f37c40949cffb6e07f0bf60df2391080c149",
+  "exit": 0,
+  "output": "Pass 1: backfilling votes.bill_id from question text (regex)\u2026\n  381 filled by regex, 288 unparseable, 669 total NULL rows scanned.\n\nPass 2: GovTrack API resolution for remaining NULL bill_ids\u2026\n  GovTrack API: 50 calls, 49 resolved\u2026\n  GovTrack API: 100 calls, 98 resolved\u2026\n  GovTrack API: 150 calls, 147 resolved\u2026\n  GovTrack API: 200 calls, 197 resolved\u2026\n  GovTrack API: 250 calls, 244 resolved\u2026\n  0 filled by regex, 281 resolved via GovTrack API, 7 still unresolvable.\n\nFetching summaries for 39 distinct bill(s)\u2026\n\n  [1/39] 119-hconres-113  \u2713 (no summary)\n  [2/39] 119-hconres-89  \u2713 (no summary)\n  [3/39] 119-hconres-93  \u2713 (no summary)\n  [4/39] 119-hjres-1  \u2713 (no summary)\n  [5/39] 119-hjres-210  \u2713 (no summary)\n  [6/39] 119-hr-1118  \u2713 Value Over Cost Act of 2025\n  [7/39] 119-hr-1181  \u2713 Protecting Privacy in Purchases Act\n  [8/39] 119-hr-139  \u2713 Sunshine Protection Act of 2025\n  [9/39] 119-hr-1501  \u2713 Protecting Domestic Mining Act of 2025\n  [10/39] 119-hr-2140  \u2713 Diesel Emissions Reduction Act of 2025\n  [11/39] 119-hr-2978  \u2713 (no summary)\n  [12/39] 119-hr-3106  \u2713 Weatherizing Infrastructure in the North and Terrorism Emerg\n  [13/39] 119-hr-3276  \u2713 Local Communities &amp; Bird Habitat Stewardship Act of 2026\n  [14/39] 119-hr-4219  \u2713 National Wildlife Refuge System Invasive Species Strike Team\n  [15/39] 119-hr-4541  \u2713 (no summary)\n  [16/39] 119-hr-4646  \u2713 Whistleblower Protection Act of 2025\n  [17/39] 119-hr-4795  \u2713 Protect Economic and Academic Freedom Act of 2026\n  [18/39] 119-hr-5362  \u2713 (no summary)\n  [19/39] 119-hr-6955  \u2713 Main Street Capital Access Act or the Main Street Act\n  [20/39] 119-hr-7008  \u2713 Stop Insider Trading Act\n  [21/39] 119-hr-8278  \u2713 Fostering the Use of Technology to Uphold Regulatory Effecti\n  [22/39] 119-hr-8595  \u2713 National Security, Department of State, and Related Programs\n  [23/39] 119-hr-8800  \u2713 National Defense Authorization Act for Fiscal Year 2027\n  [24/39] 119-hr-8823  \u2713 Putting Patients First by Strengthening Provider Accountabil\n  [25/39] 119-hr-8884  \u2713 Removing Barriers to Work for Disabled Americans Act\n  [26/39] 119-hr-8897  \u2713 Improving Travel for American Families Act\n  [27/39] 119-hr-9237  \u2713 Take Care of America's Veterans Act\n  [28/39] 119-hr-9436  \u2713 Northeast Lobsterman Protection Act of 2026\n  [29/39] 119-hr-9500  \u2713 Tax Relief for Fraud Victims Act\n  [30/39] 119-hr-9770  \u2713 Continuing Appropriations Act, 2027\n  [31/39] 119-hres-1423  \u2713 (no summary)\n  [32/39] 119-hres-1438  \u2713 (no summary)\n  [33/39] 119-hres-1486  \u2713 (no summary)\n  [34/39] 119-hres-1490  \u2713 (no summary)\n  [35/39] 119-hres-1498  \u2713 (no summary)\n  [36/39] 119-hres-1499  \u2713 (no summary)\n  [37/39] 119-hres-1530  \u2713 Providing for consideration of the bill (H.R. 9576) to estab\n  [38/39] 119-s-307  \u2713 Prison Staff Safety Enhancement Act\n  [39/39] 119-s-32  \u2713 Local Access to Courts Act or LACA\n\nDone: 39 fetched, 0 already cached, 0 skipped.\n\n(member scope: skipping global NULL-title refill \u2014 not target-originated.)\n",
+  "dbAfter": "7c9afdb3fe89383fc43ae487a49eb2c2dbb1f133114852e40e45c26138d6037e",
+  "finished": "2026-09-16T14:49:52Z",
+  "walAfter": "1b8dccbc645e3443bc35c9623c42b8aea564cad0de888dd78c72e19d25136dff"
+}

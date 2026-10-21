@@ -19,9 +19,9 @@ two known gaps that bulk downloads from primary sources will close:
    FEC-candidate-id backfill workaround in one fetch.
 
 2. **House PTR ingestion is per-filing scrape.** The official disclosure
-   portal also publishes annual ZIPs containing every PTR PDF for that year
-   plus an XML index keyed by doc ID. The ZIP is a one-shot replacement for
-   per-PDF scraping for full-year coverage.
+   portal publishes annual ZIPs containing TXT and XML indexes keyed by doc ID,
+   not the PTR PDFs themselves. Each PDF must still be downloaded separately
+   from the official per-document endpoint.
 
 Existing cache convention is per-source directories at the project root:
 `pfd-cache/`, `senate-ptr-cache/`, `pfd-cache/fec-ie/`. Match this.

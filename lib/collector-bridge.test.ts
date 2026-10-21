@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { createHash } from 'node:crypto';
+import { runCollectorBridge, resolveCollectorRuntime, validateBridgeRun, CollectorBridgeError } from './collector-bridge.js';
+import type { BridgeRollInput } from './official-vote-types.js';
+const root = resolve(import.meta.dirname, '..');
+const p = resolve(root, 'fixtures/votes/official-samples/house-bill-2025-roll006.xml');
+const row: BridgeRollInput = { key: '119-2025/h6', chamber: 'house', congress:119, session:1, year:2025,roll:6,date:'2025-01-07',source_url:'https://clerk.house.gov/evs/2025/roll006.xml',path:p,sha256:createHash('sha256').update(readFileSync(p)).digest('hex') };
+test('real offline pinned bridge parses a valid official roll', async () => { const run=await runCollectorBridge([row]);assert.equal(run.results[0].ok,true);assert.equal(run.results[0].key,row.key); });
+test('empty input rejects',async () => { await assert.rejects(runCollectorBridge([]),CollectorBridgeError); });
+test('missing runtime is typed',()=>{assert.throws(()=>resolveCollectorRuntime({runtimeDir:'/tmp/civiclens-SYNTHETIC-no-runtime'}),(e:unknown)=> e instanceof CollectorBridgeError && e.code==='runtime_missing');});
+test('validator rejects mismatching keys and raw identities',async()=>{const run=await runCollectorBridge([row]); const bad=structuredClone(run);bad.results[0].key='119-2025/h7';assert.throws(()=>validateBridgeRun(bad,[row]),(e:unknown)=>e instanceof CollectorBridgeError&&e.code==='malformed_output');const badRaw=structuredClone(run); if(badRaw.results[0].ok)badRaw.results[0].raw.roll=7;assert.throws(()=>validateBridgeRun(badRaw,[row]),CollectorBridgeError);});
+test('validator rejects wrong count, network, pin, lock and malformed raw',async()=>{const run=await runCollectorBridge([row]);for(const mutate of [(r:any)=>r.results=[],(r:any)=>r.network.interfaces=['eth0'],(r:any)=>r.collector.commit='bad',(r:any)=>r.runtime.lock_sha256='0'.repeat(64),(r:any)=>r.results[0].raw.voters=null]){const bad=structuredClone(run);mutate(bad);assert.throws(()=>validateBridgeRun(bad,[row]),CollectorBridgeError);}});

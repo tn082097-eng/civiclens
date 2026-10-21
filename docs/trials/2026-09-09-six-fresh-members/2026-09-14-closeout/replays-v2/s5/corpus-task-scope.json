@@ -1,0 +1,34 @@
+{
+  "note": "validate:corpus is task-scoped and returns exit 1 because the retained FAILED task legitimately has no summarizer/code-checker/final-review. This is preserved failure evidence, not a defect of onboarding-rerun-1. The failed task was NOT deleted or merged; no corpus laundering performed.",
+  "failedTask": "task-1789571212455-8282c36b",
+  "successfulTask": "task-1789604138913-41f1f4a8",
+  "successfulTaskRequiredSeven": 7,
+  "tasks": {
+    "task-1789571212455-8282c36b": {
+      "state": "failed",
+      "artifacts": {
+        "researcher": "93a2e54825ff84a26f6dab13d3e5f6406d0436a413cb28276877b66bd50825ba",
+        "data-checker": "dda263436de39859b72b9b4585eca50fb226462413472f21a68d567f03e35606",
+        "code-checker": null,
+        "trade-analyst": "d06cd74b60bf043e393419315c611f9ab49586310f9b0388e375728e009f0d2f",
+        "predictor": "75d8d355362427aba8f0251a94c603b2af43d5f8b1e62c4e1dafd5bc8fa39b8c",
+        "summarizer": null,
+        "final-review": null
+      },
+      "requiredPresent": 4
+    },
+    "task-1789604138913-41f1f4a8": {
+      "state": "complete",
+      "artifacts": {
+        "researcher": "158ce784e2ad60bb6668870ac14b733e46dc595702b0c7d74c8a27226587e82e",
+        "data-checker": "7e74e3da42a91dc1c3c0c33f4d85c25d29bd6e8ba4b7788d8e9c1b8b982db8ad",
+        "code-checker": "4449855256e5a25ce1893e5984a32c6f17385082a68f5690cde2e2e7b13518c3",
+        "trade-analyst": "13dc52bfdeca8c2c576f6398608ebe8b6826ef90297f317e27dc5f62b98405f3",
+        "predictor": "2da8563c624566570ce3fd47c0b7a458b4c85dcc084e0671ba84483cff3de5d6",
+        "summarizer": "028eb1e1faada844db76d6017aa1c177b6243e099f5a9cbd34b1e6972138d297",
+        "final-review": "11eedf86cb20686130a484e21bbd9f30627ec5a097c88f8e1f763c29bbcfe4a5"
+      },
+      "requiredPresent": 7
+    }
+  }
+}

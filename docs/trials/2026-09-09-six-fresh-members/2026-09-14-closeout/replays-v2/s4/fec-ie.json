@@ -1,0 +1,25 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "agents/pipeline.ts",
+    "--load-fec-ie",
+    "2026",
+    "--bioguide",
+    "V000128"
+  ],
+  "started": "2026-09-16T15:08:48Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen/data/caches",
+  "dbBefore": "80568fce5c6125266c26ef95b012437009783605c0f156fad1608464372d488d",
+  "walBefore": "ba1480407d1261cd43bef5595e99e5eb305e6d5d81b36485974904fdf7a08972",
+  "exit": 0,
+  "output": "\nLoading FEC IE for 1 member(s), cycle 2026\u2026\n\nFEC IE load: 1 member-cycle rows, 0 with IE, 0 errored\n",
+  "dbAfter": "80568fce5c6125266c26ef95b012437009783605c0f156fad1608464372d488d",
+  "finished": "2026-09-16T15:08:49Z",
+  "walAfter": "ec4c18efe9f9684ee09dcc5e80cf847f082afb329cca41434e51a39710d7a7ab"
+}

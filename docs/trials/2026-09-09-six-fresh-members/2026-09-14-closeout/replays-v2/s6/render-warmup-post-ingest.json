@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "render/build.ts",
+    "--member",
+    "eric-burlison"
+  ],
+  "started": "2026-09-17T00:32:04Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/caches",
+  "dbBefore": "3cb41b9fa5d74307d38da95326959a8b6078087802efe119af433128a4938e8b",
+  "walBefore": null,
+  "exit": 0,
+  "output": "  \u2713 site/members/eric-burlison.html  (15d 0t 0p 37peers)\n",
+  "dbAfter": "3cb41b9fa5d74307d38da95326959a8b6078087802efe119af433128a4938e8b",
+  "finished": "2026-09-17T00:32:05Z",
+  "walAfter": null
+}

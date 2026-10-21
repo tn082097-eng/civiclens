@@ -1,0 +1,22 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "db/load-cosponsored.ts",
+    "chris-van-hollen"
+  ],
+  "started": "2026-09-16T14:59:31Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen/data/caches",
+  "dbBefore": "80568fce5c6125266c26ef95b012437009783605c0f156fad1608464372d488d",
+  "walBefore": "bbfadfa9cd5397bb0ac4e6914081ad0206dbf49570dad19a3d512fb3fc9396bb",
+  "exit": 0,
+  "output": "Loading cosponsors for 1 member(s)\u2026\n\n  chris-van-hollen (Chris Van Hollen): 6919 fetched, 6531 inserted, 388 dup/skipped\n\nDone. 6531 cosponsor rows inserted, 0 member(s) not loaded.\nBills table now: [\n  { sponsor_role: 'cosponsor', n: 159993 },\n  { sponsor_role: null, n: 179 },\n  { sponsor_role: 'sponsor', n: 16574 }\n]\n",
+  "dbAfter": "80568fce5c6125266c26ef95b012437009783605c0f156fad1608464372d488d",
+  "finished": "2026-09-16T15:03:36Z",
+  "walAfter": "71f4f6e712c021c0d9d28b26f83aa964757e1a47a799587624ed298e8346830f"
+}

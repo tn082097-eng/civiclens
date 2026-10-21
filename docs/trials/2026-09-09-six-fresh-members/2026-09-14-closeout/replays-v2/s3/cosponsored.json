@@ -1,0 +1,22 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "db/load-cosponsored.ts",
+    "cleo-fields"
+  ],
+  "started": "2026-09-16T14:51:56Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields/data/caches",
+  "dbBefore": "e2b4c3cfdd4df11eeb85a26b5a881a89620ac16ed3cdf289c27488b847582c39",
+  "walBefore": "8a6e5094070debcbe400030cfacf4ce1153adbf725b013e55d04288bec360a26",
+  "exit": 0,
+  "output": "Loading cosponsors for 1 member(s)\u2026\n\n  cleo-fields (Cleo Fields): 594 fetched, 594 inserted, 0 dup/skipped\n\nDone. 594 cosponsor rows inserted, 0 member(s) not loaded.\nBills table now: [\n  { sponsor_role: 'cosponsor', n: 154056 },\n  { sponsor_role: null, n: 179 },\n  { sponsor_role: 'sponsor', n: 16196 }\n]\n",
+  "dbAfter": "e2b4c3cfdd4df11eeb85a26b5a881a89620ac16ed3cdf289c27488b847582c39",
+  "finished": "2026-09-16T14:52:13Z",
+  "walAfter": "02eea91b59a4de6ed48cdde65c78595f4e408187bb44bea541d7ae15be8f3219"
+}

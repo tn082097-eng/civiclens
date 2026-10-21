@@ -1,0 +1,19 @@
+{
+  "candidate": "d2992fda5c7e412e86b3cd47ef0248fd039e8d46",
+  "worktree": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-s4-chris-van-hollen",
+  "member": "Chris Van Hollen",
+  "bioguide": "V000128",
+  "dbInitialSha256": "a766c8917a0e6b42ddc488758eb0b1a66abb37d24c873a74b4cc9d6fd7e4a38b",
+  "cacheInitiallyAbsent": true,
+  "sources": [
+    {
+      "path": "data/caches/legislators-cache/legislators-current.yaml",
+      "sha256": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2"
+    },
+    {
+      "path": "data/caches/senate-ptr-cache/_search-receipts/V000128.json",
+      "sha256": "0d984a7504b64954efb42b473ef98e0257edf4ff49fe11d2489c59bb94b483b1"
+    }
+  ],
+  "vault": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-s4-chris-van-hollen/trial-vault"
+}

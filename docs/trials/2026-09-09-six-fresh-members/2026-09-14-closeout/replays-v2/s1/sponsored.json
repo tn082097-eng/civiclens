@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s1-tina-smith",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "agents/pipeline.ts",
+    "--load-sponsored",
+    "tina-smith"
+  ],
+  "started": "2026-09-16T08:47:06Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s1-tina-smith/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s1-tina-smith/data/caches",
+  "dbBefore": "9934e0a55cd591c44d524b0efdccb981a7f8f77980e0dfd6f9fa2f61b741f233",
+  "walBefore": null,
+  "exit": 0,
+  "output": "Loading sponsored legislation for 1 member(s)\u2026\n\n  tina-smith (Tina Smith): 357 fetched, 288 upserted, 288 w/ policyArea, 0 no-policy, 69 skipped\n\nDone. 1 member(s), 288 sponsor rows upserted, 288 bill_subjects rows written.\n",
+  "dbAfter": "9934e0a55cd591c44d524b0efdccb981a7f8f77980e0dfd6f9fa2f61b741f233",
+  "finished": "2026-09-16T08:47:11Z",
+  "walAfter": "af263b2db1c475a8b49a1e1f12fbd49d894f690bc84718921529303fccefb62d"
+}

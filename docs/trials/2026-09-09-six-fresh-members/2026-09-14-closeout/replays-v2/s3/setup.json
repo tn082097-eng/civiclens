@@ -1,0 +1,200 @@
+{
+  "candidate": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "worktree": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields",
+  "member": "Cleo Fields",
+  "bioguide": "F000110",
+  "dbInitialSha256": "a766c8917a0e6b42ddc488758eb0b1a66abb37d24c873a74b4cc9d6fd7e4a38b",
+  "cacheInitiallyAbsent": true,
+  "sources": [
+    {
+      "path": "data/caches/legislators-cache/legislators-current.yaml",
+      "sha256": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20027855.pdf",
+      "sha256": "4dd806a65b4328bbd6ae976cd09fd09c8188f07b0599a5ebb1de7fdef67a2fe3"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20027855.txt",
+      "sha256": "4ef5f2078cfe06a00750b1628f615d7fb13996182b9746991d6aae9ec432495f"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20030472.pdf",
+      "sha256": "b7792e8b4cd473b26e4a1b749f28aa62f85ec8e5d46ea3742e0956e5b7da3804"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20030472.txt",
+      "sha256": "7ff5b2db9f33b190e0aadedb5510e757ee1d949ee96d180fe0731efdc5d0bf41"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20030803.pdf",
+      "sha256": "05a5d833c10e73a34aee70cfc4266a6f4db4ce055ca86298f523efd689d7d8e9"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20030803.txt",
+      "sha256": "8dc4b4aed8c589131d4409601f7ae0338a181c1d06322f50de140015450c29b6"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20031017.pdf",
+      "sha256": "cd6cbe0c14d3b0c727deb8cd2dc74ce90ecaa5c62d44ba1c8f3bff9204a52d71"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20031017.txt",
+      "sha256": "afee650b81741c8531f6ea3a98766b6acfb15e0ad405a61d43829a69e0ad1563"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20032106.pdf",
+      "sha256": "606edc1951553ca8d3be8ebd242e6a44af6557d40f6968295f84cdb27d21b68b"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20032106.txt",
+      "sha256": "c28c54e2bbc919b4f84a2fddda4c4496e75df442fbfd5ad57d4e0cb702fedb41"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20033326.pdf",
+      "sha256": "b090e0bd9de1c30f0b9a3a4838b45282400a60a3e1c7b0810eec1f374d9b2e1b"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20033326.txt",
+      "sha256": "9aa2df95a1cec2ffb27839162953c58365986180ef43cbb21b4e1ed01f1298c1"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20033424.pdf",
+      "sha256": "d77920ed17da4938c5664fe81d29b164e51658edc8c77c71fc15e9f37a85d1dd"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20033424.txt",
+      "sha256": "490f5fc021f693cd27a97809f7afdbdd73bc5b10b777228f359cd61d2a2b154f"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20033493.pdf",
+      "sha256": "97820221489caecfdc0e704231134fd98a2525876344135627ab53fb72ed226a"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20033493.txt",
+      "sha256": "39e85e1a0f0514c4aeb1b897aab50fcfdec3c2e9f3c39ad7c057299cfbd5cc53"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20033559.pdf",
+      "sha256": "4d86a13b1c30f447ceb63613220afcd6eb3b0710f30db3146cd86564a32dc811"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20033559.txt",
+      "sha256": "cc74bcc853d76897e44e3f2d1bc076c3e1be853c6c238feee3e255daff18333d"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20033616.pdf",
+      "sha256": "b4a14090190553474a8ccc7b0489611025fa5f40ca601ef5959102ab902998c8"
+    },
+    {
+      "path": "data/caches/pfd-cache/2025/fields-cleo-20033616.txt",
+      "sha256": "ba474cb1241e5d8a5db3f0299fb4e98cd34770c472a0fb05bc9fad4ef21bd5c6"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20033732.pdf",
+      "sha256": "13d21ea4878ef3ed529a011152bf17d0f416f187b2950d135883be4d4f12b3d5"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20033732.txt",
+      "sha256": "6e8ac44f7c49f64d704458b9a55186ce0059919b8140898193255b3fd44d1476"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20033858.pdf",
+      "sha256": "c5cbb249a101d4a6802bcb56da073a234310aa86333da2376bd3a9d86f2b2a4b"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20033858.txt",
+      "sha256": "90ad2a0bea7fbf47ced0f96aa4df979e0861d5ab35ba26bc06f3e60a5d7db102"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20034018.pdf",
+      "sha256": "2bf197ff45c31c34919daff21ac9f89d705f3b78655158170cb19e7a4d4b81f0"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20034018.txt",
+      "sha256": "7e139e2835d3484144366a99346da4267b54799f60e8a17a892ca5bfc18f1867"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20034179.pdf",
+      "sha256": "de338645e1f2e7546b906c688c1b1b733d527a66d474e4be9ec05025c889414a"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20034179.txt",
+      "sha256": "a7cd0cef27a1f96fada7b09b9bc9f5cc14f9170736ea214b8c7823eec16f286e"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20034295.pdf",
+      "sha256": "4b7c672633351bc9993a42c81c68285553d2e00124b2b578b26ce49c3d096053"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20034295.txt",
+      "sha256": "4703c78bab7cf63637044f52cfb4d5320aeed365643aa059c415e2086c05f021"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20034357.pdf",
+      "sha256": "72fa8c0202baeec2622022cc6b3386513286820b1b6aa7d342e82fd2bb2219d0"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20034357.txt",
+      "sha256": "52789ea01dbccea9fa95ff448552454f8308f3cbc95637cd14953ab0ba63faac"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20034591.pdf",
+      "sha256": "564ce40c050199985019f83ce2ad895200bbc27f976de77d8a8aa5402039800b"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20034591.txt",
+      "sha256": "092fd1dc14f4d28d3511e96c8cc8849866663240ee99f59bbc292ff481fb1a7e"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20034800.pdf",
+      "sha256": "aab374c3fb3f99ac9daf7c26a3a1e1ee365b6febf104e09559312431a2f5e0e8"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20034800.txt",
+      "sha256": "304143c369196ed90d06869f8b7bed1170fb39ad796abbd5681a778dda96f515"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20034894.pdf",
+      "sha256": "608b5187192c389d67a0bc033458d4fac3215194821982049102a5bab2a2df9b"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20034894.txt",
+      "sha256": "9c8efbea6464a38a0a7b043478a6970d4687deadf751f167a4407c18459432c0"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20035023.pdf",
+      "sha256": "4ac0adc4bead48b10c0cdd3a4b832211c08e67dc538180d365257201570cc940"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20035023.txt",
+      "sha256": "df776534964fc255bbcfdc6ca5295367aca73406a4da8bf4adf522473d54bb3d"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20035345.pdf",
+      "sha256": "91bba9a2be22622ad127278cf9611536fbbb52046568238e89c25c1d7f0076f7"
+    },
+    {
+      "path": "data/caches/pfd-cache/2026/fields-cleo-20035345.txt",
+      "sha256": "7caa6bfc92678158d33c56aa92b1272453216a40713f15b6acc16104ae737c68"
+    },
+    {
+      "path": "data/caches/pfd-cache/index/2023FD.xml",
+      "sha256": "60e5dcf86ec483f428a371abbe7894f72124fc03d3e5b6351507b40ec8f8c10d"
+    },
+    {
+      "path": "data/caches/pfd-cache/index/2024FD.xml",
+      "sha256": "99576a8c58e100fc35e14af597b184f0421650cf6de1e11379a784189d5c5f9e"
+    },
+    {
+      "path": "data/caches/pfd-cache/index/2025FD.xml",
+      "sha256": "0b0b0cd2b288938a00b38bcee4f1c5f7686139a32920e2e9c38a7291844c0814"
+    },
+    {
+      "path": "data/caches/pfd-cache/index/2026FD.xml",
+      "sha256": "3d010744d0db9b91a1d8f8132c43c3c2567c5a5b16c100648f5f99e9ff3217d9"
+    }
+  ],
+  "vault": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields/trial-vault",
+  "sourceCopy": "Only frozen manifest files copied from superseded worktree; no runtime or derived outputs copied."
+}

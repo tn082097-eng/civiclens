@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-evidence/\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--input-type=module",
+    "--import",
+    "tsx",
+    "-e",
+    "\nimport {getDb,closeDb} from './db/init.ts';\nimport {findSharedDonors} from './db/queries.ts';\nconst c=await getDb();\nconst q=async s=>(await (await c.run(s)).getRowObjects());\nconst j=v=>JSON.stringify(v,(_,x)=>typeof x==='bigint'?x.toString():x);\nconsole.log('MEMBER', j(await q(\"SELECT member_id,fec_candidate_id,state,role,in_office FROM members WHERE bioguide_id='G000608'\")));\nconsole.log('IE', j(await q(\"SELECT * FROM super_pac_ie WHERE member_id='darline-graham'\")));\nconsole.log('DONOR_SRC', j(await q(\"SELECT source, count(*) n, sum(amount) total FROM donors WHERE member_id='darline-graham' GROUP BY 1\")));\nconsole.log('PFD', j(await q(\"SELECT count(*) n FROM pfd_transactions WHERE member_id='darline-graham'\")));\nconsole.log('BILLS', j(await q(\"SELECT sponsor_role, count(*) n FROM bills WHERE member_id='darline-graham' GROUP BY 1\")));\nconsole.log('SHARED_REAL', j(await findSharedDonors('darline-graham')));\ncloseDb();\n"
+  ],
+  "started": "2026-09-17T00:27:21Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham/data/caches",
+  "dbBefore": "b79e9cf018e70f883a807ba90903554c102880c5e08a3a1d8fc57ac421fb4554",
+  "walBefore": null,
+  "exit": 0,
+  "output": "MEMBER [{\"member_id\":\"darline-graham\",\"fec_candidate_id\":\"S6SC04437\",\"state\":\"SC\",\"role\":\"Senator\",\"in_office\":true}]\nIE [{\"member_id\":\"darline-graham\",\"candidate_id\":\"S6SC04437\",\"cycle\":2026,\"committee_id\":\"C00573733\",\"committee_name\":\"SECURITY IS STRENGTH PAC\",\"committee_type\":\"Super PAC (Independent Expenditure-Only)\",\"designation\":\"Unauthorized\",\"party\":null,\"support_oppose\":\"S\",\"total_amount\":1020591.32,\"filing_count\":5,\"fetched_at\":{\"micros\":\"1789604722374000\"}}]\nDONOR_SRC [{\"source\":\"fec.gov\",\"n\":\"80\",\"total\":282229.5000000001}]\nPFD [{\"n\":\"0\"}]\nBILLS [{\"sponsor_role\":\"cosponsor\",\"n\":\"49\"},{\"sponsor_role\":\"sponsor\",\"n\":\"1\"}]\nSHARED_REAL [{\"peer_id\":\"jason-smith\",\"peer_name\":\"Jason Smith\",\"shared_count\":3,\"combined_amount\":59000,\"donor_canonicals\":[]},{\"peer_id\":\"frank-lucas\",\"peer_name\":\"Frank Lucas\",\"shared_count\":2,\"combined_amount\":28000,\"donor_canonicals\":[]},{\"peer_id\":\"dan-crenshaw\",\"peer_name\":\"Dan Crenshaw\",\"shared_count\":1,\"combined_amount\":20600,\"donor_canonicals\":[]},{\"peer_id\":\"john-cornyn\",\"peer_name\":\"John Cornyn\",\"shared_count\":1,\"combined_amount\":20000,\"donor_canonicals\":[]},{\"peer_id\":\"john-thune\",\"peer_name\":\"John Thune\",\"shared_count\":1,\"combined_amount\":15000,\"donor_canonicals\":[]},{\"peer_id\":\"tommy-tuberville\",\"peer_name\":\"Tommy Tuberville\",\"shared_count\":1,\"combined_amount\":14000,\"donor_canonicals\":[]},{\"peer_id\":\"elise-stefanik\",\"peer_name\":\"Elise Stefanik\",\"shared_count\":1,\"combined_amount\":10000,\"donor_canonicals\":[]},{\"peer_id\":\"susan-collins\",\"peer_name\":\"Susan Collins\",\"shared_count\":1,\"combined_amount\":6000,\"donor_canonicals\":[]}]\n",
+  "dbAfter": "b79e9cf018e70f883a807ba90903554c102880c5e08a3a1d8fc57ac421fb4554",
+  "finished": "2026-09-17T00:27:22Z",
+  "walAfter": null
+}

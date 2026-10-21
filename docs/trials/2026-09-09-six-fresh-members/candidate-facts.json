@@ -1,0 +1,8495 @@
+{
+  "candidates": [
+    {
+      "bioguide": "A000055",
+      "name": "Robert B. Aderholt",
+      "chamber": "house",
+      "fecIds": [
+        "H6AL04098"
+      ],
+      "housePtrByYear": {
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20032062"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "A000148",
+      "name": "Jake Auchincloss",
+      "chamber": "house",
+      "fecIds": [
+        "H0MA04192"
+      ],
+      "housePtrByYear": {
+        "2024": 2,
+        "2025": 4,
+        "2026": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20025708",
+          "20026246"
+        ],
+        "2025": [
+          "20027810",
+          "20030397",
+          "20030976",
+          "20033492"
+        ],
+        "2026": [
+          "20034024",
+          "20034622"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "A000369",
+      "name": "Mark E. Amodei",
+      "chamber": "house",
+      "fecIds": [
+        "H1NV02017",
+        "H2NV02395",
+        "S0NV00237"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "A000370",
+      "name": "Alma S. Adams",
+      "chamber": "house",
+      "fecIds": [
+        "H4NC12100"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "A000371",
+      "name": "Pete Aguilar",
+      "chamber": "house",
+      "fecIds": [
+        "H2CA31125"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "A000372",
+      "name": "Rick W. Allen",
+      "chamber": "house",
+      "fecIds": [
+        "H2GA12121"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "A000375",
+      "name": "Jodey C. Arrington",
+      "chamber": "house",
+      "fecIds": [
+        "H6TX19099"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "A000379",
+      "name": "Mark Alford",
+      "chamber": "house",
+      "fecIds": [
+        "H2MO04207"
+      ],
+      "housePtrByYear": {
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2026": [
+          "20034201"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "A000380",
+      "name": "Gabe Amo",
+      "chamber": "house",
+      "fecIds": [
+        "H4RI01265"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "A000381",
+      "name": "Yassamin Ansari",
+      "chamber": "house",
+      "fecIds": [
+        "H4AZ03109"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "A000382",
+      "name": "Angela D. Alsobrooks",
+      "chamber": "senate",
+      "fecIds": [
+        "S4MD00327"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B000490",
+      "name": "Sanford D. Bishop, Jr.",
+      "chamber": "house",
+      "fecIds": [
+        "H2GA02031"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B000668",
+      "name": "Cliff Bentz",
+      "chamber": "house",
+      "fecIds": [
+        "H0OR02127"
+      ],
+      "housePtrByYear": {
+        "2023": 1,
+        "2024": 1,
+        "2025": 1,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022850"
+        ],
+        "2024": [
+          "20024492"
+        ],
+        "2025": [
+          "20030646"
+        ],
+        "2026": [
+          "20034524"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B000740",
+      "name": "Stephanie I. Bice",
+      "chamber": "house",
+      "fecIds": [
+        "H0OK05205"
+      ],
+      "housePtrByYear": {
+        "2023": 1,
+        "2024": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20023437"
+        ],
+        "2024": [
+          "20025620"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B000825",
+      "name": "Lauren Boebert",
+      "chamber": "house",
+      "fecIds": [
+        "H0CO03165"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001230",
+      "name": "Tammy Baldwin",
+      "chamber": "senate",
+      "fecIds": [
+        "H8WI00018",
+        "S2WI00219"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001236",
+      "name": "John Boozman",
+      "chamber": "senate",
+      "fecIds": [
+        "H2AR03176",
+        "S0AR00150"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": 62,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001243",
+      "name": "Marsha Blackburn",
+      "chamber": "senate",
+      "fecIds": [
+        "H2TN06030",
+        "S8TN00337"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001257",
+      "name": "Gus M. Bilirakis",
+      "chamber": "house",
+      "fecIds": [
+        "H6FL09070"
+      ],
+      "housePtrByYear": {
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "8220747"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001260",
+      "name": "Vern Buchanan",
+      "chamber": "house",
+      "fecIds": [
+        "H6FL13148"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001261",
+      "name": "John Barrasso",
+      "chamber": "senate",
+      "fecIds": [
+        "S6WY00068"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001267",
+      "name": "Michael F. Bennet",
+      "chamber": "senate",
+      "fecIds": [
+        "S0CO00211"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001277",
+      "name": "Richard Blumenthal",
+      "chamber": "senate",
+      "fecIds": [
+        "S0CT00177"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001278",
+      "name": "Suzanne Bonamici",
+      "chamber": "house",
+      "fecIds": [
+        "H2OR01133"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001281",
+      "name": "Joyce Beatty",
+      "chamber": "house",
+      "fecIds": [
+        "H2OH03125"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001282",
+      "name": "Andy Barr",
+      "chamber": "house",
+      "fecIds": [
+        "H0KY06104",
+        "S6KY00286"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001285",
+      "name": "Julia Brownley",
+      "chamber": "house",
+      "fecIds": [
+        "H2CA00120"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001287",
+      "name": "Ami Bera",
+      "chamber": "house",
+      "fecIds": [
+        "H0CA03078"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001291",
+      "name": "Brian Babin",
+      "chamber": "house",
+      "fecIds": [
+        "H6TX02079"
+      ],
+      "housePtrByYear": {
+        "2023": 1,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20005641"
+        ],
+        "2026": [
+          "20034522"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001295",
+      "name": "Mike Bost",
+      "chamber": "house",
+      "fecIds": [
+        "H4IL12060"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001296",
+      "name": "Brendan F. Boyle",
+      "chamber": "house",
+      "fecIds": [
+        "H4PA13199"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001298",
+      "name": "Don Bacon",
+      "chamber": "house",
+      "fecIds": [
+        "H6NE02125"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001299",
+      "name": "Jim Banks",
+      "chamber": "senate",
+      "fecIds": [
+        "H6IN03229",
+        "S4IN00196"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001300",
+      "name": "Nanette Diaz Barragán",
+      "chamber": "house",
+      "fecIds": [
+        "H6CA44103"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001301",
+      "name": "Jack Bergman",
+      "chamber": "house",
+      "fecIds": [
+        "H6MI01226"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001302",
+      "name": "Andy Biggs",
+      "chamber": "house",
+      "fecIds": [
+        "H6AZ05083"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001303",
+      "name": "Lisa Blunt Rochester",
+      "chamber": "senate",
+      "fecIds": [
+        "H6DE00206",
+        "S4DE00060"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001305",
+      "name": "Ted Budd",
+      "chamber": "senate",
+      "fecIds": [
+        "H6NC13129",
+        "S2NC00505"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001306",
+      "name": "Troy Balderson",
+      "chamber": "house",
+      "fecIds": [
+        "H8OH12180"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001307",
+      "name": "James R. Baird",
+      "chamber": "house",
+      "fecIds": [
+        "H8IN04199"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001309",
+      "name": "Tim Burchett",
+      "chamber": "house",
+      "fecIds": [
+        "H8TN02119"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001313",
+      "name": "Shontel M. Brown",
+      "chamber": "house",
+      "fecIds": [
+        "H2OH11169"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001314",
+      "name": "Aaron Bean",
+      "chamber": "house",
+      "fecIds": [
+        "H2FL04211"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001315",
+      "name": "Nikki Budzinski",
+      "chamber": "house",
+      "fecIds": [
+        "H2IL13153"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001316",
+      "name": "Eric Burlison",
+      "chamber": "house",
+      "fecIds": [
+        "H2MO07143"
+      ],
+      "housePtrByYear": {
+        "2023": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "8219414"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {
+        "scanned": {
+          "year": 2023,
+          "docId": "8219414",
+          "hasUsableText": false
+        }
+      }
+    },
+    {
+      "bioguide": "B001317",
+      "name": "Josh Brecheen",
+      "chamber": "house",
+      "fecIds": [
+        "H2OK02315"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001318",
+      "name": "Becca Balint",
+      "chamber": "house",
+      "fecIds": [
+        "H2VT01076"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001319",
+      "name": "Katie Boyd Britt",
+      "chamber": "senate",
+      "fecIds": [
+        "S2AL00145"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001321",
+      "name": "Tom Barrett",
+      "chamber": "house",
+      "fecIds": [
+        "H2MI07123"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001322",
+      "name": "Michael Baumgartner",
+      "chamber": "house",
+      "fecIds": [
+        "H4WA05234"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001323",
+      "name": "Nicholas J. Begich III",
+      "chamber": "house",
+      "fecIds": [
+        "H2AK01083"
+      ],
+      "housePtrByYear": {
+        "2026": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2026": [
+          "20020055",
+          "20034920"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001324",
+      "name": "Wesley Bell",
+      "chamber": "house",
+      "fecIds": [
+        "H4MO01134",
+        "S4MO00250"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001325",
+      "name": "Sheri Biggs",
+      "chamber": "house",
+      "fecIds": [
+        "H4SC01313"
+      ],
+      "housePtrByYear": {
+        "2025": 4,
+        "2026": 7
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20032149",
+          "20033379",
+          "20033579",
+          "20033694"
+        ],
+        "2026": [
+          "20033800",
+          "20033927",
+          "20034013",
+          "20034195",
+          "20034346",
+          "20034496",
+          "20035007"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001326",
+      "name": "Janelle S. Bynum",
+      "chamber": "house",
+      "fecIds": [
+        "H4OR05304"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001327",
+      "name": "Robert P. Bresnahan, Jr.",
+      "chamber": "house",
+      "fecIds": [
+        "H4PA08124"
+      ],
+      "housePtrByYear": {
+        "2025": 18,
+        "2026": 3
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20024346",
+          "20027923",
+          "20027940",
+          "20029034",
+          "20029055",
+          "20030212",
+          "20030238",
+          "20030291",
+          "20030312",
+          "20030336",
+          "20030433",
+          "20030482",
+          "20030546",
+          "20030635",
+          "20030857",
+          "20030998",
+          "20032276",
+          "20033574"
+        ],
+        "2026": [
+          "20034044",
+          "20034202",
+          "20035216"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "B001328",
+      "name": "Everton Blair Jr.",
+      "chamber": "house",
+      "fecIds": [
+        "H6GA13062"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C000059",
+      "name": "Ken Calvert",
+      "chamber": "house",
+      "fecIds": [
+        "H2CA37023"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C000127",
+      "name": "Maria Cantwell",
+      "chamber": "senate",
+      "fecIds": [
+        "H2WA01054",
+        "S8WA00194"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C000537",
+      "name": "James E. Clyburn",
+      "chamber": "house",
+      "fecIds": [
+        "H2SC02042"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C000880",
+      "name": "Mike Crapo",
+      "chamber": "senate",
+      "fecIds": [
+        "H2ID02034",
+        "S8ID00027"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001039",
+      "name": "Kat Cammack",
+      "chamber": "house",
+      "fecIds": [
+        "H0FL03175"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001047",
+      "name": "Shelley Moore Capito",
+      "chamber": "senate",
+      "fecIds": [
+        "H0WV02138",
+        "S4WV00159"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001051",
+      "name": "John R. Carter",
+      "chamber": "house",
+      "fecIds": [
+        "H2TX31044"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001053",
+      "name": "Tom Cole",
+      "chamber": "house",
+      "fecIds": [
+        "H2OK04055"
+      ],
+      "housePtrByYear": {
+        "2023": 2,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "8219430",
+          "8219893"
+        ],
+        "2026": [
+          "9116249"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001059",
+      "name": "Jim Costa",
+      "chamber": "house",
+      "fecIds": [
+        "H4CA20082"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001061",
+      "name": "Emanuel Cleaver",
+      "chamber": "house",
+      "fecIds": [
+        "H4MO05234"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001063",
+      "name": "Henry Cuellar",
+      "chamber": "house",
+      "fecIds": [
+        "H2TX23082"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001066",
+      "name": "Kathy Castor",
+      "chamber": "house",
+      "fecIds": [
+        "H6FL11126",
+        "H6FL11134"
+      ],
+      "housePtrByYear": {
+        "2024": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20024754",
+          "20025475"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001067",
+      "name": "Yvette D. Clarke",
+      "chamber": "house",
+      "fecIds": [
+        "H4NY11138"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001068",
+      "name": "Steve Cohen",
+      "chamber": "house",
+      "fecIds": [
+        "H6TN09068"
+      ],
+      "housePtrByYear": {
+        "2023": 4,
+        "2024": 2,
+        "2025": 5,
+        "2026": 11
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022368",
+          "20022428",
+          "20023162",
+          "20023392"
+        ],
+        "2024": [
+          "20024188",
+          "20024540"
+        ],
+        "2025": [
+          "20026548",
+          "20028025",
+          "20030416",
+          "20031011",
+          "20033572"
+        ],
+        "2026": [
+          "20033754",
+          "20033813",
+          "20033889",
+          "20034119",
+          "20034167",
+          "20034368",
+          "20034452",
+          "20034589",
+          "20034796",
+          "20035235",
+          "20035350"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001069",
+      "name": "Joe Courtney",
+      "chamber": "house",
+      "fecIds": [
+        "H2CT02112"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001072",
+      "name": "André Carson",
+      "chamber": "house",
+      "fecIds": [
+        "H8IN07184"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001075",
+      "name": "Bill Cassidy",
+      "chamber": "senate",
+      "fecIds": [
+        "H8LA00017",
+        "S4LA00107"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001080",
+      "name": "Judy Chu",
+      "chamber": "house",
+      "fecIds": [
+        "H0CA32101"
+      ],
+      "housePtrByYear": {
+        "2024": 1,
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20024347"
+        ],
+        "2025": [
+          "20031001"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001087",
+      "name": "Eric A. \"Rick\" Crawford",
+      "chamber": "house",
+      "fecIds": [
+        "H0AR01083"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001088",
+      "name": "Christopher A. Coons",
+      "chamber": "senate",
+      "fecIds": [
+        "S0DE00092"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001091",
+      "name": "Joaquin Castro",
+      "chamber": "house",
+      "fecIds": [
+        "H2TX35011"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001095",
+      "name": "Tom Cotton",
+      "chamber": "senate",
+      "fecIds": [
+        "H2AR04083",
+        "S4AR00103"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001101",
+      "name": "Katherine M. Clark",
+      "chamber": "house",
+      "fecIds": [
+        "H4MA05084"
+      ],
+      "housePtrByYear": {
+        "2023": 3,
+        "2024": 3,
+        "2025": 2,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022509",
+          "20022917",
+          "20023950"
+        ],
+        "2024": [
+          "20024435",
+          "20024588",
+          "20024795"
+        ],
+        "2025": [
+          "20032205",
+          "20033393"
+        ],
+        "2026": [
+          "20034892"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001103",
+      "name": "Earl L. \"Buddy\" Carter",
+      "chamber": "house",
+      "fecIds": [
+        "H4GA01039",
+        "S6GA00374"
+      ],
+      "housePtrByYear": {
+        "2023": 1,
+        "2024": 3,
+        "2025": 3,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022894"
+        ],
+        "2024": [
+          "20025257",
+          "20025349",
+          "20025499"
+        ],
+        "2025": [
+          "20027913",
+          "20030215",
+          "20030632"
+        ],
+        "2026": [
+          "20034502"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001108",
+      "name": "James Comer",
+      "chamber": "house",
+      "fecIds": [
+        "H6KY01110"
+      ],
+      "housePtrByYear": {
+        "2025": 3
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20018054",
+          "20026750",
+          "20030716"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001110",
+      "name": "J. Luis Correa",
+      "chamber": "house",
+      "fecIds": [
+        "H6CA46116"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001112",
+      "name": "Salud O. Carbajal",
+      "chamber": "house",
+      "fecIds": [
+        "H6CA24303"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001113",
+      "name": "Catherine Cortez Masto",
+      "chamber": "senate",
+      "fecIds": [
+        "S6NV00200"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001114",
+      "name": "John R. Curtis",
+      "chamber": "senate",
+      "fecIds": [
+        "H8UT03238",
+        "S4UT00282"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001115",
+      "name": "Michael Cloud",
+      "chamber": "house",
+      "fecIds": [
+        "H8TX27049"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001116",
+      "name": "Andrew S. Clyde",
+      "chamber": "house",
+      "fecIds": [
+        "H0GA09246"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001117",
+      "name": "Sean Casten",
+      "chamber": "house",
+      "fecIds": [
+        "H8IL06139"
+      ],
+      "housePtrByYear": {
+        "2024": 3
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20023805",
+          "20025384",
+          "20025700"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001118",
+      "name": "Ben Cline",
+      "chamber": "house",
+      "fecIds": [
+        "H8VA06104"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001119",
+      "name": "Angie Craig",
+      "chamber": "house",
+      "fecIds": [
+        "H6MN02131",
+        "S6MN00499"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001121",
+      "name": "Jason Crow",
+      "chamber": "house",
+      "fecIds": [
+        "H8CO06229"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001123",
+      "name": "Gilbert Ray Cisneros, Jr.",
+      "chamber": "house",
+      "fecIds": [
+        "H4CA31170",
+        "H8CA39174"
+      ],
+      "housePtrByYear": {
+        "2025": 11,
+        "2026": 8
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20026726",
+          "20027891",
+          "20029026",
+          "20030288",
+          "20030461",
+          "20030634",
+          "20030901",
+          "20031022",
+          "20032248",
+          "20033455",
+          "20033619"
+        ],
+        "2026": [
+          "20033762",
+          "20033983",
+          "20034144",
+          "20034285",
+          "20034500",
+          "20034713",
+          "20034906",
+          "20035190"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001125",
+      "name": "Troy A. Carter",
+      "chamber": "house",
+      "fecIds": [
+        "H2LA02149"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001126",
+      "name": "Mike Carey",
+      "chamber": "house",
+      "fecIds": [
+        "H2OH15228"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001129",
+      "name": "Mike Collins",
+      "chamber": "house",
+      "fecIds": [
+        "H4GA10071",
+        "S6GA00390"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001131",
+      "name": "Greg Casar",
+      "chamber": "house",
+      "fecIds": [
+        "H2TX35144"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001132",
+      "name": "Elijah Crane",
+      "chamber": "house",
+      "fecIds": [
+        "H2AZ01354"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001133",
+      "name": "Juan Ciscomani",
+      "chamber": "house",
+      "fecIds": [
+        "H2AZ02360"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001136",
+      "name": "Herbert C. Conaway, Jr.",
+      "chamber": "house",
+      "fecIds": [
+        "H4NJ03080"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "C001137",
+      "name": "Jeff Crank",
+      "chamber": "house",
+      "fecIds": [
+        "H6CO05142"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000032",
+      "name": "Byron Donalds",
+      "chamber": "house",
+      "fecIds": [
+        "H2FL14186"
+      ],
+      "housePtrByYear": {
+        "2024": 3,
+        "2025": 7,
+        "2026": 7
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20026099",
+          "8220682",
+          "8221334"
+        ],
+        "2025": [
+          "20026712",
+          "20027903",
+          "20029092",
+          "20030342",
+          "20032038",
+          "20032234",
+          "20033491"
+        ],
+        "2026": [
+          "20033747",
+          "20033780",
+          "20033981",
+          "20034134",
+          "20034297",
+          "20034478",
+          "20034968"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000096",
+      "name": "Danny K. Davis",
+      "chamber": "house",
+      "fecIds": [
+        "H4IL07037"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000197",
+      "name": "Diana DeGette",
+      "chamber": "house",
+      "fecIds": [
+        "H6CO01141"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000216",
+      "name": "Rosa L. DeLauro",
+      "chamber": "house",
+      "fecIds": [
+        "H0CT03072"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000230",
+      "name": "Donald G. Davis",
+      "chamber": "house",
+      "fecIds": [
+        "H2NC02287"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000399",
+      "name": "Lloyd Doggett",
+      "chamber": "house",
+      "fecIds": [
+        "H4TX10028"
+      ],
+      "housePtrByYear": {
+        "2023": 11,
+        "2024": 11,
+        "2025": 7,
+        "2026": 7
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022228",
+          "20022517",
+          "20022697",
+          "20022859",
+          "20023097",
+          "20023279",
+          "20023456",
+          "20023652",
+          "20023810",
+          "20023962",
+          "20024166"
+        ],
+        "2024": [
+          "20024268",
+          "20024611",
+          "20024839",
+          "20024997",
+          "20025202",
+          "20025397",
+          "20025592",
+          "20025822",
+          "20026002",
+          "20026151",
+          "20026322"
+        ],
+        "2025": [
+          "20026535",
+          "20027935",
+          "20029088",
+          "20030285",
+          "20030454",
+          "20030618",
+          "20030820"
+        ],
+        "2026": [
+          "20033713",
+          "20034132",
+          "20034292",
+          "20034486",
+          "20034712",
+          "20034923",
+          "20035136"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000530",
+      "name": "Christopher R. Deluzio",
+      "chamber": "house",
+      "fecIds": [
+        "H2PA17103"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000563",
+      "name": "Richard J. Durbin",
+      "chamber": "senate",
+      "fecIds": [
+        "H2IL20026",
+        "S6IL00151"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000594",
+      "name": "Monica De La Cruz",
+      "chamber": "house",
+      "fecIds": [
+        "H0TX15124"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000600",
+      "name": "Mario Diaz-Balart",
+      "chamber": "house",
+      "fecIds": [
+        "H2FL25018"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000616",
+      "name": "Scott DesJarlais",
+      "chamber": "house",
+      "fecIds": [
+        "H0TN04195"
+      ],
+      "housePtrByYear": {
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20033490"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000617",
+      "name": "Suzan K. DelBene",
+      "chamber": "house",
+      "fecIds": [
+        "H0WA08046"
+      ],
+      "housePtrByYear": {
+        "2023": 22,
+        "2024": 14,
+        "2025": 15,
+        "2026": 9
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022183",
+          "20022288",
+          "20022355",
+          "20022453",
+          "20022498",
+          "20022589",
+          "20022655",
+          "20022828",
+          "20022975",
+          "20023052",
+          "20023100",
+          "20023183",
+          "20023238",
+          "20023349",
+          "20023421",
+          "20023610",
+          "20023721",
+          "20023788",
+          "20023930",
+          "20024016",
+          "20024080",
+          "20024173"
+        ],
+        "2024": [
+          "20024317",
+          "20024425",
+          "20024495",
+          "20024581",
+          "20025178",
+          "20025312",
+          "20025379",
+          "20025568",
+          "20025705",
+          "20025768",
+          "20025940",
+          "20026123",
+          "20026238",
+          "20026423"
+        ],
+        "2025": [
+          "20026602",
+          "20027807",
+          "20027999",
+          "20029070",
+          "20030289",
+          "20030444",
+          "20030541",
+          "20030619",
+          "20030826",
+          "20030955",
+          "20032102",
+          "20032245",
+          "20033335",
+          "20033431",
+          "20033587"
+        ],
+        "2026": [
+          "20033766",
+          "20033835",
+          "20034155",
+          "20034400",
+          "20034466",
+          "20034615",
+          "20034727",
+          "20035175",
+          "20035274"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000618",
+      "name": "Steve Daines",
+      "chamber": "senate",
+      "fecIds": [
+        "H2MT01060",
+        "S2MT00096"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000622",
+      "name": "Tammy Duckworth",
+      "chamber": "senate",
+      "fecIds": [
+        "H6IL06141",
+        "S6IL00292"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000623",
+      "name": "Mark DeSaulnier",
+      "chamber": "house",
+      "fecIds": [
+        "H0CA10073"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000624",
+      "name": "Debbie Dingell",
+      "chamber": "house",
+      "fecIds": [
+        "H4MI12079"
+      ],
+      "housePtrByYear": {
+        "2023": 7,
+        "2024": 4,
+        "2025": 3,
+        "2026": 6
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022184",
+          "20022293",
+          "20022528",
+          "20022585",
+          "20022749",
+          "20022957",
+          "20024143"
+        ],
+        "2024": [
+          "20024270",
+          "20025056",
+          "20025306",
+          "20026160"
+        ],
+        "2025": [
+          "20026647",
+          "20029053",
+          "20029105"
+        ],
+        "2026": [
+          "20033744",
+          "20034035",
+          "20034416",
+          "20034702",
+          "20034960",
+          "20035048"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000626",
+      "name": "Warren Davidson",
+      "chamber": "house",
+      "fecIds": [
+        "H6OH08315"
+      ],
+      "housePtrByYear": {
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2026": [
+          "20034223"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000628",
+      "name": "Neal P. Dunn",
+      "chamber": "house",
+      "fecIds": [
+        "H6FL02208"
+      ],
+      "housePtrByYear": {
+        "2023": 2,
+        "2024": 3,
+        "2025": 4,
+        "2026": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022361",
+          "20023022"
+        ],
+        "2024": [
+          "20025104",
+          "20026140",
+          "20026250"
+        ],
+        "2025": [
+          "20027895",
+          "20029068",
+          "20030735",
+          "20032191"
+        ],
+        "2026": [
+          "20034114",
+          "20034815"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000629",
+      "name": "Sharice Davids",
+      "chamber": "house",
+      "fecIds": [
+        "H8KS03155"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000631",
+      "name": "Madeleine Dean",
+      "chamber": "house",
+      "fecIds": [
+        "H8PA04116"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000634",
+      "name": "Troy Downing",
+      "chamber": "house",
+      "fecIds": [
+        "H4MT02098"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "D000635",
+      "name": "Maxine Dexter",
+      "chamber": "house",
+      "fecIds": [
+        "H4OR03192"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "E000071",
+      "name": "Jake Ellzey",
+      "chamber": "house",
+      "fecIds": [
+        "H8TX06266"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "E000235",
+      "name": "Mike Ezell",
+      "chamber": "house",
+      "fecIds": [
+        "H2MS04258"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "E000246",
+      "name": "Chuck Edwards",
+      "chamber": "house",
+      "fecIds": [
+        "H2NC14050"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "E000295",
+      "name": "Joni Ernst",
+      "chamber": "senate",
+      "fecIds": [
+        "S4IA00129"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "E000296",
+      "name": "Dwight Evans",
+      "chamber": "house",
+      "fecIds": [
+        "H6PA02171"
+      ],
+      "housePtrByYear": {
+        "2023": 2,
+        "2024": 1,
+        "2025": 4,
+        "2026": 3
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022547",
+          "20023246"
+        ],
+        "2024": [
+          "20024324"
+        ],
+        "2025": [
+          "20029062",
+          "20030179",
+          "20033370",
+          "20033667"
+        ],
+        "2026": [
+          "20034379",
+          "20034556",
+          "20034851"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "E000297",
+      "name": "Adriano Espaillat",
+      "chamber": "house",
+      "fecIds": [
+        "H2NY13096"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "E000298",
+      "name": "Ron Estes",
+      "chamber": "house",
+      "fecIds": [
+        "H8KS04112"
+      ],
+      "housePtrByYear": {
+        "2023": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20023779"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "E000299",
+      "name": "Veronica Escobar",
+      "chamber": "house",
+      "fecIds": [
+        "H8TX16109"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "E000300",
+      "name": "Gabe Evans",
+      "chamber": "house",
+      "fecIds": [
+        "H4CO08034"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "E000301",
+      "name": "Sarah Elfreth",
+      "chamber": "house",
+      "fecIds": [
+        "H4MD03156"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000110",
+      "name": "Cleo Fields",
+      "chamber": "house",
+      "fecIds": [
+        "H4LA06211"
+      ],
+      "housePtrByYear": {
+        "2025": 10,
+        "2026": 11
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20027855",
+          "20030472",
+          "20030803",
+          "20031017",
+          "20032106",
+          "20033326",
+          "20033424",
+          "20033493",
+          "20033559",
+          "20033616"
+        ],
+        "2026": [
+          "20033732",
+          "20033858",
+          "20034018",
+          "20034179",
+          "20034295",
+          "20034357",
+          "20034591",
+          "20034800",
+          "20034894",
+          "20035023",
+          "20035345"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {
+        "text": {
+          "year": 2025,
+          "docId": "20027855",
+          "hasUsableText": true
+        }
+      }
+    },
+    {
+      "bioguide": "F000246",
+      "name": "Pat Fallon",
+      "chamber": "house",
+      "fecIds": [
+        "H0TX04219"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000446",
+      "name": "Randy Feenstra",
+      "chamber": "house",
+      "fecIds": [
+        "H0IA04145"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000450",
+      "name": "Virginia Foxx",
+      "chamber": "house",
+      "fecIds": [
+        "H4NC05146"
+      ],
+      "housePtrByYear": {
+        "2023": 13,
+        "2024": 11,
+        "2025": 8,
+        "2026": 5
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022211",
+          "20022213",
+          "20022352",
+          "20022504",
+          "20022646",
+          "20022822",
+          "20023059",
+          "20023237",
+          "20023393",
+          "20023613",
+          "20023809",
+          "20023946",
+          "20024072"
+        ],
+        "2024": [
+          "20024230",
+          "20024424",
+          "20024596",
+          "20024825",
+          "20024996",
+          "20025200",
+          "20025588",
+          "20025771",
+          "20026032",
+          "20026124",
+          "20026376"
+        ],
+        "2025": [
+          "20026516",
+          "20027876",
+          "20029061",
+          "20030450",
+          "20030587",
+          "20032040",
+          "20032215",
+          "20033553"
+        ],
+        "2026": [
+          "20033734",
+          "20033947",
+          "20034095",
+          "20034670",
+          "20034895"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000459",
+      "name": "Charles J. \"Chuck\" Fleischmann",
+      "chamber": "house",
+      "fecIds": [
+        "H0TN03254"
+      ],
+      "housePtrByYear": {
+        "2023": 4,
+        "2024": 4,
+        "2025": 4,
+        "2026": 5
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "8219359",
+          "8219527",
+          "8219919",
+          "8220049"
+        ],
+        "2024": [
+          "8220147",
+          "8220317",
+          "8220617",
+          "8220683"
+        ],
+        "2025": [
+          "8220753",
+          "8220902",
+          "8221237",
+          "9115670"
+        ],
+        "2026": [
+          "8221321",
+          "9115704",
+          "9115821",
+          "9116212",
+          "9116290"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000463",
+      "name": "Deb Fischer",
+      "chamber": "senate",
+      "fecIds": [
+        "S2NE00094"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000466",
+      "name": "Brian K. Fitzpatrick",
+      "chamber": "house",
+      "fecIds": [
+        "H6PA08277"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000468",
+      "name": "Lizzie Fletcher",
+      "chamber": "house",
+      "fecIds": [
+        "H8TX07140"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000469",
+      "name": "Russ Fulcher",
+      "chamber": "house",
+      "fecIds": [
+        "H8ID01124"
+      ],
+      "housePtrByYear": {
+        "2023": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022919"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000470",
+      "name": "Michelle Fischbach",
+      "chamber": "house",
+      "fecIds": [
+        "H0MN07091"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000471",
+      "name": "Scott Fitzgerald",
+      "chamber": "house",
+      "fecIds": [
+        "H0WI05113"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000472",
+      "name": "Scott Franklin",
+      "chamber": "house",
+      "fecIds": [
+        "H0FL15104"
+      ],
+      "housePtrByYear": {
+        "2023": 3,
+        "2024": 4,
+        "2025": 10,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022530",
+          "20022987",
+          "20023847"
+        ],
+        "2024": [
+          "20024916",
+          "20025170",
+          "20025711",
+          "20026020"
+        ],
+        "2025": [
+          "20027834",
+          "20027995",
+          "20029132",
+          "20030187",
+          "20030445",
+          "20030494",
+          "20030670",
+          "20030778",
+          "20030918",
+          "20033327"
+        ],
+        "2026": [
+          "20034050"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000474",
+      "name": "Mike Flood",
+      "chamber": "house",
+      "fecIds": [
+        "H2NE01118"
+      ],
+      "housePtrByYear": {
+        "2023": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022861"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000475",
+      "name": "Brad Finstad",
+      "chamber": "house",
+      "fecIds": [
+        "H2MN01223"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000476",
+      "name": "Maxwell Frost",
+      "chamber": "house",
+      "fecIds": [
+        "H2FL10259"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000477",
+      "name": "Valerie P. Foushee",
+      "chamber": "house",
+      "fecIds": [
+        "H2NC06114"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000478",
+      "name": "Russell Fry",
+      "chamber": "house",
+      "fecIds": [
+        "H2SC07280",
+        "S6SC04403"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000479",
+      "name": "John Fetterman",
+      "chamber": "senate",
+      "fecIds": [
+        "S6PA00274"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": 22,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000480",
+      "name": "Vince Fong",
+      "chamber": "house",
+      "fecIds": [
+        "H4CA20181"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000481",
+      "name": "Shomari Figures",
+      "chamber": "house",
+      "fecIds": [
+        "H4AL02170"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000482",
+      "name": "Julie Fedorchak",
+      "chamber": "house",
+      "fecIds": [
+        "H4ND00061"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000483",
+      "name": "Laura Friedman",
+      "chamber": "house",
+      "fecIds": [
+        "H4CA30149"
+      ],
+      "housePtrByYear": {
+        "2025": 2,
+        "2026": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20032051",
+          "20032250"
+        ],
+        "2026": [
+          "20034355",
+          "20034563"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000484",
+      "name": "Randy Fine",
+      "chamber": "house",
+      "fecIds": [
+        "H6FL06258"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "F000485",
+      "name": "Clay Fuller",
+      "chamber": "house",
+      "fecIds": [
+        "H0GA14030"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000386",
+      "name": "Chuck Grassley",
+      "chamber": "senate",
+      "fecIds": [
+        "S0IA00028"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000546",
+      "name": "Sam Graves",
+      "chamber": "house",
+      "fecIds": [
+        "H0MO06073"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000553",
+      "name": "Al Green",
+      "chamber": "house",
+      "fecIds": [
+        "H4TX09095"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000555",
+      "name": "Kirsten E. Gillibrand",
+      "chamber": "senate",
+      "fecIds": [
+        "H6NY20167",
+        "S0NY00410"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000559",
+      "name": "John Garamendi",
+      "chamber": "house",
+      "fecIds": [
+        "H0CA10149"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000565",
+      "name": "Paul A. Gosar",
+      "chamber": "house",
+      "fecIds": [
+        "H0AZ01259"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000568",
+      "name": "H. Morgan Griffith",
+      "chamber": "house",
+      "fecIds": [
+        "H0VA09055"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000574",
+      "name": "Ruben Gallego",
+      "chamber": "senate",
+      "fecIds": [
+        "H4AZ07043",
+        "S4AZ00139"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000581",
+      "name": "Vicente Gonzalez",
+      "chamber": "house",
+      "fecIds": [
+        "H6TX15162"
+      ],
+      "housePtrByYear": {
+        "2025": 3
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "8220796",
+          "8220809",
+          "8220845"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000585",
+      "name": "Jimmy Gomez",
+      "chamber": "house",
+      "fecIds": [
+        "H8CA34266"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000586",
+      "name": "Jesús G. \"Chuy\" García",
+      "chamber": "house",
+      "fecIds": [
+        "H8IL04134"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000587",
+      "name": "Sylvia R. Garcia",
+      "chamber": "house",
+      "fecIds": [
+        "H8TX29052"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000589",
+      "name": "Lance Gooden",
+      "chamber": "house",
+      "fecIds": [
+        "H8TX05144"
+      ],
+      "housePtrByYear": {
+        "2024": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20025806",
+          "20026382"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000591",
+      "name": "Michael Guest",
+      "chamber": "house",
+      "fecIds": [
+        "H8MS03125"
+      ],
+      "housePtrByYear": {
+        "2023": 7,
+        "2024": 2,
+        "2025": 1,
+        "2026": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022270",
+          "20022392",
+          "20022701",
+          "20023247",
+          "20023442",
+          "20023951",
+          "20024107"
+        ],
+        "2024": [
+          "20024622",
+          "20026412"
+        ],
+        "2025": [
+          "20033416"
+        ],
+        "2026": [
+          "20033944",
+          "20035130"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000592",
+      "name": "Jared F. Golden",
+      "chamber": "house",
+      "fecIds": [
+        "H8ME02185"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000593",
+      "name": "Carlos A. Gimenez",
+      "chamber": "house",
+      "fecIds": [
+        "H0FL26036"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000597",
+      "name": "Andrew R. Garbarino",
+      "chamber": "house",
+      "fecIds": [
+        "H0NY02234"
+      ],
+      "housePtrByYear": {
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20030952"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {
+        "scanned": {
+          "year": 2025,
+          "docId": "20030952",
+          "hasUsableText": true
+        }
+      }
+    },
+    {
+      "bioguide": "G000598",
+      "name": "Robert Garcia",
+      "chamber": "house",
+      "fecIds": [
+        "H2CA47188"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000600",
+      "name": "Marie Gluesenkamp Perez",
+      "chamber": "house",
+      "fecIds": [
+        "H2WA03217"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000601",
+      "name": "Craig A. Goldman",
+      "chamber": "house",
+      "fecIds": [
+        "H4TX12065"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000602",
+      "name": "Laura Gillen",
+      "chamber": "house",
+      "fecIds": [
+        "H2NY04244",
+        "H4NY04158"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000603",
+      "name": "Brandon Gill",
+      "chamber": "house",
+      "fecIds": [
+        "H4TX26149"
+      ],
+      "housePtrByYear": {
+        "2025": 4
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20030417",
+          "20030641",
+          "20030889",
+          "20033476"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {
+        "scanned": {
+          "year": 2025,
+          "docId": "20030417",
+          "hasUsableText": true
+        }
+      }
+    },
+    {
+      "bioguide": "G000604",
+      "name": "Maggie Goodlander",
+      "chamber": "house",
+      "fecIds": [
+        "H4NH02399"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000605",
+      "name": "Adam Gray",
+      "chamber": "house",
+      "fecIds": [
+        "H2CA13115"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000606",
+      "name": "Adelita S. Grijalva",
+      "chamber": "house",
+      "fecIds": [
+        "H6AZ07121"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000607",
+      "name": "James Gallagher",
+      "chamber": "house",
+      "fecIds": [
+        "H6CA01285"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "G000608",
+      "name": "Darline Graham",
+      "chamber": "senate",
+      "fecIds": [],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H000273",
+      "name": "John W. Hickenlooper",
+      "chamber": "senate",
+      "fecIds": [
+        "S0CO00575"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H000601",
+      "name": "Bill Hagerty",
+      "chamber": "senate",
+      "fecIds": [
+        "S0TN00169"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H000874",
+      "name": "Steny H. Hoyer",
+      "chamber": "house",
+      "fecIds": [
+        "H2MD05155"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001042",
+      "name": "Mazie K. Hirono",
+      "chamber": "senate",
+      "fecIds": [
+        "H6HI02251",
+        "S2HI00106"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001046",
+      "name": "Martin Heinrich",
+      "chamber": "senate",
+      "fecIds": [
+        "H8NM01224",
+        "S2NM00088"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001052",
+      "name": "Andy Harris",
+      "chamber": "house",
+      "fecIds": [
+        "H8MD01094"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001058",
+      "name": "Bill Huizenga",
+      "chamber": "house",
+      "fecIds": [
+        "H0MI02094"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001061",
+      "name": "John Hoeven",
+      "chamber": "senate",
+      "fecIds": [
+        "S0ND00093"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001067",
+      "name": "Richard Hudson",
+      "chamber": "house",
+      "fecIds": [
+        "H2NC08185"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001068",
+      "name": "Jared Huffman",
+      "chamber": "house",
+      "fecIds": [
+        "H2CA06259"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001072",
+      "name": "J. French Hill",
+      "chamber": "house",
+      "fecIds": [
+        "H4AR02141"
+      ],
+      "housePtrByYear": {
+        "2023": 4,
+        "2024": 1,
+        "2025": 2,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022189",
+          "20022579",
+          "20022591",
+          "20023412"
+        ],
+        "2024": [
+          "20024215"
+        ],
+        "2025": [
+          "20026706",
+          "20030551"
+        ],
+        "2026": [
+          "20033661"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001076",
+      "name": "Margaret Wood Hassan",
+      "chamber": "senate",
+      "fecIds": [
+        "S6NH00091"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001077",
+      "name": "Clay Higgins",
+      "chamber": "house",
+      "fecIds": [
+        "H6LA03148"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001079",
+      "name": "Cindy Hyde-Smith",
+      "chamber": "senate",
+      "fecIds": [
+        "S8MS00261"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001081",
+      "name": "Jahana Hayes",
+      "chamber": "house",
+      "fecIds": [
+        "H8CT05245"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001082",
+      "name": "Kevin Hern",
+      "chamber": "house",
+      "fecIds": [
+        "H8OK01157",
+        "S6OK04247"
+      ],
+      "housePtrByYear": {
+        "2023": 12,
+        "2024": 11,
+        "2025": 6,
+        "2026": 10
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022285",
+          "20022430",
+          "20022580",
+          "20022699",
+          "20022908",
+          "20023136",
+          "20023303",
+          "20023532",
+          "20023641",
+          "20023848",
+          "20024020",
+          "20024104"
+        ],
+        "2024": [
+          "20024305",
+          "20024481",
+          "20024669",
+          "20024869",
+          "20025040",
+          "20025232",
+          "20025473",
+          "20025634",
+          "20026033",
+          "20026222",
+          "20026415"
+        ],
+        "2025": [
+          "20026597",
+          "20026794",
+          "20030185",
+          "20030339",
+          "20032284",
+          "20033458"
+        ],
+        "2026": [
+          "20033829",
+          "20034012",
+          "20034128",
+          "20034262",
+          "20034461",
+          "20034695",
+          "20035013",
+          "20035134",
+          "20035196",
+          "20035326"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001085",
+      "name": "Chrissy Houlahan",
+      "chamber": "house",
+      "fecIds": [
+        "H8PA06087"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001086",
+      "name": "Diana Harshbarger",
+      "chamber": "house",
+      "fecIds": [
+        "H0TN01118"
+      ],
+      "housePtrByYear": {
+        "2023": 2,
+        "2026": 10
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20016496",
+          "8219412"
+        ],
+        "2026": [
+          "9115809",
+          "9115811",
+          "9115812",
+          "9115813",
+          "9115814",
+          "9115815",
+          "9115901",
+          "9116256",
+          "9116257",
+          "9116258"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001090",
+      "name": "Josh Harder",
+      "chamber": "house",
+      "fecIds": [
+        "H8CA10126"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001091",
+      "name": "Ashley Hinson",
+      "chamber": "house",
+      "fecIds": [
+        "H0IA01174"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001093",
+      "name": "Erin Houchin",
+      "chamber": "house",
+      "fecIds": [
+        "H6IN09143"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001094",
+      "name": "Val T. Hoyle",
+      "chamber": "house",
+      "fecIds": [
+        "H2OR04095"
+      ],
+      "housePtrByYear": {
+        "2025": 2,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20032070",
+          "20032211"
+        ],
+        "2026": [
+          "20034581"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001095",
+      "name": "Wesley Hunt",
+      "chamber": "house",
+      "fecIds": [
+        "H0TX07170",
+        "S6TX00511"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001096",
+      "name": "Harriet M. Hageman",
+      "chamber": "house",
+      "fecIds": [
+        "H2WY00166",
+        "S6WY00209"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001098",
+      "name": "Abraham J. Hamadeh",
+      "chamber": "house",
+      "fecIds": [
+        "H4AZ08108"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001099",
+      "name": "Mike Haridopolos",
+      "chamber": "house",
+      "fecIds": [
+        "H4FL08168"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001100",
+      "name": "Jeff Hurd",
+      "chamber": "house",
+      "fecIds": [
+        "H4CO03357"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001101",
+      "name": "Pat Harrigan",
+      "chamber": "house",
+      "fecIds": [
+        "H2NC13243"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001102",
+      "name": "Mark Harris",
+      "chamber": "house",
+      "fecIds": [
+        "H4NC08066",
+        "H6NC09200"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001103",
+      "name": "Pablo José Hernández",
+      "chamber": "house",
+      "fecIds": [
+        "H4PR01010"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "H001104",
+      "name": "Jon Husted",
+      "chamber": "senate",
+      "fecIds": [
+        "S6OH00304"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "I000056",
+      "name": "Darrell Issa",
+      "chamber": "house",
+      "fecIds": [
+        "H0CA48024",
+        "S8CA00135"
+      ],
+      "housePtrByYear": {
+        "2024": 2,
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20025909",
+          "20025913"
+        ],
+        "2025": [
+          "20030181"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "I000058",
+      "name": "Glenn Ivey",
+      "chamber": "house",
+      "fecIds": [
+        "H2MD04232",
+        "H2MD04315"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "J000288",
+      "name": "Henry C. \"Hank\" Johnson, Jr.",
+      "chamber": "house",
+      "fecIds": [
+        "H6GA04129"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "J000293",
+      "name": "Ron Johnson",
+      "chamber": "senate",
+      "fecIds": [
+        "S0WI00197"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "J000295",
+      "name": "David P. Joyce",
+      "chamber": "house",
+      "fecIds": [
+        "H2OH14064"
+      ],
+      "housePtrByYear": {
+        "2024": 2,
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20021523",
+          "20026440"
+        ],
+        "2025": [
+          "20026736"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {
+        "scanned": {
+          "year": 2024,
+          "docId": "20021523",
+          "hasUsableText": true
+        }
+      }
+    },
+    {
+      "bioguide": "J000301",
+      "name": "Dusty Johnson",
+      "chamber": "house",
+      "fecIds": [
+        "H8SD01055"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "J000302",
+      "name": "John Joyce",
+      "chamber": "house",
+      "fecIds": [
+        "H8PA13125"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "J000304",
+      "name": "Ronny Jackson",
+      "chamber": "house",
+      "fecIds": [
+        "H0TX13228"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "J000305",
+      "name": "Sara Jacobs",
+      "chamber": "house",
+      "fecIds": [
+        "H8CA49074"
+      ],
+      "housePtrByYear": {
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2026": [
+          "20034498"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "J000307",
+      "name": "John James",
+      "chamber": "house",
+      "fecIds": [
+        "H2MI10150",
+        "S8MI00372"
+      ],
+      "housePtrByYear": {
+        "2024": 2,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20025719",
+          "20025799"
+        ],
+        "2026": [
+          "20034949"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {
+        "scanned": {
+          "year": 2024,
+          "docId": "20025719",
+          "hasUsableText": true
+        }
+      }
+    },
+    {
+      "bioguide": "J000310",
+      "name": "Julie Johnson",
+      "chamber": "house",
+      "fecIds": [
+        "H4TX32089"
+      ],
+      "housePtrByYear": {
+        "2025": 11,
+        "2026": 3
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20026762",
+          "20027936",
+          "20029064",
+          "20030296",
+          "20030474",
+          "20030647",
+          "20030909",
+          "20032066",
+          "20032242",
+          "20033420",
+          "20033611"
+        ],
+        "2026": [
+          "20033789",
+          "20034706",
+          "20035035"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "J000311",
+      "name": "Brian Jack",
+      "chamber": "house",
+      "fecIds": [
+        "H4GA03126"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "J000312",
+      "name": "James C. Justice",
+      "chamber": "senate",
+      "fecIds": [
+        "S4WV00332"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000009",
+      "name": "Marcy Kaptur",
+      "chamber": "house",
+      "fecIds": [
+        "H2OH09031"
+      ],
+      "housePtrByYear": {
+        "2023": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022886"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000375",
+      "name": "William R. Keating",
+      "chamber": "house",
+      "fecIds": [
+        "H0MA10082"
+      ],
+      "housePtrByYear": {
+        "2023": 7,
+        "2024": 8,
+        "2025": 6,
+        "2026": 7
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022340",
+          "20022490",
+          "20023143",
+          "20023339",
+          "20023410",
+          "20023537",
+          "20023752"
+        ],
+        "2024": [
+          "20023767",
+          "20024445",
+          "20024668",
+          "20024852",
+          "20025119",
+          "20025226",
+          "20025891",
+          "20026091"
+        ],
+        "2025": [
+          "20026556",
+          "20027837",
+          "20028007",
+          "20030174",
+          "20031014",
+          "20033628"
+        ],
+        "2026": [
+          "20033946",
+          "20034068",
+          "20034177",
+          "20034307",
+          "20034417",
+          "20034898",
+          "20035293"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000376",
+      "name": "Mike Kelly",
+      "chamber": "house",
+      "fecIds": [
+        "H0PA03271"
+      ],
+      "housePtrByYear": {
+        "2023": 8,
+        "2024": 11,
+        "2025": 7,
+        "2026": 9
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20023670",
+          "20023829",
+          "20023960",
+          "20024120",
+          "8219383",
+          "8219420",
+          "8219455",
+          "8219843"
+        ],
+        "2024": [
+          "20024300",
+          "20024494",
+          "20024654",
+          "20025280",
+          "20025281",
+          "20025660",
+          "20025661",
+          "20025773",
+          "20026023",
+          "20026212",
+          "20026380"
+        ],
+        "2025": [
+          "20026550",
+          "20026792",
+          "20030639",
+          "20030892",
+          "20032254",
+          "20033447",
+          "20033615"
+        ],
+        "2026": [
+          "20033763",
+          "20033991",
+          "20034168",
+          "20034302",
+          "20034607",
+          "20034767",
+          "20034947",
+          "20035203",
+          "20035209"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000377",
+      "name": "Mark Kelly",
+      "chamber": "senate",
+      "fecIds": [
+        "S0AZ00350"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000383",
+      "name": "Angus S. King, Jr.",
+      "chamber": "senate",
+      "fecIds": [
+        "S2ME00109"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000384",
+      "name": "Tim Kaine",
+      "chamber": "senate",
+      "fecIds": [
+        "S2VA00142"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000385",
+      "name": "Robin L. Kelly",
+      "chamber": "house",
+      "fecIds": [
+        "H2IL02172",
+        "S6IL00474"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000388",
+      "name": "Trent Kelly",
+      "chamber": "house",
+      "fecIds": [
+        "H6MS01131"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000391",
+      "name": "Raja Krishnamoorthi",
+      "chamber": "house",
+      "fecIds": [
+        "H6IL08147",
+        "S6IL00482"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000392",
+      "name": "David Kustoff",
+      "chamber": "house",
+      "fecIds": [
+        "H2TN07103"
+      ],
+      "housePtrByYear": {
+        "2023": 4
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "8219339",
+          "8219415",
+          "8220037",
+          "8220060"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000394",
+      "name": "Andy Kim",
+      "chamber": "senate",
+      "fecIds": [
+        "H8NJ03206",
+        "S4NJ00466"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000397",
+      "name": "Young Kim",
+      "chamber": "house",
+      "fecIds": [
+        "H8CA39240"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000398",
+      "name": "Thomas H. Kean, Jr.",
+      "chamber": "house",
+      "fecIds": [
+        "H0NJ07261"
+      ],
+      "housePtrByYear": {
+        "2023": 7,
+        "2024": 11,
+        "2025": 12,
+        "2026": 8
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022373",
+          "20022550",
+          "20022704",
+          "20023455",
+          "20023671",
+          "20023717",
+          "20023986"
+        ],
+        "2024": [
+          "20024309",
+          "20024509",
+          "20024685",
+          "20025059",
+          "20025291",
+          "20025478",
+          "20025671",
+          "20025681",
+          "20025886",
+          "20026021",
+          "20026408"
+        ],
+        "2025": [
+          "20026591",
+          "20026802",
+          "20027931",
+          "20030155",
+          "20030275",
+          "20030491",
+          "20030671",
+          "20030946",
+          "20032089",
+          "20032269",
+          "20033474",
+          "20033659"
+        ],
+        "2026": [
+          "20033821",
+          "20034025",
+          "20034190",
+          "20034327",
+          "20034616",
+          "20034783",
+          "20035003",
+          "20035273"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000399",
+      "name": "Jennifer A. Kiggans",
+      "chamber": "house",
+      "fecIds": [
+        "H2VA02064"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000400",
+      "name": "Sydney Kamlager-Dove",
+      "chamber": "house",
+      "fecIds": [
+        "H2CA37304"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000401",
+      "name": "Kevin Kiley",
+      "chamber": "house",
+      "fecIds": [
+        "H2CA03157"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000402",
+      "name": "Timothy M. Kennedy",
+      "chamber": "house",
+      "fecIds": [
+        "H4NY26078"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000403",
+      "name": "Mike Kennedy",
+      "chamber": "house",
+      "fecIds": [
+        "H4UT03260"
+      ],
+      "housePtrByYear": {
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20030542"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000404",
+      "name": "Kimberlyn King-Hinds",
+      "chamber": "house",
+      "fecIds": [
+        "H4MP01022"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "K000405",
+      "name": "Brad Knott",
+      "chamber": "house",
+      "fecIds": [
+        "H4NC13116"
+      ],
+      "housePtrByYear": {
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20027846"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000273",
+      "name": "Teresa Leger Fernandez",
+      "chamber": "house",
+      "fecIds": [
+        "H0NM03102"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000397",
+      "name": "Zoe Lofgren",
+      "chamber": "house",
+      "fecIds": [
+        "H4CA16049"
+      ],
+      "housePtrByYear": {
+        "2023": 2,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022637",
+          "20023083"
+        ],
+        "2026": [
+          "20033738"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000557",
+      "name": "John B. Larson",
+      "chamber": "house",
+      "fecIds": [
+        "H8CT01046"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000560",
+      "name": "Rick Larsen",
+      "chamber": "house",
+      "fecIds": [
+        "H0WA02080"
+      ],
+      "housePtrByYear": {
+        "2023": 6,
+        "2024": 3,
+        "2025": 3,
+        "2026": 3
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20000807",
+          "20023043",
+          "20023204",
+          "20023345",
+          "20023834",
+          "20023835"
+        ],
+        "2024": [
+          "20024339",
+          "20024842",
+          "20025486"
+        ],
+        "2025": [
+          "20026587",
+          "20030158",
+          "20032298"
+        ],
+        "2026": [
+          "20033814",
+          "20034351",
+          "20034977"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000562",
+      "name": "Stephen F. Lynch",
+      "chamber": "house",
+      "fecIds": [
+        "H2MA09072",
+        "S0MA00083"
+      ],
+      "housePtrByYear": {
+        "2023": 1,
+        "2024": 3
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20020981"
+        ],
+        "2024": [
+          "20025025",
+          "20025123",
+          "20025563"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000566",
+      "name": "Robert E. Latta",
+      "chamber": "house",
+      "fecIds": [
+        "H8OH05036"
+      ],
+      "housePtrByYear": {
+        "2023": 5,
+        "2024": 5,
+        "2025": 5,
+        "2026": 4
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022370",
+          "20022811",
+          "20023057",
+          "20023449",
+          "20023887"
+        ],
+        "2024": [
+          "20024505",
+          "20024901",
+          "20025238",
+          "20025507",
+          "20026165"
+        ],
+        "2025": [
+          "20026650",
+          "20030234",
+          "20030480",
+          "20030730",
+          "20033346"
+        ],
+        "2026": [
+          "20033857",
+          "20034401",
+          "20034726",
+          "20035065"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000570",
+      "name": "Ben Ray Luján",
+      "chamber": "senate",
+      "fecIds": [
+        "H8NM03196",
+        "S0NM00058"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000571",
+      "name": "Cynthia M. Lummis",
+      "chamber": "senate",
+      "fecIds": [
+        "H8WY00148",
+        "S0WY00137"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000575",
+      "name": "James Lankford",
+      "chamber": "senate",
+      "fecIds": [
+        "H0OK05114",
+        "S4OK00232"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000577",
+      "name": "Mike Lee",
+      "chamber": "senate",
+      "fecIds": [
+        "S0UT00165"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000582",
+      "name": "Ted Lieu",
+      "chamber": "house",
+      "fecIds": [
+        "H4CA33119"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000583",
+      "name": "Barry Loudermilk",
+      "chamber": "house",
+      "fecIds": [
+        "H4GA11061"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000585",
+      "name": "Darin LaHood",
+      "chamber": "house",
+      "fecIds": [
+        "H6IL18088"
+      ],
+      "housePtrByYear": {
+        "2024": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20025916"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000593",
+      "name": "Mike Levin",
+      "chamber": "house",
+      "fecIds": [
+        "H8CA49058"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000595",
+      "name": "Julia Letlow",
+      "chamber": "house",
+      "fecIds": [
+        "H2LA05126",
+        "S6LA00664"
+      ],
+      "housePtrByYear": {
+        "2026": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2026": [
+          "20030977",
+          "20034106"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {
+        "scanned": {
+          "year": 2026,
+          "docId": "20030977",
+          "hasUsableText": true
+        }
+      }
+    },
+    {
+      "bioguide": "L000596",
+      "name": "Anna Paulina Luna",
+      "chamber": "house",
+      "fecIds": [
+        "H0FL13158"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000597",
+      "name": "Laurel M. Lee",
+      "chamber": "house",
+      "fecIds": [
+        "H2FL15241"
+      ],
+      "housePtrByYear": {
+        "2023": 1,
+        "2024": 5,
+        "2025": 4,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "8219742"
+        ],
+        "2024": [
+          "20024249",
+          "20025116",
+          "20025546",
+          "20025714",
+          "20026063"
+        ],
+        "2025": [
+          "20026513",
+          "20030458",
+          "20030810",
+          "20030875"
+        ],
+        "2026": [
+          "20034694"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000598",
+      "name": "Nick LaLota",
+      "chamber": "house",
+      "fecIds": [
+        "H2NY01190"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000599",
+      "name": "Michael Lawler",
+      "chamber": "house",
+      "fecIds": [
+        "H2NY17162"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000600",
+      "name": "Nicholas A. Langworthy",
+      "chamber": "house",
+      "fecIds": [
+        "H2NY23228"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000601",
+      "name": "Greg Landsman",
+      "chamber": "house",
+      "fecIds": [
+        "H2OH01194"
+      ],
+      "housePtrByYear": {
+        "2024": 5,
+        "2025": 4
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20025622",
+          "20025834",
+          "20025946",
+          "20026101",
+          "20026361"
+        ],
+        "2025": [
+          "20026551",
+          "20027885",
+          "20029084",
+          "20030207"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000602",
+      "name": "Summer L. Lee",
+      "chamber": "house",
+      "fecIds": [
+        "H2PA18200"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000603",
+      "name": "Morgan Luttrell",
+      "chamber": "house",
+      "fecIds": [
+        "H2TX08182"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000606",
+      "name": "George Latimer",
+      "chamber": "house",
+      "fecIds": [
+        "H4NY16087"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "L000607",
+      "name": "Sam T. Liccardo",
+      "chamber": "house",
+      "fecIds": [
+        "H4CA16197"
+      ],
+      "housePtrByYear": {
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2026": [
+          "20034736"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M000133",
+      "name": "Edward J. Markey",
+      "chamber": "senate",
+      "fecIds": [
+        "H6MA07101",
+        "S4MA00028"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M000194",
+      "name": "Nancy Mace",
+      "chamber": "house",
+      "fecIds": [
+        "H0SC01394"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M000312",
+      "name": "James P. McGovern",
+      "chamber": "house",
+      "fecIds": [
+        "H4MA03022"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M000317",
+      "name": "Nicole Malliotakis",
+      "chamber": "house",
+      "fecIds": [
+        "H0NY11078"
+      ],
+      "housePtrByYear": {
+        "2023": 4,
+        "2024": 3,
+        "2025": 2,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "8219352",
+          "8219436",
+          "8219904",
+          "8219905"
+        ],
+        "2024": [
+          "8220119",
+          "8220508",
+          "8220710"
+        ],
+        "2025": [
+          "8221276",
+          "8221287"
+        ],
+        "2026": [
+          "9116217"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M000687",
+      "name": "Kweisi Mfume",
+      "chamber": "house",
+      "fecIds": [
+        "H0MD07114",
+        "H6MD07020",
+        "S6MD03185"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M000871",
+      "name": "Tracey Mann",
+      "chamber": "house",
+      "fecIds": [
+        "H0KS01123"
+      ],
+      "housePtrByYear": {
+        "2023": 1,
+        "2024": 1,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022801"
+        ],
+        "2024": [
+          "20024810"
+        ],
+        "2026": [
+          "9116292"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001111",
+      "name": "Patty Murray",
+      "chamber": "senate",
+      "fecIds": [
+        "S2WA00189"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001136",
+      "name": "Lisa C. McClain",
+      "chamber": "house",
+      "fecIds": [
+        "H0MI10287"
+      ],
+      "housePtrByYear": {
+        "2025": 5,
+        "2026": 4
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20030891",
+          "20030932",
+          "20032129",
+          "20033446",
+          "8221212"
+        ],
+        "2026": [
+          "20033736",
+          "20033964",
+          "20034105",
+          "20035131"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001137",
+      "name": "Gregory W. Meeks",
+      "chamber": "house",
+      "fecIds": [
+        "H8NY06048"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001143",
+      "name": "Betty McCollum",
+      "chamber": "house",
+      "fecIds": [
+        "H0MN04049"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001160",
+      "name": "Gwen Moore",
+      "chamber": "house",
+      "fecIds": [
+        "H4WI04183"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001163",
+      "name": "Doris O. Matsui",
+      "chamber": "house",
+      "fecIds": [
+        "H6CA05195"
+      ],
+      "housePtrByYear": {
+        "2023": 4,
+        "2024": 4,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022771",
+          "20023060",
+          "20023891",
+          "20023987"
+        ],
+        "2024": [
+          "20024369",
+          "20025111",
+          "20025152",
+          "20025820"
+        ],
+        "2026": [
+          "20033695"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001169",
+      "name": "Christopher Murphy",
+      "chamber": "senate",
+      "fecIds": [
+        "H6CT05124",
+        "S2CT00132"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001176",
+      "name": "Jeff Merkley",
+      "chamber": "senate",
+      "fecIds": [
+        "S8OR00207"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001177",
+      "name": "Tom McClintock",
+      "chamber": "house",
+      "fecIds": [
+        "H6CA21135",
+        "H8CA04152"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001184",
+      "name": "Thomas Massie",
+      "chamber": "house",
+      "fecIds": [
+        "H2KY04121"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001188",
+      "name": "Grace Meng",
+      "chamber": "house",
+      "fecIds": [
+        "H2NY06116"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001194",
+      "name": "John R. Moolenaar",
+      "chamber": "house",
+      "fecIds": [
+        "H4MI04126"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001196",
+      "name": "Seth Moulton",
+      "chamber": "house",
+      "fecIds": [
+        "H4MA06090",
+        "S6MA00296"
+      ],
+      "housePtrByYear": {
+        "2023": 8,
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022261",
+          "20022343",
+          "20022451",
+          "20022611",
+          "20022724",
+          "20023219",
+          "20023528",
+          "20023624"
+        ],
+        "2025": [
+          "20030756"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001198",
+      "name": "Roger Marshall",
+      "chamber": "senate",
+      "fecIds": [
+        "H6KS01179",
+        "S0KS00315"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001199",
+      "name": "Brian J. Mast",
+      "chamber": "house",
+      "fecIds": [
+        "H6FL18097"
+      ],
+      "housePtrByYear": {
+        "2024": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20024743"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001204",
+      "name": "Daniel Meuser",
+      "chamber": "house",
+      "fecIds": [
+        "H8PA10147"
+      ],
+      "housePtrByYear": {
+        "2023": 5,
+        "2024": 3,
+        "2025": 2,
+        "2026": 5
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022636",
+          "20022791",
+          "20023070",
+          "20023212",
+          "20023678"
+        ],
+        "2024": [
+          "20024710",
+          "20025061",
+          "20025438"
+        ],
+        "2025": [
+          "20030884",
+          "20030922"
+        ],
+        "2026": [
+          "20034016",
+          "20034158",
+          "20034359",
+          "20034547",
+          "20034774"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {
+        "scanned": {
+          "year": 2023,
+          "docId": "20022636",
+          "hasUsableText": true
+        }
+      }
+    },
+    {
+      "bioguide": "M001206",
+      "name": "Joseph D. Morelle",
+      "chamber": "house",
+      "fecIds": [
+        "H8NY25105"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001208",
+      "name": "Lucy McBath",
+      "chamber": "house",
+      "fecIds": [
+        "H8GA06393"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001210",
+      "name": "Gregory F. Murphy",
+      "chamber": "house",
+      "fecIds": [
+        "H0NC03172"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001211",
+      "name": "Mary E. Miller",
+      "chamber": "house",
+      "fecIds": [
+        "H0IL15129"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001212",
+      "name": "Barry Moore",
+      "chamber": "house",
+      "fecIds": [
+        "H8AL02171",
+        "S6AL00476"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001214",
+      "name": "Frank J. Mrvan",
+      "chamber": "house",
+      "fecIds": [
+        "H0IN01150"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001215",
+      "name": "Mariannette Miller-Meeks",
+      "chamber": "house",
+      "fecIds": [
+        "H8IA02043"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001216",
+      "name": "Cory Mills",
+      "chamber": "house",
+      "fecIds": [
+        "H2FL07156"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001218",
+      "name": "Richard McCormick",
+      "chamber": "house",
+      "fecIds": [
+        "H0GA07273"
+      ],
+      "housePtrByYear": {
+        "2025": 3
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20030699",
+          "20032255",
+          "20033610"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001219",
+      "name": "James C. Moylan",
+      "chamber": "house",
+      "fecIds": [
+        "H2GU01031"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001220",
+      "name": "Morgan McGarvey",
+      "chamber": "house",
+      "fecIds": [
+        "H2KY03206"
+      ],
+      "housePtrByYear": {
+        "2023": 4,
+        "2024": 5
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022526",
+          "20022656",
+          "20023739",
+          "20023977"
+        ],
+        "2024": [
+          "20025388",
+          "20025765",
+          "20025892",
+          "20026207",
+          "20026360"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001222",
+      "name": "Max L. Miller",
+      "chamber": "house",
+      "fecIds": [
+        "H2OH16051"
+      ],
+      "housePtrByYear": {
+        "2023": 9,
+        "2024": 14,
+        "2025": 9,
+        "2026": 6
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20023296",
+          "20023822",
+          "20023851",
+          "20023911",
+          "20024175",
+          "20024189",
+          "8219356",
+          "8219442",
+          "8219743"
+        ],
+        "2024": [
+          "20024380",
+          "20024472",
+          "20024519",
+          "20024705",
+          "20024772",
+          "20025328",
+          "20025345",
+          "20025740",
+          "20025831",
+          "20026090",
+          "20026097",
+          "20026231",
+          "20026340",
+          "20026480"
+        ],
+        "2025": [
+          "20026684",
+          "20027838",
+          "20029035",
+          "20030236",
+          "20030401",
+          "20030585",
+          "20030742",
+          "20030989",
+          "20032187"
+        ],
+        "2026": [
+          "20033881",
+          "20034247",
+          "20034419",
+          "20034651",
+          "20034869",
+          "20035075"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001223",
+      "name": "Seth Magaziner",
+      "chamber": "house",
+      "fecIds": [
+        "H2RI02184"
+      ],
+      "housePtrByYear": {
+        "2024": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20025372"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001224",
+      "name": "Nathaniel Moran",
+      "chamber": "house",
+      "fecIds": [
+        "H2TX01112"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001225",
+      "name": "Kevin Mullin",
+      "chamber": "house",
+      "fecIds": [
+        "H2CA14162"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001226",
+      "name": "Robert Menendez",
+      "chamber": "house",
+      "fecIds": [
+        "H2NJ08232"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001227",
+      "name": "Jennifer L. McClellan",
+      "chamber": "house",
+      "fecIds": [
+        "H4VA04066"
+      ],
+      "housePtrByYear": {
+        "2023": 1,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022895"
+        ],
+        "2026": [
+          "20034311"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001228",
+      "name": "Celeste Maloy",
+      "chamber": "house",
+      "fecIds": [
+        "H4UT02296"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001229",
+      "name": "LaMonica McIver",
+      "chamber": "house",
+      "fecIds": [
+        "H4NJ10176"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001230",
+      "name": "Ryan Mackenzie",
+      "chamber": "house",
+      "fecIds": [
+        "H8PA15195"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001231",
+      "name": "John W. Mannion",
+      "chamber": "house",
+      "fecIds": [
+        "H4NY22085"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001232",
+      "name": "April McClain Delaney",
+      "chamber": "house",
+      "fecIds": [
+        "H4MD06340"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001233",
+      "name": "Mark B. Messmer",
+      "chamber": "house",
+      "fecIds": [
+        "H4IN08249"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001234",
+      "name": "Kelly Morrison",
+      "chamber": "house",
+      "fecIds": [
+        "H4MN03118"
+      ],
+      "housePtrByYear": {
+        "2025": 14,
+        "2026": 14
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20026695",
+          "20027907",
+          "20027951",
+          "20029067",
+          "20029121",
+          "20030267",
+          "20030313",
+          "20030448",
+          "20030475",
+          "20030802",
+          "20030893",
+          "20032061",
+          "20033425",
+          "20033651"
+        ],
+        "2026": [
+          "20033830",
+          "20033928",
+          "20033989",
+          "20034056",
+          "20034082",
+          "20034102",
+          "20034123",
+          "20034156",
+          "20034213",
+          "20034300",
+          "20034520",
+          "20034806",
+          "20034972",
+          "20035244"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001235",
+      "name": "Riley M. Moore",
+      "chamber": "house",
+      "fecIds": [
+        "H4WV02205"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001236",
+      "name": "Tim Moore",
+      "chamber": "house",
+      "fecIds": [
+        "H4NC14015"
+      ],
+      "housePtrByYear": {
+        "2025": 12,
+        "2026": 9
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20026796",
+          "20027944",
+          "20029134",
+          "20030516",
+          "20030522",
+          "20030637",
+          "20030824",
+          "20031020",
+          "20032256",
+          "20033413",
+          "20033564",
+          "20033670"
+        ],
+        "2026": [
+          "20033746",
+          "20033856",
+          "20034034",
+          "20034217",
+          "20034424",
+          "20034587",
+          "20034721",
+          "20034952",
+          "20035291"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001237",
+      "name": "Kristen McDonald Rivet",
+      "chamber": "house",
+      "fecIds": [
+        "H4MI08218"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001238",
+      "name": "Sarah McBride",
+      "chamber": "house",
+      "fecIds": [
+        "H4DE00045"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001239",
+      "name": "John J. McGuire III",
+      "chamber": "house",
+      "fecIds": [
+        "H0VA07133",
+        "H2VA07196"
+      ],
+      "housePtrByYear": {
+        "2025": 3,
+        "2026": 6
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20016861",
+          "20030509",
+          "20030620"
+        ],
+        "2026": [
+          "20033956",
+          "20034521",
+          "20034748",
+          "20034942",
+          "20035180",
+          "20035367"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001240",
+      "name": "Addison P. McDowell",
+      "chamber": "house",
+      "fecIds": [
+        "H4NC06177"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001241",
+      "name": "Dave Min",
+      "chamber": "house",
+      "fecIds": [
+        "H4CA47085"
+      ],
+      "housePtrByYear": {
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20029100"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001242",
+      "name": "Bernie Moreno",
+      "chamber": "senate",
+      "fecIds": [
+        "S4OH00192"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001244",
+      "name": "Ashley Moody",
+      "chamber": "senate",
+      "fecIds": [
+        "S6FL00640"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001245",
+      "name": "Christian D. Menefee",
+      "chamber": "house",
+      "fecIds": [
+        "H6TX18232"
+      ],
+      "housePtrByYear": {
+        "2026": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2026": [
+          "20034099",
+          "20035157"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "M001246",
+      "name": "Analilia Mejia",
+      "chamber": "house",
+      "fecIds": [
+        "H6NJ11286"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "N000002",
+      "name": "Jerrold Nadler",
+      "chamber": "house",
+      "fecIds": [
+        "H2NY17071"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "N000015",
+      "name": "Richard E. Neal",
+      "chamber": "house",
+      "fecIds": [
+        "H8MA02041"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "N000026",
+      "name": "Troy E. Nehls",
+      "chamber": "house",
+      "fecIds": [
+        "H0TX22302"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "N000147",
+      "name": "Eleanor Holmes Norton",
+      "chamber": "house",
+      "fecIds": [
+        "H0DC00058"
+      ],
+      "housePtrByYear": {
+        "2023": 4,
+        "2024": 5,
+        "2025": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022858",
+          "20023290",
+          "20023893",
+          "20024205"
+        ],
+        "2024": [
+          "20024876",
+          "20025052",
+          "20025053",
+          "20025107",
+          "20025789"
+        ],
+        "2025": [
+          "20027950",
+          "20033318"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "N000188",
+      "name": "Donald Norcross",
+      "chamber": "house",
+      "fecIds": [
+        "H4NJ01084"
+      ],
+      "housePtrByYear": {
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20030894"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "N000189",
+      "name": "Dan Newhouse",
+      "chamber": "house",
+      "fecIds": [
+        "H4WA04104"
+      ],
+      "housePtrByYear": {
+        "2023": 1,
+        "2024": 1,
+        "2025": 2,
+        "2026": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20023020"
+        ],
+        "2024": [
+          "20024917"
+        ],
+        "2025": [
+          "20030292",
+          "20032091"
+        ],
+        "2026": [
+          "20033654",
+          "20034998"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "N000190",
+      "name": "Ralph Norman",
+      "chamber": "house",
+      "fecIds": [
+        "H8SC05158",
+        "S6SC04445"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "N000191",
+      "name": "Joe Neguse",
+      "chamber": "house",
+      "fecIds": [
+        "H8CO02160"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "N000193",
+      "name": "Zachary Nunn",
+      "chamber": "house",
+      "fecIds": [
+        "H2IA03119"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "O000019",
+      "name": "Jay Obernolte",
+      "chamber": "house",
+      "fecIds": [
+        "H0CA08135"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "O000086",
+      "name": "Burgess Owens",
+      "chamber": "house",
+      "fecIds": [
+        "H0UT04076"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "O000174",
+      "name": "Jon Ossoff",
+      "chamber": "senate",
+      "fecIds": [
+        "H8GA06195",
+        "S8GA00180"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "O000175",
+      "name": "Andrew Ogles",
+      "chamber": "house",
+      "fecIds": [
+        "H2TN05446"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "O000176",
+      "name": "Johnny Olszewski, Jr.",
+      "chamber": "house",
+      "fecIds": [
+        "H4MD02232"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "O000177",
+      "name": "Robert F. Onder, Jr.",
+      "chamber": "house",
+      "fecIds": [
+        "H4MO03221",
+        "H8MO09146"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "P000048",
+      "name": "August Pfluger",
+      "chamber": "house",
+      "fecIds": [
+        "H0TX11230"
+      ],
+      "housePtrByYear": {
+        "2025": 3,
+        "2026": 4
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20021220",
+          "20030714",
+          "20030737"
+        ],
+        "2026": [
+          "20033804",
+          "20033920",
+          "20034054",
+          "20034348"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "P000145",
+      "name": "Alex Padilla",
+      "chamber": "senate",
+      "fecIds": [
+        "S2CA00955"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "P000595",
+      "name": "Gary C. Peters",
+      "chamber": "senate",
+      "fecIds": [
+        "H8MI09068",
+        "S4MI00355"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "P000597",
+      "name": "Chellie Pingree",
+      "chamber": "house",
+      "fecIds": [
+        "H8ME01120",
+        "S0ME00038"
+      ],
+      "housePtrByYear": {
+        "2023": 1,
+        "2024": 6,
+        "2025": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20021327"
+        ],
+        "2024": [
+          "20024446",
+          "20024846",
+          "20025006",
+          "20025371",
+          "20025785",
+          "20026150"
+        ],
+        "2025": [
+          "20030492",
+          "20033402"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "P000605",
+      "name": "Scott Perry",
+      "chamber": "house",
+      "fecIds": [
+        "H2PA04135"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "P000607",
+      "name": "Mark Pocan",
+      "chamber": "house",
+      "fecIds": [
+        "H2WI02124"
+      ],
+      "housePtrByYear": {
+        "2024": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20024758"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "P000609",
+      "name": "Gary J. Palmer",
+      "chamber": "house",
+      "fecIds": [
+        "H4AL06098"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "P000610",
+      "name": "Stacey E. Plaskett",
+      "chamber": "house",
+      "fecIds": [
+        "H2VI00082"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "P000613",
+      "name": "Jimmy Panetta",
+      "chamber": "house",
+      "fecIds": [
+        "H6CA20152"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "P000614",
+      "name": "Chris Pappas",
+      "chamber": "house",
+      "fecIds": [
+        "H8NH01210",
+        "S6NH00141"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "P000617",
+      "name": "Ayanna Pressley",
+      "chamber": "house",
+      "fecIds": [
+        "H8MA07032"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "P000620",
+      "name": "Brittany Pettersen",
+      "chamber": "house",
+      "fecIds": [
+        "H8CO07045"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "P000621",
+      "name": "Nellie Pou",
+      "chamber": "house",
+      "fecIds": [
+        "H4NJ09194"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "P000622",
+      "name": "Jimmy Patronis",
+      "chamber": "house",
+      "fecIds": [
+        "H6FL01390"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "Q000023",
+      "name": "Mike Quigley",
+      "chamber": "house",
+      "fecIds": [
+        "H0IL05096"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000122",
+      "name": "Jack Reed",
+      "chamber": "senate",
+      "fecIds": [
+        "H0RI02071",
+        "S6RI00163"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000305",
+      "name": "Deborah K. Ross",
+      "chamber": "house",
+      "fecIds": [
+        "H0NC02125"
+      ],
+      "housePtrByYear": {
+        "2023": 3,
+        "2024": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022421",
+          "20022738",
+          "20022808"
+        ],
+        "2024": [
+          "20024986"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000579",
+      "name": "Patrick Ryan",
+      "chamber": "house",
+      "fecIds": [
+        "H8NY19223"
+      ],
+      "housePtrByYear": {
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20030800"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000584",
+      "name": "James E. Risch",
+      "chamber": "senate",
+      "fecIds": [
+        "S8ID00092"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000599",
+      "name": "Raul Ruiz",
+      "chamber": "house",
+      "fecIds": [
+        "H2CA36439"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000600",
+      "name": "Aumua Amata Coleman Radewagen",
+      "chamber": "house",
+      "fecIds": [
+        "H4AS00036"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000603",
+      "name": "David Rouzer",
+      "chamber": "house",
+      "fecIds": [
+        "H2NC07096"
+      ],
+      "housePtrByYear": {
+        "2026": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2026": [
+          "20033758",
+          "20033759"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000605",
+      "name": "Mike Rounds",
+      "chamber": "senate",
+      "fecIds": [
+        "S4SD00049"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000606",
+      "name": "Jamie Raskin",
+      "chamber": "house",
+      "fecIds": [
+        "H6MD08457"
+      ],
+      "housePtrByYear": {
+        "2024": 1,
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20025439"
+        ],
+        "2025": [
+          "8220828"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000608",
+      "name": "Jacky Rosen",
+      "chamber": "senate",
+      "fecIds": [
+        "H6NV03139",
+        "S8NV00156"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000609",
+      "name": "John H. Rutherford",
+      "chamber": "house",
+      "fecIds": [
+        "H6FL04105"
+      ],
+      "housePtrByYear": {
+        "2023": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20023026",
+          "20023426"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000612",
+      "name": "John W. Rose",
+      "chamber": "house",
+      "fecIds": [
+        "H8TN06094"
+      ],
+      "housePtrByYear": {
+        "2025": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20030610",
+          "20030611"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000614",
+      "name": "Chip Roy",
+      "chamber": "house",
+      "fecIds": [
+        "H8TX21307"
+      ],
+      "housePtrByYear": {
+        "2024": 2,
+        "2026": 3
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20024848",
+          "20025201"
+        ],
+        "2026": [
+          "20034375",
+          "20034528",
+          "20034762"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {
+        "scanned": {
+          "year": 2024,
+          "docId": "20024848",
+          "hasUsableText": true
+        }
+      }
+    },
+    {
+      "bioguide": "R000617",
+      "name": "Delia C. Ramirez",
+      "chamber": "house",
+      "fecIds": [
+        "H2IL03162"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000618",
+      "name": "Pete Ricketts",
+      "chamber": "senate",
+      "fecIds": [
+        "S6NE00129"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000619",
+      "name": "Michael A. Rulli",
+      "chamber": "house",
+      "fecIds": [
+        "H4OH06165"
+      ],
+      "housePtrByYear": {
+        "2026": 3
+      },
+      "housePtrDocIdsByYear": {
+        "2026": [
+          "20035147",
+          "20035309",
+          "20035365"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000620",
+      "name": "Luz M. Rivas",
+      "chamber": "house",
+      "fecIds": [
+        "H4CA29141"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000621",
+      "name": "Emily Randall",
+      "chamber": "house",
+      "fecIds": [
+        "H4WA06117"
+      ],
+      "housePtrByYear": {
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20026756"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "R000622",
+      "name": "Josh Riley",
+      "chamber": "house",
+      "fecIds": [
+        "H8NY22177"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S000168",
+      "name": "Maria Elvira Salazar",
+      "chamber": "house",
+      "fecIds": [
+        "H8FL27185"
+      ],
+      "housePtrByYear": {
+        "2023": 8,
+        "2024": 7,
+        "2026": 5
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022272",
+          "20022414",
+          "20022596",
+          "20022756",
+          "20023045",
+          "20023146",
+          "20023797",
+          "20023976"
+        ],
+        "2024": [
+          "20024296",
+          "20024465",
+          "20024649",
+          "20025014",
+          "20025236",
+          "20025813",
+          "20026184"
+        ],
+        "2026": [
+          "20033993",
+          "20034479",
+          "20034709",
+          "20034928",
+          "20035138"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S000185",
+      "name": "Robert C. \"Bobby\" Scott",
+      "chamber": "house",
+      "fecIds": [
+        "H6VA01117"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S000250",
+      "name": "Pete Sessions",
+      "chamber": "house",
+      "fecIds": [
+        "H2TX03126"
+      ],
+      "housePtrByYear": {
+        "2023": 15,
+        "2024": 9,
+        "2025": 4,
+        "2026": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022203",
+          "20022292",
+          "20023094",
+          "20023198",
+          "20023211",
+          "20023319",
+          "20023360",
+          "20023399",
+          "20023552",
+          "20023683",
+          "20023819",
+          "20023922",
+          "20023975",
+          "20024047",
+          "20024204"
+        ],
+        "2024": [
+          "20024212",
+          "20024375",
+          "20024632",
+          "20025115",
+          "20025214",
+          "20025848",
+          "20025867",
+          "20026126",
+          "20026446"
+        ],
+        "2025": [
+          "20030544",
+          "20032080",
+          "20033330",
+          "20033427"
+        ],
+        "2026": [
+          "20033500",
+          "20035068"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S000510",
+      "name": "Adam Smith",
+      "chamber": "house",
+      "fecIds": [
+        "H6WA09025"
+      ],
+      "housePtrByYear": {
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20030868"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S000522",
+      "name": "Christopher H. Smith",
+      "chamber": "house",
+      "fecIds": [
+        "H8NJ04014"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S000929",
+      "name": "Victoria Spartz",
+      "chamber": "house",
+      "fecIds": [
+        "H0IN05326"
+      ],
+      "housePtrByYear": {
+        "2023": 5,
+        "2024": 3,
+        "2025": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022269",
+          "20022813",
+          "20022905",
+          "20022906",
+          "20023570"
+        ],
+        "2024": [
+          "20024515",
+          "20025519",
+          "20026136"
+        ],
+        "2025": [
+          "20026754",
+          "20030233"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001145",
+      "name": "Janice D. Schakowsky",
+      "chamber": "house",
+      "fecIds": [
+        "H8IL09067"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001148",
+      "name": "Michael K. Simpson",
+      "chamber": "house",
+      "fecIds": [
+        "H8ID02064"
+      ],
+      "housePtrByYear": {
+        "2023": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20021081"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001156",
+      "name": "Linda T. Sánchez",
+      "chamber": "house",
+      "fecIds": [
+        "H2CA39078"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001159",
+      "name": "Marilyn Strickland",
+      "chamber": "house",
+      "fecIds": [
+        "H0WA10034"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001172",
+      "name": "Adrian Smith",
+      "chamber": "house",
+      "fecIds": [
+        "H6NE03115"
+      ],
+      "housePtrByYear": {
+        "2023": 2,
+        "2024": 1,
+        "2025": 3,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20023004",
+          "20023381"
+        ],
+        "2024": [
+          "20024577"
+        ],
+        "2025": [
+          "8220764",
+          "8221238",
+          "9115549"
+        ],
+        "2026": [
+          "20035067"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001181",
+      "name": "Jeanne Shaheen",
+      "chamber": "senate",
+      "fecIds": [
+        "S0NH00219"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001183",
+      "name": "David Schweikert",
+      "chamber": "house",
+      "fecIds": [
+        "H4AZ06045",
+        "H8AZ05097"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001184",
+      "name": "Tim Scott",
+      "chamber": "senate",
+      "fecIds": [
+        "H0SC01279",
+        "S4SC00240"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001185",
+      "name": "Terri A. Sewell",
+      "chamber": "house",
+      "fecIds": [
+        "H0AL07086"
+      ],
+      "housePtrByYear": {
+        "2025": 1,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20030235"
+        ],
+        "2026": [
+          "20034384"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001188",
+      "name": "Marlin A. Stutzman",
+      "chamber": "house",
+      "fecIds": [
+        "H0IN03198",
+        "S0IN00095"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001189",
+      "name": "Austin Scott",
+      "chamber": "house",
+      "fecIds": [
+        "H0GA08099"
+      ],
+      "housePtrByYear": {
+        "2023": 1,
+        "2025": 1,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022312"
+        ],
+        "2025": [
+          "20030902"
+        ],
+        "2026": [
+          "20032279"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001190",
+      "name": "Bradley Scott Schneider",
+      "chamber": "house",
+      "fecIds": [
+        "H2IL10068"
+      ],
+      "housePtrByYear": {
+        "2023": 2,
+        "2025": 3
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022745",
+          "20023178"
+        ],
+        "2025": [
+          "20027911",
+          "20030591",
+          "20030594"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001194",
+      "name": "Brian Schatz",
+      "chamber": "senate",
+      "fecIds": [
+        "H6HI02244",
+        "S4HI00136"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001198",
+      "name": "Dan Sullivan",
+      "chamber": "senate",
+      "fecIds": [
+        "S4AK00214"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001199",
+      "name": "Lloyd Smucker",
+      "chamber": "house",
+      "fecIds": [
+        "H6PA16320"
+      ],
+      "housePtrByYear": {
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2026": [
+          "20019182"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001200",
+      "name": "Darren Soto",
+      "chamber": "house",
+      "fecIds": [
+        "H6FL09179"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001201",
+      "name": "Thomas R. Suozzi",
+      "chamber": "house",
+      "fecIds": [
+        "H6NY03247"
+      ],
+      "housePtrByYear": {
+        "2024": 5,
+        "2025": 5,
+        "2026": 3
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20024271",
+          "20026077",
+          "20026168",
+          "20026202",
+          "20026203"
+        ],
+        "2025": [
+          "20030188",
+          "20030307",
+          "20033321",
+          "20033394",
+          "20033565"
+        ],
+        "2026": [
+          "20034188",
+          "20034503",
+          "20034747"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001203",
+      "name": "Tina Smith",
+      "chamber": "senate",
+      "fecIds": [
+        "S8MN00578"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": 9,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001205",
+      "name": "Mary Gay Scanlon",
+      "chamber": "house",
+      "fecIds": [
+        "H8PA07200"
+      ],
+      "housePtrByYear": {
+        "2023": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20023019"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001208",
+      "name": "Elissa Slotkin",
+      "chamber": "senate",
+      "fecIds": [
+        "H8MI08102",
+        "S4MI00470"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001211",
+      "name": "Greg Stanton",
+      "chamber": "house",
+      "fecIds": [
+        "H8AZ09040"
+      ],
+      "housePtrByYear": {
+        "2023": 2,
+        "2026": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20023892",
+          "20023994"
+        ],
+        "2026": [
+          "20034499",
+          "20034717"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001212",
+      "name": "Pete Stauber",
+      "chamber": "house",
+      "fecIds": [
+        "H8MN08043"
+      ],
+      "housePtrByYear": {
+        "2025": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20033488"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001213",
+      "name": "Bryan Steil",
+      "chamber": "house",
+      "fecIds": [
+        "H8WI01156"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001214",
+      "name": "W. Gregory Steube",
+      "chamber": "house",
+      "fecIds": [
+        "H8FL17053"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001215",
+      "name": "Haley M. Stevens",
+      "chamber": "house",
+      "fecIds": [
+        "H8MI11254",
+        "S6MI00426"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001216",
+      "name": "Kim Schrier",
+      "chamber": "house",
+      "fecIds": [
+        "H8WA08189"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001217",
+      "name": "Rick Scott",
+      "chamber": "senate",
+      "fecIds": [
+        "S8FL00273"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001218",
+      "name": "Melanie A. Stansbury",
+      "chamber": "house",
+      "fecIds": [
+        "H2NM01144"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001220",
+      "name": "Dale W. Strong",
+      "chamber": "house",
+      "fecIds": [
+        "H2AL05102"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001221",
+      "name": "Hillary J. Scholten",
+      "chamber": "house",
+      "fecIds": [
+        "H0MI03316"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001223",
+      "name": "Emilia Strong Sykes",
+      "chamber": "house",
+      "fecIds": [
+        "H2OH13264"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001224",
+      "name": "Keith Self",
+      "chamber": "house",
+      "fecIds": [
+        "H2TX00064",
+        "H2TX03290"
+      ],
+      "housePtrByYear": {
+        "2025": 2,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "8220731",
+          "9115686"
+        ],
+        "2026": [
+          "9116197"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001225",
+      "name": "Eric Sorensen",
+      "chamber": "house",
+      "fecIds": [
+        "H2IL17147"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001226",
+      "name": "Andrea Salinas",
+      "chamber": "house",
+      "fecIds": [
+        "H2OR06066"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001227",
+      "name": "Eric Schmitt",
+      "chamber": "senate",
+      "fecIds": [
+        "S2MO00544"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001228",
+      "name": "Derek Schmidt",
+      "chamber": "house",
+      "fecIds": [
+        "H4KS02164"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001229",
+      "name": "Jefferson Shreve",
+      "chamber": "house",
+      "fecIds": [
+        "H4IN06185"
+      ],
+      "housePtrByYear": {
+        "2025": 8,
+        "2026": 4
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20026770",
+          "20027879",
+          "20029038",
+          "20030231",
+          "20030387",
+          "20033575",
+          "20033699",
+          "20033700"
+        ],
+        "2026": [
+          "20033705",
+          "20033709",
+          "20034084",
+          "20034653"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001230",
+      "name": "Suhas Subramanyam",
+      "chamber": "house",
+      "fecIds": [
+        "H4VA10279"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001231",
+      "name": "Lateefah Simon",
+      "chamber": "house",
+      "fecIds": [
+        "H4CA12154"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "S001232",
+      "name": "Tim Sheehy",
+      "chamber": "senate",
+      "fecIds": [
+        "S4MT00183"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000165",
+      "name": "Thomas P. Tiffany",
+      "chamber": "house",
+      "fecIds": [
+        "H0WI07101"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000193",
+      "name": "Bennie G. Thompson",
+      "chamber": "house",
+      "fecIds": [
+        "H4MS02068"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000460",
+      "name": "Mike Thompson",
+      "chamber": "house",
+      "fecIds": [
+        "H8CA01109"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000467",
+      "name": "Glenn Thompson",
+      "chamber": "house",
+      "fecIds": [
+        "H8PA05071"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000468",
+      "name": "Dina Titus",
+      "chamber": "house",
+      "fecIds": [
+        "H8NV03036"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000472",
+      "name": "Mark Takano",
+      "chamber": "house",
+      "fecIds": [
+        "H2CA43245"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000474",
+      "name": "Norma J. Torres",
+      "chamber": "house",
+      "fecIds": [
+        "H4CA35031"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000476",
+      "name": "Thom Tillis",
+      "chamber": "senate",
+      "fecIds": [
+        "S4NC00162"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000478",
+      "name": "Claudia Tenney",
+      "chamber": "house",
+      "fecIds": [
+        "H4NY22051"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000480",
+      "name": "William R. Timmons IV",
+      "chamber": "house",
+      "fecIds": [
+        "H8SC04250"
+      ],
+      "housePtrByYear": {
+        "2026": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2026": [
+          "20022577",
+          "20035042"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000481",
+      "name": "Rashida Tlaib",
+      "chamber": "house",
+      "fecIds": [
+        "H8MI13250"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000482",
+      "name": "Lori Trahan",
+      "chamber": "house",
+      "fecIds": [
+        "H8MA03106"
+      ],
+      "housePtrByYear": {
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2026": [
+          "20034414"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000486",
+      "name": "Ritchie Torres",
+      "chamber": "house",
+      "fecIds": [
+        "H0NY15160"
+      ],
+      "housePtrByYear": {
+        "2025": 1,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20030930"
+        ],
+        "2026": [
+          "20034224"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000487",
+      "name": "Jill N. Tokuda",
+      "chamber": "house",
+      "fecIds": [
+        "H2HI02581"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000488",
+      "name": "Shri Thanedar",
+      "chamber": "house",
+      "fecIds": [
+        "H2MI13204"
+      ],
+      "housePtrByYear": {
+        "2023": 1,
+        "2024": 2,
+        "2025": 1,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022380"
+        ],
+        "2024": [
+          "20024468",
+          "20024862"
+        ],
+        "2025": [
+          "20030869"
+        ],
+        "2026": [
+          "20033910"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000490",
+      "name": "David J. Taylor",
+      "chamber": "house",
+      "fecIds": [
+        "H4OH02248"
+      ],
+      "housePtrByYear": {
+        "2025": 11,
+        "2026": 14
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20029060",
+          "20029069",
+          "20030402",
+          "20030567",
+          "20030782",
+          "20032094",
+          "20032236",
+          "20033395",
+          "20033495",
+          "20033590",
+          "20033666"
+        ],
+        "2026": [
+          "20033845",
+          "20033916",
+          "20033918",
+          "20034036",
+          "20034138",
+          "20034207",
+          "20034280",
+          "20034489",
+          "20034650",
+          "20034780",
+          "20034897",
+          "20035146",
+          "20035289",
+          "20035392"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "T000491",
+      "name": "Derek Tran",
+      "chamber": "house",
+      "fecIds": [
+        "H4CA45170"
+      ],
+      "housePtrByYear": {
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2026": [
+          "20035183"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "U000040",
+      "name": "Lauren Underwood",
+      "chamber": "house",
+      "fecIds": [
+        "H8IL14174"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "V000081",
+      "name": "Nydia M. Velázquez",
+      "chamber": "house",
+      "fecIds": [
+        "H2NY00010"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "V000128",
+      "name": "Chris Van Hollen",
+      "chamber": "senate",
+      "fecIds": [
+        "H2MD08126",
+        "S6MD03441"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": 0,
+      "probes": {}
+    },
+    {
+      "bioguide": "V000129",
+      "name": "David G. Valadao",
+      "chamber": "house",
+      "fecIds": [
+        "H2CA20094"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "V000130",
+      "name": "Juan Vargas",
+      "chamber": "house",
+      "fecIds": [
+        "H2CA50026"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "V000131",
+      "name": "Marc A. Veasey",
+      "chamber": "house",
+      "fecIds": [
+        "H2TX33073"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "V000133",
+      "name": "Jefferson Van Drew",
+      "chamber": "house",
+      "fecIds": [
+        "H8NJ02166"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "V000134",
+      "name": "Beth Van Duyne",
+      "chamber": "house",
+      "fecIds": [
+        "H0TX24209"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "V000135",
+      "name": "Derrick Van Orden",
+      "chamber": "house",
+      "fecIds": [
+        "H0WI03175"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "V000136",
+      "name": "Gabe Vasquez",
+      "chamber": "house",
+      "fecIds": [
+        "H2NM02191"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "V000138",
+      "name": "Eugene Simon Vindman",
+      "chamber": "house",
+      "fecIds": [
+        "H4VA07234"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "V000139",
+      "name": "Matt Van Epps",
+      "chamber": "house",
+      "fecIds": [
+        "H6TN07161"
+      ],
+      "housePtrByYear": {
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2026": [
+          "20034807"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000437",
+      "name": "Roger F. Wicker",
+      "chamber": "senate",
+      "fecIds": [
+        "H4MS01078",
+        "S8MS00196"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000788",
+      "name": "Nikema Williams",
+      "chamber": "house",
+      "fecIds": [
+        "H0GA05301"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000790",
+      "name": "Raphael G. Warnock",
+      "chamber": "senate",
+      "fecIds": [
+        "S0GA00559"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000795",
+      "name": "Joe Wilson",
+      "chamber": "house",
+      "fecIds": [
+        "H2SC02059"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000798",
+      "name": "Tim Walberg",
+      "chamber": "house",
+      "fecIds": [
+        "H4MI07103"
+      ],
+      "housePtrByYear": {
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2026": [
+          "20034660"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000800",
+      "name": "Peter Welch",
+      "chamber": "senate",
+      "fecIds": [
+        "H6VT00160",
+        "H8VT00034",
+        "S2VT00235"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000804",
+      "name": "Robert J. Wittman",
+      "chamber": "house",
+      "fecIds": [
+        "H8VA01147"
+      ],
+      "housePtrByYear": {
+        "2023": 8,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022227",
+          "20022437",
+          "20022513",
+          "20022746",
+          "20023110",
+          "20023474",
+          "20023757",
+          "20023861"
+        ],
+        "2026": [
+          "20034916"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000806",
+      "name": "Daniel Webster",
+      "chamber": "house",
+      "fecIds": [
+        "H0FL08208",
+        "S4FL00256"
+      ],
+      "housePtrByYear": {
+        "2024": 1,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20025243"
+        ],
+        "2026": [
+          "20034562"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000808",
+      "name": "Frederica S. Wilson",
+      "chamber": "house",
+      "fecIds": [
+        "H0FL17068"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000809",
+      "name": "Steve Womack",
+      "chamber": "house",
+      "fecIds": [
+        "H0AR03055"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000812",
+      "name": "Ann Wagner",
+      "chamber": "house",
+      "fecIds": [
+        "H2MO02102"
+      ],
+      "housePtrByYear": {
+        "2023": 5,
+        "2024": 2,
+        "2025": 3,
+        "2026": 3
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "8219425",
+          "8219470",
+          "8219814",
+          "8219959",
+          "8220074"
+        ],
+        "2024": [
+          "8220718",
+          "8220763"
+        ],
+        "2025": [
+          "20033403",
+          "8220765",
+          "8220836"
+        ],
+        "2026": [
+          "20033718",
+          "20034462",
+          "20034915"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000814",
+      "name": "Randy K. Weber, Sr.",
+      "chamber": "house",
+      "fecIds": [
+        "H2TX14149"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000816",
+      "name": "Roger Williams",
+      "chamber": "house",
+      "fecIds": [
+        "H2TX33040",
+        "S2TX00270"
+      ],
+      "housePtrByYear": {
+        "2024": 1,
+        "2025": 1,
+        "2026": 1
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "20025151"
+        ],
+        "2025": [
+          "20027867"
+        ],
+        "2026": [
+          "20033783"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000821",
+      "name": "Bruce Westerman",
+      "chamber": "house",
+      "fecIds": [
+        "H4AR04048"
+      ],
+      "housePtrByYear": {
+        "2025": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20030146",
+          "20030332"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000822",
+      "name": "Bonnie Watson Coleman",
+      "chamber": "house",
+      "fecIds": [
+        "H4NJ12149"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000829",
+      "name": "Tony Wied",
+      "chamber": "house",
+      "fecIds": [
+        "H4WI08119"
+      ],
+      "housePtrByYear": {
+        "2024": 2,
+        "2025": 8,
+        "2026": 5
+      },
+      "housePtrDocIdsByYear": {
+        "2024": [
+          "8220698",
+          "8220714"
+        ],
+        "2025": [
+          "8220757",
+          "8220799",
+          "8220824",
+          "8220903",
+          "8221177",
+          "8221233",
+          "8221297",
+          "9115665"
+        ],
+        "2026": [
+          "8221360",
+          "9115816",
+          "9116260",
+          "9116308",
+          "9116326"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000830",
+      "name": "George Whitesides",
+      "chamber": "house",
+      "fecIds": [
+        "H4CA27111"
+      ],
+      "housePtrByYear": {
+        "2025": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2025": [
+          "20027982",
+          "20030886"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000831",
+      "name": "James R. Walkinshaw",
+      "chamber": "house",
+      "fecIds": [
+        "H6VA11066"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "W000832",
+      "name": "Aisha Wahab",
+      "chamber": "house",
+      "fecIds": [
+        "H0CA15213"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "Y000064",
+      "name": "Todd Young",
+      "chamber": "senate",
+      "fecIds": [
+        "H0IN09070",
+        "S6IN00191"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "Y000067",
+      "name": "Rudy Yakym III",
+      "chamber": "house",
+      "fecIds": [
+        "H2IN02295"
+      ],
+      "housePtrByYear": {
+        "2023": 8,
+        "2024": 11,
+        "2025": 4,
+        "2026": 2
+      },
+      "housePtrDocIdsByYear": {
+        "2023": [
+          "20022362",
+          "20022969",
+          "20023174",
+          "20023267",
+          "20023494",
+          "20023658",
+          "20023843",
+          "20024203"
+        ],
+        "2024": [
+          "20024353",
+          "20024392",
+          "20025165",
+          "20025348",
+          "20025448",
+          "20025597",
+          "20025829",
+          "20025910",
+          "20026036",
+          "20026310",
+          "20026311"
+        ],
+        "2025": [
+          "20026666",
+          "20030311",
+          "20030933",
+          "20033684"
+        ],
+        "2026": [
+          "20034298",
+          "20034984"
+        ]
+      },
+      "senatePtrCount": null,
+      "probes": {}
+    },
+    {
+      "bioguide": "Z000018",
+      "name": "Ryan K. Zinke",
+      "chamber": "house",
+      "fecIds": [
+        "H4MT01041"
+      ],
+      "housePtrByYear": {},
+      "housePtrDocIdsByYear": {},
+      "senatePtrCount": null,
+      "probes": {}
+    }
+  ],
+  "excluded": [
+    {
+      "bioguide": "A000383",
+      "reasons": [
+        "names.txt:Alan Armstrong"
+      ]
+    },
+    {
+      "bioguide": "B001288",
+      "reasons": [
+        "names.txt:Cory Booker",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "B001292",
+      "reasons": [
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "C001035",
+      "reasons": [
+        "names.txt:Susan Collins",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "C001055",
+      "reasons": [
+        "names.txt:Ed Case"
+      ]
+    },
+    {
+      "bioguide": "C001056",
+      "reasons": [
+        "names.txt:John Cornyn",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "C001096",
+      "reasons": [
+        "names.txt:Kevin Cramer"
+      ]
+    },
+    {
+      "bioguide": "C001098",
+      "reasons": [
+        "names.txt:Ted Cruz",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "C001120",
+      "reasons": [
+        "names.txt:Dan Crenshaw",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "C001130",
+      "reasons": [
+        "names.txt:Jasmine Crockett",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "E000294",
+      "reasons": [
+        "names.txt:Tom Emmer",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "F000454",
+      "reasons": [
+        "names.txt:Bill Foster",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "F000462",
+      "reasons": [
+        "names.txt:Lois Frankel",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "G000558",
+      "reasons": [
+        "names.txt:Brett Guthrie",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "G000576",
+      "reasons": [
+        "names.txt:Glenn Grothman"
+      ]
+    },
+    {
+      "bioguide": "G000583",
+      "reasons": [
+        "names.txt:Josh Gottheimer",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "G000599",
+      "reasons": [
+        "names.txt:Dan Goldman",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "H001047",
+      "reasons": [
+        "names.txt:Jim Himes",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "H001066",
+      "reasons": [
+        "names.txt:Steven Horsford",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "H001089",
+      "reasons": [
+        "names.txt:Josh Hawley",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "J000289",
+      "reasons": [
+        "names.txt:Jim Jordan",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "J000294",
+      "reasons": [
+        "names.txt:Hakeem Jeffries",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "J000298",
+      "reasons": [
+        "names.txt:Pramila Jayapal",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "J000299",
+      "reasons": [
+        "names.txt:Mike Johnson",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "J000309",
+      "reasons": [
+        "names.txt:Jonathan L. Jackson"
+      ]
+    },
+    {
+      "bioguide": "K000367",
+      "reasons": [
+        "names.txt:Amy Klobuchar",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "K000389",
+      "reasons": [
+        "names.txt:Ro Khanna",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "K000393",
+      "reasons": [
+        "names.txt:John Kennedy"
+      ]
+    },
+    {
+      "bioguide": "L000491",
+      "reasons": [
+        "names.txt:Frank Lucas",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "L000590",
+      "reasons": [
+        "names.txt:Susie Lee",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "M000355",
+      "reasons": [
+        "names.txt:Mitch McConnell",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "M000934",
+      "reasons": [
+        "names.txt:Jerry Moran"
+      ]
+    },
+    {
+      "bioguide": "M001153",
+      "reasons": [
+        "names.txt:Lisa Murkowski",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "M001157",
+      "reasons": [
+        "names.txt:Michael McCaul",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "M001205",
+      "reasons": [
+        "names.txt:Carol D. Miller"
+      ]
+    },
+    {
+      "bioguide": "M001213",
+      "reasons": [
+        "names.txt:Blake Moore",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "M001217",
+      "reasons": [
+        "names.txt:Jared Moskowitz",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "M001243",
+      "reasons": [
+        "names.txt:David McCormick"
+      ]
+    },
+    {
+      "bioguide": "O000172",
+      "reasons": [
+        "names.txt:Alexandria Ocasio-Cortez",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "O000173",
+      "reasons": [
+        "names.txt:Ilhan Omar",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "P000034",
+      "reasons": [
+        "names.txt:Frank Pallone",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "P000197",
+      "reasons": [
+        "names.txt:Nancy Pelosi",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "P000603",
+      "reasons": [
+        "names.txt:Rand Paul",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "P000608",
+      "reasons": [
+        "names.txt:Scott Peters",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "R000395",
+      "reasons": [
+        "names.txt:Harold Rogers"
+      ]
+    },
+    {
+      "bioguide": "R000575",
+      "reasons": [
+        "names.txt:Mike Rogers",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "R000610",
+      "reasons": [
+        "names.txt:Guy Reschenthaler"
+      ]
+    },
+    {
+      "bioguide": "S000033",
+      "reasons": [
+        "names.txt:Bernie Sanders",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "S000148",
+      "reasons": [
+        "names.txt:Chuck Schumer",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "S000344",
+      "reasons": [
+        "names.txt:Brad Sherman"
+      ]
+    },
+    {
+      "bioguide": "S001150",
+      "reasons": [
+        "names.txt:Adam Schiff",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "S001176",
+      "reasons": [
+        "names.txt:Steve Scalise",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "S001195",
+      "reasons": [
+        "names.txt:Jason Smith",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "S001196",
+      "reasons": [
+        "names.txt:Elise Stefanik",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "T000250",
+      "reasons": [
+        "names.txt:John Thune",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "T000278",
+      "reasons": [
+        "names.txt:Tommy Tuberville",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "T000463",
+      "reasons": [
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "T000469",
+      "reasons": [
+        "names.txt:Paul Tonko"
+      ]
+    },
+    {
+      "bioguide": "W000187",
+      "reasons": [
+        "names.txt:Maxine Waters",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "W000779",
+      "reasons": [
+        "names.txt:Ron Wyden",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "W000797",
+      "reasons": [
+        "names.txt:Debbie Wasserman Schultz",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "W000802",
+      "reasons": [
+        "names.txt:Sheldon Whitehouse",
+        "production-db"
+      ]
+    },
+    {
+      "bioguide": "W000805",
+      "reasons": [
+        "names.txt:Mark R. Warner"
+      ]
+    },
+    {
+      "bioguide": "W000817",
+      "reasons": [
+        "names.txt:Elizabeth Warren",
+        "production-db"
+      ]
+    }
+  ],
+  "unresolvedNames": [
+    "Don Beyer",
+    "Katie Porter",
+    "Kevin McCarthy",
+    "Lindsey Graham",
+    "Marco Rubio",
+    "Marjorie Taylor Greene",
+    "Matt Gaetz",
+    "Mike Turner",
+    "Ron DeSantis"
+  ]
+}

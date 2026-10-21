@@ -45,6 +45,10 @@ export interface MemberRow {
   chamber: 'house' | 'senate';
 }
 
+export interface SlugMemberRow extends MemberRow {
+  bioguideId: string;
+}
+
 export const SCOPE_USAGE =
   'exactly one of --member <slug|name>, --bioguide <id>, or --all is required ' +
   '(no selector is not allowed — it never means all)';
@@ -100,8 +104,27 @@ export function parseScopeArgs(argv: string[]): RawScope {
 interface ResolveDeps {
   index?: Map<string, LegislatorIdentity>;
   aliasMap?: Map<string, Set<string>>;
+  /** member_id slug → canonical members-table row. Injectable for tests. */
+  slugLookup?: (slug: string) => SlugMemberRow | undefined | Promise<SlugMemberRow | undefined>;
   /** bioguide → members-table row (undefined = not in DB). Injectable for tests. */
   memberLookup?: (bioguide: string) => MemberRow | undefined | Promise<MemberRow | undefined>;
+}
+
+/** Default DB slug lookup: member_id → canonical identity from the members table. */
+async function dbSlugLookup(slug: string): Promise<SlugMemberRow | undefined> {
+  const conn = await getDb();
+  const r = await conn.run(
+    `SELECT bioguide_id, member_id, chamber FROM members WHERE member_id = ? LIMIT 1`,
+    [slug],
+  );
+  const rows = (await r.getRowObjects()) as any[];
+  if (rows.length === 0) return undefined;
+  const chamber = String(rows[0].chamber ?? '').toLowerCase();
+  return {
+    bioguideId: String(rows[0].bioguide_id),
+    memberId: String(rows[0].member_id),
+    chamber: chamber === 'senate' ? 'senate' : 'house',
+  };
 }
 
 /** Default DB member lookup: bioguide → { memberId, chamber } from the members table. */
@@ -131,6 +154,19 @@ export async function resolveScope(
   deps: ResolveDeps = {},
 ): Promise<IngestScope> {
   if (raw.kind === 'all') return { kind: 'all' };
+
+  if (raw.by === 'member') {
+    const slugRow = await (deps.slugLookup ?? dbSlugLookup)(raw.selector);
+    if (slugRow) {
+      return {
+        kind: 'member',
+        slug: slugRow.memberId,
+        bioguideId: slugRow.bioguideId,
+        memberId: slugRow.memberId,
+        chamber: slugRow.chamber,
+      };
+    }
+  }
 
   const index = deps.index ?? getLegislatorIndex();
   const aliasMap = deps.aliasMap ?? getAllAliases();

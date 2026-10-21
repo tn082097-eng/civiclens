@@ -1,0 +1,31 @@
+{
+  "candidate": "d2992fda5c7e412e86b3cd47ef0248fd039e8d46",
+  "worktree": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-s2-john-mannion",
+  "member": "John W. Mannion",
+  "bioguide": "M001231",
+  "dbInitialSha256": "a766c8917a0e6b42ddc488758eb0b1a66abb37d24c873a74b4cc9d6fd7e4a38b",
+  "cacheInitiallyAbsent": true,
+  "sources": [
+    {
+      "path": "data/caches/legislators-cache/legislators-current.yaml",
+      "sha256": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2"
+    },
+    {
+      "path": "data/caches/pfd-cache/index/2023FD.xml",
+      "sha256": "60e5dcf86ec483f428a371abbe7894f72124fc03d3e5b6351507b40ec8f8c10d"
+    },
+    {
+      "path": "data/caches/pfd-cache/index/2024FD.xml",
+      "sha256": "99576a8c58e100fc35e14af597b184f0421650cf6de1e11379a784189d5c5f9e"
+    },
+    {
+      "path": "data/caches/pfd-cache/index/2025FD.xml",
+      "sha256": "0b0b0cd2b288938a00b38bcee4f1c5f7686139a32920e2e9c38a7291844c0814"
+    },
+    {
+      "path": "data/caches/pfd-cache/index/2026FD.xml",
+      "sha256": "3d010744d0db9b91a1d8f8132c43c3c2567c5a5b16c100648f5f99e9ff3217d9"
+    }
+  ],
+  "vault": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-s2-john-mannion/trial-vault"
+}

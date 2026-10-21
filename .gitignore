@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+__pycache__/
 
 # Secrets / auth state — never commit
 .baileys_auth/
@@ -38,6 +39,9 @@ artifacts/
 !public/
 !public/**/*.html
 
+# Frozen raw official listing fixtures are source evidence.
+!fixtures/votes/house-acquisition/*.html
+
 # Local IPC/voice experiment (not part of CivicLens)
 .ipc/
 .grok/
@@ -54,3 +58,6 @@ graphify-out/
 
 # Local Claude Code project config/skills — personal tooling, not part of CivicLens
 .claude/
+
+# Pinned collector runtime (venv/wheelhouse; rebuilt from requirements.lock)
+tools/congress-collector/.runtime/

@@ -1,0 +1,13 @@
+{
+  "normalizationRegex": "(?<= \u00b7 generated )\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}Z(?=</div>)",
+  "normalization": "remove only generated timestamp",
+  "raw": [
+    "efe07778a7b9dbdaf0b008b422aaffccba5c382e96aa71bcbd7b87ebefbca41f",
+    "efe07778a7b9dbdaf0b008b422aaffccba5c382e96aa71bcbd7b87ebefbca41f"
+  ],
+  "normalized": [
+    "8d783d3f78be3b6e18faa16af8189bb7713e2c9c2590094631f21d7c88a54ea7",
+    "8d783d3f78be3b6e18faa16af8189bb7713e2c9c2590094631f21d7c88a54ea7"
+  ],
+  "equal": true
+}

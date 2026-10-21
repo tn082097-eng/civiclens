@@ -1,0 +1,16 @@
+{
+  "cacheSource": "/home/captainanime/Developer/civiclens-track-b-trials/final-s2-john-mannion/data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json",
+  "sha256": "faccf341b7474956f57fb071455b3c23459b31a0047fb1223004defcc308cab9",
+  "copiedTo": [
+    "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-control-reference/data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json",
+    "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s1-tina-smith/data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json",
+    "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion/data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json",
+    "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields/data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json",
+    "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s4-chris-van-hollen/data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json",
+    "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham/data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json",
+    "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s6-eric-burlison/data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json"
+  ],
+  "controlThemeArtifact": "ABSENT",
+  "decision": "does-not-invalidate",
+  "reason": "Frozen real control-only FEC cache seeded equally before any control render. Does not change selected-member inputs, code, acceptance rules, or source-selection frame. Fresh reference will be rendered at candidate."
+}

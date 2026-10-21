@@ -1,0 +1,71 @@
+{
+  "stratum": 4,
+  "member": "Chris Van Hollen",
+  "bioguide": "V000128",
+  "chamber": "senate",
+  "stage": "bills (--load-bills --bioguide V000128 --api-pass)",
+  "outcome": "failed",
+  "classification": "external source degradation (GovTrack /api/v2 intermittent), not an implementation defect",
+  "attempts": [
+    {
+      "label": "bills",
+      "exit": 1,
+      "note": "Pass 1 regex 596 filled/1104 unparseable/1700 scanned; Pass 2 GovTrack API -> Fatal: The operation was aborted due to timeout"
+    },
+    {
+      "label": "bills-rerun-1",
+      "exit": 1,
+      "note": "single authorized manual rerun, unchanged member/inputs/acceptance; Pass 1 0 filled/1104 unparseable/1104 scanned; Pass 2 -> Fatal: The operation was aborted due to timeout"
+    }
+  ],
+  "rerunPolicy": "exactly one manual rerun used; no ad hoc retry loop; no acceptance rule, member, input, or timeout changed",
+  "dbIntegrity": {
+    "dbShaBeforeAndAfterBothAttempts": "80568fce5c6125266c26ef95b012437009783605c0f156fad1608464372d488d",
+    "note": "main DB file hash unchanged across both failed attempts; loader failed closed"
+  },
+  "stagesCompletedBeforeFailure": {
+    "baseline-before": "ok",
+    "onboarding": "ok (APPROVED, task-1789570440288-f9d00580)",
+    "sponsored": "ok 632 fetched/384 upserted/380 policyArea/4 no-policy/248 skipped",
+    "cosponsored": "ok 6919 fetched/6531 inserted/388 dup-skipped"
+  },
+  "stageNotReached": [
+    "senate-ptr",
+    "fec-ie",
+    "patterns",
+    "theme-gaps",
+    "baseline-after",
+    "corpus",
+    "typecheck",
+    "tests",
+    "renders",
+    "checkpoint",
+    "db-audit-complete",
+    "control-after-serial"
+  ],
+  "sharedExternalCause": {
+    "endpoint": "https://www.govtrack.us/api/v2/",
+    "observedLatencySamples": [
+      {
+        "when": "after s3 rerun failure",
+        "result": "no response, curl code 000, timed out at 25s"
+      },
+      {
+        "when": "after s4 first failure",
+        "result": "HTTP 200 but 28.331s for limit=1"
+      },
+      {
+        "when": "after s4 rerun failure",
+        "result": "HTTP 200 in 0.220s / 0.216s / 0.213s"
+      }
+    ],
+    "interpretation": "GovTrack /api/v2 is intermittently degraded, swinging between ~0.21s, ~28s, and unreachable within minutes. govtrack.us root stayed HTTP 200 ~0.27s throughout and api.congress.gov stayed HTTP 200, so this is upstream API instability, not local network loss and not a candidate defect.",
+    "whyBothStrataFailed": "Both s3 and s4 failed at the same --load-bills Pass 2 GovTrack resolution step for the same upstream reason; the two failures are one external condition, not two independent defects."
+  },
+  "notASourceBoundLimitation": "A transient external failure is not a source-backed limitation and cannot close this stratum. Stratum 4 is NOT a pass.",
+  "artifactsPreserved": [
+    "s4/bills.json",
+    "s4/bills-rerun-1.json"
+  ],
+  "stopRule": "This is the second stratum failure. Per the frozen defect rule Track B execution stops here. No repair attempted; no timeout, retry policy, acceptance rule, or member selection changed. Returned to conductor for decision."
+}

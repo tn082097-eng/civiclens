@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-control-reference",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": "?? node_modules\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "render/build.ts",
+    "--member",
+    "josh-gottheimer"
+  ],
+  "started": "2026-09-16T08:55:14Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-control-reference/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-control-reference/data/caches",
+  "dbBefore": "a766c8917a0e6b42ddc488758eb0b1a66abb37d24c873a74b4cc9d6fd7e4a38b",
+  "walBefore": null,
+  "exit": 0,
+  "output": "  \u2713 site/members/josh-gottheimer.html  (15d 500t 1750p 34peers)\n",
+  "dbAfter": "a766c8917a0e6b42ddc488758eb0b1a66abb37d24c873a74b4cc9d6fd7e4a38b",
+  "finished": "2026-09-16T08:55:39Z",
+  "walAfter": null
+}

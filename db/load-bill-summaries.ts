@@ -13,13 +13,19 @@
  * Usage:
  *   npx tsx db/load-bill-summaries.ts
  *   npx tsx db/load-bill-summaries.ts --limit 100      # cap fetches per run
- *   npx tsx db/load-bill-summaries.ts --backfill-only  # skip the API calls
+ *   npx tsx db/load-bill-summaries.ts --backfill-only  # skip Congress.gov summaries
+ *   --official-pass (alias --api-pass) resolves legacy rolls from official Clerk/LIS via pinned collector
+ *   --api-limit N caps distinct official rolls
  *   npx tsx agents/pipeline.ts --load-bills [--limit N]
  */
 
 import type { DuckDBConnection } from '@duckdb/node-api';
 import { applySchema, getDb } from './init.js';
 import type { IngestScope } from '../lib/ingest-scope.js';
+import { parseRollKey, isIsoDate, houseSourceUrl, senateSourceUrl } from '../lib/vote-source.js';
+import { OfficialVoteFailure, type LegacyRollRequest } from '../lib/official-vote-types.js';
+import { OfficialVoteResolutionSchema } from '../lib/schemas.js';
+import { resolveOfficialRolls } from '../skills/researcher/official-vote-runtime.js';
 
 const CONGRESS_KEY = process.env.CONGRESS_API_KEY ?? '';
 const UA = 'CivicLens/1.0 (research)';
@@ -36,18 +42,6 @@ function scopePredicate(scope: IngestScope, alias = ''): { sql: string; params: 
 const BILL_TYPE_MAP: Record<string, string> = {
   HR: 'hr', HRES: 'hres', HJRES: 'hjres', HCONRES: 'hconres',
   S: 's',   SRES: 'sres', SJRES: 'sjres', SCONRES: 'sconres',
-};
-
-// GovTrack bill_type strings → our canonical type codes.
-const GOVTRACK_TYPE_MAP: Record<string, string> = {
-  house_bill:                 'hr',
-  house_resolution:           'hres',
-  house_joint_resolution:     'hjres',
-  house_concurrent_resolution:'hconres',
-  senate_bill:                's',
-  senate_resolution:          'sres',
-  senate_joint_resolution:    'sjres',
-  senate_concurrent_resolution:'sconres',
 };
 
 // Match references like "H R 8752", "H.R. 8752", "S. 4638", "H Res 1316",
@@ -72,112 +66,131 @@ function extractCongress(sourceUrl: string | null | undefined): number | null {
   return m ? parseInt(m[1], 10) : null;
 }
 
-// Extract vote number + chamber from GovTrack URL so we can call the API.
-// "/congress/votes/119-2025/s104" → { congress: 119, session: '2025', chamber: 'senate', number: 104 }
-function parseGovtrackUrl(url: string | null | undefined): { congress: number; session: string; chamber: string; number: number } | null {
-  if (!url) return null;
-  const m = url.match(/\/votes\/(\d+)-(\d+)\/([hs])(\d+)$/);
-  if (!m) return null;
-  return {
-    congress: parseInt(m[1], 10),
-    session:  m[2],
-    chamber:  m[3] === 's' ? 'senate' : 'house',
-    number:   parseInt(m[4], 10),
-  };
-}
-
-// Call GovTrack /api/v2/vote to get related_bill for a single vote.
-// Returns a canonical bill_id string like "119-s-5" or null.
-async function fetchGovtrackBillId(sourceUrl: string): Promise<string | null> {
-  const parsed = parseGovtrackUrl(sourceUrl);
-  if (!parsed) return null;
-  const apiUrl = `https://www.govtrack.us/api/v2/vote?congress=${parsed.congress}&session=${parsed.session}&chamber=${parsed.chamber}&number=${parsed.number}&format=json`;
-  try {
-    const res = await fetch(apiUrl, {
-      headers: { 'User-Agent': UA },
-      signal: AbortSignal.timeout(12_000),
-    });
-    if (!res.ok) return null;
-    const data: any = await res.json();
-    const vote = data?.objects?.[0];
-    if (!vote?.related_bill) return null;
-    const bt = GOVTRACK_TYPE_MAP[String(vote.related_bill.bill_type ?? '')];
-    if (!bt) return null;
-    return `${vote.related_bill.congress}-${bt}-${vote.related_bill.number}`;
-  } catch {
-    return null;
-  }
-}
-
 // ─── Backfill votes.bill_id ─────────────────────────────────────────────────
 
-// Pass 1: regex over question text — fast, no network.
-// Pass 2: GovTrack API for votes that still have no bill_id — covers votes
-//         whose question text is just a bill title with no "H.R. N" reference.
-export async function backfillBillIds(
-  scope: IngestScope,
-  opts: { apiPass?: boolean; apiLimit?: number; conn?: DuckDBConnection } = {},
-): Promise<{ filled: number; skipped: number; apiResolved: number; total: number }> {
+/** Regex is historical-only. Remaining legacy rolls use official Clerk/LIS
+ * resolution through the pinned collector; every resolution precedes any write. */
+export async function backfillBillIds(scope: IngestScope, opts: {
+  officialPass?: boolean;
+  apiPass?: boolean;
+  apiLimit?: number;
+  conn?: DuckDBConnection;
+  resolveRolls?: typeof resolveOfficialRolls;
+} = {}): Promise<{
+  filled: number;
+  skipped: number;
+  officialResolved: number;
+  apiResolved: number;
+  nonBill: number;
+  unresolved: number;
+  notAttempted: number;
+  total: number;
+}> {
   const conn = opts.conn ?? await getDb();
   const pred = scopePredicate(scope);
-  const r = await conn.run(
-    `SELECT vote_id, member_id, question, source_url FROM votes WHERE bill_id IS NULL${pred.sql}`,
-    pred.params,
-  );
-  const rows = await r.getRowObjects() as any[];
-
-  let filled = 0, skipped = 0, apiResolved = 0;
-
-  // Pass 1: regex
-  const stillNull: any[] = [];
+  const rows = await (await conn.run(`SELECT vote_id,member_id,question,source_url,CAST(date AS VARCHAR) AS date
+    FROM votes WHERE bill_id IS NULL${pred.sql} ORDER BY vote_id,member_id`, pred.params)).getRowObjects() as any[];
+  const updates: Array<{
+    member: string;
+    key: string;
+    bill: string;
+  }> = [];
+  const remaining: any[] = [];
+  let filled = 0, officialResolved = 0, nonBill = 0, unresolved = 0, notAttempted = 0;
   for (const row of rows) {
+    // Official rows may mention bills in text but classification owns their linkage.
+    if (!String(row.source_url ?? '').startsWith('https://www.govtrack.us/'))
+      continue;
     const ref = extractBillRef(String(row.question ?? ''));
     const congress = extractCongress(String(row.source_url ?? ''));
-    if (!ref || !congress) { stillNull.push(row); continue; }
-    const billId = `${congress}-${ref.type}-${ref.number}`;
-    await conn.run(
-      `UPDATE votes SET bill_id = ? WHERE member_id = ? AND vote_id = ?`,
-      [billId, String(row.member_id), String(row.vote_id)],
-    );
-    filled++;
-  }
-
-  if (!opts.apiPass) {
-    skipped = stillNull.length;
-    return { filled, skipped, apiResolved, total: rows.length };
-  }
-
-  // Pass 2: GovTrack API for remaining nulls.
-  // Deduplicate by source_url — many members share the same vote URL,
-  // so we resolve each unique URL once and apply to all matching rows.
-  const urlToId = new Map<string, string | null>();
-  const limit = opts.apiLimit ?? Infinity;
-  let apiCalls = 0;
-
-  for (const row of stillNull) {
-    const url = String(row.source_url ?? '');
-    if (!url) { skipped++; continue; }
-
-    if (!urlToId.has(url)) {
-      if (apiCalls >= limit) { skipped++; continue; }
-      const billId = await fetchGovtrackBillId(url);
-      urlToId.set(url, billId);
-      apiCalls++;
-      if (apiCalls % 50 === 0) process.stdout.write(`  GovTrack API: ${apiCalls} calls, ${apiResolved} resolved…\n`);
-      await new Promise(r => setTimeout(r, 120)); // ~8 req/s
+    if (ref && congress) {
+      updates.push({ member: String(row.member_id), key: String(row.vote_id), bill: `${congress}-${ref.type}-${ref.number}` });
+      filled++;
     }
-
-    const billId = urlToId.get(url) ?? null;
-    if (!billId) { skipped++; continue; }
-
-    await conn.run(
-      `UPDATE votes SET bill_id = ? WHERE member_id = ? AND vote_id = ?`,
-      [billId, String(row.member_id), String(row.vote_id)],
-    );
-    apiResolved++;
+    else
+      remaining.push(row);
   }
-
-  return { filled, skipped, apiResolved, total: rows.length };
+  if (opts.officialPass || opts.apiPass) {
+    if (opts.apiLimit !== undefined && (!Number.isSafeInteger(opts.apiLimit) || opts.apiLimit < 0))
+      throw new OfficialVoteFailure('runtime', 'invalid_limit', 'apiLimit must be a nonnegative safe integer');
+    const failures: string[] = [];
+    const grouped = new Map<string, any[]>();
+    for (const row of remaining) {
+      const key = String(row.vote_id);
+      grouped.set(key, [...(grouped.get(key) ?? []), row]);
+    }
+    const requests: LegacyRollRequest[] = [];
+    for (const [key, group] of grouped) {
+      try {
+        const id = parseRollKey(key);
+        if (new Set(group.map(r => r.date)).size !== 1 || !isIsoDate(group[0].date) || Number(group[0].date.slice(0, 4)) !== id.year)
+          throw Error('missing, conflicting or inconsistent stored dates');
+        requests.push({ key, date: group[0].date });
+      }
+      catch (e: any) {
+        failures.push(`${key}: ${e.message}`);
+      }
+    }
+    if (failures.length)
+      throw new OfficialVoteFailure('identity', 'legacy_roll_resolution_failed', 'invalid stored roll identities', failures);
+    const attempted = requests.slice(0, opts.apiLimit ?? requests.length);
+    notAttempted = requests.length - attempted.length;
+    if (attempted.length) {
+      const results = await (opts.resolveRolls ?? resolveOfficialRolls)(attempted, { source: { mode: 'live' } });
+      const seen = new Set<string>();
+      const expected = new Map(attempted.map(r => [r.key, r]));
+      let stage: import('../lib/official-vote-types.js').OfficialVoteStage = 'normalization';
+      for (const result of results) {
+        const request = expected.get(result.key);
+        if (!request || seen.has(result.key)) {
+          failures.push(`${result.key}: unexpected or duplicate resolver result`);
+          continue;
+        }
+        seen.add(result.key);
+        if (result.ok === false) {
+          stage = result.failure.stage;
+          failures.push(`${result.key}: ${result.failure.stage}/${result.failure.code}: ${result.failure.message}`);
+          continue;
+        }
+        const id = parseRollKey(result.key);
+        const url = id.chamber === 'house' ? houseSourceUrl(id.year, id.roll) : senateSourceUrl(id.congress, id.session, id.roll);
+        const parsed = OfficialVoteResolutionSchema.safeParse(result.resolution);
+        if (result.date !== request.date || result.sourceUrl !== url || !parsed.success || result.resolution.billId && result.resolution.billId.split('-')[0] !== String(id.congress)) {
+          failures.push(`${result.key}: inconsistent official resolution identity or metadata`);
+          continue;
+        }
+        const group = grouped.get(result.key)!;
+        if (result.resolution.outcome === 'resolved_bill') {
+          for (const row of group)
+            updates.push({ member: String(row.member_id), key: result.key, bill: result.resolution.billId! });
+          officialResolved += group.length;
+        }
+        else if (result.resolution.outcome === 'authoritative_non_bill')
+          nonBill += group.length;
+        else
+          unresolved += group.length;
+      }
+      for (const request of attempted)
+        if (!seen.has(request.key))
+          failures.push(`${request.key}: missing resolver result`);
+      if (failures.length)
+        throw new OfficialVoteFailure(stage, 'legacy_roll_resolution_failed', 'official roll resolution failed', failures);
+    }
+  }
+  // Validate the whole resolution batch before changing even regex candidates.
+  if (updates.length) {
+    await conn.run('BEGIN TRANSACTION');
+    try {
+      for (const u of updates)
+        await conn.run('UPDATE votes SET bill_id=? WHERE member_id=? AND vote_id=? AND bill_id IS NULL', [u.bill, u.member, u.key]);
+      await conn.run('COMMIT');
+    }
+    catch (error) {
+      await conn.run('ROLLBACK');
+      throw error;
+    }
+  }
+  return { filled, skipped: rows.length - filled - officialResolved, officialResolved, apiResolved: officialResolved, nonBill, unresolved, notAttempted, total: rows.length };
 }
 
 // ─── Congress.gov fetch ─────────────────────────────────────────────────────
@@ -190,15 +203,14 @@ async function fetchBillTitleFallback(billId: string): Promise<string | null> {
   if (!m) return null;
   const [, congress, type, number] = m;
   const url = `https://api.congress.gov/v3/bill/${congress}/${type}/${number}?format=json&api_key=${CONGRESS_KEY}`;
-  try {
-    const res = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' }, signal: AbortSignal.timeout(15_000) });
-    if (!res.ok) return null;
-    const data: any = await res.json();
-    return data?.bill?.title ?? null;
-  } catch { return null; }
+  const res = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' }, signal: AbortSignal.timeout(15_000) });
+  if (!res.ok) throw new Error(`Congress bill detail HTTP ${res.status} for ${billId}`);
+  const data: any = await res.json();
+  if (typeof data?.bill?.title !== 'string' || !data.bill.title.trim()) throw new Error(`missing authoritative bill title for ${billId}`);
+  return data.bill.title;
 }
 
-async function fetchSummary(billId: string): Promise<{
+export async function fetchSummary(billId: string): Promise<{
   title: string | null;
   summaryHtml: string;
   summaryText: string;
@@ -213,17 +225,18 @@ async function fetchSummary(billId: string): Promise<{
   try {
     res = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' }, signal: AbortSignal.timeout(15_000) });
   } catch (e: any) {
-    return null;
+    throw new Error(`Congress summary fetch failed for ${billId}: ${e.message}`);
   }
   if (!res.ok) {
     if (res.status === 404) {
       const fallbackTitle = await fetchBillTitleFallback(billId);
       return { title: fallbackTitle, summaryHtml: '', summaryText: '', versionCode: '', actionDate: null };
     }
-    return null;
+    throw new Error(`Congress summaries HTTP ${res.status} for ${billId}`);
   }
   const data = await res.json();
-  const summaries: any[] = data?.summaries ?? [];
+  if (!Array.isArray(data?.summaries)) throw new Error(`malformed summaries for ${billId}`);
+  const summaries: any[] = data.summaries;
   if (summaries.length === 0) {
     // No CRS summary published yet — fall back to the bill endpoint title.
     const fallbackTitle = await fetchBillTitleFallback(billId);
@@ -340,20 +353,15 @@ async function loadSummaries(
 export async function main(scope: IngestScope, opts: {
   limit?: number;
   backfillOnly?: boolean;
+  officialPass?: boolean;
   apiPass?: boolean;
   apiLimit?: number;
 } = {}): Promise<void> {
   await applySchema();
 
-  console.log('Pass 1: backfilling votes.bill_id from question text (regex)…');
-  const bf = await backfillBillIds(scope, { apiPass: false });
-  console.log(`  ${bf.filled} filled by regex, ${bf.skipped} unparseable, ${bf.total} total NULL rows scanned.\n`);
-
-  if (opts.apiPass) {
-    console.log(`Pass 2: GovTrack API resolution for remaining NULL bill_ids${opts.apiLimit ? ` (limit ${opts.apiLimit} API calls)` : ''}…`);
-    const bf2 = await backfillBillIds(scope, { apiPass: true, apiLimit: opts.apiLimit });
-    console.log(`  ${bf2.filled} filled by regex, ${bf2.apiResolved} resolved via GovTrack API, ${bf2.skipped} still unresolvable.\n`);
-  }
+  console.log('Backfilling legacy votes.bill_id: regex and official Clerk/LIS roll resolution (pinned collector)…');
+  const bf = await backfillBillIds(scope, {officialPass: opts.officialPass || opts.apiPass, apiLimit: opts.apiLimit});
+  console.log(`  ${bf.filled} filled by regex, ${bf.officialResolved} resolved by official collector, ${bf.nonBill} non-bill, ${bf.unresolved} unresolved, ${bf.notAttempted} rolls not attempted.\n`);
 
   if (opts.backfillOnly) return;
   if (!CONGRESS_KEY) {
@@ -383,9 +391,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const limit       = limitIdx    >= 0 ? parseInt(args[limitIdx    + 1] ?? '', 10) : undefined;
     const apiLimit    = apiLimitIdx >= 0 ? parseInt(args[apiLimitIdx + 1] ?? '', 10) : undefined;
     const backfillOnly = args.includes('--backfill-only');
-    const apiPass      = args.includes('--api-pass');
+    const officialPass = args.includes('--official-pass') || args.includes('--api-pass');
     const scope = await resolveScope(parseScopeArgs(args));
-    await main(scope, { limit, backfillOnly, apiPass, apiLimit });
+    await main(scope, { limit, backfillOnly, officialPass, apiLimit });
     process.exit(0);
   })().catch(e => { console.error(e); process.exit(1); });
 }

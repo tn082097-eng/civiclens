@@ -1,0 +1,47 @@
+TAP version 13
+# Subtest: bill resolution distinguishes http-error
+ok 1 - bill resolution distinguishes http-error
+  ---
+  duration_ms: 111.604673
+  type: 'test'
+  ...
+# Subtest: bill resolution distinguishes malformed
+ok 2 - bill resolution distinguishes malformed
+  ---
+  duration_ms: 66.405197
+  type: 'test'
+  ...
+# Subtest: bill resolution distinguishes verified-empty
+ok 3 - bill resolution distinguishes verified-empty
+  ---
+  duration_ms: 188.322549
+  type: 'test'
+  ...
+# Subtest: summary fallback HTTP failure cannot become an empty summary
+ok 4 - summary fallback HTTP failure cannot become an empty summary
+  ---
+  duration_ms: 0.729271
+  type: 'test'
+  ...
+# Subtest: sponsored pagination must reach the advertised total
+ok 5 - sponsored pagination must reach the advertised total
+  ---
+  duration_ms: 0.515273
+  type: 'test'
+  ...
+# Loading sponsored legislation for 1 member(s)…
+# Subtest: a sponsored fetch failure propagates through the loader
+ok 6 - a sponsored fetch failure propagates through the loader
+  ---
+  duration_ms: 65.421599
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 604.337825

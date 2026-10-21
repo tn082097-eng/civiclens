@@ -21,6 +21,8 @@ export interface LegislatorIdentity {
   chamber: 'House' | 'Senate';
   state: string;
   district: string | null;
+  /** House district and exact term bounds; empty for senators. */
+  houseTerms: Array<{ stateDistrict: string; start: string; end: string }>;
   termStart: string; // YYYY-MM-DD
   termEnd: string;   // YYYY-MM-DD
 }
@@ -47,6 +49,15 @@ export function buildIndex(paths: string[]): Map<string, LegislatorIdentity> {
       const firstTerm = terms[0] ?? {};
       const chamber: 'House' | 'Senate' =
         String(lastTerm.type).toLowerCase().startsWith('sen') ? 'Senate' : 'House';
+      const houseTerms = terms
+        .filter(term => String(term?.type).toLowerCase().startsWith('rep'))
+        .filter(term => term?.state && term?.district !== undefined && term?.district !== null)
+        .map(term => ({
+          stateDistrict: `${String(term.state).toUpperCase()}${String(term.district).padStart(2, '0')}`,
+          start: String(term.start ?? ''),
+          end: String(term.end ?? ''),
+        }))
+        .sort((a, b) => a.start.localeCompare(b.start) || a.stateDistrict.localeCompare(b.stateDistrict));
       map.set(bio, {
         bioguide: bio,
         officialFull: name.official_full ?? `${name.first ?? ''} ${name.last ?? ''}`.trim(),
@@ -58,6 +69,7 @@ export function buildIndex(paths: string[]): Map<string, LegislatorIdentity> {
         state: lastTerm.state ?? '',
         district: lastTerm.district === undefined || lastTerm.district === null
           ? null : String(lastTerm.district),
+        houseTerms,
         termStart: firstTerm.start ?? '',
         termEnd: lastTerm.end ?? '',
       });

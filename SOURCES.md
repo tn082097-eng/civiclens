@@ -555,3 +555,73 @@ TECHNOLOGY SOLUTIONS. Auto-matching is a candidate generator only — any
 shipped edge needs a hand-curated `recipient_ticker` confirm table (the
 sic_theme philosophy). Only member-overlap pairs need curation, so the
 curated surface stays small.
+
+## Official House listing and XML — acquisition adapter freeze (2026-10-07)
+
+Frozen primary-source samples and SHA256 receipts: `fixtures/votes/house-acquisition/manifest.json`. The House inventory was captured October 4 EDT (October 5 UTC), covering the fixed inclusive September 26, 2022–September 26, 2026 window. All 249 listing pages were saved; 2,466 published rows reconcile, of which 2,012 are in window. This is published-index completeness at capture time, not complete detail acquisition or historical immutability.
+
+Current listing endpoint: `https://clerk.house.gov/Votes/MemberVotes?CongressNum=119&Session=1st&Page=37`; detail XML: `https://clerk.house.gov/evs/2025/roll001.xml`. Saved samples include the penultimate/final listing pages, 2023 Speaker-election blank statuses, and 2025 roll 1 QUORUM XML. Duplicate top/bottom counters must agree; malformed top pagination actions must not be repaired into evidence, and valid numbered continuation can exist without a Next arrow.
+
+This package validates raw listing correspondence and XML roll metadata and retains every response. It does not normalize voters, infer bill/non-bill classification, implement Senate acquisition, install the pinned collector, integrate loaders or certify the pipeline. The existing ADAPT collector design remains downstream; metadata validation here is an acquisition gate only.
+
+---
+
+## Shared official-vote contract and Senate sample (2026-10-08)
+
+Contract: `docs/official-vote-source-contract-2026-10-08.md` defines canonical identity (§1), coverage window (§2), position normalization (§3), roll resolution / bill classification (§4), the TypeScript API (§5 lib/vote-source.ts, §7 skills/researcher/official-votes.ts) and acquisition-manifest wire format (§6). All agents receive the spec; wire fields are the single source of truth.
+
+`fixtures/votes/manifest.json` (version 1) is the package provenance index, listing official frozen samples with SHA256, HTTP status, bytes, captured date and contract role. The Senate sample `fixtures/votes/official-samples/senate-119-1-roll00001.xml` (URL: `https://www.senate.gov/legislative/LIS/roll_call_votes/vote1191/vote_119_1_00001.xml`, SHA256 `9d71d78a54c83522babd743209ca4a1a27baa2df122d6830c50ec2aa512ea17e`, captured 2026-09-26, 28,670 bytes) is a Senate document/bill classification and identity sample only — it tests classification of S. 5 cloture as `resolved_bill s 5` and verifies date/congress identity against real Senate XML. It is not used to test position normalization. No frozen official House speaker-election, Senate nomination, or treaty-document XML exists in this package; tests for those record types are SYNTHETIC (labeled in test comments). Evidence logs and test artifacts are in `artifacts/official-votes-contract-2026-10-08/`. Senate acquisition, live HTTP, identity mapping and consumer integration remain downstream.
+
+---
+
+## Official vote runtime — GovTrack replacement samples and pins (2026-10-16)
+
+Frozen before any build against them. The provenance index is
+`fixtures/votes/manifest.json` (version 2). Receipts are in the ignored run
+directory `artifacts/govtrack-replacement-2026-10-16-0907/source-packet/receipts.json`.
+Every request below returned HTTP 200 with no redirect and a complete body.
+
+| Sample | URL | Bytes | SHA256 |
+|---|---|---|---|
+| House 2025 roll 2, Election of the Speaker | `https://clerk.house.gov/evs/2025/roll002.xml` | 96,942 | `a452d484b1a1219dd61061fe870ab9c3fa087de512b24033ff6db86a2b38c0c4` |
+| House 2025 roll 6, H R 29 On Passage | `https://clerk.house.gov/evs/2025/roll006.xml` | 94,574 | `58c75e9750226a49c55712812dc40dda0e67a192e5e18f4a49cbf32e3346ed6e` |
+| Senate 119/1 roll 3, S.Amdt. 14 to S. 5 | `https://www.senate.gov/legislative/LIS/roll_call_votes/vote1191/vote_119_1_00003.xml` | 28,532 | `f099e753743dc41ebd73aeb6164bb69cb1a52033859c1123fc8ea9ffe77fe94d` |
+| Senate 119/1 roll 570, S. 2296 passage | `https://www.senate.gov/legislative/LIS/roll_call_votes/vote1191/vote_119_1_00570.xml` | 29,078 | `abf2ebf8da845213e464d9eec4d258b90394efd90d5c66d915f41cc48da7ae7a` |
+| Senate 119/1 roll 655, PN416-9 nomination | `https://www.senate.gov/legislative/LIS/roll_call_votes/vote1191/vote_119_1_00655.xml` | 104,536 | `edf44e13beb93b2010b809f36cdab594ad159c81a0ad992cdaf8806a07ac66c5` |
+| Senate 119/1 vote menu (659 votes) | `https://www.senate.gov/legislative/LIS/roll_call_lists/vote_menu_119_1.xml` | 419,112 | `bbf37be1e0fe327fb6cd623cc7b2ed56253f5410ec0066831ba5eba605244a0c` |
+
+The menu was captured 2026-09-26 in the reliability-evidence packet. The other
+five were captured 2026-10-16 13:11 UTC. Existing samples, House 2025 roll 1
+(QUORUM) and Senate 119/1 roll 1, remain valid. No treaty, House amendment or
+House journal/adjourn/motion XML is frozen.
+
+**Identity snapshot.** The source is `unitedstates/congress-legislators` at
+commit `d5af3d2d2490f8c6532c9490b1f47a76cacca699`, licensed CC0.
+
+| File | Bytes | SHA256 |
+|---|---|---|
+| `legislators-current.yaml` | 1,081,187 | `bd32e62b1c89e9585e4ec49df5676563510e9435d779c061ff50139833f73a49` |
+| `legislators-historical.yaml` | 8,997,407 | `9641615f336b3113d6f89152e3441128cbdc3f61ccf87c65da3a015076c78c91` |
+
+The historical file comes from the second fetch of the same pin. The first
+fetch hit an 8 MiB cap and is kept only as an incomplete `.partial`, which is
+never parsed. The raw YAML is not committed. Instead, a deterministic derived
+mapping goes under `fixtures/votes/identity/`. It covers every person with a
+House/Senate term ending on or after `2019-01-03` and records its own hash and
+derivation command. Earlier dates fail closed.
+
+**Collector.** The parser is `unitedstates/congress` at
+`8184bcb13160da2389dea4c902de67817db681fc`, archive sha256
+`bbd159e67fd0c9c451636eeaad5e1981cd38e148560ad211e3d0f54b437f3ff5`. It was
+verified in
+`artifacts/official-votes-contract-2026-10-08/collector-runtime-gate-a-1/gate-a/`.
+That gate's static check STOPPED on `import utils` in `congress/run.py`. The
+cause is a classifier defect: run.py appends its own `tasks/` directory to
+sys.path, and this runtime does not use the `run.py` entrypoint. The failed
+record is preserved unchanged. The vote path vendored here is in
+`tools/congress-collector/vendor/`.
+
+Official vote rows are the House Clerk roll-call XML and the Senate LIS
+roll-call XML. GovTrack is no longer an active source for votes or for
+vote→bill resolution. Historical GovTrack URLs stored in old artifacts and DB
+rows stay readable as legacy provenance only.

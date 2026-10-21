@@ -1,0 +1,49 @@
+{
+  "inputsBefore": {
+    "data/caches/legislators-cache/legislators-current.yaml": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2",
+    "data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json": "faccf341b7474956f57fb071455b3c23459b31a0047fb1223004defcc308cab9",
+    "data/caches/pfd-cache/fec-ie/S8MN00578/2026-funders3.json": "7a78d8b3d40c53ac9e42d577ae19ee50aced00a90f5dc80afbe3fac3e81b3f20",
+    "data/caches/pfd-cache/fec-ie/S8MN00578/2026-itemized.json": "f9020b5280f29b49e192e0bdc7d26f3fba68307a68650fb11597b3e8dd15c696",
+    "data/caches/pfd-cache/fec-ie/committees/C00004036.json": "c3ec4e3f93d52b2822c4b60ce3de4f5cd8ea1ae7a735b371c37ff2c5e1e8a2d1",
+    "data/caches/pfd-cache/fec-ie/committees/C00489799.json": "d3a4ecc01053f6642a2c3046784571565c576c989347d8ef0e2b6841e34eb713",
+    "data/caches/pfd-cache/fec-ie/committees/C00684530.json": "d3a4ecc01053f6642a2c3046784571565c576c989347d8ef0e2b6841e34eb713",
+    "data/caches/senate-ptr-cache/2023/tina-smith-7c840533-d541-42ab-b8ca-361a1be272d2.json": "bbdfcef06d10869063cb2ff1b478bc7c923656b4baf90ee7bcd6481a7fb369e4",
+    "data/caches/senate-ptr-cache/2023/tina-smith-de3cd462-f294-4333-a9b3-cccd64e711b2.json": "53602802e3d6b6bf1deecc1a767a02aa70a0ea2ef6f8e85652f1041df9a6a631",
+    "data/caches/senate-ptr-cache/2024/tina-smith-c337b418-b154-457a-9fd1-147b2dbcb151.json": "96a775246985fbe8f7f95688ad269a621dcf2988e07a83a538ae2328133899e6",
+    "data/caches/senate-ptr-cache/2024/tina-smith-cf08c60c-6c0f-45ac-b8e9-3ca4c088e705.json": "92dba7e7cbd50d08a3b7f00c08d4c8bac35881a85727f0ed6a8e77826e036019",
+    "data/caches/senate-ptr-cache/2025/tina-smith-82093483-e915-4a5d-bb4b-e40431d79f99.json": "f3cefd75a91487e5efb56559d33c54a66596c6a9e449d76e514c19eb1902e224",
+    "data/caches/senate-ptr-cache/2025/tina-smith-ec33423d-b244-4bc3-a96f-da77436cda11.json": "a78817725a6a2bb65e9bc6f28f80c8c4a2ceb77e8cc1193b652ee56c99d5959f",
+    "data/caches/senate-ptr-cache/2026/tina-smith-3f315067-5f69-42b3-b32d-063ce735957b.json": "f27c945c6bebaa15f5a9c6e7c009e0445d8f8cfd74ae8a32f03e5811028b3aeb",
+    "data/caches/senate-ptr-cache/2026/tina-smith-5a00d807-84f1-409b-9cb0-566e59553e38.json": "81830f1f628ddf8d023fb95ef75394650240f5a72a5a345b1ba8f3dedeaa77f1",
+    "data/caches/senate-ptr-cache/2026/tina-smith-a8f2bab8-0feb-49cf-b80f-9826cb4a7a4c.json": "48da0694d0fab43667f11659618c32d0ac218331bd23ba85da352982d30c074f",
+    "data/caches/senate-ptr-cache/_search-receipts/S001203.json": "46b736510320fc315498c518c459a360ab3e390acd9a0d2440109c827e4f3434",
+    "pipeline/artifacts/tina-smith.theme-gaps.json": "62d050e5edf191c7136b69c038a93666d19a97fa350a534348175e0a71cbbc80"
+  },
+  "inputsAfter": {
+    "data/caches/legislators-cache/legislators-current.yaml": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2",
+    "data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json": "faccf341b7474956f57fb071455b3c23459b31a0047fb1223004defcc308cab9",
+    "data/caches/pfd-cache/fec-ie/S8MN00578/2026-funders3.json": "7a78d8b3d40c53ac9e42d577ae19ee50aced00a90f5dc80afbe3fac3e81b3f20",
+    "data/caches/pfd-cache/fec-ie/S8MN00578/2026-itemized.json": "f9020b5280f29b49e192e0bdc7d26f3fba68307a68650fb11597b3e8dd15c696",
+    "data/caches/pfd-cache/fec-ie/committees/C00004036.json": "c3ec4e3f93d52b2822c4b60ce3de4f5cd8ea1ae7a735b371c37ff2c5e1e8a2d1",
+    "data/caches/pfd-cache/fec-ie/committees/C00489799.json": "d3a4ecc01053f6642a2c3046784571565c576c989347d8ef0e2b6841e34eb713",
+    "data/caches/pfd-cache/fec-ie/committees/C00684530.json": "d3a4ecc01053f6642a2c3046784571565c576c989347d8ef0e2b6841e34eb713",
+    "data/caches/senate-ptr-cache/2023/tina-smith-7c840533-d541-42ab-b8ca-361a1be272d2.json": "bbdfcef06d10869063cb2ff1b478bc7c923656b4baf90ee7bcd6481a7fb369e4",
+    "data/caches/senate-ptr-cache/2023/tina-smith-de3cd462-f294-4333-a9b3-cccd64e711b2.json": "53602802e3d6b6bf1deecc1a767a02aa70a0ea2ef6f8e85652f1041df9a6a631",
+    "data/caches/senate-ptr-cache/2024/tina-smith-c337b418-b154-457a-9fd1-147b2dbcb151.json": "96a775246985fbe8f7f95688ad269a621dcf2988e07a83a538ae2328133899e6",
+    "data/caches/senate-ptr-cache/2024/tina-smith-cf08c60c-6c0f-45ac-b8e9-3ca4c088e705.json": "92dba7e7cbd50d08a3b7f00c08d4c8bac35881a85727f0ed6a8e77826e036019",
+    "data/caches/senate-ptr-cache/2025/tina-smith-82093483-e915-4a5d-bb4b-e40431d79f99.json": "f3cefd75a91487e5efb56559d33c54a66596c6a9e449d76e514c19eb1902e224",
+    "data/caches/senate-ptr-cache/2025/tina-smith-ec33423d-b244-4bc3-a96f-da77436cda11.json": "a78817725a6a2bb65e9bc6f28f80c8c4a2ceb77e8cc1193b652ee56c99d5959f",
+    "data/caches/senate-ptr-cache/2026/tina-smith-3f315067-5f69-42b3-b32d-063ce735957b.json": "f27c945c6bebaa15f5a9c6e7c009e0445d8f8cfd74ae8a32f03e5811028b3aeb",
+    "data/caches/senate-ptr-cache/2026/tina-smith-5a00d807-84f1-409b-9cb0-566e59553e38.json": "81830f1f628ddf8d023fb95ef75394650240f5a72a5a345b1ba8f3dedeaa77f1",
+    "data/caches/senate-ptr-cache/2026/tina-smith-a8f2bab8-0feb-49cf-b80f-9826cb4a7a4c.json": "48da0694d0fab43667f11659618c32d0ac218331bd23ba85da352982d30c074f",
+    "data/caches/senate-ptr-cache/_search-receipts/S001203.json": "46b736510320fc315498c518c459a360ab3e390acd9a0d2440109c827e4f3434",
+    "pipeline/artifacts/tina-smith.theme-gaps.json": "62d050e5edf191c7136b69c038a93666d19a97fa350a534348175e0a71cbbc80"
+  },
+  "identicalInputs": true,
+  "normalizedSha256": [
+    "8d783d3f78be3b6e18faa16af8189bb7713e2c9c2590094631f21d7c88a54ea7",
+    "8d783d3f78be3b6e18faa16af8189bb7713e2c9c2590094631f21d7c88a54ea7"
+  ],
+  "normalizationRegex": "(?<= \u00b7 generated )\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}Z(?=</div>)",
+  "equal": true
+}

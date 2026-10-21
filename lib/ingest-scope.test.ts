@@ -24,8 +24,16 @@ const DB: Record<string, MemberRow> = {
   R000001: { memberId: 'robert-smith-ca', chamber: 'house' },
 };
 const memberLookup = (bio: string): MemberRow | undefined => DB[bio];
+const slugLookup = (slug: string) => {
+  if (slug !== 'bernie-sanders') return undefined;
+  return {
+    bioguideId: 'S000033',
+    memberId: 'bernie-sanders',
+    chamber: 'senate' as const,
+  };
+};
 
-const deps = { index: idx, aliasMap: aliases, memberLookup };
+const deps = { index: idx, aliasMap: aliases, memberLookup, slugLookup };
 
 // ─── parseScopeArgs: fail closed, explicit --all, mutual exclusion ───────────
 
@@ -75,6 +83,16 @@ test('resolveScope(all) passes through', async () => {
 
 test('resolveScope resolves a slug/name to one canonical member', async () => {
   const r = await resolveScope({ kind: 'member', selector: 'Bernard Sanders', by: 'member' }, deps);
+  assert.deepEqual(r, {
+    kind: 'member', slug: 'bernie-sanders', bioguideId: 'S000033',
+    memberId: 'bernie-sanders', chamber: 'senate',
+  });
+});
+
+test('resolveScope resolves a stored member slug before human-name resolution', async () => {
+  const r = await resolveScope({
+    kind: 'member', selector: 'bernie-sanders', by: 'member',
+  }, deps);
   assert.deepEqual(r, {
     kind: 'member', slug: 'bernie-sanders', bioguideId: 'S000033',
     memberId: 'bernie-sanders', chamber: 'senate',

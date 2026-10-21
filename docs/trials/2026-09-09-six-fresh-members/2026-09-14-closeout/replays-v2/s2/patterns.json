@@ -1,0 +1,23 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "pipeline/run-patterns.ts",
+    "--member",
+    "john-w-mannion"
+  ],
+  "started": "2026-09-16T14:50:01Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s2-john-mannion/data/caches",
+  "dbBefore": "7c9afdb3fe89383fc43ae487a49eb2c2dbb1f133114852e40e45c26138d6037e",
+  "walBefore": "acc738291dd404d30247e66c9b816d3f205f3ccd6d8f886485e91f7224f66cc9",
+  "exit": 0,
+  "output": "  note: \"trade-vote-alignment\" has not yet consumed its preregistered confirmatory run. This recompute path is not the confirmatory event \u2014 the authoritative one-shot run is the detector's *-baseline.ts runner (ADR 0003).\n  note: \"spousal-trade-timing\" has not yet consumed its preregistered confirmatory run. This recompute path is not the confirmatory event \u2014 the authoritative one-shot run is the detector's *-baseline.ts runner (ADR 0003).\n(onboarding-safe: running 1 detector(s); parked timing pair [trade-vote-alignment, spousal-trade-timing] excluded \u2014 use score-anomaly.ts for those.)\n\u25b8 john-w-mannion\n  donor-sector-vote-alignment: 0 hit(s) [\u2014]\n\nDone. 0 hit(s) across 1 member(s), 1 detector(s).\n",
+  "dbAfter": "7c9afdb3fe89383fc43ae487a49eb2c2dbb1f133114852e40e45c26138d6037e",
+  "finished": "2026-09-16T14:50:02Z",
+  "walAfter": "acc738291dd404d30247e66c9b816d3f205f3ccd6d8f886485e91f7224f66cc9"
+}

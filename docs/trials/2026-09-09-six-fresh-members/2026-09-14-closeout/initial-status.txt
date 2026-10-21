@@ -1,0 +1,16 @@
+ M AGENTS.md
+ M agents/pipeline.ts
+ M db/load-pfd.ts
+ M db/load-pfd.validation.test.ts
+ M docs/prompts/bulk-download-legislators-and-house-ptrs.md
+ M docs/trials/2026-09-06/civiclens-completion-plan.md
+ M docs/trials/2026-09-08-run-any-member/plan.md
+ M docs/trials/2026-09-09-six-fresh-members/final-certification-review.md
+ M docs/trials/2026-09-09-six-fresh-members/protocol.md
+ M docs/trials/2026-09-09-six-fresh-members/stratum-6-eric-burlison.md
+ M scripts/validate-artifact-corpus.test.ts
+ M scripts/validate-artifact-corpus.ts
+ M skills/pfd-fetcher/extract.test.ts
+ M skills/pfd-fetcher/extract.ts
+?? docs/pfd-formatting-holds.md
+?? docs/trials/2026-09-09-six-fresh-members/2026-09-14-closeout/

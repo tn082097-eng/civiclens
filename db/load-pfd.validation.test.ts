@@ -22,7 +22,7 @@ import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { tempDb, insertMember, snapshot } from './__testkit__/temp-db.js';
-import { loadPfdYear, classifyTransaction, classifyFiling } from './load-pfd.js';
+import { loadPfdYear, pfdLoadExitCode, classifyTransaction, classifyFiling } from './load-pfd.js';
 import type { IngestScope } from '../lib/ingest-scope.js';
 
 function memberScope(slug: string): IngestScope {
@@ -143,6 +143,11 @@ test('unresolved rows never reach production insertion', async () => {
     assert.equal(rows, '[]', 'no rows may be inserted');
     assert.equal(res.withheld.length, 1);
     assert.equal(res.withheld[0].state, 'unresolved');
+    assert.equal(
+      pfdLoadExitCode({ totalUnmatched: res.unmatched, totalWithheld: res.withheld.length }),
+      1,
+      'a formatting hold cannot be reported as a successful member load',
+    );
   } finally { cleanup(); }
 });
 
@@ -346,7 +351,7 @@ test('a zero-row re-extraction preserves the existing rows for that filing', asy
   }
 });
 
-test('a filing missing its identity is reported as withheld', async () => {
+test('a filing missing its identity fails rather than becoming a formatting hold', async () => {
   const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-cache-'));
   const { conn, cleanup } = await tempDb();
   try {
@@ -355,11 +360,8 @@ test('a filing missing its identity is reported as withheld', async () => {
       filingId: '', filer: { name: 'Jane Doe', stateDistrict: 'CA12' },
       transactions: [goodTx()],
     });
-    const res = await loadPfdYear(2024, memberScope('jane-doe'), { conn, cacheRoot });
-    assert.equal(res.totalTx, 0, 'a filing with no id cannot scope a replacement');
-    assert.equal(res.withheld.length, 1, 'and is not silently dropped');
-    assert.equal(res.withheld[0].state, 'unresolved');
-    assert.match(res.withheld[0].problems.join(' '), /filingId/);
+    await assert.rejects(() => loadPfdYear(2024, memberScope('jane-doe'), { conn, cacheRoot }), /missing identity/);
+    assert.equal(await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index'), '[]');
   } finally {
     await cleanup();
   }

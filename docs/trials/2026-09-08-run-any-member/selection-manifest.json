@@ -1,0 +1,101 @@
+{
+  "seed": "civiclens-track-b-2026-09-08-v1",
+  "status": "selected",
+  "assignmentOrder": [
+    "1",
+    "2",
+    "6",
+    "3",
+    "4",
+    "5"
+  ],
+  "selections": [
+    {
+      "stratum": "1",
+      "bioguide": "M000934",
+      "name": "Jerry Moran",
+      "digest": "046dd9cb6144ca742ee2dc3fd548ab161fdff03b30906c6281d67083397c64e8",
+      "rank": 1,
+      "disqualified": []
+    },
+    {
+      "stratum": "2",
+      "bioguide": "T000469",
+      "name": "Paul Tonko",
+      "digest": "007efc69af78c3377f4b8cd062d643e18cfe310e6e80c5bf76cb8aac9c1f0737",
+      "rank": 1,
+      "disqualified": []
+    },
+    {
+      "stratum": "6",
+      "bioguide": "S000344",
+      "name": "Brad Sherman",
+      "digest": "06c54934f46f45b8ee10f14f914598c2ccf779187620deac6a53364816be8a37",
+      "rank": 3,
+      "disqualified": [
+        {
+          "bioguide": "G000576",
+          "name": "Glenn Grothman",
+          "rank": 1,
+          "reason": "probe-has-usable-text"
+        },
+        {
+          "bioguide": "C001055",
+          "name": "Ed Case",
+          "rank": 2,
+          "reason": "probe-has-usable-text"
+        }
+      ]
+    },
+    {
+      "stratum": "3",
+      "bioguide": "J000309",
+      "name": "Jonathan L. Jackson",
+      "digest": "3b55f858ec71ba9bcc47cd52f7d6c3e99da5ca19370372ba8a43a0607e2bf10e",
+      "rank": 2,
+      "disqualified": [
+        {
+          "bioguide": "R000395",
+          "name": "Harold Rogers",
+          "rank": 1,
+          "reason": "probe-no-usable-text"
+        }
+      ]
+    },
+    {
+      "stratum": "4",
+      "bioguide": "C001096",
+      "name": "Kevin Cramer",
+      "digest": "092b70e349dfff7dd8cf9fa3513feacedb3c4bf3a310d3d7dc02859fb257984a",
+      "rank": 4,
+      "disqualified": [
+        {
+          "bioguide": "K000393",
+          "name": "John Kennedy",
+          "rank": 1,
+          "reason": "senate-ptr-count=1"
+        },
+        {
+          "bioguide": "M001243",
+          "name": "David McCormick",
+          "rank": 2,
+          "reason": "senate-ptr-count=24"
+        },
+        {
+          "bioguide": "W000805",
+          "name": "Mark R. Warner",
+          "rank": 3,
+          "reason": "senate-ptr-count=9"
+        }
+      ]
+    },
+    {
+      "stratum": "5",
+      "bioguide": "A000383",
+      "name": "Alan Armstrong",
+      "digest": "36236dc5448d12e9e18ef526409a65978a15f1d5e63981dd287ee4c72370f46e",
+      "rank": 1,
+      "disqualified": []
+    }
+  ]
+}

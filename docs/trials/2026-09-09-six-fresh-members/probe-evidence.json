@@ -1,0 +1,65 @@
+{
+  "B001316": {
+    "scanned": {
+      "year": 2023,
+      "docId": "8219414",
+      "hasUsableText": false
+    }
+  },
+  "F000110": {
+    "text": {
+      "year": 2025,
+      "docId": "20027855",
+      "hasUsableText": true
+    }
+  },
+  "G000597": {
+    "scanned": {
+      "year": 2025,
+      "docId": "20030952",
+      "hasUsableText": true
+    }
+  },
+  "G000603": {
+    "scanned": {
+      "year": 2025,
+      "docId": "20030417",
+      "hasUsableText": true
+    }
+  },
+  "J000295": {
+    "scanned": {
+      "year": 2024,
+      "docId": "20021523",
+      "hasUsableText": true
+    }
+  },
+  "J000307": {
+    "scanned": {
+      "year": 2024,
+      "docId": "20025719",
+      "hasUsableText": true
+    }
+  },
+  "L000595": {
+    "scanned": {
+      "year": 2026,
+      "docId": "20030977",
+      "hasUsableText": true
+    }
+  },
+  "M001204": {
+    "scanned": {
+      "year": 2023,
+      "docId": "20022636",
+      "hasUsableText": true
+    }
+  },
+  "R000614": {
+    "scanned": {
+      "year": 2024,
+      "docId": "20024848",
+      "hasUsableText": true
+    }
+  }
+}

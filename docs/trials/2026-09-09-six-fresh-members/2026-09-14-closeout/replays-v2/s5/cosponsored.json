@@ -1,0 +1,22 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "db/load-cosponsored.ts",
+    "darline-graham"
+  ],
+  "started": "2026-09-17T00:24:56Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s5-darline-graham/data/caches",
+  "dbBefore": "eb0603d03ef09b6bc81bbda94825ef628c26f4a031b49d4acc577a745e5d671d",
+  "walBefore": "d2b67241d3d944883ddc85f31ab8f9d3315fc3e23b1cb0557192fb7d2e35d6b6",
+  "exit": 0,
+  "output": "Loading cosponsors for 1 member(s)\u2026\n\n  darline-graham (Darline Graham): 49 fetched, 49 inserted, 0 dup/skipped\n\nDone. 49 cosponsor rows inserted, 0 member(s) not loaded.\nBills table now: [\n  { sponsor_role: 'cosponsor', n: 153511 },\n  { sponsor_role: null, n: 179 },\n  { sponsor_role: 'sponsor', n: 16178 }\n]\n",
+  "dbAfter": "eb0603d03ef09b6bc81bbda94825ef628c26f4a031b49d4acc577a745e5d671d",
+  "finished": "2026-09-17T00:24:57Z",
+  "walAfter": "80acc6d786c55589854142b87acd9fcbcec6726199610056e52b1f4b5fc5ca4a"
+}

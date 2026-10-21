@@ -1,0 +1,75 @@
+{
+  "families": [
+    {
+      "agent": "researcher",
+      "total": 1,
+      "pass": 1,
+      "unparseable": 0,
+      "failed": 0,
+      "required": true,
+      "status": "PASS",
+      "signatures": []
+    },
+    {
+      "agent": "data-checker",
+      "total": 1,
+      "pass": 1,
+      "unparseable": 0,
+      "failed": 0,
+      "required": true,
+      "status": "PASS",
+      "signatures": []
+    },
+    {
+      "agent": "code-checker",
+      "total": 1,
+      "pass": 1,
+      "unparseable": 0,
+      "failed": 0,
+      "required": false,
+      "status": "PASS",
+      "signatures": []
+    },
+    {
+      "agent": "trade-analyst",
+      "total": 1,
+      "pass": 1,
+      "unparseable": 0,
+      "failed": 0,
+      "required": false,
+      "status": "PASS",
+      "signatures": []
+    },
+    {
+      "agent": "summarizer",
+      "total": 1,
+      "pass": 1,
+      "unparseable": 0,
+      "failed": 0,
+      "required": true,
+      "status": "PASS",
+      "signatures": []
+    },
+    {
+      "agent": "predictor",
+      "total": 1,
+      "pass": 1,
+      "unparseable": 0,
+      "failed": 0,
+      "required": false,
+      "status": "PASS",
+      "signatures": []
+    },
+    {
+      "agent": "final-review",
+      "total": 1,
+      "pass": 1,
+      "unparseable": 0,
+      "failed": 0,
+      "required": false,
+      "status": "PASS",
+      "signatures": []
+    }
+  ],
+  "ok": true
+}

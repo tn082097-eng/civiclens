@@ -1,0 +1,81 @@
+{
+  "sourceKind": "frozen Senate parsed source JSON and search receipt; original HTML not in this frozen cache",
+  "filings": 9,
+  "transactionRows": 20,
+  "counts": [
+    {
+      "filingId": "7c840533-d541-42ab-b8ca-361a1be272d2",
+      "rows": 3,
+      "sourceUrl": "https://efdsearch.senate.gov/search/view/ptr/7c840533-d541-42ab-b8ca-361a1be272d2/"
+    },
+    {
+      "filingId": "de3cd462-f294-4333-a9b3-cccd64e711b2",
+      "rows": 3,
+      "sourceUrl": "https://efdsearch.senate.gov/search/view/ptr/de3cd462-f294-4333-a9b3-cccd64e711b2/"
+    },
+    {
+      "filingId": "c337b418-b154-457a-9fd1-147b2dbcb151",
+      "rows": 1,
+      "sourceUrl": "https://efdsearch.senate.gov/search/view/ptr/c337b418-b154-457a-9fd1-147b2dbcb151/"
+    },
+    {
+      "filingId": "cf08c60c-6c0f-45ac-b8e9-3ca4c088e705",
+      "rows": 2,
+      "sourceUrl": "https://efdsearch.senate.gov/search/view/ptr/cf08c60c-6c0f-45ac-b8e9-3ca4c088e705/"
+    },
+    {
+      "filingId": "82093483-e915-4a5d-bb4b-e40431d79f99",
+      "rows": 1,
+      "sourceUrl": "https://efdsearch.senate.gov/search/view/ptr/82093483-e915-4a5d-bb4b-e40431d79f99/"
+    },
+    {
+      "filingId": "ec33423d-b244-4bc3-a96f-da77436cda11",
+      "rows": 2,
+      "sourceUrl": "https://efdsearch.senate.gov/search/view/ptr/ec33423d-b244-4bc3-a96f-da77436cda11/"
+    },
+    {
+      "filingId": "3f315067-5f69-42b3-b32d-063ce735957b",
+      "rows": 4,
+      "sourceUrl": "https://efdsearch.senate.gov/search/view/ptr/3f315067-5f69-42b3-b32d-063ce735957b/"
+    },
+    {
+      "filingId": "5a00d807-84f1-409b-9cb0-566e59553e38",
+      "rows": 2,
+      "sourceUrl": "https://efdsearch.senate.gov/search/view/ptr/5a00d807-84f1-409b-9cb0-566e59553e38/"
+    },
+    {
+      "filingId": "a8f2bab8-0feb-49cf-b80f-9826cb4a7a4c",
+      "rows": 2,
+      "sourceUrl": "https://efdsearch.senate.gov/search/view/ptr/a8f2bab8-0feb-49cf-b80f-9826cb4a7a4c/"
+    }
+  ],
+  "receipt": {
+    "schemaVersion": 1,
+    "kind": "senate-ptr-search",
+    "status": "success",
+    "bioguideId": "S001203",
+    "canonicalName": "Tina Smith",
+    "fromYear": 2023,
+    "toYear": 2026,
+    "filingIds": [
+      "3f315067-5f69-42b3-b32d-063ce735957b",
+      "5a00d807-84f1-409b-9cb0-566e59553e38",
+      "7c840533-d541-42ab-b8ca-361a1be272d2",
+      "82093483-e915-4a5d-bb4b-e40431d79f99",
+      "a8f2bab8-0feb-49cf-b80f-9826cb4a7a4c",
+      "c337b418-b154-457a-9fd1-147b2dbcb151",
+      "cf08c60c-6c0f-45ac-b8e9-3ca4c088e705",
+      "de3cd462-f294-4333-a9b3-cccd64e711b2",
+      "ec33423d-b244-4bc3-a96f-da77436cda11"
+    ],
+    "filingCount": 9,
+    "sourceUrl": "https://efdsearch.senate.gov/search/report/data/",
+    "fetchedAt": "2026-09-10T03:07:14.592Z"
+  },
+  "representativeChecks": [
+    "CSII account-distinct rows retained separately",
+    "PODD/NEE sale-partial preserved",
+    "Explicit null ticker retained with MRSH ticker-change source comment"
+  ],
+  "loadedRows": "pending DB audit"
+}

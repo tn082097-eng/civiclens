@@ -1,0 +1,106 @@
+{
+  "stratum": 6,
+  "member": "Eric Burlison",
+  "slug": "eric-burlison",
+  "bioguide": "B001316",
+  "chamber": "house",
+  "sources": {
+    "congress.gov/govtrack (sponsored)": {
+      "outcome": "ok",
+      "detail": "55 fetched, 48 upserted, 48 w/ policyArea, 7 skipped",
+      "evidence": "sponsored.json"
+    },
+    "govtrack (cosponsored)": {
+      "outcome": "ok",
+      "evidence": "cosponsored.json"
+    },
+    "govtrack (bills --api-pass)": {
+      "outcome": "ok",
+      "detail": "46 fetched, 0 already cached, 0 skipped",
+      "evidence": "bills.json",
+      "note": "Same stage class that failed externally in s3/s4; succeeded here first attempt. No retry consumed; s3/s4 NOT retried."
+    },
+    "House Clerk PFD (house-pfd)": {
+      "outcome": "withheld",
+      "holdFlag": "needs_manual_formatting",
+      "evidence": "house-pfd.json",
+      "detail": "exit 1; 4 years seen; 0 transactions, 0 unmatched, 1 filing withheld; member hold warning emitted",
+      "perYear": {
+        "2023": "1 filing withheld [unresolved/empty-input] (DocID 8219414)",
+        "2024": "verified-empty (authoritative index)",
+        "2025": "verified-empty (authoritative index)",
+        "2026": "verified-empty (authoritative index)"
+      },
+      "pfdTransactionRowDelta": 0,
+      "note": "This is the canonical ingest-v2.py stage via agents/pipeline.ts --load-pfd. It reproduces the same nonpassing hold as the direct db/load-pfd.ts invocation recorded in load-house-2023-2026.json. NOT a pass."
+    },
+    "FEC 2026 (fec-ie)": {
+      "outcome": "ok",
+      "detail": "1 member-cycle row, 1 with IE, 0 errored",
+      "evidence": "fec-ie.json"
+    },
+    "OpenSecrets": {
+      "outcome": "not-collected",
+      "detail": "optional; not run in any stratum"
+    }
+  },
+  "sourceBoundHold": {
+    "filingId": "8219414",
+    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2023/8219414.pdf",
+    "pdfSha256": "517bdde3ed131ecf67631098857fb08c3135fe38f7c6c39e5902fafb46a60f50",
+    "textSha256": "7060584c3e59f0b2f12f34aa0b40faadf4aa5790a0459f3319852bcd63262cbb",
+    "reason": "empty-input (2-byte text layer; scanned PDF)",
+    "ocr": "not invoked; not authorized",
+    "distinctFromExtractionError": true
+  },
+  "billsLoaded": {
+    "sponsor": 48,
+    "bill_subjects": 48,
+    "bill_summaries": 46,
+    "billsRowDelta": 449
+  },
+  "controlAttribution": {
+    "comparedAgainst": "closeout-v2-control-reference/site/members/josh-gottheimer.html (pristine, same candidate)",
+    "normalization": "remove only the single generated timestamp",
+    "peerCount": {
+      "pristine": 34,
+      "afterS6": 35
+    },
+    "htmlLineDelta": {
+      "before": 74448,
+      "after": 74453,
+      "inserted": 5,
+      "removed": 0
+    },
+    "insertedRegion": "one sec-peers table row: <a class=\"member\" href=\"eric-burlison.html\">Eric Burlison</a> | 2 | $50.5K",
+    "onlyChangedRegion": true,
+    "dbCorroboration": {
+      "findSharedDonors(josh-gottheimer) total peers": 35,
+      "burlisonEntry": {
+        "shared_count": 2,
+        "combined_amount": 50500
+      },
+      "sharedDonorRows": [
+        {
+          "donor_canonical": "AMERICAN ISRAEL PUBLIC AFFAIRS COMMITTEE POLITICAL ACTION COMMITTEE",
+          "burlison_amt": 5000,
+          "gottheimer_amt": 20500
+        },
+        {
+          "donor_canonical": "CHARTER COMMUNICATIONS INC POLITICAL ACTION COMMITTEE",
+          "burlison_amt": 5000,
+          "gottheimer_amt": 20000
+        }
+      ]
+    },
+    "exactAttribution": "The single 5-line insertion is fully explained by exactly 2 shared donor rows totalling $50,500 (5000+20500 + 5000+20000). The rendered \"2\" and \"$50.5K\" match the DB query exactly. No unexplained region remains.",
+    "controlRenderLabel": "control-after-serial-post-ingest",
+    "queryEvidence": "control-attribution-query.json (real db/queries.ts findSharedDonors)"
+  },
+  "baselineBeforeGap": {
+    "status": "not recorded",
+    "honest": true,
+    "reason": "ingest-v2.py step 1 emits baseline-before prior to onboarding. s6 was run stage-by-stage and onboarding had already executed before this reconciliation, so a genuine pre-ingestion baseline snapshot can no longer be captured at this candidate. It is NOT substituted with the post-ingest run.",
+    "available": "baseline-after.json and baseline-post-ingest.json (both post-state)"
+  }
+}

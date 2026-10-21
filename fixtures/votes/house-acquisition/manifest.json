@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "purpose": "Frozen official samples for acquisition validation, not certification or complete XML coverage. Failure/small-inventory cases in tests are explicitly synthetic.",
+  "inventory": {
+    "path": "/home/captainanime/NoService/Projects/CivicLens/Sources/votes/2026-10-04-house-discovery/inventory.json",
+    "sha256": "2c250360ab3fa72b68b1f134d9ba1cee0f25999920f5b4cbde9498abe33401e4",
+    "window": [
+      "2022-09-26",
+      "2026-09-26"
+    ],
+    "published_total": 2466,
+    "window_total": 2012
+  },
+  "samples": [
+    {
+      "url": "https://clerk.house.gov/Votes/MemberVotes?CongressNum=119&Session=1st&Page=36",
+      "status": 200,
+      "path": "2025-page036.html",
+      "sha256": "a07a63ee5dbae93662d40fc0197b7d8bb72aee819b4b2f0f6d534e2616832086",
+      "range": [
+        351,
+        360
+      ],
+      "total": 362,
+      "fetched_at": "2026-10-05T00:29:27.875443+00:00"
+    },
+    {
+      "url": "https://clerk.house.gov/Votes/MemberVotes?CongressNum=119&Session=1st&Page=37",
+      "status": 200,
+      "path": "2025-page037.html",
+      "sha256": "e8c0420c9d204bb2c3e0c79983c190b9af1ac057c91feb7bf2bbd26052065ee2",
+      "range": [
+        361,
+        362
+      ],
+      "total": 362,
+      "fetched_at": "2026-10-05T00:29:27.860230+00:00"
+    },
+    {
+      "url": "https://clerk.house.gov/Votes/MemberVotes?CongressNum=118&Session=1st&Page=1",
+      "status": 200,
+      "path": "2023-page001.html",
+      "sha256": "254ebaf6b4a4071f78db8b8cbd06a0bfeff026b59b9881b420e054c5c3ad3fe5",
+      "range": [
+        1,
+        10
+      ],
+      "total": 724,
+      "fetched_at": "2026-10-05T00:28:56.604947+00:00"
+    },
+    {
+      "path": "house-2025-roll001.xml",
+      "url": "https://clerk.house.gov/evs/2025/roll001.xml",
+      "status": 200,
+      "sha256": "876aa39e6cfe58942eb5a3b24628975b288e6c5fca8d8e0257dfcd7d180163fd",
+      "captured_in": "2026-09-26-reliability-evidence/source-receipts.json"
+    },
+    {
+      "url": "https://clerk.house.gov/Votes/MemberVotes?CongressNum=118&Session=1st&Page=72",
+      "status": 200,
+      "path": "2023-page072.html",
+      "sha256": "c74b65061285ce4e3d23d7d23b9ddd494b41fe1bdbe8b63a3ed5df636563a977",
+      "range": [
+        711,
+        720
+      ],
+      "total": 724,
+      "fetched_at": "2026-10-05T00:29:23.162191+00:00"
+    }
+  ]
+}

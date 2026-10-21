@@ -4,6 +4,79 @@
  */
 
 import { z } from 'zod';
+import { parseRollKey, houseSourceUrl, senateSourceUrl, RESOLUTION_OUTCOMES, isIsoDate, subtractCalendarMonths } from './vote-source.js';
+
+const sha256 = z.string().regex(/^[a-f0-9]{64}$/);
+const commit = z.string().regex(/^[a-f0-9]{40}$/);
+const positiveInteger = z.number().int().positive().safe();
+const count = z.number().int().nonnegative().safe();
+const isoDate = z.string().refine(isIsoDate, 'invalid calendar date');
+export const OfficialVoteResolutionSchema = z.object({
+  outcome: z.enum(RESOLUTION_OUTCOMES),
+  billId: z.string().regex(/^[1-9]\d*-(hr|s|hjres|sjres|hconres|sconres|hres|sres)-[1-9]\d*$/).nullable(),
+  subtype: z.enum(['quorum', 'journal', 'adjourn', 'nomination', 'treaty']).nullable(),
+  amendment: z.string().min(1).nullable(),
+  reason: z.string().refine(s => s.trim().length > 0, 'empty reason').nullable(),
+}).superRefine((r, ctx) => {
+  const bill = r.outcome === 'resolved_bill';
+  const nonBill = r.outcome === 'authoritative_non_bill';
+  if ((r.billId !== null) !== bill || (r.subtype !== null) !== nonBill
+    || (!bill && r.amendment !== null) || (r.reason !== null) !== (!bill && !nonBill)) {
+    ctx.addIssue({ code: 'custom', message: 'inconsistent official resolution' });
+  }
+});
+export const VoteCoverageSchema = z.object({
+  outcome: z.literal('ok'), source: z.literal('official'), chamber: z.enum(['house', 'senate']),
+  bioguideId: z.string().regex(/^[A-Z]\d{6}$/), asOf: isoDate,
+  window: z.object({ start: isoDate, end: isoDate, months: z.literal(48) }),
+  requiredRolls: count, analyzedRolls: count, inServiceRolls: count,
+  recorded: count, notRecorded: count, notRecordedKeys: z.array(z.string()),
+  outOfServiceListings: z.array(z.object({
+    rollKey: z.string(), chamber: z.enum(['house', 'senate']),
+    voterId: z.string(), rawPosition: z.literal('Not Voting'), date: isoDate,
+  })).optional(),
+  acquisition: z.object({ runDir: z.string().min(1), manifestSha256: sha256, inventorySha256: sha256.nullable() }),
+  collector: z.object({ commit, lockSha256: sha256, vendorManifestSha256: sha256 }),
+  identity: z.object({ commit, snapshotSha256: sha256, floor: isoDate }),
+}).superRefine((c, ctx) => {
+  const fail = (message: string) => ctx.addIssue({ code: 'custom', message });
+  try {
+    if (c.window.end !== c.asOf || c.window.start !== subtractCalendarMonths(c.asOf, 48))
+      fail('coverage window differs from 48 calendar months');
+  }
+  catch {
+    fail('invalid coverage window');
+  }
+  if (c.requiredRolls !== c.analyzedRolls || c.inServiceRolls > c.analyzedRolls || c.recorded + c.notRecorded !== c.inServiceRolls
+    || c.notRecordedKeys.length !== c.notRecorded || new Set(c.notRecordedKeys).size !== c.notRecorded)
+    fail('inconsistent coverage counts');
+  for (const key of c.notRecordedKeys) {
+    try {
+      if (parseRollKey(key).chamber !== c.chamber)
+        fail('coverage key chamber mismatch');
+    }
+    catch {
+      fail('invalid coverage key');
+    }
+  }
+  const listings = c.outOfServiceListings ?? [];
+  const listingKeys = new Set<string>(), listingRolls = new Set<string>();
+  for (const listing of listings) {
+    try {
+      const roll = parseRollKey(listing.rollKey);
+      if (listing.chamber !== c.chamber || roll.chamber !== c.chamber
+        || !listing.date.startsWith(`${roll.year}-`)
+        || listing.date < c.window.start || listing.date > c.window.end)
+        fail('listing roll, chamber or date differs from coverage');
+    } catch { fail('invalid listing roll key'); }
+    if (!(listing.chamber === 'house' ? /^[A-Z]\d{6}$/ : /^S\d+$/).test(listing.voterId))
+      fail('invalid listing voter identity');
+    const key = `${listing.rollKey}/${listing.voterId}`;
+    if (listingKeys.has(key)) fail('duplicate out-of-service listing');
+    listingKeys.add(key); listingRolls.add(listing.rollKey);
+  }
+  if (listingRolls.size > c.analyzedRolls) fail('listing rolls exceed analyzed coverage');
+});
 
 export const BillSchema = z.object({
   title:        z.string().min(3),
@@ -15,13 +88,48 @@ export const BillSchema = z.object({
   confidence:   z.number().min(0).max(1),
 });
 
+const officialFields = ['rawPosition', 'sourceSha256', 'rollKey', 'chamber', 'congress', 'session', 'roll', 'question', 'resolution'] as const;
 export const VoteSchema = z.object({
-  billTitle:  z.string().min(3),
-  vote:       z.enum(['yea', 'nay', 'abstain', 'absent']),
-  date:       z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  source:     z.string().min(3),
-  sourceUrl:  z.string().url().optional(),
-  confidence: z.number().min(0).max(1),
+  billTitle: z.string().min(3),
+  vote: z.enum(['yea', 'nay', 'abstain', 'absent', 'other']),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  source: z.string().min(3), sourceUrl: z.string().url().optional(), confidence: z.number().min(0).max(1),
+  rawPosition: z.string().refine(s => s.trim().length > 0, 'empty raw position').optional(), sourceSha256: sha256.optional(), rollKey: z.string().optional(),
+  chamber: z.enum(['house', 'senate']).optional(), congress: positiveInteger.optional(),
+  session: z.union([z.literal(1), z.literal(2)]).optional(), roll: positiveInteger.optional(),
+  question: z.string().min(1).optional(), resolution: OfficialVoteResolutionSchema.optional(),
+}).superRefine((v, ctx) => {
+  const fail = (message: string) => ctx.addIssue({ code: 'custom', message });
+  const official = officialFields.some(k => v[k] !== undefined);
+  if (!official) {
+    if (v.vote === 'other')
+      fail('other requires official metadata');
+    if (v.sourceUrl) {
+      const host = new URL(v.sourceUrl).hostname;
+      if (['clerk.house.gov', 'senate.gov', 'www.senate.gov'].includes(host))
+        fail('official URL requires official roll identity');
+    }
+    return;
+  }
+  if (officialFields.some(k => v[k] === undefined)) {
+    fail('official metadata must be complete');
+    return;
+  }
+  try {
+    const id = parseRollKey(v.rollKey!);
+    if (id.chamber !== v.chamber || id.congress !== v.congress || id.session !== v.session || id.roll !== v.roll)
+      fail('official roll identity mismatch');
+    const url = id.chamber === 'house' ? houseSourceUrl(id.year, id.roll) : senateSourceUrl(id.congress, id.session, id.roll);
+    if (v.sourceUrl !== url || v.source !== (id.chamber === 'house' ? 'clerk.house.gov' : 'senate.gov'))
+      fail('official source mismatch');
+    if (v.resolution!.billId && v.resolution!.billId.split('-')[0] !== String(v.congress))
+      fail('bill congress differs from roll');
+    if (!isIsoDate(v.date) || Number(v.date.slice(0, 4)) !== id.year)
+      fail('official date differs from roll year');
+  }
+  catch {
+    fail('invalid official roll identity');
+  }
 });
 
 export const DonorSchema = z.object({
@@ -85,6 +193,7 @@ export const PoliticianDataSchema = z.object({
   inOffice:      z.boolean(),
   bills:         z.array(BillSchema),
   votes:         z.array(VoteSchema),
+  voteCoverage:  VoteCoverageSchema.optional(),
   donors:        z.array(DonorSchema),
   controversies:    z.array(ControversySchema),
   connections:      z.array(ConnectionSchema),

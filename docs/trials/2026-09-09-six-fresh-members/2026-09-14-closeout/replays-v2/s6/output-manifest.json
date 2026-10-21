@@ -1,0 +1,102 @@
+[
+  {
+    "path": "data/caches/legislators-cache/legislators-current.yaml",
+    "sha256": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2",
+    "bytes": 1081081
+  },
+  {
+    "path": "data/caches/pfd-cache/2023/burlison-eric-8219414.hold.json",
+    "sha256": "990e4c4bbba5f6f3aeea9eb36acd0557c47820d2e6cd00eb844c45fb92f259db",
+    "bytes": 287
+  },
+  {
+    "path": "data/caches/pfd-cache/2023/burlison-eric-8219414.pdf",
+    "sha256": "517bdde3ed131ecf67631098857fb08c3135fe38f7c6c39e5902fafb46a60f50",
+    "bytes": 57314
+  },
+  {
+    "path": "data/caches/pfd-cache/2023/burlison-eric-8219414.txt",
+    "sha256": "7060584c3e59f0b2f12f34aa0b40faadf4aa5790a0459f3319852bcd63262cbb",
+    "bytes": 2
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/H2MO07143/2026-funders3.json",
+    "sha256": "13430c0b8e00fd3a7e523b3da6d2abcaee0bfd0ac6908f4de1c4166dd6e4b25e",
+    "bytes": 3612
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json",
+    "sha256": "faccf341b7474956f57fb071455b3c23459b31a0047fb1223004defcc308cab9",
+    "bytes": 10055
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/committees/C00552851.json",
+    "sha256": "436875f59a14b8386b1d0ff078435328868bccaa06164f669a024e1c037845b0",
+    "bytes": 123
+  },
+  {
+    "path": "data/caches/pfd-cache/index/2023FD.xml",
+    "sha256": "60e5dcf86ec483f428a371abbe7894f72124fc03d3e5b6351507b40ec8f8c10d",
+    "bytes": 650480
+  },
+  {
+    "path": "data/caches/pfd-cache/index/2024FD.xml",
+    "sha256": "99576a8c58e100fc35e14af597b184f0421650cf6de1e11379a784189d5c5f9e",
+    "bytes": 625362
+  },
+  {
+    "path": "data/caches/pfd-cache/index/2025FD.xml",
+    "sha256": "0b0b0cd2b288938a00b38bcee4f1c5f7686139a32920e2e9c38a7291844c0814",
+    "bytes": 793323
+  },
+  {
+    "path": "data/caches/pfd-cache/index/2026FD.xml",
+    "sha256": "3d010744d0db9b91a1d8f8132c43c3c2567c5a5b16c100648f5f99e9ff3217d9",
+    "bytes": 431311
+  },
+  {
+    "path": "pipeline/artifacts/eric-burlison.theme-gaps.json",
+    "sha256": "1972f8a96247364e2fb424c8714370db66015d3d67a38873e799ffbfb6ccd0de",
+    "bytes": 237
+  },
+  {
+    "path": "pipeline/task-1789604336595-31f470a0/code-checker.json",
+    "sha256": "0df5fdef621a65523f9312b243bbb1cd296dab4dec4d3a1fc62a3c2972c49110",
+    "bytes": 236
+  },
+  {
+    "path": "pipeline/task-1789604336595-31f470a0/data-checker.json",
+    "sha256": "fd6f3587c973db2c519903b8132680fb8d3b7cd3d7bbfe511d98133bce0e19f2",
+    "bytes": 208
+  },
+  {
+    "path": "pipeline/task-1789604336595-31f470a0/final-review.json",
+    "sha256": "8ff8c0033ce8ad0b5015023cddccda3a05e93383e34c6a0b674dbdd32905a5f6",
+    "bytes": 582
+  },
+  {
+    "path": "pipeline/task-1789604336595-31f470a0/predictor.json",
+    "sha256": "300e6a1a79727835060cfede24ce85c0b3388ee7cb1f0b0b6a4b262f46a4c477",
+    "bytes": 2384
+  },
+  {
+    "path": "pipeline/task-1789604336595-31f470a0/researcher.json",
+    "sha256": "a11b382a71e706a79401991af4686374c9b942563e46ce11dcbc068cd2a77caa",
+    "bytes": 733908
+  },
+  {
+    "path": "pipeline/task-1789604336595-31f470a0/state.json",
+    "sha256": "c7664edcc133ac6b5bd3a41034aae14d152dfda1af9f0fba505187a94ac3b1b3",
+    "bytes": 2050
+  },
+  {
+    "path": "pipeline/task-1789604336595-31f470a0/summarizer.json",
+    "sha256": "d11bb287d7c433c0bbdf976c9b3a424294357072d353f0a49e4534bae0886387",
+    "bytes": 2650
+  },
+  {
+    "path": "pipeline/task-1789604336595-31f470a0/trade-analyst.json",
+    "sha256": "a76c567db1d0824c2bf1f06ee3390f4ba7a146589068cfca2a5ccf9bde59c724",
+    "bytes": 309
+  }
+]

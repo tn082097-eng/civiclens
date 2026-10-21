@@ -1,0 +1,22 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s1-tina-smith",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "db/load-cosponsored.ts",
+    "tina-smith"
+  ],
+  "started": "2026-09-16T08:47:11Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s1-tina-smith/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s1-tina-smith/data/caches",
+  "dbBefore": "9934e0a55cd591c44d524b0efdccb981a7f8f77980e0dfd6f9fa2f61b741f233",
+  "walBefore": "af263b2db1c475a8b49a1e1f12fbd49d894f690bc84718921529303fccefb62d",
+  "exit": 0,
+  "output": "Loading cosponsors for 1 member(s)\u2026\n\n  tina-smith (Tina Smith): 2831 fetched, 2688 inserted, 143 dup/skipped\n\nDone. 2688 cosponsor rows inserted, 0 member(s) not loaded.\nBills table now: [\n  { sponsor_role: 'sponsor', n: 16486 },\n  { sponsor_role: null, n: 179 },\n  { sponsor_role: 'cosponsor', n: 156150 }\n]\n",
+  "dbAfter": "9934e0a55cd591c44d524b0efdccb981a7f8f77980e0dfd6f9fa2f61b741f233",
+  "finished": "2026-09-16T08:48:31Z",
+  "walAfter": "18f66b545e11c766006abf8d5934354481264f0d35149c63f457fad53f6ed7c8"
+}

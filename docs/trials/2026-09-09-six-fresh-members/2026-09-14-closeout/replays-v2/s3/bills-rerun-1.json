@@ -1,0 +1,25 @@
+{
+  "cwd": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields",
+  "head": "56efb3bc4308206d406553162cd39274df0efc8b",
+  "gitStatus": " M names.txt\n?? node_modules\n?? trial-vault/\n",
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "agents/pipeline.ts",
+    "--load-bills",
+    "--bioguide",
+    "F000110",
+    "--api-pass"
+  ],
+  "started": "2026-09-16T14:52:34Z",
+  "dbPath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields/data/civiclens.duckdb",
+  "cachePath": "/home/captainanime/Developer/civiclens-track-b-trials/closeout-v2-s3-cleo-fields/data/caches",
+  "dbBefore": "e2b4c3cfdd4df11eeb85a26b5a881a89620ac16ed3cdf289c27488b847582c39",
+  "walBefore": "bb91d5d8642aba17b08f4245529d4c9d6e23e7267bc07a8674cc1f44bf54b423",
+  "exit": 1,
+  "output": "Pass 1: backfilling votes.bill_id from question text (regex)\u2026\n  0 filled by regex, 254 unparseable, 254 total NULL rows scanned.\n\nPass 2: GovTrack API resolution for remaining NULL bill_ids\u2026\n\u001b[31m\nFatal: fetch failed\u001b[0m\n",
+  "dbAfter": "e2b4c3cfdd4df11eeb85a26b5a881a89620ac16ed3cdf289c27488b847582c39",
+  "finished": "2026-09-16T14:52:42Z",
+  "walAfter": "97613f44eea7e36aa1f323f1c7dc35d3692614f411324dd8fcb6c39ca7a044b6"
+}

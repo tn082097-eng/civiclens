@@ -1,0 +1,107 @@
+[
+  {
+    "path": "data/caches/legislators-cache/legislators-current.yaml",
+    "sha256": "a90636aef9e7c613b53b24eeadc8612ea946669a7ec8118e08833a01ded08cd2",
+    "bytes": 1081081
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/H4NY22085/2026-funders3.json",
+    "sha256": "6f06037bda35b6588552a5c9a9a81352f23e7e4d334fbc5de1442f0a5aa73076",
+    "bytes": 10566
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/H4NY22085/2026-itemized.json",
+    "sha256": "2574bd0801ea05e8a3553225740f858232ec678228884f619359239abab3ab0a",
+    "bytes": 3769
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/H6NJ05171/2024-funders3.json",
+    "sha256": "faccf341b7474956f57fb071455b3c23459b31a0047fb1223004defcc308cab9",
+    "bytes": 10055
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/committees/C00350991.json",
+    "sha256": "079c52cf53099d2b1a1f6ba5dc3766545978f575002dd6bf7643777169540d51",
+    "bytes": 84
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/committees/C00483693.json",
+    "sha256": "c1b4209384377b97787b144ac58c5be276c28d229140ed2e5e19df02aa6b4c89",
+    "bytes": 117
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/committees/C00489799.json",
+    "sha256": "d3a4ecc01053f6642a2c3046784571565c576c989347d8ef0e2b6841e34eb713",
+    "bytes": 106
+  },
+  {
+    "path": "data/caches/pfd-cache/fec-ie/committees/C00606962.json",
+    "sha256": "8e169de01e4a9408077b447c3e8f4437260b48103167ade2c6faad7ae25ea992",
+    "bytes": 120
+  },
+  {
+    "path": "data/caches/pfd-cache/index/2023FD.xml",
+    "sha256": "60e5dcf86ec483f428a371abbe7894f72124fc03d3e5b6351507b40ec8f8c10d",
+    "bytes": 650480
+  },
+  {
+    "path": "data/caches/pfd-cache/index/2024FD.xml",
+    "sha256": "99576a8c58e100fc35e14af597b184f0421650cf6de1e11379a784189d5c5f9e",
+    "bytes": 625362
+  },
+  {
+    "path": "data/caches/pfd-cache/index/2025FD.xml",
+    "sha256": "0b0b0cd2b288938a00b38bcee4f1c5f7686139a32920e2e9c38a7291844c0814",
+    "bytes": 793323
+  },
+  {
+    "path": "data/caches/pfd-cache/index/2026FD.xml",
+    "sha256": "3d010744d0db9b91a1d8f8132c43c3c2567c5a5b16c100648f5f99e9ff3217d9",
+    "bytes": 431311
+  },
+  {
+    "path": "pipeline/artifacts/john-w-mannion.theme-gaps.json",
+    "sha256": "223361c1ba692f9f61256eacfb8c2ae19de1bc577e55a7d7ac0bbb2c2f051a0d",
+    "bytes": 239
+  },
+  {
+    "path": "pipeline/task-1789570053261-814dc4a0/code-checker.json",
+    "sha256": "ed94467b832f544e0824b6ad6cf8b169e90d78afa91e5ac54102d23f88486cd0",
+    "bytes": 236
+  },
+  {
+    "path": "pipeline/task-1789570053261-814dc4a0/data-checker.json",
+    "sha256": "1897fca976d46f41eda9ce121e4feb5ae6961b55e108eba4f95a75002ad418a8",
+    "bytes": 208
+  },
+  {
+    "path": "pipeline/task-1789570053261-814dc4a0/final-review.json",
+    "sha256": "13b74bc7c0cec02a985955e094e0215c8ec1995f072afe95135dc52c4915621d",
+    "bytes": 585
+  },
+  {
+    "path": "pipeline/task-1789570053261-814dc4a0/predictor.json",
+    "sha256": "565fae58e0470c2b3121a71b4f9c9d56edccf2e358158cec5367c5761d226bd7",
+    "bytes": 2372
+  },
+  {
+    "path": "pipeline/task-1789570053261-814dc4a0/researcher.json",
+    "sha256": "1a162c801a427eb174bde2b892a95001ea27f910744fbfb511bf09d7994de089",
+    "bytes": 265034
+  },
+  {
+    "path": "pipeline/task-1789570053261-814dc4a0/state.json",
+    "sha256": "ec6f8499433dbd0cccbefeb1cff8d0ec4a195bb463eb36cc5dfc2df69ee92260",
+    "bytes": 2046
+  },
+  {
+    "path": "pipeline/task-1789570053261-814dc4a0/summarizer.json",
+    "sha256": "5e9d0e2fbb7ccd1333ee91bf5e87f2b1849e29e773e66929bf727724393545e0",
+    "bytes": 2446
+  },
+  {
+    "path": "pipeline/task-1789570053261-814dc4a0/trade-analyst.json",
+    "sha256": "60f9636d29585011a35ade221ee58b8002331eef9f8889d8b96208fb915700d5",
+    "bytes": 309
+  }
+]

@@ -1,10 +1,10 @@
 /**
- * CivicLens Live Researcher (v2 — Congress.gov primary, GovTrack fallback)
+ * CivicLens Live Researcher (Congress.gov and official chamber votes)
  *
  * Sources (in priority order):
  *   1. Congress.gov   — member identity, role, bio, sponsored bills
  *   2. OpenFEC        — donors, campaign totals
- *   3. GovTrack       — votes (Congress.gov v3 has no clean member-votes endpoint)
+ *   3. House Clerk / Senate LIS XML — votes through the pinned collector
  *
  * Every returned record carries {source, sourceUrl} for provenance.
  */
@@ -15,6 +15,8 @@ import { join } from 'node:path';
 import { load as parseYaml } from 'js-yaml';
 import { resolveMember } from '../../lib/resolve-member.js';
 import { LEGISLATORS_CACHE } from '../../lib/paths.js';
+import { fetchOfficialMemberVotes } from './official-vote-runtime.js';
+import { OfficialVoteFailure, type OfficialVoteRecord, type VoteCoverage } from '../../lib/official-vote-types.js';
 
 // ─── Env loader: read ~/.hermes/.env if keys aren't already exported ─────────
 function loadEnvOnce() {
@@ -62,14 +64,6 @@ async function get(url: string, timeoutMs = 15_000, maxAttempts = 3): Promise<an
     await new Promise(res => setTimeout(res, 500 * Math.pow(3, attempt - 1)));
   }
   throw lastErr!;
-}
-
-function normalizeVote(raw: string): 'yea' | 'nay' | 'abstain' | 'absent' {
-  const v = raw.toLowerCase();
-  if (['yea', 'yes', 'aye'].includes(v)) return 'yea';
-  if (['nay', 'no'].includes(v))         return 'nay';
-  if (v === 'present')                   return 'abstain';
-  return 'absent';
 }
 
 function normalizeBillStatus(raw: string): 'introduced' | 'passed' | 'failed' | 'signed' {
@@ -544,50 +538,12 @@ async function fetchUpcomingMeetings(memberCommittees: MemberCommittee[]): Promi
   return out.sort((a, b) => a.date.localeCompare(b.date));
 }
 
-async function fetchGovTrackVotes(
-  personId: number,
-  limit = 8,
-  minDateISO?: string,
-): Promise<any[]> {
-  // GovTrack's vote_voter offset is hard-capped at 1000 ("Offset > 1000 is
-  // not permitted") — purely offset-based pagination tops out at ~1100 votes
-  // per member, missing the older window we need for multi-year PFD coverage.
-  //
-  // Workaround: cursor by `created__lt`. Each page asks for the next 100
-  // votes older than the oldest seen so far. Naturally bounded by minDateISO
-  // (stop once oldest seen predates the cutoff). Per-call timeout fits the
-  // ~14s curve at limit=100.
-  const PAGE = 100;
-  const out: any[] = [];
-  let cursor: string | null = null;
-  while (out.length < limit) {
-    const want = Math.min(PAGE, limit - out.length);
-    const cursorParam = cursor ? `&created__lt=${encodeURIComponent(cursor)}` : '';
-    try {
-      const d = await get(
-        `https://www.govtrack.us/api/v2/vote_voter?person=${personId}&limit=${want}&sort=-created${cursorParam}`,
-        25_000
-      );
-      const objs = d.objects ?? [];
-      if (objs.length === 0) break; // nothing left to fetch
-      out.push(...objs);
-      // Cursor = `created` timestamp of the oldest item in this page (used as
-      // exclusive upper bound for the next page).
-      const oldest = objs[objs.length - 1];
-      const oldestRaw = String(oldest?.created ?? oldest?.vote?.created ?? '');
-      if (!oldestRaw) break; // can't advance the cursor
-      cursor = oldestRaw;
-      if (objs.length < want) break; // truly ran out
-      if (minDateISO) {
-        const oldestDate = oldestRaw.slice(0, 10);
-        if (oldestDate && oldestDate < minDateISO) break;
-      }
-    } catch (e: any) {
-      console.warn(`[researcher/fetch] cursor pagination failed at cursor=${cursor}; result truncated to ${out.length}: ${e?.message ?? e}`);
-      break;
-    }
+/** Official failures propagate unchanged; an empty result requires validated coverage. */
+export async function collectOfficialVotes(bioguideId: string, chamber: string, asOf: string, fetcher: typeof fetchOfficialMemberVotes = fetchOfficialMemberVotes) {
+  if (chamber !== 'house' && chamber !== 'senate') {
+    throw new OfficialVoteFailure('identity', 'unsupported_chamber', `unsupported chamber: ${chamber}`);
   }
-  return out;
+  return fetcher({ bioguideId, chamber, asOf, source: { mode: 'live' } });
 }
 
 // ─── OpenFEC (donors) ────────────────────────────────────────────────────────
@@ -725,7 +681,8 @@ export interface LiveFetchResult {
   role: string;
   inOffice: boolean;
   bills: Array<{ title: string; summary: string; status: string; introducedAt: string; source: string; sourceUrl: string; confidence: number }>;
-  votes: Array<{ billTitle: string; vote: string; date: string; source: string; sourceUrl: string; confidence: number }>;
+  votes: OfficialVoteRecord[];
+  voteCoverage: VoteCoverage;
   donors: Array<{ name: string; type: string; amount: number; date: string; source: string; sourceUrl: string; confidence: number }>;
   committees: MemberCommittee[];
   upcomingMeetings: UpcomingMeeting[];
@@ -783,38 +740,11 @@ export async function fetchPolitician(name: string): Promise<LiveFetchResult | n
   }
   const upcomingMeetings = await fetchUpcomingMeetings(committees);
 
-  // ── 5. Votes: GovTrack (Congress.gov v3 has no first-class member-votes) ──
-  // Pull up to ~2000, keep up to 1500. 48-month lookback via minDateISO bounds
-  // wall-time on high-frequency voters. Wide enough that *current* PFD filings
-  // covering 2022+ transactions (the multi-year corpus) still find votes in
-  // their trade-date window.
-  let votes: LiveFetchResult['votes'] = [];
-  const govtrackId = leg?.govtrack ?? null;
-  if (govtrackId) {
-    const minDateISO = new Date(Date.now() - 48 * 30 * 24 * 3600 * 1000)
-      .toISOString().slice(0, 10);
-    // Bumped fetch cap so a House member with ~25 votes/week reaches the
-    // full 48-month window before the cap fires. minDateISO is the real
-    // bound; the cap is a safety net.
-    const raw = await fetchGovTrackVotes(govtrackId, 4000, minDateISO);
-    votes = raw
-      .filter((v: any) => v.vote?.question)
-      .map((v: any) => ({
-        billTitle: v.vote.question?.replace(/^H\.R\.\s*\d+[^:]*:\s*/i, '')
-                                   .replace(/^S\.\s*\d+[^:]*:\s*/i, '')
-                                   .trim() ?? 'Unknown Vote',
-        vote:      normalizeVote(v.option?.value ?? 'absent'),
-        date:      (v.created ?? v.vote?.created ?? '').slice(0, 10),
-        source:    'govtrack.us',
-        sourceUrl: v.vote?.link
-          ? (v.vote.link.startsWith('http') ? v.vote.link : `https://www.govtrack.us${v.vote.link}`)
-          : 'https://www.govtrack.us',
-        confidence: 0.99,
-      }))
-      .filter((v: any) => v.date && v.date <= new Date().toISOString().split('T')[0])
-      .slice(0, 3500);
-  }
-  if (votes.length === 0) warnings.push(`votes: no live vote data for "${canonicalName}"`);
+  // ── 5. Official House Clerk / Senate LIS votes via pinned collector ──
+  const govtrackId = leg?.govtrack ?? null; // historical identifier; never a vote source
+  const {votes,coverage:voteCoverage} = await collectOfficialVotes(
+    bioguideId, chamber, new Date().toISOString().slice(0,10),
+  );
 
   // ── 6. Donors: OpenFEC (multi-cycle union) ──
   // Single-cycle pulls miss recurring donors who maxed in earlier cycles —
@@ -918,6 +848,7 @@ export async function fetchPolitician(name: string): Promise<LiveFetchResult | n
     inOffice,
     bills,
     votes,
+    voteCoverage,
     donors,
     committees,
     upcomingMeetings,
