@@ -1,7 +1,7 @@
 // SYNTHETIC rows and provenance for offline contract tests, not coverage evidence.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { VoteSchema, ResearcherOutputSchema, ResearcherArtifactSchema } from './schemas.js';
+import { VoteSchema, VoteCoverageSchema, ResearcherOutputSchema, ResearcherArtifactSchema } from './schemas.js';
 export function officialVote(overrides: Record<string, unknown> = {}) {
   return { billTitle: 'H R 29: Test bill', vote: 'yea', rawPosition: 'Yea', date: '2025-01-07', source: 'clerk.house.gov', sourceUrl: 'https://clerk.house.gov/evs/2025/roll006.xml', sourceSha256: 'a'.repeat(64), confidence: 1, rollKey: '119-2025/h6', chamber: 'house', congress: 119, session: 1, roll: 6, question: 'On Passage', resolution: { outcome: 'resolved_bill', billId: '119-hr-29', subtype: null, amendment: null, reason: null }, ...overrides };
 }
@@ -42,4 +42,19 @@ test('Senate official source and non-bill classification validate', () => {
 test('coverage rejects partial and inconsistent success receipts', () => {
   for (const c of [{ outcome: 'ok' }, { ...coverage(), requiredRolls: 1 }, { ...coverage(), recorded: 1 }, { ...coverage(), window: { start: '2022-10-17', end: '2026-10-16', months: 48 } }])
     assert.equal(ResearcherOutputSchema.safeParse(artifact([], c)).success, false);
+});
+
+test('coverage retains listing evidence and rejects contradictory or duplicate listings',()=>{
+  const listing={rollKey:'119-2025/h1',chamber:'house',voterId:'G000578',rawPosition:'Not Voting',date:'2025-01-03'};
+  const c={...coverage(1),outOfServiceListings:[listing]};
+  assert.deepEqual(VoteCoverageSchema.parse(c).outOfServiceListings,[listing]);
+  const artifactValue=artifact([officialVote()],c);
+  assert.deepEqual(ResearcherOutputSchema.parse(artifactValue).data.voteCoverage?.outOfServiceListings,[listing]);
+  for(const patch of [{rawPosition:'Yea'},{voterId:'UNKNOWN'},{chamber:'senate'},{rollKey:'119-2025/s1'},{rollKey:'119-2025/h01'},{date:'2024-01-03'},{date:'2030-01-03'}]){
+    assert.equal(VoteCoverageSchema.safeParse({...c,outOfServiceListings:[{...listing,...patch}]}).success,false,JSON.stringify(patch));
+  }
+  assert.equal(VoteCoverageSchema.safeParse({...c,outOfServiceListings:[listing,listing]}).success,false);
+  assert.equal(VoteCoverageSchema.safeParse({...c,outOfServiceListings:[listing,{...listing,rollKey:'119-2025/h2'}]}).success,false);
+  assert.equal(VoteCoverageSchema.safeParse({...c,outOfServiceListings:[{...listing,rollKey:'119-2025/s1',chamber:'senate',voterId:'S033'}]}).success,false);
+  assert.equal(VoteCoverageSchema.safeParse({...coverage(0),outOfServiceListings:[listing]}).success,false);
 });

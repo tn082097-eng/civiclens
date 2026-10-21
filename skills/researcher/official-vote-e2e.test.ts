@@ -15,7 +15,7 @@ import { loadWindowRun, normalizeMemberVotes } from './official-member-votes.js'
 import { resolveOfficialRolls } from './official-vote-runtime.js';
 import { runCollectorBridge } from '../../lib/collector-bridge.js';
 import { loadIdentityIndex } from '../../lib/official-identity.js';
-import { OfficialVoteFailure } from '../../lib/official-vote-types.js';
+import { ResearcherOutputSchema } from '../../lib/schemas.js';
 import { tempDb, insertMember, snapshot } from '../../db/__testkit__/temp-db.js';
 import { planVoteBatch, applyVoteBatch } from '../../db/load-from-tasks.js';
 
@@ -71,30 +71,31 @@ for (const c of cases) {
         chamber: c.chamber, asOf,
         run: { ...loaded.run, mode: 'window' as const, as_of: asOf, months: 48, window: [window.start, window.end] as [string, string] },
       };
+      const normalized = normalizeMemberVotes(normalization);
+      assert.equal(normalized.votes.length, rolls.length);
       if (c.chamber === 'house') {
-        // Real source conflict, NOT a success fixture: roll 1 includes G000578
-        // as Not Voting after the pinned identity snapshot's term end.
-        // Preserve the strict contract; do not silently omit it in production.
-        assert.throws(() => normalizeMemberVotes(normalization),
-          (error: unknown) => error instanceof OfficialVoteFailure
-            && error.code === 'voter_not_in_service' && error.message.includes('G000578'));
+        assert.deepEqual(normalized.coverage.outOfServiceListings, [{
+          rollKey: '119-2025/h1', chamber: 'house', voterId: 'G000578',
+          rawPosition: 'Not Voting', date: '2025-01-03',
+        }]);
       }
-      const accepted = c.chamber === 'house' ? rolls.filter(r => r.key !== '119-2025/h1') : rolls;
-      const acceptedKeys = new Set(accepted.map(r => r.key));
-      // A separate selected-roll interoperability control, not a repaired full run.
-      const normalized = normalizeMemberVotes({ ...normalization,
-        bridgeInputs: loaded.bridgeInputs.filter(r => acceptedKeys.has(r.key)),
-        bridge: { ...bridge, results: bridge.results.filter(r => acceptedKeys.has(r.key)) },
+      // SYNTHETIC surrounding biography only; real normalized votes and coverage
+      // must survive the same artifact validation that researcher/loadOne use.
+      const parsed = ResearcherOutputSchema.parse({
+        source:'congress.gov',fetchedAt:'2026-10-16T12:00:00Z',target:{name:'Fixture member',type:'politician'},warnings:[],
+        data:{id:c.bioguide,name:'Fixture member',party:'Independent',state:'TX',chamber:c.chamber,
+          role:'Fixture role',bio:'SYNTHETIC biography for an offline artifact interoperability control only. '.repeat(2),
+          inOffice:true,bills:[],votes:normalized.votes,voteCoverage:normalized.coverage,donors:[],controversies:[],connections:[]},
       });
-      assert.equal(normalized.votes.length, accepted.length);
+      assert.deepEqual(parsed.data.voteCoverage?.outOfServiceListings,normalized.coverage.outOfServiceListings);
       await insertMember(db.conn, { memberId: c.bioguide, name: 'Fixture member', chamber: c.chamber, bioguideId: c.bioguide });
       await insertMember(db.conn, { memberId: 'unaffected', name: 'SYNTHETIC unaffected member', chamber: c.chamber });
       const otherBefore = await snapshot(db.conn, "(SELECT * FROM members WHERE member_id='unaffected')", 'member_id');
-      await applyVoteBatch(db.conn, c.bioguide, planVoteBatch(c.bioguide, normalized.votes, normalized.coverage));
+      await applyVoteBatch(db.conn, c.bioguide, planVoteBatch(c.bioguide, parsed.data.votes, parsed.data.voteCoverage));
       const rows = await (await db.conn.run('SELECT vote_id, bill_id, position, source_url FROM votes WHERE member_id=? ORDER BY vote_id', [c.bioguide])).getRowObjects();
-      assert.equal(rows.length, accepted.length);
-      assert.deepEqual(rows.map(r => r.vote_id).sort(), accepted.map(r => r.key).sort());
-      for (const resolution of resolutions.filter(r => acceptedKeys.has(r.key))) {
+      assert.equal(rows.length, rolls.length);
+      assert.deepEqual(rows.map(r => r.vote_id).sort(), rolls.map(r => r.key).sort());
+      for (const resolution of resolutions) {
         assert.ok(resolution.ok);
         const row = rows.find(r => r.vote_id === resolution.key)!;
         assert.equal(row.bill_id, resolution.resolution.billId);

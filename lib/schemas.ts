@@ -31,6 +31,10 @@ export const VoteCoverageSchema = z.object({
   window: z.object({ start: isoDate, end: isoDate, months: z.literal(48) }),
   requiredRolls: count, analyzedRolls: count, inServiceRolls: count,
   recorded: count, notRecorded: count, notRecordedKeys: z.array(z.string()),
+  outOfServiceListings: z.array(z.object({
+    rollKey: z.string(), chamber: z.enum(['house', 'senate']),
+    voterId: z.string(), rawPosition: z.literal('Not Voting'), date: isoDate,
+  })).optional(),
   acquisition: z.object({ runDir: z.string().min(1), manifestSha256: sha256, inventorySha256: sha256.nullable() }),
   collector: z.object({ commit, lockSha256: sha256, vendorManifestSha256: sha256 }),
   identity: z.object({ commit, snapshotSha256: sha256, floor: isoDate }),
@@ -55,6 +59,23 @@ export const VoteCoverageSchema = z.object({
       fail('invalid coverage key');
     }
   }
+  const listings = c.outOfServiceListings ?? [];
+  const listingKeys = new Set<string>(), listingRolls = new Set<string>();
+  for (const listing of listings) {
+    try {
+      const roll = parseRollKey(listing.rollKey);
+      if (listing.chamber !== c.chamber || roll.chamber !== c.chamber
+        || !listing.date.startsWith(`${roll.year}-`)
+        || listing.date < c.window.start || listing.date > c.window.end)
+        fail('listing roll, chamber or date differs from coverage');
+    } catch { fail('invalid listing roll key'); }
+    if (!(listing.chamber === 'house' ? /^[A-Z]\d{6}$/ : /^S\d+$/).test(listing.voterId))
+      fail('invalid listing voter identity');
+    const key = `${listing.rollKey}/${listing.voterId}`;
+    if (listingKeys.has(key)) fail('duplicate out-of-service listing');
+    listingKeys.add(key); listingRolls.add(listing.rollKey);
+  }
+  if (listingRolls.size > c.analyzedRolls) fail('listing rolls exceed analyzed coverage');
 });
 
 export const BillSchema = z.object({

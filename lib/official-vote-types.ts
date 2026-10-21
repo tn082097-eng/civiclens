@@ -186,6 +186,15 @@ export interface OfficialVoteRecord {
   resolution: OfficialVoteResolution;
 }
 
+/** A source listing preserved as evidence, never attributed as a member vote. */
+export interface OutOfServiceListing {
+  rollKey: string;
+  chamber: Chamber;
+  voterId: string;
+  rawPosition: 'Not Voting';
+  date: string;
+}
+
 export interface VoteCoverage {
   outcome: 'ok';
   source: 'official';
@@ -199,6 +208,8 @@ export interface VoteCoverage {
   recorded: number;
   notRecorded: number;
   notRecordedKeys: string[];
+  /** New runs always include this; older artifacts may omit it. */
+  outOfServiceListings?: OutOfServiceListing[];
   acquisition: { runDir: string; manifestSha256: string; inventorySha256: string | null };
   collector: { commit: string; lockSha256: string; vendorManifestSha256: string };
   identity: { commit: string; snapshotSha256: string; floor: string };

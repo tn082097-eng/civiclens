@@ -318,7 +318,8 @@ pattern. Fetch functions are injectable for tests.
 
   `personForVoter` throws for any of these: date before floor, unknown id, or
   no term in that chamber covering the date (codes `date_before_floor`,
-  `unmapped_voter`, `voter_not_in_service`).
+  `unmapped_voter`, `voter_not_in_service`). The lookup itself stays strict;
+  the approved listing rule in §4 is applied only by the normalizer.
 
 ## 4. Normalization (owner: official-vote-ingest, TS)
 
@@ -373,9 +374,23 @@ absolute `path` = `join(runDir, 'acquisition', response.path)`.
     Giving Live Pair, `absent` = #Not Voting, plus `Guilty`→yeas and
     `Not Guilty`→nays. Any other token is a mismatch.
   - A mismatch throws with stage `collector` and code `cross_check_mismatch`.
-- **Identity.** Map every voter through `identity.personForVoter` on the roll
-  date. Any failure throws. Two voters mapping to one bioguide → `identity` /
-  `duplicate_person`.
+- **Identity (maintainer-approved amendment, 2026-10-20).** Map every raw
+  voter through `identity.personForVoter` on the roll date. A failure throws
+  except a known identity whose lookup throws `voter_not_in_service` and whose
+  raw position is exactly `Not Voting`. Retain that row as an
+  `outOfServiceListings` entry `{rollKey, chamber, voterId, rawPosition, date}`;
+  do not attribute a vote or add it to the member-to-position map. Unknown
+  identities, dates before the floor and every other out-of-service position
+  still fail. Collector/raw voter-set comparisons and declared totals still
+  cover every row, including these listings. Duplicate raw IDs and duplicate
+  resolved people still fail. This rule has no member- or roll-specific case.
+  `RollAnalysis` exposes the listings and `normalizeMemberVotes` aggregates
+  them into coverage. New coverage always includes the array (empty when none);
+  the schema accepts its absence only for older artifacts. Validate canonical
+  roll/chamber/date, chamber-specific voter ID, exact `Not Voting`, window
+  membership and unique (rollKey, voterId) pairs. Keep original XML and hashes.
+  A listing is source evidence of non-participation, not service or an
+  attributed absence vote.
 - **Position context.**
   - `election` iff all three hold: House, `raw.question === 'Election of the
     Speaker'`, and `raw.totals.kind === 'by_candidate'` and
@@ -408,7 +423,9 @@ absolute `path` = `join(runDir, 'acquisition', response.path)`.
   - if the member is `inService` on that date, a voter row becomes a vote
     record; no row → `notRecorded` (key listed), never absent;
   - a member who appears in a roll while not in service → `identity` /
-    `appears_out_of_service`.
+    `appears_out_of_service`, except an approved `Not Voting` listing above:
+    it contributes no member vote, no in-service roll and no notRecorded key,
+    while remaining present in `outOfServiceListings`.
 - If `inServiceRolls > 0 && recorded === 0` → `identity` /
   `member_never_recorded`.
 - Record fields follow `OfficialVoteRecord`:

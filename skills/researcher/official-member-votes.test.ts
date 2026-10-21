@@ -28,11 +28,61 @@ test('synthetic member coverage missing row stays notRecorded',()=>{const one=re
 test('synthetic never recorded, unknown target, appears out of service, incomplete and zero required fail',()=>{const r=result(syntheticHouse());assert.throws(()=>normalizeMemberVotes(args([r],'A000371')),failure('member_never_recorded'));assert.throws(()=>normalizeMemberVotes(args([r],'UNKNOWN')),failure('unmapped_voter'));assert.throws(()=>normalizeMemberVotes(args([r],'A000370',{...identity,inService:()=>false})),failure('appears_out_of_service'));const a=args([r]);a.run.status='incomplete';assert.throws(()=>normalizeMemberVotes(a),failure('incomplete_run'));const b=args([r]);b.bridgeInputs=[];b.bridge.results=[];assert.throws(()=>normalizeMemberVotes(b),failure('zero_required_rolls'));});
 test('synthetic classifier disagreement and amendment parent semantics',()=>{const r=result(syntheticHouse());(r.collector.bill as any).number=999;assert.equal(classifyRoll(r.raw,r.collector).outcome,'ambiguity');const s=result(syntheticSenate());assert.equal(classifyRoll(s.raw,s.collector).billId,'119-s-5');});
 test('incomplete and zero-required saved runs throw typed failures',()=>{const dir=mkdtempSync(join(tmpdir(),'official-run-'));try{const a=args();a.run.status='incomplete';writeFileSync(join(dir,'window-run.json'),JSON.stringify(a.run));assert.throws(()=>loadWindowRun(dir),failure('incomplete_run'));a.run.status='complete';const m={contract:'civiclens.official-vote-acquisition',contract_version:1,chamber:'house',status:'acquisition_complete',required_rolls:0,records:[]};const bytes=Buffer.from(JSON.stringify(m));mkdirSync(join(dir,'acquisition'));writeFileSync(join(dir,'acquisition/manifest.json'),bytes);a.run.manifest_sha256=createHash('sha256').update(bytes).digest('hex');writeFileSync(join(dir,'window-run.json'),JSON.stringify(a.run));assert.throws(()=>loadWindowRun(dir),failure('zero_required_rolls'));}finally{rmSync(dir,{recursive:true,force:true});}});
-test('real frozen bridge outputs retain official classification and strict dated-voter behavior',()=>{
+test('real frozen bridge outputs account for every voter including out-of-service listings',()=>{
  const bridge=JSON.parse(readFileSync(new URL('../../fixtures/votes/collector-output/bridge-run-official-samples.json',import.meta.url),'utf8')) as BridgeRun;
  assert.equal(bridge.results.length,7);
  for(const r of bridge.results){assert.ok(r.ok);if(!r.ok)continue;const i=input(r);i.congress=r.raw.congress;i.date=r.raw.date;
-  // Some frozen Clerk rows may include an out-of-service person. Preserve strict failure.
-  try{const a=analyzeRoll(i,r,identity);assert.equal(a.voters.size,r.raw.voters.length);}catch(e){assert.ok(e instanceof OfficialVoteFailure&&e.stage==='identity',String(e));}
+  const a=analyzeRoll(i,r,identity);
+  assert.equal(a.voters.size+a.outOfServiceListings.length,r.raw.voters.length);
+  if(r.key==='119-2025/h1')assert.deepEqual(a.outOfServiceListings,[{rollKey:r.key,chamber:'house',voterId:'G000578',rawPosition:'Not Voting',date:'2025-01-03'}]);
  }
+});
+
+// SYNTHETIC listing added to a small roll; identities come from the pinned snapshot.
+function withListing(id='G000578', position='Not Voting'):BridgeRollOk {
+ const raw=syntheticHouse();raw.voters.push({id,raw_position:position});
+ if(raw.totals.kind==='by_vote'){
+  if(position==='Not Voting')raw.totals.not_voting++;
+  else if(position==='Yea')raw.totals.yea++;
+  else if(position==='Nay')raw.totals.nay++;
+  else if(position==='Present')raw.totals.present++;
+ }
+ return result(raw);
+}
+test('known out-of-service Not Voting row is retained without attributing a vote',()=>{
+ const r=withListing();const a=analyzeRoll(input(r),r,identity);
+ assert.equal(a.voters.has('G000578'),false);
+ assert.deepEqual(a.outOfServiceListings,[{rollKey:r.key,chamber:'house',voterId:'G000578',rawPosition:'Not Voting',date:r.raw.date}]);
+ const out=normalizeMemberVotes(args([r]));
+ assert.deepEqual(out.coverage.outOfServiceListings,a.outOfServiceListings);
+ assert.equal(out.coverage.recorded,1);assert.equal(out.coverage.notRecorded,0);
+});
+test('out-of-service target gets evidence only, without an absent vote or in-service count',()=>{
+ const out=normalizeMemberVotes(args([withListing()],'G000578'));
+ assert.deepEqual(out.votes,[]);assert.equal(out.coverage.inServiceRolls,0);
+ assert.equal(out.coverage.recorded,0);assert.equal(out.coverage.notRecorded,0);
+ assert.deepEqual(out.coverage.notRecordedKeys,[]);
+ assert.equal(out.coverage.outOfServiceListings?.length,1);
+});
+test('unknown Not Voting and actual out-of-service votes remain failures',()=>{
+ const unknown=withListing('X999999');assert.throws(()=>analyzeRoll(input(unknown),unknown,identity),failure('unmapped_voter'));
+ for(const position of ['Yea','Nay','Present']){
+  const r=withListing('G000578',position);assert.throws(()=>analyzeRoll(input(r),r,identity),failure('voter_not_in_service'));
+ }
+});
+test('Senate LIS listings use the same generic rule and keep strict lookup behavior',()=>{
+ const raw=syntheticSenate();raw.voters.push({id:'S289',raw_position:'Not Voting'});raw.count.absent++;
+ const r=result(raw);const a=analyzeRoll(input(r),r,identity);
+ assert.deepEqual(a.outOfServiceListings,[{rollKey:r.key,chamber:'senate',voterId:'S289',rawPosition:'Not Voting',date:raw.date}]);
+ assert.equal(a.voters.size,2);
+ assert.throws(()=>identity.personForVoter('senate','S289',raw.date),failure('voter_not_in_service'));
+ assert.deepEqual(analyzeRoll(input(result(syntheticHouse())),result(syntheticHouse()),identity).outOfServiceListings,[]);
+});
+test('listing exception never bypasses total, duplicate or collector cross-checks',()=>{
+ const duplicate=withListing();duplicate.raw.voters.push({...duplicate.raw.voters[2]});
+ assert.throws(()=>analyzeRoll(input(duplicate),duplicate,identity),failure('cross_check_mismatch'));
+ const totals=withListing();if(totals.raw.chamber==='house'&&totals.raw.totals.kind==='by_vote')totals.raw.totals.not_voting=0;
+ assert.throws(()=>analyzeRoll(input(totals),totals,identity),failure('cross_check_mismatch'));
+ const collector=withListing();delete (collector.collector.votes as any)['Not Voting'];
+ assert.throws(()=>analyzeRoll(input(collector),collector,identity),failure('cross_check_mismatch'));
 });

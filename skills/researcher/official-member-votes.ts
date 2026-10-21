@@ -3,7 +3,7 @@ import {createHash} from 'node:crypto';
 import {readFileSync,lstatSync,realpathSync} from 'node:fs';
 import {resolve,relative,isAbsolute,dirname} from 'node:path';
 import {classifyHouseRoll,classifySenateRoll,normalizePosition,parseRollKey,rollKey,sessionYear,houseSourceUrl,senateSourceUrl,coverageWindow,isIsoDate,type Chamber,type NormalizedPosition} from '../../lib/vote-source.js';
-import {OfficialVoteFailure,type OfficialVoteStage,type WindowRun,type BridgeRollInput,type BridgeRollOk,type BridgeRollFail,type BridgeRun,type HouseRaw,type SenateRaw,type OfficialVoteResolution,type OfficialMemberVotes,type OfficialVoteRecord} from '../../lib/official-vote-types.js';
+import {OfficialVoteFailure,type OfficialVoteStage,type WindowRun,type BridgeRollInput,type BridgeRollOk,type BridgeRollFail,type BridgeRun,type HouseRaw,type SenateRaw,type OfficialVoteResolution,type OfficialMemberVotes,type OfficialVoteRecord,type OutOfServiceListing} from '../../lib/official-vote-types.js';
 import type {IdentityIndex} from '../../lib/official-identity.js';
 import {validateAcquisitionManifest,verifyResponseBodies,type AcquisitionManifest,type AcquisitionResponse} from './official-votes.js';
 
@@ -14,7 +14,7 @@ export interface AcquisitionManifestLike {
  acquisition_semantics:string;normalized_votes_validated:boolean;member_coverage_validated:boolean;bill_resolution_validated:boolean;collector_revision:unknown;
  records:Array<{key:string;chamber:Chamber;congress:number;session:1|2;year:number;roll:number;date:string;status:string|null;url:string;page:number;index_receipt:Record<string,unknown>;source_url:string;in_window:boolean;attempted:boolean;attempted_at:string|null;outcome:string;reason:string|null;response:AcquisitionResponse|null;metadata:Record<string,unknown>|null}>;
 }
-export interface RollAnalysis {input:BridgeRollInput;raw:HouseRaw|SenateRaw;resolution:OfficialVoteResolution;voters:Map<string,{vote:NormalizedPosition;rawPosition:string}>}
+export interface RollAnalysis {input:BridgeRollInput;raw:HouseRaw|SenateRaw;resolution:OfficialVoteResolution;voters:Map<string,{vote:NormalizedPosition;rawPosition:string}>;outOfServiceListings:OutOfServiceListing[]}
 const PIN='8184bcb13160da2389dea4c902de67817db681fc';
 const SHA=/^[a-f0-9]{64}$/;
 const sha=(b:Buffer|string)=>createHash('sha256').update(b).digest('hex');
@@ -151,8 +151,27 @@ export function analyzeRoll(input:BridgeRollInput,result:BridgeRollOk|BridgeRoll
   if(raw.totals.kind==='by_vote'){const t=raw.totals;check(['Yea','Aye','Nay','No','Present','Not Voting'].every(()=>true)&&[...tokens.keys()].every(k=>['Yea','Aye','Nay','No','Present','Not Voting'].includes(k)),'unknown House count token');check([t.yea,t.nay,t.present,t.not_voting].every(count)&&t.yea===n('Yea','Aye')&&t.nay===n('Nay','No')&&t.present===n('Present')&&t.not_voting===n('Not Voting'),'House totals differ');}
   else {check(raw.totals.kind==='by_candidate'&&Array.isArray(raw.totals.candidates)&&raw.totals.candidates.length>0,'missing candidate totals');const seen=new Set<string>();for(const c of raw.totals.candidates){check(typeof c.name==='string'&&!!c.name&&!seen.has(c.name)&&count(c.total)&&c.total===n(c.name),'candidate total differs');seen.add(c.name);}check([...tokens.keys()].every(t=>seen.has(t))&&raw.totals.candidates.reduce((s,c)=>s+c.total,0)===raw.voters.length,'candidate sum differs');election=raw.question==='Election of the Speaker'&&raw.legis_num==='';}
  }else {const t=raw.count;check(obj(t)&&[t.yeas,t.nays,t.present,t.absent].every(count)&&[...tokens.keys()].every(k=>['Yea','Nay','Present','Present, Giving Live Pair','Not Voting','Guilty','Not Guilty'].includes(k))&&t.yeas===n('Yea','Guilty')&&t.nays===n('Nay','Not Guilty')&&t.present===n('Present','Present, Giving Live Pair')&&t.absent===n('Not Voting'),'Senate totals differ');}
- const voters:RollAnalysis['voters']=new Map();for(const v of raw.voters){const person=identity.personForVoter(raw.chamber,v.id,raw.date);ensure(!voters.has(person),'identity','duplicate_person',person);const pos=normalizePosition(v.raw_position,election?'election':'standard');if(pos.ok===false)fail('normalization','unsupported_position',pos.reason);voters.set(person,{vote:pos.position,rawPosition:pos.rawPosition});}
- return {input,raw,resolution:classifyRoll(raw,collector),voters};
+ const voters:RollAnalysis['voters']=new Map();
+ const outOfServiceListings:OutOfServiceListing[]=[];
+ for(const v of raw.voters){
+  let person:string;
+  try {person=identity.personForVoter(raw.chamber,v.id,raw.date);}
+  catch(error){
+   // The strict identity lookup checks known identity before dated service.
+   // Preserve exact non-participation listings without attributing a vote.
+   if(error instanceof OfficialVoteFailure&&error.stage==='identity'
+     &&error.code==='voter_not_in_service'&&v.raw_position==='Not Voting'){
+    outOfServiceListings.push({rollKey:input.key,chamber:raw.chamber,voterId:v.id,rawPosition:'Not Voting',date:raw.date});
+    continue;
+   }
+   throw error;
+  }
+  ensure(!voters.has(person),'identity','duplicate_person',person);
+  const pos=normalizePosition(v.raw_position,election?'election':'standard');
+  if(pos.ok===false)fail('normalization','unsupported_position',pos.reason);
+  voters.set(person,{vote:pos.position,rawPosition:pos.rawPosition});
+ }
+ return {input,raw,resolution:classifyRoll(raw,collector),voters,outOfServiceListings};
 }
 export function normalizeMemberVotes(args:{runDir:string;run:WindowRun;bridge:BridgeRun;bridgeInputs:BridgeRollInput[];identity:IdentityIndex;bioguideId:string;chamber:Chamber;asOf:string}):OfficialMemberVotes {
  const {run,bridge,bridgeInputs,identity,bioguideId,chamber,asOf}=args;
@@ -160,8 +179,8 @@ export function normalizeMemberVotes(args:{runDir:string;run:WindowRun;bridge:Br
  ensure(run.mode==='window'&&run.chamber===chamber&&run.as_of===asOf&&run.months===48&&equal(run.window,[window.start,window.end]),'coverage','window_mismatch','member window mismatch');
  identity.inService(bioguideId,chamber,asOf);
  ensure(bridge.bridge==='civiclens.congress-collector-bridge'&&bridge.bridge_version===1&&bridge.collector.commit===PIN&&SHA.test(bridge.collector.vendor_manifest_sha256)&&SHA.test(bridge.runtime.lock_sha256)&&bridge.network.interfaces.every(v=>v==='lo')&&['lookup_legislator','require_congress_legislators_repo','download'].every(n=>bridge.inference_disabled.includes(n))&&bridge.results.length===bridgeInputs.length,'collector','cross_check_mismatch','bridge provenance/count mismatch');
- const votes:OfficialVoteRecord[]=[],notRecordedKeys:string[]=[];let inServiceRolls=0;const keys=new Set<string>();
- for(let n=0;n<bridgeInputs.length;n++){const input=bridgeInputs[n];ensure(!keys.has(input.key)&&input.chamber===chamber&&input.key===rollKey(input)&&input.year===sessionYear(input.congress,input.session)&&input.source_url===source(input)&&isIsoDate(input.date)&&window.start<=input.date&&input.date<=window.end&&SHA.test(input.sha256),'coverage','invalid_roll','invalid/duplicate required roll');keys.add(input.key);const a=analyzeRoll(input,bridge.results[n],identity),member=a.voters.get(bioguideId),serves=identity.inService(bioguideId,chamber,input.date);if(!serves){ensure(!member,'identity','appears_out_of_service',input.key);continue;}inServiceRolls++;if(!member){notRecordedKeys.push(input.key);continue;}const raw=a.raw;votes.push({billTitle:raw.chamber==='house'?(raw.legis_num&&raw.vote_desc?`${raw.legis_num}: ${raw.vote_desc}`:raw.vote_desc||raw.question):raw.vote_title||raw.question,vote:member.vote,rawPosition:member.rawPosition,date:raw.date,source:chamber==='house'?'clerk.house.gov':'senate.gov',sourceUrl:input.source_url,sourceSha256:input.sha256,confidence:1,rollKey:input.key,chamber,congress:input.congress,session:input.session,roll:input.roll,question:raw.question,resolution:a.resolution});}
+ const votes:OfficialVoteRecord[]=[],notRecordedKeys:string[]=[],outOfServiceListings:OutOfServiceListing[]=[];let inServiceRolls=0;const keys=new Set<string>();
+ for(let n=0;n<bridgeInputs.length;n++){const input=bridgeInputs[n];ensure(!keys.has(input.key)&&input.chamber===chamber&&input.key===rollKey(input)&&input.year===sessionYear(input.congress,input.session)&&input.source_url===source(input)&&isIsoDate(input.date)&&window.start<=input.date&&input.date<=window.end&&SHA.test(input.sha256),'coverage','invalid_roll','invalid/duplicate required roll');keys.add(input.key);const a=analyzeRoll(input,bridge.results[n],identity),member=a.voters.get(bioguideId),serves=identity.inService(bioguideId,chamber,input.date);outOfServiceListings.push(...a.outOfServiceListings);if(!serves){ensure(!member,'identity','appears_out_of_service',input.key);continue;}inServiceRolls++;if(!member){notRecordedKeys.push(input.key);continue;}const raw=a.raw;votes.push({billTitle:raw.chamber==='house'?(raw.legis_num&&raw.vote_desc?`${raw.legis_num}: ${raw.vote_desc}`:raw.vote_desc||raw.question):raw.vote_title||raw.question,vote:member.vote,rawPosition:member.rawPosition,date:raw.date,source:chamber==='house'?'clerk.house.gov':'senate.gov',sourceUrl:input.source_url,sourceSha256:input.sha256,confidence:1,rollKey:input.key,chamber,congress:input.congress,session:input.session,roll:input.roll,question:raw.question,resolution:a.resolution});}
  ensure(inServiceRolls===0||votes.length>0,'identity','member_never_recorded','member in service but not recorded in any required roll');votes.sort((a,b)=>b.date.localeCompare(a.date)||b.roll-a.roll);
- return {votes,coverage:{outcome:'ok',source:'official',chamber,bioguideId,asOf,window:{start:window.start,end:window.end,months:48},requiredRolls:bridgeInputs.length,analyzedRolls:bridgeInputs.length,inServiceRolls,recorded:votes.length,notRecorded:notRecordedKeys.length,notRecordedKeys,acquisition:{runDir:args.runDir,manifestSha256:run.manifest_sha256,inventorySha256:run.discovery.inventory_sha256},collector:{commit:bridge.collector.commit,lockSha256:bridge.runtime.lock_sha256,vendorManifestSha256:bridge.collector.vendor_manifest_sha256},identity:{commit:identity.commit,snapshotSha256:identity.snapshotSha256,floor:identity.floor}}};
+ return {votes,coverage:{outcome:'ok',source:'official',chamber,bioguideId,asOf,window:{start:window.start,end:window.end,months:48},requiredRolls:bridgeInputs.length,analyzedRolls:bridgeInputs.length,inServiceRolls,recorded:votes.length,notRecorded:notRecordedKeys.length,notRecordedKeys,outOfServiceListings,acquisition:{runDir:args.runDir,manifestSha256:run.manifest_sha256,inventorySha256:run.discovery.inventory_sha256},collector:{commit:bridge.collector.commit,lockSha256:bridge.runtime.lock_sha256,vendorManifestSha256:bridge.collector.vendor_manifest_sha256},identity:{commit:identity.commit,snapshotSha256:identity.snapshotSha256,floor:identity.floor}}};
 }
