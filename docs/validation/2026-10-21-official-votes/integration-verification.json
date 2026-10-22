@@ -1,0 +1,158 @@
+{
+  "excluded_confirmatory_runner_tests": [
+    "pipeline/patterns/confirmatory-guard-inpath.test.ts",
+    "pipeline/patterns/timing-detectors-baseline.test.ts"
+  ],
+  "checks": [
+    {
+      "command": [
+        "unshare",
+        "-rn",
+        "node_modules/.bin/tsx",
+        "--test",
+        "--test-concurrency=1",
+        "agents/required-agents.test.ts",
+        "agents/shared.test.ts",
+        "db/load-bill-summaries.test.ts",
+        "db/load-cosponsored.test.ts",
+        "db/load-fec-ie.test.ts",
+        "db/load-from-tasks.test.ts",
+        "db/load-from-tasks.votes.test.ts",
+        "db/load-opensecrets.test.ts",
+        "db/load-pfd.test.ts",
+        "db/load-pfd.validation.test.ts",
+        "db/load-recipient-ticker.test.ts",
+        "db/load-senate-ptr.test.ts",
+        "db/source-completeness.test.ts",
+        "lib/collector-bridge.test.ts",
+        "lib/donor-crosswalk.test.ts",
+        "lib/ingest-scope.test.ts",
+        "lib/legislators.test.ts",
+        "lib/naics-crosswalk.test.ts",
+        "lib/official-identity.test.ts",
+        "lib/recipient-match.test.ts",
+        "lib/resolve-member.test.ts",
+        "lib/schemas.official-votes.test.ts",
+        "lib/senate-ptr-receipt.test.ts",
+        "lib/vote-source.test.ts",
+        "pipeline/onboarding-safe.test.ts",
+        "pipeline/onboarding-timing-safety.test.ts",
+        "pipeline/patterns/_gap.test.ts",
+        "pipeline/patterns/_nexus.test.ts",
+        "pipeline/patterns/_permutation.test.ts",
+        "pipeline/patterns/_rng.test.ts",
+        "pipeline/patterns/_substrate.test.ts",
+        "pipeline/patterns/detectors-characterization.test.ts",
+        "pipeline/patterns/donor-sector-vote-alignment.test.ts",
+        "pipeline/patterns/recipient-trade-overlap.test.ts",
+        "pipeline/run-patterns.test.ts",
+        "pipeline/score-anomaly.test.ts",
+        "pipeline/score-theme-gaps.test.ts",
+        "render/_safe.test.ts",
+        "render/empty-shells.test.ts",
+        "render/ie-cycles.test.ts",
+        "render/landing.test.ts",
+        "render/load-artifacts.test.ts",
+        "render/member-sections.test.ts",
+        "render/pattern-intensity.test.ts",
+        "render/receipts.test.ts",
+        "render/skeleton.golden.test.ts",
+        "scripts/confirmatory-guard.test.ts",
+        "scripts/validate-artifact-corpus.test.ts",
+        "skills/onboard-member-guidance.test.ts",
+        "skills/pfd-fetcher/extract.test.ts",
+        "skills/researcher/fetch.official.test.ts",
+        "skills/researcher/fetch.test.ts",
+        "skills/researcher/official-member-votes.test.ts",
+        "skills/researcher/official-vote-e2e.test.ts",
+        "skills/researcher/official-vote-runtime.test.ts",
+        "skills/researcher/official-votes.test.ts"
+      ],
+      "log": "typescript-tests-green.log",
+      "exit": 0,
+      "started_at": "2026-10-22T05:45:36.102925+00:00",
+      "finished_at": "2026-10-22T05:45:54.064680+00:00"
+    },
+    {
+      "command": [
+        "python3",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/congress-collector",
+        "-p",
+        "test_*.py"
+      ],
+      "log": "python-tests.log",
+      "exit": 0,
+      "started_at": "2026-10-22T05:45:54.064969+00:00",
+      "finished_at": "2026-10-22T05:45:57.553306+00:00"
+    },
+    {
+      "command": [
+        "unshare",
+        "-rn",
+        "python3",
+        "-I",
+        "-B",
+        "artifacts/full-window-validation-2026-10-21/checks/test_revalidate_capture.py"
+      ],
+      "log": "provenance-tests.log",
+      "exit": 0,
+      "started_at": "2026-10-22T05:45:57.553624+00:00",
+      "finished_at": "2026-10-22T05:45:57.629121+00:00"
+    },
+    {
+      "command": [
+        "node_modules/.bin/tsc",
+        "--noEmit"
+      ],
+      "log": "typecheck-green.log",
+      "exit": 0,
+      "started_at": "2026-10-22T05:45:57.629357+00:00",
+      "finished_at": "2026-10-22T05:45:59.558448+00:00"
+    }
+  ],
+  "recorded_at": "2026-10-22T05:46:45.520840+00:00",
+  "typescript": {
+    "tests": 714,
+    "pass": 714,
+    "fail": 0,
+    "files": 56
+  },
+  "python": {
+    "tests": 205,
+    "pass": 205,
+    "fail": 0,
+    "skip": 0
+  },
+  "provenance_controls": {
+    "tests": 16,
+    "pass": 16
+  },
+  "typecheck_exit": 0,
+  "original_broad_run": {
+    "tests": 713,
+    "pass": 712,
+    "fail": 1,
+    "failure": "stale GovTrack-era test in db/source-completeness.test.ts; base production loader unchanged",
+    "log_sha256": "f4a8cfb66ff08e19086e282aa249df4d46d12e93b6a62a3da52da4260a54bf48",
+    "command_record_sha256": "87580a49f2af74787ebf203bdcfd6b4991a3b624bfdc343ef1c2dbbaff9228d4"
+  },
+  "changes_since_full_window_validation": [
+    "db/source-completeness.test.ts"
+  ],
+  "production_files_changed_since_full_window_validation": false,
+  "source_window": "original2026-10-21capture; not newly acquired on2026-10-22",
+  "log_sha256": {
+    "typescript-tests-green.log": "c80f2c1ea951435ad3dc6d6fe91b999c52a0019558a6f971fea49434983a1ac8",
+    "python-tests.log": "f0e237eb398277a55b5614e14819102907ad7b5db2a3e2b9d32537dbe5077c90",
+    "provenance-tests.log": "40e7e701b0fb7520dec152943e03896c5835fbb8b2ebe4c5ca0e04b62aeaeb2b",
+    "typecheck-green.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "portable_archive_files_verified": 32,
+  "raw_capture_portability": "raw captures/DB not committed; full independent replay requires original local run artifacts"
+}

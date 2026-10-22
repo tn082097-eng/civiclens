@@ -1,0 +1,140 @@
+TAP version 13
+# Subtest: synthetic voter set, option, duplicate, malformed list, identity and total cross-check failures
+ok 1 - synthetic voter set, option, duplicate, malformed list, identity and total cross-check failures
+  ---
+  duration_ms: 1.368553
+  type: 'test'
+  ...
+# Subtest: bridge failure is typed and propagated
+ok 2 - bridge failure is typed and propagated
+  ---
+  duration_ms: 0.105309
+  type: 'test'
+  ...
+# Subtest: synthetic unknown LIS and before-floor fail
+ok 3 - synthetic unknown LIS and before-floor fail
+  ---
+  duration_ms: 0.331586
+  type: 'test'
+  ...
+# Subtest: synthetic duplicate-person mapping fails
+ok 4 - synthetic duplicate-person mapping fails
+  ---
+  duration_ms: 0.191087
+  type: 'test'
+  ...
+# Subtest: synthetic Speaker candidate context yields other and unsupported bill identity
+ok 5 - synthetic Speaker candidate context yields other and unsupported bill identity
+  ---
+  duration_ms: 0.331236
+  type: 'test'
+  ...
+# Subtest: synthetic Senate pair rewrite is the sole allowed rewrite
+ok 6 - synthetic Senate pair rewrite is the sole allowed rewrite
+  ---
+  duration_ms: 0.338546
+  type: 'test'
+  ...
+# Subtest: synthetic member coverage missing row stays notRecorded
+ok 7 - synthetic member coverage missing row stays notRecorded
+  ---
+  duration_ms: 1.022718
+  type: 'test'
+  ...
+# Subtest: synthetic never recorded, unknown target, appears out of service, incomplete and zero required fail
+ok 8 - synthetic never recorded, unknown target, appears out of service, incomplete and zero required fail
+  ---
+  duration_ms: 0.295717
+  type: 'test'
+  ...
+# Subtest: synthetic classifier disagreement and amendment parent semantics
+ok 9 - synthetic classifier disagreement and amendment parent semantics
+  ---
+  duration_ms: 0.217048
+  type: 'test'
+  ...
+# Subtest: synthetic Senate absent documents retain votes with unresolved bill identity
+not ok 10 - synthetic Senate absent documents retain votes with unresolved bill identity
+  ---
+  duration_ms: 0.320696
+  type: 'test'
+  location: '/home/captainanime/Developer/civiclens-full-window-validation/skills/researcher/official-member-votes.test.ts:1:7558'
+  failureType: 'testCodeFailure'
+  error: 'official votes collector/cross_check_mismatch: bundle first document mismatch'
+  code: 'cross_check_mismatch'
+  name: 'OfficialVoteFailure'
+  stack: |-
+    fail (/home/captainanime/Developer/civiclens-full-window-validation/skills/researcher/official-member-votes.ts:23:95)
+    ensure (/home/captainanime/Developer/civiclens-full-window-validation/skills/researcher/official-member-votes.ts:24:116)
+    classifyRoll (/home/captainanime/Developer/civiclens-full-window-validation/skills/researcher/official-member-votes.ts:122:3)
+    analyzeRoll (/home/captainanime/Developer/civiclens-full-window-validation/skills/researcher/official-member-votes.ts:174:31)
+    TestContext.<anonymous> (/home/captainanime/Developer/civiclens-full-window-validation/skills/researcher/official-member-votes.test.ts:34:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+  ...
+# Subtest: empty Senate documents cannot mask populated, missing or extra projection fields
+ok 11 - empty Senate documents cannot mask populated, missing or extra projection fields
+  ---
+  duration_ms: 0.307917
+  type: 'test'
+  ...
+# Subtest: nonempty Senate document arrays still require an identical first projection
+ok 12 - nonempty Senate document arrays still require an identical first projection
+  ---
+  duration_ms: 0.154709
+  type: 'test'
+  ...
+# Subtest: incomplete and zero-required saved runs throw typed failures
+ok 13 - incomplete and zero-required saved runs throw typed failures
+  ---
+  duration_ms: 1.346104
+  type: 'test'
+  ...
+# Subtest: real frozen bridge outputs account for every voter including out-of-service listings
+ok 14 - real frozen bridge outputs account for every voter including out-of-service listings
+  ---
+  duration_ms: 5.023079
+  type: 'test'
+  ...
+# Subtest: known out-of-service Not Voting row is retained without attributing a vote
+ok 15 - known out-of-service Not Voting row is retained without attributing a vote
+  ---
+  duration_ms: 0.303447
+  type: 'test'
+  ...
+# Subtest: out-of-service target gets evidence only, without an absent vote or in-service count
+ok 16 - out-of-service target gets evidence only, without an absent vote or in-service count
+  ---
+  duration_ms: 0.212568
+  type: 'test'
+  ...
+# Subtest: unknown Not Voting and actual out-of-service votes remain failures
+ok 17 - unknown Not Voting and actual out-of-service votes remain failures
+  ---
+  duration_ms: 0.251667
+  type: 'test'
+  ...
+# Subtest: Senate LIS listings use the same generic rule and keep strict lookup behavior
+ok 18 - Senate LIS listings use the same generic rule and keep strict lookup behavior
+  ---
+  duration_ms: 0.256757
+  type: 'test'
+  ...
+# Subtest: listing exception never bypasses total, duplicate or collector cross-checks
+ok 19 - listing exception never bypasses total, duplicate or collector cross-checks
+  ---
+  duration_ms: 0.156018
+  type: 'test'
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 18
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 175.89149

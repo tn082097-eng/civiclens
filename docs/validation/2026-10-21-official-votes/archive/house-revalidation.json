@@ -1,0 +1,43 @@
+{
+  "operation": "offline_revalidation_of_real_http_capture",
+  "validated_at": "2026-10-21T23:47:41.659635+00:00",
+  "original_run": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/house-20261021T232934Z-79090ba9",
+  "original_hashes": {
+    "window_run_sha256": "c33b64dfecb778670f2d5845c50abbfda7b0012fa8fda1f066d93674cfa47b0a",
+    "manifest_sha256": "755f1f8923fadffdf05e78ece7a60a1b85b02c1e7101f28210294ed17c1665c6"
+  },
+  "original_candidate": null,
+  "original_candidate_evidence": "source manifest collector_revision; null means unrecorded, not inferred",
+  "new_http_requests": 0,
+  "original_receipts_and_timestamps_preserved": true,
+  "revalidation_script_path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/revalidate_capture.py",
+  "revalidation_script_sha256": "50eeb3414a9e0053cf2bc0d447935545f2fef41fb9b78a6a5708753b98a620af",
+  "validator_sha256": {
+    "tools/congress-collector/runtime.py": "572b69b1695f163dffff60e28f98bace509010195cb6364d270790a2168f5676",
+    "tools/congress-collector/test_acquire_window.py": "43ab9156f12d402732365b2f84a6239d7bdf2ab57824a289e8a9478bd9f5fe67",
+    "tools/congress-collector/test_house_discovery.py": "b49bb8ec32a0d0ad2f8f0bb140a98a5532e73b1c77ff82dd58e3b3747d0f89bd",
+    "tools/congress-collector/acquire_window.py": "0d25be4cc4f345ae7a1f595e47d3c9c631ce368c2f7c54344989ff18ea41f617",
+    "tools/congress-collector/test_bridge.py": "15f20d541340b346a2f530cc6849346d2afb4ea6234fa7460981e2b7f8718eb4",
+    "tools/congress-collector/test_senate_adapter.py": "5900a0ea09a79b96892fb0269efd2de922114613cb46f3fadbd542899f5270ee",
+    "tools/congress-collector/test_runtime.py": "7edfb24f0440742152e622def8bd36703a500b355103fe850b1f7795ea0dcced",
+    "tools/congress-collector/senate_adapter.py": "ad829d1fec0de04bbf9a2fd7b5f40db798c68c555f09b9a9aa9defc05edd3c21",
+    "tools/congress-collector/test_house_metadata.py": "08611cf0c3a74a62d1b5aa87c517be39666828eff449a8cbfd2ad11741ae7159",
+    "tools/congress-collector/adapter.py": "0b774719d6eff55fcf795a07bf5c831159d5719797f4f20cfa7325327cc15041",
+    "tools/congress-collector/make_interop_manifest.py": "17e7026131471fbb116c2df1803236b1a928e368fc6224233a17b4aef9163e3b",
+    "tools/congress-collector/bridge.py": "ddb91a04dc1afd7b3d071d845d4aa2388f3c0a9d1e035a2e866d461519e10deb",
+    "tools/congress-collector/senate_documents.py": "2224bd5dd65534dd69f4334e61efd8e394e18dc3f6704db621eb8bab14ec8916",
+    "tools/congress-collector/test_adapter.py": "d96d5a6b446ea0a81645b03f2ba8f9c0324f4217f3a03e00f0afd8fe4f572e24",
+    "tools/congress-collector/house_discovery.py": "62ee5f6bc8726f6ffb767b87038698002bbd165d388bfb2d3941c17f399caa3e",
+    "tools/congress-collector/house_metadata.py": "44512f63eaa45c9c34cb23c73e579a05cc56dad0a56c4b4f195a320eef2b4d17"
+  },
+  "required_rolls": 1989,
+  "failures": [],
+  "derived_manifest_sha256": "c35d0885155c08156f1da9f7bcc9535567de3b832626b260a2a4ab115db7f78a",
+  "derived_window_run_sha256": "992a63d56361280a8f180b12675b645002dffc8f8d8706eac79c721dd9a98c1f",
+  "original_outcome_counts": {
+    "acquired": 1366,
+    "excluded_outside_window": 477,
+    "malformed_source": 623
+  },
+  "metadata_changed_previously_acquired": []
+}

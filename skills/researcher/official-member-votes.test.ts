@@ -27,6 +27,24 @@ test('synthetic Senate pair rewrite is the sole allowed rewrite',()=>{const r=re
 test('synthetic member coverage missing row stays notRecorded',()=>{const one=result(syntheticHouse()),two=result(syntheticHouse());two.key='119-2025/h7';two.raw.roll=7;two.raw.voters=two.raw.voters.slice(1);(two.raw as HouseRaw).totals={kind:'by_vote',yea:1,nay:0,present:0,not_voting:0};two.collector.votes={Yea:[{id:'A000055'}]};const out=normalizeMemberVotes(args([one,two]));assert.equal(out.votes.length,1);assert.equal(out.coverage.notRecorded,1);assert.deepEqual(out.coverage.notRecordedKeys,['119-2025/h7']);assert.equal(out.votes[0].vote,'nay');});
 test('synthetic never recorded, unknown target, appears out of service, incomplete and zero required fail',()=>{const r=result(syntheticHouse());assert.throws(()=>normalizeMemberVotes(args([r],'A000371')),failure('member_never_recorded'));assert.throws(()=>normalizeMemberVotes(args([r],'UNKNOWN')),failure('unmapped_voter'));assert.throws(()=>normalizeMemberVotes(args([r],'A000370',{...identity,inService:()=>false})),failure('appears_out_of_service'));const a=args([r]);a.run.status='incomplete';assert.throws(()=>normalizeMemberVotes(a),failure('incomplete_run'));const b=args([r]);b.bridgeInputs=[];b.bridge.results=[];assert.throws(()=>normalizeMemberVotes(b),failure('zero_required_rolls'));});
 test('synthetic classifier disagreement and amendment parent semantics',()=>{const r=result(syntheticHouse());(r.collector.bill as any).number=999;assert.equal(classifyRoll(r.raw,r.collector).outcome,'ambiguity');const s=result(syntheticSenate());assert.equal(classifyRoll(s.raw,s.collector).billId,'119-s-5');});
+test('synthetic Senate absent documents retain votes with unresolved bill identity',()=>{
+ const raw=syntheticSenate();for(const k of Object.keys(raw.document) as Array<keyof SenateRaw['document']>)raw.document[k]='';
+ raw.documents=[];raw.question='On the Motion to Adjourn';
+ const r=result(raw);delete r.collector.bill;
+ const a=analyzeRoll(input(r),r,identity);
+ assert.equal(a.resolution.outcome,'unsupported_record');assert.equal(a.resolution.billId,null);assert.equal(a.voters.size,2);
+ const member=identity.personForVoter('senate','S428',raw.date);
+ const out=normalizeMemberVotes(args([r],member));assert.equal(out.votes.length,1);assert.equal(out.votes[0].resolution.billId,null);
+});
+test('empty Senate documents cannot mask populated, missing or extra projection fields',()=>{
+ const empty=syntheticSenate();for(const k of Object.keys(empty.document) as Array<keyof SenateRaw['document']>)empty.document[k]='';empty.documents=[];
+ for(const k of Object.keys(empty.document) as Array<keyof SenateRaw['document']>){const raw=structuredClone(empty);raw.document[k]='not empty';assert.throws(()=>classifyRoll(raw,{}),failure('cross_check_mismatch'));}
+ for(const mutate of [(r:SenateRaw)=>{delete (r.document as any).document_name;},(r:SenateRaw)=>{(r.document as any).unexpected='';},(r:SenateRaw)=>{(r as any).documents={};}]){const raw=structuredClone(empty);mutate(raw);assert.throws(()=>classifyRoll(raw,{}),failure('cross_check_mismatch'));}
+});
+test('nonempty Senate document arrays still require an identical first projection',()=>{
+ const raw=syntheticSenate();raw.documents=[{...raw.document,document_number:'different'}];assert.throws(()=>classifyRoll(raw,{}),failure('cross_check_mismatch'));
+ raw.documents=[{...raw.document}];assert.equal(classifyRoll(raw,{bill:{congress:119,type:'s',number:5}}).billId,'119-s-5');
+});
 test('incomplete and zero-required saved runs throw typed failures',()=>{const dir=mkdtempSync(join(tmpdir(),'official-run-'));try{const a=args();a.run.status='incomplete';writeFileSync(join(dir,'window-run.json'),JSON.stringify(a.run));assert.throws(()=>loadWindowRun(dir),failure('incomplete_run'));a.run.status='complete';const m={contract:'civiclens.official-vote-acquisition',contract_version:1,chamber:'house',status:'acquisition_complete',required_rolls:0,records:[]};const bytes=Buffer.from(JSON.stringify(m));mkdirSync(join(dir,'acquisition'));writeFileSync(join(dir,'acquisition/manifest.json'),bytes);a.run.manifest_sha256=createHash('sha256').update(bytes).digest('hex');writeFileSync(join(dir,'window-run.json'),JSON.stringify(a.run));assert.throws(()=>loadWindowRun(dir),failure('zero_required_rolls'));}finally{rmSync(dir,{recursive:true,force:true});}});
 test('real frozen bridge outputs account for every voter including out-of-service listings',()=>{
  const bridge=JSON.parse(readFileSync(new URL('../../fixtures/votes/collector-output/bridge-run-official-samples.json',import.meta.url),'utf8')) as BridgeRun;

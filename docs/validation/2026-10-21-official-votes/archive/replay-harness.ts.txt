@@ -1,0 +1,303 @@
+/**
+ * Offline replay harness (W2). Re-validates a COMPLETED official-vote window
+ * acquisition, runs the pinned collector bridge once per chamber, census-checks
+ * every required roll, normalizes two targets, and persists them into an
+ * isolated temp DuckDB. Never touches data/civiclens.duckdb. Never fetches.
+ *
+ * Node builtins only until the guards pass; repo modules are dynamically imported
+ * afterwards so --help exits without loading DB or bridge code.
+ */
+import {createHash} from 'node:crypto';
+import {existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, realpathSync, statSync, writeFileSync} from 'node:fs';
+import {basename, dirname, isAbsolute, join, resolve, sep} from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
+const FLAGS = ['--run-dir', '--chamber', '--as-of', '--targets', '--reference', '--out', '--bridge-timeout-ms'];
+const USAGE = `usage: npx tsx workers/replay/replay-harness.ts --run-dir <abs> --chamber house|senate --as-of YYYY-MM-DD
+       --targets <BIO,BIO> --reference <BIO> --out <abs, must not exist> [--bridge-timeout-ms <int, default 3600000>]
+Writes evidence under --out (never deletes). Exit 0 pass, 1 fail, 2 guard/usage error.`;
+
+const argv = process.argv.slice(2);
+if (argv.includes('--help') || argv.includes('-h')) { console.log(USAGE); process.exit(0); }
+const bad = (msg: string): never => { console.error(`replay-harness: ${msg}\n${USAGE}`); process.exit(2); };
+for (let i = 0; i < argv.length; i++) {
+  if (!FLAGS.includes(argv[i])) bad(`unknown or positional argument ${argv[i]}`);
+  if (argv[i + 1] === undefined || argv[i + 1].startsWith('--')) bad(`missing value for ${argv[i]}`);
+  i++;
+}
+const arg = (name: string): string => {
+  const at = argv.indexOf(name);
+  if (at < 0 || at !== argv.lastIndexOf(name)) bad(`${name} is required exactly once`);
+  return argv[at + 1];
+};
+const sha = (b: Buffer | string) => createHash('sha256').update(b).digest('hex');
+const canon = (v: unknown) => JSON.stringify(v, (_k, x) => (typeof x === 'bigint' ? x.toString() : x));
+const inside = (dir: string, p: string) => p === dir || p.startsWith(dir + sep);
+/** realpath of the deepest existing ancestor, so symlinked parents cannot evade guards. */
+function realish(p: string): string {
+  let cur = p; const rest: string[] = [];
+  while (!existsSync(cur)) { rest.unshift(basename(cur)); const up = dirname(cur); if (up === cur) break; cur = up; }
+  return join(realpathSync(cur), ...rest);
+}
+
+// ── 0. Guards (fail closed, exit 2) ────────────────────────────────────────────
+const runDirArg = arg('--run-dir');
+const chamber = arg('--chamber');
+const asOf = arg('--as-of');
+const targets = arg('--targets').split(',');
+const reference = arg('--reference');
+const outArg = arg('--out');
+const timeoutRaw = argv.includes('--bridge-timeout-ms') ? arg('--bridge-timeout-ms') : '3600000';
+if (!isAbsolute(runDirArg) || !statSync(runDirArg, {throwIfNoEntry: false})?.isDirectory()) bad('--run-dir must be an existing absolute directory');
+if (!['house', 'senate'].includes(chamber)) bad('--chamber must be house or senate');
+if (!/^\d{4}-\d{2}-\d{2}$/.test(asOf)) bad('--as-of must be YYYY-MM-DD');
+if (targets.length !== 2 || targets[0] === targets[1] || !targets.every(t => /^[A-Z]\d{6}$/.test(t))) bad('--targets must be two distinct BIOGUIDEs');
+if (!targets.includes(reference)) bad('--reference must be one of --targets');
+if (!/^[1-9]\d*$/.test(timeoutRaw)) bad('--bridge-timeout-ms must be a positive integer');
+if (!isAbsolute(outArg)) bad('--out must be absolute');
+const out = resolve(outArg);
+if (lstatSync(out, {throwIfNoEntry: false})) bad('--out must not exist (symlinks included)');
+const outReal = realish(out), runReal = realpathSync(runDirArg);
+if (inside(realish(join(ROOT, 'data')), outReal) || inside(realish(join(ROOT, 'public')), outReal)) bad('--out must not be inside <repo>/data or <repo>/public');
+if (outReal.includes('civiclens.duckdb')) bad('--out path must not contain civiclens.duckdb');
+if (inside(runReal, outReal)) bad('--out must not be inside --run-dir');
+
+const paths = await import('../../../../lib/paths.js');
+const DB_PATH = paths.DB_PATH;
+if (DB_PATH !== join(ROOT, 'data', 'civiclens.duckdb')) bad('unexpected DB_PATH resolution');
+const dbState = () => {
+  const s = statSync(DB_PATH, {throwIfNoEntry: false});
+  return s ? {exists: true, size: s.size, mtimeMs: s.mtimeMs} : {exists: false, size: null, mtimeMs: null};
+};
+const dbBefore = dbState();
+mkdirSync(out);
+const startedAt = new Date().toISOString();
+const t0 = Date.now();
+writeFileSync(join(out, 'invocation.json'), JSON.stringify({
+  argv: process.argv, cwd: process.cwd(), node: process.version, startedAt, pid: process.pid,
+  uid: process.getuid?.() ?? null, runDir: runReal, out, dbPath: DB_PATH, dbBefore,
+}, null, 2));
+
+// ── helpers for failure reporting ─────────────────────────────────────────────
+type Info = {stage: string; code: string; message: string; details: unknown[]};
+class Halt extends Error { constructor(readonly step: number, readonly name: string, readonly info: Info) { super(info.message); } }
+function info(e: unknown, stage: string): Info {
+  const x = e as any;
+  if (e instanceof Error) return {stage: x.stage ?? stage, code: x.code ?? 'unexpected', message: e.message, details: Array.isArray(x.details) ? x.details : []};
+  return {stage, code: 'unexpected', message: String(e), details: []};
+}
+const halt = (step: number, name: string, e: unknown, stage: string) => new Halt(step, name, info(e, stage));
+const fileRec = (p: string) => { const b = readFileSync(p); return {path: p, sha256: sha(b), bytes: b.length}; };
+const state: any = {steps: {}, targets: {}};
+const stepTime = (n: number, started: number) => { state.steps[n] = {ms: Date.now() - started}; };
+
+async function persist(targetsOrder: string[], votesBy: Record<string, any[]>, coverageBy: Record<string, any>, chamberName: string) {
+  const {DuckDBInstance} = await import('@duckdb/node-api');
+  const T = await import('../../../../db/__testkit__/temp-db.js');
+  const L = await import('../../../../db/load-from-tasks.js');
+  const dbFile = join(out, 'validation.duckdb');
+  if (existsSync(dbFile)) throw new Error('validation.duckdb already exists');
+  const instance = await DuckDBInstance.create(dbFile);
+  const conn = await instance.connect();
+  const res: any = {status: 'fail', fetchedAt: startedAt, dbFile: 'validation.duckdb', perMember: {}, referenceSnapshots: []};
+  try {
+    await T.applySchemaTo(conn);
+    for (const bio of targetsOrder) await T.insertMember(conn, {memberId: bio.toLowerCase(), name: `replay ${bio}`, chamber: chamberName as 'house' | 'senate', bioguideId: bio});
+    const count = async (mid: string) => Number((await (await conn.run('SELECT COUNT(*) AS n FROM votes WHERE member_id=?', [mid])).getRowObjects())[0].n);
+    const snap = async (mid: string) => sha(canon(await (await conn.run('SELECT * FROM votes WHERE member_id=? ORDER BY vote_id', [mid])).getRowObjects()));
+    const applyOne = async (bio: string) => {
+      const mid = bio.toLowerCase();
+      const plan = L.planVoteBatch(mid, votesBy[bio], coverageBy[bio]);
+      const applied = await L.applyVoteBatch(conn, mid, plan, {fetchedAt: startedAt});
+      const dbRows = await count(mid), recorded = coverageBy[bio].recorded;
+      if (!(dbRows === plan.rows.length && plan.rows.length === recorded && applied === plan.rows.length))
+        throw new Error(`${bio}: db=${dbRows} plan=${plan.rows.length} applied=${applied} recorded=${recorded}`);
+      res.perMember[bio] = {memberId: mid, planRows: plan.rows.length, applied, dbRows, recorded};
+    };
+    const [ref, other] = targetsOrder;
+    await applyOne(ref);
+    const refHash1 = await snap(ref.toLowerCase()), refCount1 = await count(ref.toLowerCase());
+    res.referenceSnapshots.push({stage: 'after_reference', sha256: refHash1, rows: refCount1});
+    await applyOne(other);
+    const refHash2 = await snap(ref.toLowerCase()), refCount2 = await count(ref.toLowerCase());
+    res.referenceSnapshots.push({stage: 'after_second', sha256: refHash2, rows: refCount2});
+    if (refHash1 !== refHash2 || refCount1 !== refCount2) throw new Error('reference member rows changed when second target was loaded');
+    res.totalVotesRows = Number((await (await conn.run('SELECT COUNT(*) AS n FROM votes')).getRowObjects())[0].n);
+    res.status = 'pass';
+  } catch (e) {
+    res.error = info(e, 'persistence');
+  } finally {
+    conn.closeSync(); instance.closeSync();
+  }
+  return res;
+}
+
+async function main(): Promise<number> {
+  const V = await import('../../../../lib/vote-source.js');
+  const I = await import('../../../../lib/official-identity.js');
+  const C = await import('../../../../lib/collector-bridge.js');
+  const MV = await import('../../../../skills/researcher/official-member-votes.js');
+  const win = V.coverageWindow(asOf);
+
+  // ── 1. Window run load + checks ─────────────────────────────────────────────
+  let t = Date.now(); let loaded: any;
+  try { loaded = MV.loadWindowRun(runReal); } catch (e) { throw halt(1, 'loadWindowRun', e, 'acquisition'); }
+  const {run, manifest, bridgeInputs} = loaded;
+  // An offline derivative must carry a hash-bound proof rather than look like a
+  // successful original HTTP acquisition. Original and derived files stay distinct.
+  const runWithProof = run as any;
+  if (runWithProof.derived_from) {
+    const proofPath = join(runReal, 'revalidation.json');
+    const proof = JSON.parse(readFileSync(proofPath, 'utf8'));
+    const from = runWithProof.derived_from;
+    if (proof.operation !== 'offline_revalidation_of_real_http_capture'
+        || proof.new_http_requests !== 0 || proof.failures.length !== 0
+        || proof.derived_window_run_sha256 !== fileRec(join(runReal, 'window-run.json')).sha256
+        || proof.derived_manifest_sha256 !== run.manifest_sha256
+        || proof.original_hashes.window_run_sha256 !== from.window_run_sha256
+        || proof.original_hashes.manifest_sha256 !== from.manifest_sha256
+        || proof.validated_at !== runWithProof.revalidated_at
+        || proof.revalidation_script_sha256 !== fileRec(proof.revalidation_script_path).sha256
+        || canon((manifest as any).derived_from) !== canon(from))
+      throw new Error('offline derivation provenance mismatch');
+    for (const [path, digest] of Object.entries(proof.validator_sha256)) {
+      if (fileRec(join(ROOT, path)).sha256 !== digest) throw new Error(`validator changed: ${path}`);
+    }
+    for (const [path, digest] of [['window-run.json', from.window_run_sha256], ['acquisition/manifest.json', from.manifest_sha256]]) {
+      if (fileRec(join(proof.original_run, path)).sha256 !== digest) throw new Error(`original capture changed: ${path}`);
+    }
+    state.derivation = {proof: fileRec(proofPath), originalHashes: proof.original_hashes,
+      validatedAt: proof.validated_at, revalidationScriptSha256: proof.revalidation_script_sha256};
+  }
+  const checks: Array<[boolean, string]> = [
+    [run.mode === 'window', 'mode'], [run.chamber === chamber, 'chamber'], [run.as_of === asOf, 'as_of'],
+    [run.months === 48, 'months'], [JSON.stringify(run.window) === JSON.stringify([win.start, asOf]), 'window'],
+  ];
+  const mismatches = checks.filter(([ok]) => !ok).map(([, name]) => name);
+  if (mismatches.length)
+    throw new Halt(1, 'window_checks', {stage: 'coverage', code: 'window_mismatch', message: 'window-run.json does not match --chamber/--as-of/48 months', details: mismatches});
+  state.run = {manifestSha256: run.manifest_sha256, inventorySha256: run.discovery.inventory_sha256, window: run.window,
+    manifestCounts: manifest.counts, publishedRolls: manifest.published_rolls, requiredRolls: bridgeInputs.length};
+  stepTime(1, t);
+
+  // ── 2. Identity ─────────────────────────────────────────────────────────────
+  t = Date.now();
+  let identity: any;
+  try { identity = I.loadIdentityIndex(); } catch (e) { throw halt(2, 'loadIdentityIndex', e, 'identity'); }
+  state.identity = {commit: identity.commit, snapshotSha256: identity.snapshotSha256, floor: identity.floor};
+  const orderedTargets = [reference, targets.find(x => x !== reference)!];
+  for (const bio of orderedTargets) {
+    let rec: any;
+    try { rec = {inServiceStart: identity.inService(bio, chamber, win.start), inServiceEnd: identity.inService(bio, chamber, win.end), inServiceAsOf: identity.inService(bio, chamber, asOf)}; }
+    catch (e) { throw halt(2, 'inService', e, 'identity'); }
+    state.targets[bio] = {...rec};
+    if (!(rec.inServiceStart && rec.inServiceEnd && rec.inServiceAsOf))
+      throw new Halt(2, 'not_in_service', {stage: 'identity', code: 'not_in_service', message: `${bio} not in service across window`, details: [bio]});
+  }
+  stepTime(2, t);
+
+  // ── 3. Runtime + one bridge run for the chamber ─────────────────────────────
+  t = Date.now();
+  let runtime: any;
+  try { runtime = C.resolveCollectorRuntime(); } catch (e) { throw halt(3, 'resolveCollectorRuntime', e, 'runtime'); }
+  state.runtime = {runtimeDir: runtime.runtimeDir, python: runtime.python, runtime: runtime.runtime};
+  const bridgeStart = Date.now();
+  let bridge: any;
+  try { bridge = await C.runCollectorBridge(bridgeInputs, {timeoutMs: Number(timeoutRaw)}); }
+  catch (e) { throw halt(3, 'runCollectorBridge', e, 'collector'); }
+  const bridgeText = JSON.stringify(bridge, null, 2);
+  writeFileSync(join(out, 'bridge-run.json'), bridgeText);
+  state.bridge = {...fileRec(join(out, 'bridge-run.json')), durationMs: Date.now() - bridgeStart, collector: bridge.collector,
+    runtime: bridge.runtime, network: bridge.network, inference_disabled: bridge.inference_disabled, results: bridge.results.length};
+  stepTime(3, t);
+
+  // ── 4. Census (independent of normalizeMemberVotes) ─────────────────────────
+  t = Date.now();
+  const census: any = {requiredRolls: bridgeInputs.length, bridgeFailures: [], analysisFailures: [], failureKeys: [],
+    outOfServiceListings: 0, resolutionOutcomeCounts: {}, presentRolls: Object.fromEntries(orderedTargets.map(b => [b, 0]))};
+  let accounted = 0;
+  bridgeInputs.forEach((input: any, i: number) => {
+    const result = bridge.results[i];
+    accounted++;
+    if (result.ok === false) { census.bridgeFailures.push({key: input.key, outcome: result.outcome, reason: result.reason}); census.failureKeys.push(input.key); return; }
+    try {
+      const a = MV.analyzeRoll(input, result, identity);
+      census.outOfServiceListings += a.outOfServiceListings.length;
+      census.resolutionOutcomeCounts[a.resolution.outcome] = (census.resolutionOutcomeCounts[a.resolution.outcome] ?? 0) + 1;
+      for (const bio of orderedTargets) if (a.voters.has(bio)) census.presentRolls[bio]++;
+    } catch (e) {
+      const x = info(e, 'unexpected');
+      census.analysisFailures.push({key: input.key, stage: x.stage, code: x.code, message: x.message});
+      census.failureKeys.push(input.key);
+    }
+  });
+  census.accounted = accounted;
+  census.failureKeys.sort();
+  writeFileSync(join(out, 'census.json'), JSON.stringify(census, null, 2));
+  if (accounted !== bridgeInputs.length) throw new Halt(4, 'census_accounting', {stage: 'census', code: 'roll_dropped', message: `accounted ${accounted} of ${bridgeInputs.length}`, details: []});
+  stepTime(4, t);
+
+  // ── 5. Per-target normalization (reference first) ───────────────────────────
+  t = Date.now();
+  const votesBy: Record<string, any[]> = {}, coverageBy: Record<string, any> = {};
+  for (const bio of orderedTargets) {
+    let rec: any;
+    try {
+      const r = MV.normalizeMemberVotes({...loaded, runDir: runReal, bridge, identity, bioguideId: bio, chamber, asOf});
+      const text = JSON.stringify(r.votes, null, 2);
+      writeFileSync(join(out, `votes-${bio}.json`), text);
+      votesBy[bio] = r.votes; coverageBy[bio] = r.coverage;
+      rec = {status: 'ok', coverage: r.coverage, votesCount: r.votes.length, votesSha256: sha(text)};
+    } catch (e) {
+      rec = {status: 'failed', coverage: null, votesCount: 0, votesSha256: null, failure: info(e, 'normalization')};
+    }
+    writeFileSync(join(out, `coverage-${bio}.json`), JSON.stringify(rec, null, 2));
+    state.targets[bio].status = rec.status; state.targets[bio].votesCount = rec.votesCount; state.targets[bio].failure = rec.failure ?? null;
+  }
+  stepTime(5, t);
+
+  // ── 6. Isolated persistence ─────────────────────────────────────────────────
+  t = Date.now();
+  let persistence: any;
+  const allOk = orderedTargets.every(b => state.targets[b].status === 'ok');
+  if (!allOk) persistence = {status: 'not_run', reason: 'a target failed normalization'};
+  else {
+    try { persistence = await persist(orderedTargets, votesBy, coverageBy, chamber); }
+    catch (e) { persistence = {status: 'fail', error: info(e, 'persistence')}; }
+  }
+  writeFileSync(join(out, 'persistence.json'), JSON.stringify(persistence, null, 2));
+  stepTime(6, t);
+
+  // ── 7. Summary + verdict ────────────────────────────────────────────────────
+  const dbAfter = dbState();
+  const dbUnchanged = canon(dbAfter) === canon(dbBefore);
+  const censusClean = census.bridgeFailures.length === 0 && census.analysisFailures.length === 0;
+  const targetsOk = orderedTargets.every(b => state.targets[b].status === 'ok');
+  const verdict = censusClean && targetsOk && persistence.status === 'pass' && dbUnchanged ? 'pass' : 'fail';
+  const outFiles = readdirSync(out).filter(f => f !== 'summary.json').sort().map(f => fileRec(join(out, f)));
+  const runFiles = [fileRec(join(runReal, 'window-run.json')), fileRec(join(runReal, 'acquisition', 'manifest.json')), fileRec(join(runReal, 'discovery', 'inventory.json'))];
+  if (state.derivation) runFiles.push(fileRec(join(runReal, 'revalidation.json')));
+  const summary = {verdict, startedAt, finishedAt: new Date().toISOString(), totalMs: Date.now() - t0, reference, targets: orderedTargets,
+    chamber, asOf, window: win, pid: process.pid, dbGuard: {before: dbBefore, after: dbAfter, unchanged: dbUnchanged},
+    censusCounts: {requiredRolls: census.requiredRolls, bridgeFailures: census.bridgeFailures.length, analysisFailures: census.analysisFailures.length,
+      outOfServiceListings: census.outOfServiceListings, resolutionOutcomeCounts: census.resolutionOutcomeCounts, presentRolls: census.presentRolls},
+    persistence: {status: persistence.status, totalVotesRows: persistence.totalVotesRows ?? null, perMember: persistence.perMember ?? null},
+    state, outFiles, runFiles};
+  writeFileSync(join(out, 'summary.json'), JSON.stringify(summary, null, 2));
+  console.log(`replay verdict=${verdict} out=${out}`);
+  return verdict === 'pass' ? 0 : 1;
+}
+
+function writeFailure(h: Halt | Error) {
+  const f = h instanceof Halt ? {step: h.step, name: h.name, ...h.info} : {step: 'unexpected', name: 'main', ...info(h, 'harness')};
+  writeFileSync(join(out, 'failure.json'), JSON.stringify({...f, dbGuard: {before: dbBefore, after: dbState()}}, null, 2));
+  console.error(`replay failed at step ${f.step} (${f.name}): ${f.code} ${f.message}`);
+}
+
+try {
+  process.exitCode = await main();
+} catch (e) {
+  writeFailure(e as Error);
+  process.exitCode = 1;
+}

@@ -1,0 +1,199 @@
+{
+  "scope": "byte-identical compact copies of actual completed 2026-10-21 validation evidence; original absolute/local paths are historical, not portable dependencies",
+  "raw_capture_in_git": false,
+  "original_artifacts_modified": false,
+  "files": [
+    {
+      "archived_path": "archive/execution-plan.md",
+      "original_path": "artifacts/full-window-validation-2026-10-21/execution-plan.md",
+      "bytes": 7816,
+      "sha256": "55498fc131f41c466ae267d79fca65de08f58bb115161e6c47f1ff555770aaa8"
+    },
+    {
+      "archived_path": "archive/agents.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/agents.json",
+      "bytes": 3881,
+      "sha256": "342e58c3705ad1c5225aba54b34c585f4f791582fd731b2be377522c81b39e91"
+    },
+    {
+      "archived_path": "archive/source-audit.md",
+      "original_path": "artifacts/full-window-validation-2026-10-21/workers/source-audit.md",
+      "bytes": 31331,
+      "sha256": "c4d0c5b878aec42c6d5982b227b9eccc7f46c1d6fc4fab496fdd80610d18f423"
+    },
+    {
+      "archived_path": "archive/identity-audit.md",
+      "original_path": "artifacts/full-window-validation-2026-10-21/workers/identity-audit.md",
+      "bytes": 11287,
+      "sha256": "65293a28cab4e1031050d2fe04056469665d544396ea7932987cf740b7870b4f"
+    },
+    {
+      "archived_path": "archive/house-summary.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/house-offline-replay-3/summary.json",
+      "bytes": 9333,
+      "sha256": "88b4d11ab6ffe8663fdd1c7975826b2b8b3d19067794318e7598840c562088e2"
+    },
+    {
+      "archived_path": "archive/house-census.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/house-offline-replay-3/census.json",
+      "bytes": 340,
+      "sha256": "e7828d19234e8339a99d814ce22d5c58664457218bab887f0cb3cd50a024250b"
+    },
+    {
+      "archived_path": "archive/house-persistence.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/house-offline-replay-3/persistence.json",
+      "bytes": 762,
+      "sha256": "a8273a2123961d25f91d0bf22e7585438e2dd074903e16a491c1da561bec650b"
+    },
+    {
+      "archived_path": "archive/senate-summary.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/senate-offline-replay-2/summary.json",
+      "bytes": 8363,
+      "sha256": "54d3599a29ab7f84b03f04f2a64ebbe90bc391ec981fa78c361ec4650d707da6"
+    },
+    {
+      "archived_path": "archive/senate-census.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/senate-offline-replay-2/census.json",
+      "bytes": 360,
+      "sha256": "0cdec51155bb9097790908a64a0addb97c97222ce5cda118b8115cd86bbfade0"
+    },
+    {
+      "archived_path": "archive/senate-persistence.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/senate-offline-replay-2/persistence.json",
+      "bytes": 762,
+      "sha256": "1b470fbe420e54db15e083d42de937a3a69a1e00e8e782b8ac26fb18a9144fdb"
+    },
+    {
+      "archived_path": "archive/house-revalidation.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/house-revalidated-committee-2/revalidation.json",
+      "bytes": 3299,
+      "sha256": "f317eed520eacb434158ec205fca9675e88ef8b2f83f36442f52e5bf1eeb6d8e"
+    },
+    {
+      "archived_path": "archive/original-house-failure.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/original-capture-frozen.json",
+      "bytes": 489,
+      "sha256": "8f2bb7b251d7e9d4a31cb880ccf504c103b2557f8eea010506733ba9b61634b4"
+    },
+    {
+      "archived_path": "archive/original-senate-replay-failure.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/senate-empty-document-frozen-failure.json",
+      "bytes": 30263,
+      "sha256": "87ceabea1088dabdcfc6e2f29360c5bfd0ca2190ee1e321768bbdb9392f63378"
+    },
+    {
+      "archived_path": "archive/house-review.txt",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/claude-house-repair-review.txt",
+      "bytes": 5449,
+      "sha256": "d7f64b072f3a677814396dace35daea260cf8694e721941a39d36a2423070a12"
+    },
+    {
+      "archived_path": "archive/house-review-disposition.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/controller-review-disposition.json",
+      "bytes": 1670,
+      "sha256": "46b9c5bbdf78f9b43fb83873f98b38d99f56cb1624429b5501e65d38af5268ea"
+    },
+    {
+      "archived_path": "archive/senate-review.txt",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/claude-senate-repair-review.txt",
+      "bytes": 4144,
+      "sha256": "811813bda59f1a1fb72f1038798b7d093f445249653d6c9c29e9ca8533f1f495"
+    },
+    {
+      "archived_path": "archive/senate-review-disposition.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/controller-senate-review-disposition.json",
+      "bytes": 460,
+      "sha256": "b1cdc497ccd25849746ff3f61a98685a8d4794b23d6c1b3b814275aed76a1c81"
+    },
+    {
+      "archived_path": "archive/candidate-fingerprint.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/final-candidate-fingerprint.json",
+      "bytes": 11519,
+      "sha256": "2968ad3f81767360c7f5d910da81bccf61bd824c64d3e28d22cc812b63e5ed2f"
+    },
+    {
+      "archived_path": "archive/evidence-integrity.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/final-evidence-integrity.json",
+      "bytes": 477,
+      "sha256": "311e2fec789abe34ecb83820bccbb0ee34ecb8f08338e73d7ba3f80a2d1b92d2"
+    },
+    {
+      "archived_path": "archive/controller-result.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/controller-final-result.json",
+      "bytes": 2715,
+      "sha256": "86be8ab46801ad9019b5fdc93113ab03661569ccc74085283623b426195c44cc"
+    },
+    {
+      "archived_path": "archive/body-corruption-control.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/controller-real-body-corruption-control.json",
+      "bytes": 676,
+      "sha256": "69e0d98cdf8b1281a7cf4523b0551602bf95b3f58a53f7864409ba51b0e546ea"
+    },
+    {
+      "archived_path": "archive/proof-corruption-control.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/controller-provenance-corruption-control.json",
+      "bytes": 603,
+      "sha256": "04ec94620106b67501e6496f476b99acd3a37315c57f0bc20dda714b025beb4e"
+    },
+    {
+      "archived_path": "archive/provenance-red.log",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/revalidation-provenance-red.log",
+      "bytes": 2339,
+      "sha256": "fa22089083432d9043ead227d497046335172336065de35bc2de2f1307423f20"
+    },
+    {
+      "archived_path": "archive/provenance-green.log",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/revalidation-provenance-green.log",
+      "bytes": 115,
+      "sha256": "40e7e701b0fb7520dec152943e03896c5835fbb8b2ebe4c5ca0e04b62aeaeb2b"
+    },
+    {
+      "archived_path": "archive/senate-red.log",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/senate-empty-doc-red.log",
+      "bytes": 5392,
+      "sha256": "c28f5bb0cb0dcff26d009f96cf625d5810a900fd7cf0e3d33ace41cce244839a"
+    },
+    {
+      "archived_path": "archive/senate-green.log",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/senate-empty-doc-green.log",
+      "bytes": 4120,
+      "sha256": "714ed08b3d599403017174b533a1e3a2be8df182bd6119d4351c18202750b92a"
+    },
+    {
+      "archived_path": "archive/house-red.log",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/house-compat-active-red.log",
+      "bytes": 23350,
+      "sha256": "847b5363bc549a305b3467fd5feb0131a3fbce8c5078c717deac1167b0df6f61"
+    },
+    {
+      "archived_path": "archive/house-green.log",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/house-compat-active-green.log",
+      "bytes": 189,
+      "sha256": "b8c03aab050c317ba052288fdb7539b571cb2295b053eb021443bc27e6486567"
+    },
+    {
+      "archived_path": "archive/revalidate_capture.py.txt",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/revalidate_capture.py",
+      "bytes": 8786,
+      "sha256": "50eeb3414a9e0053cf2bc0d447935545f2fef41fb9b78a6a5708753b98a620af"
+    },
+    {
+      "archived_path": "archive/test_revalidate_capture.py.txt",
+      "original_path": "artifacts/full-window-validation-2026-10-21/checks/test_revalidate_capture.py",
+      "bytes": 5508,
+      "sha256": "8382ad29fbe57067e0d0f79f923a2b06b528818c75d00ebeaa2ffb54972d9b67"
+    },
+    {
+      "archived_path": "archive/replay-harness.ts.txt",
+      "original_path": "artifacts/full-window-validation-2026-10-21/workers/replay/replay-harness.ts",
+      "bytes": 19953,
+      "sha256": "b020ab5c42b62c4d1acd7dec60e7733d078b46f00ffacb40b275f999f36782fb"
+    },
+    {
+      "archived_path": "archive/replay-tsconfig.json",
+      "original_path": "artifacts/full-window-validation-2026-10-21/workers/replay/tsconfig.json",
+      "bytes": 265,
+      "sha256": "f6932e1bb795f8f1252abfb1820f48c2dec39df82ea128cb0d7fe4fca0df4635"
+    }
+  ]
+}

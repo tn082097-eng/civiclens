@@ -131,6 +131,27 @@
       "captured_at": "2026-09-26 (date of the reliability-evidence capture; per-request timestamp not recorded)",
       "captured_in": "NoService/Projects/CivicLens/Specs/2026-09-26-reliability-evidence/source-receipts.json (sources/senate-index.xml)",
       "contract_role": "Senate 119/1 vote menu (659 votes) for Senate discovery parsing tests; capture-time snapshot only."
+    },
+    {
+      "path": "official-samples/house-legacy-2023-roll700.xml",
+      "url": "https://clerk.house.gov/evs/2023/roll700.xml",
+      "http_status": 200,
+      "content_type": "application/xml; charset=UTF-8",
+      "bytes": 95657,
+      "sha256": "c53ffef161351875dfa2e8ba69c17b718fb35f0fd2d8606168b8e9ba1589eea9",
+      "captured_in": "official-samples/house-legacy-2023-roll700.receipt.json",
+      "contract_role": "Real historic House metadata label compatibility: committee explicitly identifies chamber; not complete coverage evidence"
+    },
+    {
+      "path": "official-samples/senate-procedural-2024-roll140.xml",
+      "url": "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1182/vote_118_2_00140.xml",
+      "http_status": 200,
+      "content_type": "text/xml",
+      "bytes": 27960,
+      "sha256": "2ea755a07b4d9115619b17f4bd6d0e1af76032f6441dcde95b4c91aff6f99439",
+      "captured_at": "2026-10-21T23:44:29.119654+00:00",
+      "captured_in": "official-samples/senate-procedural-2024-roll140.receipt.json",
+      "contract_role": "Real Senate procedural vote with no source document/amendment elements; empty raw.documents and six explicit empty raw.document fields. Proposed compatibility remains unsupported_record with null bill; not repaired full-replay or certification evidence."
     }
   ],
   "house_acquisition_manifest": {

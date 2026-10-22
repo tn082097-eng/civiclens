@@ -1,0 +1,124 @@
+TAP version 13
+# Subtest: synthetic voter set, option, duplicate, malformed list, identity and total cross-check failures
+ok 1 - synthetic voter set, option, duplicate, malformed list, identity and total cross-check failures
+  ---
+  duration_ms: 1.239165
+  type: 'test'
+  ...
+# Subtest: bridge failure is typed and propagated
+ok 2 - bridge failure is typed and propagated
+  ---
+  duration_ms: 0.115539
+  type: 'test'
+  ...
+# Subtest: synthetic unknown LIS and before-floor fail
+ok 3 - synthetic unknown LIS and before-floor fail
+  ---
+  duration_ms: 0.328267
+  type: 'test'
+  ...
+# Subtest: synthetic duplicate-person mapping fails
+ok 4 - synthetic duplicate-person mapping fails
+  ---
+  duration_ms: 0.192818
+  type: 'test'
+  ...
+# Subtest: synthetic Speaker candidate context yields other and unsupported bill identity
+ok 5 - synthetic Speaker candidate context yields other and unsupported bill identity
+  ---
+  duration_ms: 0.358085
+  type: 'test'
+  ...
+# Subtest: synthetic Senate pair rewrite is the sole allowed rewrite
+ok 6 - synthetic Senate pair rewrite is the sole allowed rewrite
+  ---
+  duration_ms: 0.344556
+  type: 'test'
+  ...
+# Subtest: synthetic member coverage missing row stays notRecorded
+ok 7 - synthetic member coverage missing row stays notRecorded
+  ---
+  duration_ms: 1.120516
+  type: 'test'
+  ...
+# Subtest: synthetic never recorded, unknown target, appears out of service, incomplete and zero required fail
+ok 8 - synthetic never recorded, unknown target, appears out of service, incomplete and zero required fail
+  ---
+  duration_ms: 0.314906
+  type: 'test'
+  ...
+# Subtest: synthetic classifier disagreement and amendment parent semantics
+ok 9 - synthetic classifier disagreement and amendment parent semantics
+  ---
+  duration_ms: 0.234087
+  type: 'test'
+  ...
+# Subtest: synthetic Senate absent documents retain votes with unresolved bill identity
+ok 10 - synthetic Senate absent documents retain votes with unresolved bill identity
+  ---
+  duration_ms: 0.425355
+  type: 'test'
+  ...
+# Subtest: empty Senate documents cannot mask populated, missing or extra projection fields
+ok 11 - empty Senate documents cannot mask populated, missing or extra projection fields
+  ---
+  duration_ms: 0.319386
+  type: 'test'
+  ...
+# Subtest: nonempty Senate document arrays still require an identical first projection
+ok 12 - nonempty Senate document arrays still require an identical first projection
+  ---
+  duration_ms: 0.141619
+  type: 'test'
+  ...
+# Subtest: incomplete and zero-required saved runs throw typed failures
+ok 13 - incomplete and zero-required saved runs throw typed failures
+  ---
+  duration_ms: 1.560151
+  type: 'test'
+  ...
+# Subtest: real frozen bridge outputs account for every voter including out-of-service listings
+ok 14 - real frozen bridge outputs account for every voter including out-of-service listings
+  ---
+  duration_ms: 5.80769
+  type: 'test'
+  ...
+# Subtest: known out-of-service Not Voting row is retained without attributing a vote
+ok 15 - known out-of-service Not Voting row is retained without attributing a vote
+  ---
+  duration_ms: 0.363376
+  type: 'test'
+  ...
+# Subtest: out-of-service target gets evidence only, without an absent vote or in-service count
+ok 16 - out-of-service target gets evidence only, without an absent vote or in-service count
+  ---
+  duration_ms: 0.251697
+  type: 'test'
+  ...
+# Subtest: unknown Not Voting and actual out-of-service votes remain failures
+ok 17 - unknown Not Voting and actual out-of-service votes remain failures
+  ---
+  duration_ms: 0.352086
+  type: 'test'
+  ...
+# Subtest: Senate LIS listings use the same generic rule and keep strict lookup behavior
+ok 18 - Senate LIS listings use the same generic rule and keep strict lookup behavior
+  ---
+  duration_ms: 0.375216
+  type: 'test'
+  ...
+# Subtest: listing exception never bypasses total, duplicate or collector cross-checks
+ok 19 - listing exception never bypasses total, duplicate or collector cross-checks
+  ---
+  duration_ms: 0.215937
+  type: 'test'
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 177.164217

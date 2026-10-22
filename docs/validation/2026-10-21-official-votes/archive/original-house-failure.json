@@ -1,0 +1,18 @@
+{
+  "original_window_run_sha256": "c33b64dfecb778670f2d5845c50abbfda7b0012fa8fda1f066d93674cfa47b0a",
+  "original_manifest_sha256": "755f1f8923fadffdf05e78ece7a60a1b85b02c1e7101f28210294ed17c1665c6",
+  "status": "incomplete",
+  "attempted": 1989,
+  "counts": {
+    "acquired": 1366,
+    "excluded_outside_window": 477,
+    "malformed_source": 623
+  },
+  "http_statuses": {
+    "200": 1989
+  },
+  "incomplete_bodies": 0,
+  "reasons": {
+    "missing/duplicate/structured chamber": 623
+  }
+}

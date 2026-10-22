@@ -54,6 +54,27 @@ SYNTHETIC and must be labeled so in a comment/name.
   `malformed_source` at acquisition; conflicting identities between two official
   sources are `ambiguity`.
 
+### House metadata label compatibility (validation repair 2026-10-21)
+
+House chamber identity may be expressed by one plain `chamber` element, one
+plain `committee` element, or one of each under the same `vote-metadata`.
+Every present label must have literal text `U.S. House of Representatives`.
+Both absent, repeated names (even identical), child elements, attributes, empty
+or whitespace-only values, padded/case-changed values, or any conflicting/wrong
+value fail closed as `malformed_source`. A valid label never overrides an
+invalid other label. No label is inferred from the URL, voter list or roll key.
+The shared `tools/congress-collector/house_metadata.py` check is used by
+acquisition validation and bridge raw extraction. All other checks retain their
+existing scope; acquisition-only validation does not certify voter identity,
+normalized positions, totals, member coverage or bill resolution.
+
+Captured historic proof and the original failed receipt are described in
+[House metadata source proof](house-metadata-compatibility-source-2026-10-21.md).
+This compatibility repair does not authorize modifying the original failed
+manifest, retrying HTTP, or claiming complete coverage. Any retained-body
+revalidation requires a separately derived artifact after complete original
+HTTP receipt/body/hash verification.
+
 ## 2. Coverage window
 
 - `subtractCalendarMonths(isoDate, months)`: UTC calendar arithmetic, clamp the
@@ -443,3 +464,15 @@ before any code is built against them.
   fetch fails. Member participation then follows §3: a missing row while in
   service is `not_recorded`, and a row outside dated service is an identity
   failure.
+
+### Senate empty document projection (consistency repair 2026-10-21)
+
+When the raw bridge returns `documents: []`, its singular `document` must be
+exactly the six existing document/amendment fields, each an explicit empty
+string. This represents absent source identity; it is structurally consistent
+and classifies as `unsupported_record` with a null bill. No question/title-based
+bill inference or authoritative non-bill subtype is added. Nonempty arrays
+retain their first-projection and existing bundle checks; contradictory or
+partially populated empty-array projections fail closed. This corrects the
+downstream empty-array consistency check without changing acquisition receipts.
+See the [captured procedural source and preserved failure](senate-empty-document-source-2026-10-21.md).

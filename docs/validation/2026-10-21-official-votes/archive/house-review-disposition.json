@@ -1,0 +1,33 @@
+{
+  "review": "checks/claude-house-repair-review.txt",
+  "reviewer": "Claude Opus 5.5; read-only; initial verdict REQUEST_CHANGES",
+  "disposition_owner": "Codex controller",
+  "status": "all_three_findings_addressed",
+  "findings": [
+    {
+      "id": 1,
+      "issue": "stale source-proof documentation",
+      "resolution": "named-file source-proof/SOURCES documentation corrected and actual replacement hashes recorded"
+    },
+    {
+      "id": 2,
+      "issue": "offline derivative was not hash-bound by replay",
+      "resolution": "new derivative has in-band original hashes, revalidation timestamps and per-record original outcomes/reasons/metadata; replay verifies revalidation.json and includes its hash in summary.runFiles",
+      "evidence": "checks/house-offline-replay-2/summary.json"
+    },
+    {
+      "id": 3,
+      "issue": "unbound revalidation logic and hardcoded candidate",
+      "resolution": "proof hashes its actual script; original_candidate reads original collector_revision and remains null, with original e3 base separately evidenced by controller-preflight; no inferred capture revision",
+      "evidence": "house-revalidated-committee-2/revalidation.json"
+    }
+  ],
+  "verification": {
+    "provenance_controls": "16/16 passed in revalidation-provenance-green.log; RED missing fields retained",
+    "tampered_proof_rejected_before_db": "checks/controller-provenance-corruption-control.json",
+    "harness_typecheck": "checks/provenance-harness-tsc.log",
+    "full_house_replay": "pass",
+    "previously_acquired_metadata_changes": []
+  },
+  "review_limit": "one independent review; controller disposition, no claim reviewer reapproved"
+}

@@ -1,0 +1,27 @@
+{
+  "label": "SYNTHETIC corruption of a copy; not source or coverage evidence",
+  "temp_root": "/tmp/civiclens-SYNTHETIC-corruption-ley9x67s",
+  "exit": 1,
+  "failure": {
+    "step": 1,
+    "name": "loadWindowRun",
+    "stage": "acquisition",
+    "code": "response_body_mismatch",
+    "message": "official votes acquisition/response_body_mismatch: 117-2022/h549",
+    "details": [],
+    "dbGuard": {
+      "before": {
+        "exists": false,
+        "size": null,
+        "mtimeMs": null
+      },
+      "after": {
+        "exists": false,
+        "size": null,
+        "mtimeMs": null
+      }
+    }
+  },
+  "original_body_still_matches_receipt": true,
+  "db_created": false
+}

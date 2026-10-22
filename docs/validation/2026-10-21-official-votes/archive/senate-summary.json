@@ -1,0 +1,248 @@
+{
+  "verdict": "pass",
+  "startedAt": "2026-10-21T23:51:30.486Z",
+  "finishedAt": "2026-10-21T23:51:43.020Z",
+  "totalMs": 12534,
+  "reference": "S000033",
+  "targets": [
+    "S000033",
+    "W000817"
+  ],
+  "chamber": "senate",
+  "asOf": "2026-10-21",
+  "window": {
+    "asOf": "2026-10-21",
+    "start": "2022-10-21",
+    "end": "2026-10-21",
+    "months": 48
+  },
+  "pid": 282813,
+  "dbGuard": {
+    "before": {
+      "exists": false,
+      "size": null,
+      "mtimeMs": null
+    },
+    "after": {
+      "exists": false,
+      "size": null,
+      "mtimeMs": null
+    },
+    "unchanged": true
+  },
+  "censusCounts": {
+    "requiredRolls": 1675,
+    "bridgeFailures": 0,
+    "analysisFailures": 0,
+    "outOfServiceListings": 0,
+    "resolutionOutcomeCounts": {
+      "resolved_bill": 708,
+      "authoritative_non_bill": 954,
+      "unsupported_record": 12,
+      "ambiguity": 1
+    },
+    "presentRolls": {
+      "S000033": 1675,
+      "W000817": 1675
+    }
+  },
+  "persistence": {
+    "status": "pass",
+    "totalVotesRows": 3350,
+    "perMember": {
+      "S000033": {
+        "memberId": "s000033",
+        "planRows": 1675,
+        "applied": 1675,
+        "dbRows": 1675,
+        "recorded": 1675
+      },
+      "W000817": {
+        "memberId": "w000817",
+        "planRows": 1675,
+        "applied": 1675,
+        "dbRows": 1675,
+        "recorded": 1675
+      }
+    }
+  },
+  "state": {
+    "steps": {
+      "1": {
+        "ms": 202
+      },
+      "2": {
+        "ms": 6
+      },
+      "3": {
+        "ms": 6147
+      },
+      "4": {
+        "ms": 188
+      },
+      "5": {
+        "ms": 319
+      },
+      "6": {
+        "ms": 5604
+      }
+    },
+    "targets": {
+      "S000033": {
+        "inServiceStart": true,
+        "inServiceEnd": true,
+        "inServiceAsOf": true,
+        "status": "ok",
+        "votesCount": 1675,
+        "failure": null
+      },
+      "W000817": {
+        "inServiceStart": true,
+        "inServiceEnd": true,
+        "inServiceAsOf": true,
+        "status": "ok",
+        "votesCount": 1675,
+        "failure": null
+      }
+    },
+    "run": {
+      "manifestSha256": "e05e0c84cad53a25af2ce56a6070addf6b78f74877ff527b471b56208d4e6acc",
+      "inventorySha256": "d691fa76d9120d14421694df096390734e98f6afe366ed574e937ca657e34c63",
+      "window": [
+        "2022-10-21",
+        "2026-10-21"
+      ],
+      "manifestCounts": {
+        "acquired": 1675,
+        "excluded_outside_window": 352
+      },
+      "publishedRolls": 2027,
+      "requiredRolls": 1675
+    },
+    "identity": {
+      "commit": "d5af3d2d2490f8c6532c9490b1f47a76cacca699",
+      "snapshotSha256": "582e5b3e825b54b323c7720cac0f39d6d92e42baf1c009ccb78702a863ac9fe8",
+      "floor": "2019-01-03"
+    },
+    "runtime": {
+      "runtimeDir": "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/.runtime",
+      "python": "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/.runtime/venv/bin/python",
+      "runtime": {
+        "python": "3.12.3",
+        "packages": {
+          "charset-normalizer": "3.5.2",
+          "scrapelib": "2.4.1",
+          "certifi": "2026.7.22",
+          "requests": "2.34.2",
+          "lxml": "6.1.3",
+          "pytz": "2026.5",
+          "idna": "3.20",
+          "urllib3": "2.8.0"
+        },
+        "lock_sha256": "e5de05c0f32d5d928b57a36432f7e24132bba1a48771396e952151d1d41b11e8",
+        "vendor_manifest_sha256": "c9b17dc4b6b5cd0285a8649f0110d9ffc0b733bfc764fb778987650abec58e57",
+        "created_at": "2026-10-21T23:21:09.553757+00:00"
+      }
+    },
+    "bridge": {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/senate-offline-replay-2/bridge-run.json",
+      "sha256": "249b6cb6e9382ff9812e5708d119715b611d10c341811d73cfb11099aa43a25e",
+      "bytes": 57938017,
+      "durationMs": 6147,
+      "collector": {
+        "commit": "8184bcb13160da2389dea4c902de67817db681fc",
+        "repository": "https://github.com/unitedstates/congress",
+        "vendor_manifest_sha256": "c9b17dc4b6b5cd0285a8649f0110d9ffc0b733bfc764fb778987650abec58e57"
+      },
+      "runtime": {
+        "lock_sha256": "e5de05c0f32d5d928b57a36432f7e24132bba1a48771396e952151d1d41b11e8",
+        "packages": {
+          "certifi": "2026.7.22",
+          "charset-normalizer": "3.5.2",
+          "idna": "3.20",
+          "lxml": "6.1.3",
+          "pytz": "2026.5",
+          "requests": "2.34.2",
+          "scrapelib": "2.4.1",
+          "urllib3": "2.8.0"
+        },
+        "python": "3.12.3"
+      },
+      "network": {
+        "interfaces": [
+          "lo"
+        ]
+      },
+      "inference_disabled": [
+        "lookup_legislator",
+        "require_congress_legislators_repo",
+        "download"
+      ],
+      "results": 1675
+    }
+  },
+  "outFiles": [
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/senate-offline-replay-2/bridge-run.json",
+      "sha256": "249b6cb6e9382ff9812e5708d119715b611d10c341811d73cfb11099aa43a25e",
+      "bytes": 57938017
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/senate-offline-replay-2/census.json",
+      "sha256": "0cdec51155bb9097790908a64a0addb97c97222ce5cda118b8115cd86bbfade0",
+      "bytes": 360
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/senate-offline-replay-2/coverage-S000033.json",
+      "sha256": "41b3f279d38f3f0b767c571ae3cc4e499451b2de0b2d237afd075b75f99dc147",
+      "bytes": 1403
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/senate-offline-replay-2/coverage-W000817.json",
+      "sha256": "d37a2fd70c4f74ff346153c66aeb49013bcc567fad1e6b6f164831a8ca5df840",
+      "bytes": 1403
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/senate-offline-replay-2/invocation.json",
+      "sha256": "241b0e5701a55e7c5d114c58931cfa28a196df0144b8b97ae1b0c8d62ad9fabd",
+      "bytes": 1320
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/senate-offline-replay-2/persistence.json",
+      "sha256": "1b470fbe420e54db15e083d42de937a3a69a1e00e8e782b8ac26fb18a9144fdb",
+      "bytes": 762
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/senate-offline-replay-2/validation.duckdb",
+      "sha256": "5fdaf1ea7261dab686cb00c28142b556cde4a42bf7d8560212405ef00e0e0f48",
+      "bytes": 2371584
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/senate-offline-replay-2/votes-S000033.json",
+      "sha256": "d65fe28aba8206462b7aa51e06815cfe027dfee513850b54e47e1f9d5732a3f4",
+      "bytes": 1236572
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/senate-offline-replay-2/votes-W000817.json",
+      "sha256": "7e79e0a7ef251dcdeffab8ee9d2b7c2c74ba3131c3cf5b8764f2cc235523f586",
+      "bytes": 1235412
+    }
+  ],
+  "runFiles": [
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/senate-20261021T234205Z-52dfcac8/window-run.json",
+      "sha256": "e24d22039ef66b1d11350ba52fa553786e3673243161b8b1890dd4e8c6c1c95d",
+      "bytes": 696
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/senate-20261021T234205Z-52dfcac8/acquisition/manifest.json",
+      "sha256": "e05e0c84cad53a25af2ce56a6070addf6b78f74877ff527b471b56208d4e6acc",
+      "bytes": 5291099
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/senate-20261021T234205Z-52dfcac8/discovery/inventory.json",
+      "sha256": "d691fa76d9120d14421694df096390734e98f6afe366ed574e937ca657e34c63",
+      "bytes": 249972
+    }
+  ]
+}

@@ -21,11 +21,13 @@ import { planVoteBatch, applyVoteBatch } from '../../db/load-from-tasks.js';
 
 const cases = [
   { chamber: 'house' as const, bioguide: 'H001047', samples: [
+    ['118-2023/h700', '2023-12-06', 'official-samples/house-legacy-2023-roll700.xml'],
     ['119-2025/h1', '2025-01-03', 'house-acquisition/house-2025-roll001.xml'],
     ['119-2025/h2', '2025-01-03', 'official-samples/house-speaker-2025-roll002.xml'],
     ['119-2025/h6', '2025-01-07', 'official-samples/house-bill-2025-roll006.xml'],
   ] },
   { chamber: 'senate' as const, bioguide: 'S000033', samples: [
+    ['118-2024/s140', '2024-04-17', 'official-samples/senate-procedural-2024-roll140.xml'],
     ['119-2025/s1', '2025-01-09', 'official-samples/senate-119-1-roll00001.xml'],
     ['119-2025/s3', '2025-01-15', 'official-samples/senate-amendment-119-1-roll00003.xml'],
     ['119-2025/s570', '2025-10-09', 'official-samples/senate-bill-119-1-roll00570.xml'],
@@ -105,6 +107,10 @@ for (const c of cases) {
         assert.equal(rows.find(r => r.vote_id === '119-2025/h2')?.position, 'other');
         assert.equal(rows.find(r => r.vote_id === '119-2025/h6')?.bill_id, '119-hr-29');
       } else {
+        assert.equal(rows.find(r => r.vote_id === '118-2024/s140')?.bill_id, null);
+        const procedural = resolutions.find(r => r.key === '118-2024/s140');
+        assert.ok(procedural?.ok);
+        assert.equal(procedural.resolution.outcome, 'unsupported_record');
         assert.equal(rows.find(r => r.vote_id === '119-2025/s655')?.bill_id, null);
         const bundle = resolutions.find(r => r.key === '119-2025/s655');
         assert.ok(bundle?.ok);

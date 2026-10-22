@@ -118,8 +118,9 @@ export function loadWindowRun(runDir:string):{run:WindowRun;manifest:Acquisition
 }
 
 export function classifyRoll(raw:HouseRaw|SenateRaw,collector:Record<string,unknown>):OfficialVoteResolution {
- if(raw.chamber==='senate'&&raw.documents){
-  ensure(raw.documents.length>0&&equal(raw.documents[0],raw.document),'collector','cross_check_mismatch','bundle first document mismatch');
+ if(raw.chamber==='senate'&&raw.documents!==undefined){
+  const emptyDocument={document_congress:'',document_type:'',document_number:'',document_name:'',amendment_number:'',amendment_to_document_number:''};
+  ensure(Array.isArray(raw.documents)&&(raw.documents.length===0?equal(raw.document,emptyDocument):equal(raw.documents[0],raw.document)),'collector','cross_check_mismatch','bundle first document mismatch');
   if(raw.documents.length>1){
    if(raw.documents.some(d=>d.document_type!=='PN'))return {outcome:'ambiguity',billId:null,subtype:null,amendment:null,reason:'multiple documents must be an all-PN nomination bundle'};
    if(raw.documents.some(d=>d.document_congress!==String(raw.congress)))return {outcome:'ambiguity',billId:null,subtype:null,amendment:null,reason:'nomination bundle congress differs from roll'};

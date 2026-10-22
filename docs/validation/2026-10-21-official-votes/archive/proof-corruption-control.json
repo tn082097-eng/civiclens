@@ -1,0 +1,27 @@
+{
+  "synthetic_control": true,
+  "only_proof_tampered": true,
+  "exit": 1,
+  "db_created": false,
+  "failure": {
+    "step": "unexpected",
+    "name": "main",
+    "stage": "harness",
+    "code": "unexpected",
+    "message": "offline derivation provenance mismatch",
+    "details": [],
+    "dbGuard": {
+      "before": {
+        "exists": false,
+        "size": null,
+        "mtimeMs": null
+      },
+      "after": {
+        "exists": false,
+        "size": null,
+        "mtimeMs": null
+      }
+    }
+  },
+  "original_proof_sha256": "f317eed520eacb434158ec205fca9675e88ef8b2f83f36442f52e5bf1eeb6d8e"
+}

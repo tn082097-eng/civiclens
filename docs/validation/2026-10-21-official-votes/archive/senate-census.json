@@ -1,0 +1,18 @@
+{
+  "requiredRolls": 1675,
+  "bridgeFailures": [],
+  "analysisFailures": [],
+  "failureKeys": [],
+  "outOfServiceListings": 0,
+  "resolutionOutcomeCounts": {
+    "resolved_bill": 708,
+    "authoritative_non_bill": 954,
+    "unsupported_record": 12,
+    "ambiguity": 1
+  },
+  "presentRolls": {
+    "S000033": 1675,
+    "W000817": 1675
+  },
+  "accounted": 1675
+}

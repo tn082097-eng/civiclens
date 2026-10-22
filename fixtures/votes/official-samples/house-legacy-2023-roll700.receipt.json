@@ -1,0 +1,53 @@
+{
+  "captured_record": {
+    "attempted": true,
+    "attempted_at": "2026-10-21T23:31:05.688605+00:00",
+    "chamber": "house",
+    "congress": 118,
+    "date": "2023-12-06",
+    "in_window": true,
+    "index_receipt": {
+      "body_complete": true,
+      "bytes": 43267,
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-10-21T23:29:48.370912+00:00",
+      "final_url": "https://clerk.house.gov/Votes/MemberVotes?CongressNum=118&Session=1st&Page=3",
+      "path": "2023-page003.html",
+      "range": [
+        21,
+        30
+      ],
+      "read_error": null,
+      "sha256": "824de06cb7bc570765622c2be0eab32be86caa4dafd4c6ee6aa6e41e3bf30c1b",
+      "status": 200,
+      "total": 724,
+      "url": "https://clerk.house.gov/Votes/MemberVotes?CongressNum=118&Session=1st&Page=3"
+    },
+    "key": "118-2023/h700",
+    "metadata": null,
+    "outcome": "malformed_source",
+    "page": 3,
+    "reason": "missing/duplicate/structured chamber",
+    "response": {
+      "attempted_at": "2026-10-21T23:31:05.688605+00:00",
+      "body_complete": true,
+      "bytes": 95657,
+      "content_type": "application/xml; charset=UTF-8",
+      "final_url": "https://clerk.house.gov/evs/2023/roll700.xml",
+      "http_status": 200,
+      "path": "responses/2023-h00700.body",
+      "read_error": null,
+      "received_at": "2026-10-21T23:31:05.827418+00:00",
+      "sha256": "c53ffef161351875dfa2e8ba69c17b718fb35f0fd2d8606168b8e9ba1589eea9",
+      "url": "https://clerk.house.gov/evs/2023/roll700.xml"
+    },
+    "roll": 700,
+    "session": 1,
+    "source_url": "https://clerk.house.gov/evs/2023/roll700.xml",
+    "status": "Failed",
+    "url": "https://clerk.house.gov/Votes/2023700",
+    "year": 2023
+  },
+  "acquisition_run": "artifacts/full-window-validation-2026-10-21/house-20261021T232934Z-79090ba9",
+  "original_candidate": "e3eb78956c36f1a4a275a8907d2f01f10f2ce6ba"
+}

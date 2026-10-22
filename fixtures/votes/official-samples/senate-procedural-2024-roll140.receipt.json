@@ -1,0 +1,69 @@
+{
+  "acquisition_run": "artifacts/full-window-validation-2026-10-21/senate-20261021T234205Z-52dfcac8",
+  "acquisition_manifest_sha256": "e05e0c84cad53a25af2ce56a6070addf6b78f74877ff527b471b56208d4e6acc",
+  "captured_record": {
+    "attempted": true,
+    "attempted_at": "2026-10-21T23:44:28.987159+00:00",
+    "chamber": "senate",
+    "congress": 118,
+    "date": "2024-04-17",
+    "in_window": true,
+    "index_receipt": {
+      "body_complete": true,
+      "bytes": 157652,
+      "content_type": "text/xml",
+      "fetched_at": "2026-10-21T23:42:06.022331+00:00",
+      "final_url": "https://www.senate.gov/legislative/LIS/roll_call_lists/vote_menu_118_2.xml",
+      "path": "2024-menu.xml",
+      "read_error": null,
+      "sha256": "cad542344e46369f3f4e8e7f265966ece069c8c91abd16bd570d04cac09d7b18",
+      "status": 200,
+      "url": "https://www.senate.gov/legislative/LIS/roll_call_lists/vote_menu_118_2.xml"
+    },
+    "key": "118-2024/s140",
+    "metadata": {
+      "amendment_number": "",
+      "amendment_to_document_number": "",
+      "chamber": "senate",
+      "congress": 118,
+      "date": "2024-04-17",
+      "document_congress": "",
+      "document_number": "",
+      "document_type": "",
+      "documents": [],
+      "key": "118-2024/s140",
+      "position_tokens": {
+        "Nay": 49,
+        "Yea": 51
+      },
+      "question": "On the Motion to Adjourn",
+      "recorded_vote_count": 100,
+      "result": "Motion to Adjourn Agreed to",
+      "roll": 140,
+      "session": 2,
+      "vote_title": "Motion to Adjourn the Court of Impeachment Sine Die"
+    },
+    "outcome": "acquired",
+    "page": 1,
+    "reason": null,
+    "response": {
+      "attempted_at": "2026-10-21T23:44:28.987159+00:00",
+      "body_complete": true,
+      "bytes": 27960,
+      "content_type": "text/xml",
+      "final_url": "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1182/vote_118_2_00140.xml",
+      "http_status": 200,
+      "path": "responses/2024-s00140.body",
+      "read_error": null,
+      "received_at": "2026-10-21T23:44:29.119654+00:00",
+      "sha256": "2ea755a07b4d9115619b17f4bd6d0e1af76032f6441dcde95b4c91aff6f99439",
+      "url": "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1182/vote_118_2_00140.xml"
+    },
+    "roll": 140,
+    "session": 2,
+    "source_url": "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1182/vote_118_2_00140.xml",
+    "status": null,
+    "url": "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1182/vote_118_2_00140.xml",
+    "year": 2024
+  }
+}
