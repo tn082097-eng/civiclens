@@ -11,6 +11,7 @@ from datetime import date, datetime, timedelta, timezone
 import hashlib
 from http.client import HTTPException, IncompleteRead
 import html
+import importlib.util
 import json
 from pathlib import Path
 import re
@@ -19,6 +20,11 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlsplit
 from urllib.request import build_opener, HTTPRedirectHandler, Request
 import xml.etree.ElementTree as ET
+
+# Load the same sibling helper under isolated Python (-I) as the bridge.
+_spec = importlib.util.spec_from_file_location('house_metadata', Path(__file__).resolve().parent / 'house_metadata.py')
+house_metadata = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(house_metadata)
 
 MAX_RESPONSE_BYTES = 5 * 1024 * 1024
 MONTHS = {name: n for n, name in enumerate(
@@ -303,8 +309,9 @@ def validate_xml(body, row):
         if len(nodes) != 1 or list(nodes[0]):
             raise ValueError(f'missing/duplicate/structured {name}')
         return (nodes[0].text or '').strip()
+    house_metadata.validate_house_label(metadata[0])
     expected = {'congress': str(row['congress']), 'session': '1st' if row['session'] == 1 else '2nd',
-                'chamber': 'U.S. House of Representatives', 'rollcall-num': str(row['roll'])}
+                'rollcall-num': str(row['roll'])}
     for name, value in expected.items():
         if field(name) != value:
             raise ValueError(f'XML {name} differs from enumerated roll')

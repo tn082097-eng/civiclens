@@ -1,0 +1,34 @@
+{
+  "status": "pass",
+  "fetchedAt": "2026-10-21T23:52:16.798Z",
+  "dbFile": "validation.duckdb",
+  "perMember": {
+    "H001047": {
+      "memberId": "h001047",
+      "planRows": 1989,
+      "applied": 1989,
+      "dbRows": 1989,
+      "recorded": 1989
+    },
+    "A000370": {
+      "memberId": "a000370",
+      "planRows": 1989,
+      "applied": 1989,
+      "dbRows": 1989,
+      "recorded": 1989
+    }
+  },
+  "referenceSnapshots": [
+    {
+      "stage": "after_reference",
+      "sha256": "5824b7a03eddceb420a8d4003596dcee18b74dc8c392243c0be61992ae2c0693",
+      "rows": 1989
+    },
+    {
+      "stage": "after_second",
+      "sha256": "5824b7a03eddceb420a8d4003596dcee18b74dc8c392243c0be61992ae2c0693",
+      "rows": 1989
+    }
+  ],
+  "totalVotesRows": 3978
+}

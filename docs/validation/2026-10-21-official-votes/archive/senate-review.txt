@@ -1,0 +1,28 @@
+## Verdict: APPROVE
+
+I found no correctness or provenance blockers. This verdict comes from reading the source and artifacts only. I did not run any tests or replays, did not check any hashes, and did not look at the state of replay2.
+
+**What I checked**
+
+- **The guard** (`skills/researcher/official-member-votes.ts:121-123`): an empty `documents` list is accepted only when `raw.document` exactly equals the six-field all-empty object. `equal()` (`:34`) compares key sets as well as values, so any of these still fail with `cross_check_mismatch`:
+  - a missing field or an extra field
+  - a `null`, non-string, whitespace-only or populated value
+  - `documents: {}`
+  - `documents: null`
+
+  The last one used to be skipped because the old check was truthy; it is now rejected, which is stricter. Non-empty lists keep the old first-document check and the PN-bundle checks unchanged (`:123-128`).
+- **No bill is inferred:** an all-empty document goes through `classifySenateRoll` to `lib/vote-source.ts:740-745`, which returns `unsupported_record` with "all document fields empty". `classifyRoll` then returns `billId:null` and `subtype:null` (`:135`). Nothing reads the question or title text, so a procedural roll can't become a bill or a non-bill subtype.
+- **Agreement with the bridge:** `tools/congress-collector/senate_documents.py:44` builds the first document for an empty list as the empty document fields plus the amendment fields. That is exactly six keys, the same shape the TypeScript guard expects. `bridge.py:86-89` passes `document` and `documents` through unchanged.
+- **Votes still counted:** `analyzeRoll` runs voter, total and identity checks before calling `classifyRoll` (`:175`). Accepting an empty list doesn't skip any vote-integrity check.
+- **Red and green logs:** only test 10 fails in red, at `classifyRoll` `:122` called from `analyzeRoll` `:174`. Those are the pre-patch line numbers; both shift by one after the patch. Green is 19/19. Tests 11 and 12 also pass in red, which is expected: they check that bad shapes are still rejected, not that the bug is fixed.
+- **Frozen failure record:** it lists exactly s129–s140, all dated 2024-04-17, all `documents: []` with empty document metadata, plus `persistence_status: not_run` and `no_database_created: true`. Its s140 record matches the receipt's `captured_record` field for field (body sha `2ea755a0…`, 27,960 bytes, same timestamps). The fixture XML contains no `<document>` or `<amendment>` elements, which matches the sidecar doc's description.
+- **Sidecar doc:** it describes replay1 as a failure, says the repaired replay is still pending, and says it does not certify coverage. No overclaiming.
+
+**Non-blocking notes (not required for approval)**
+
+1. **e2e gap** (`skills/researcher/official-vote-e2e.test.ts:110-113`): the test checks the s140 outcome and `bill_id null`, but not that the bridge output for s140 actually has `documents: []`. A future collector change could pass this test through a different shape. Asserting `bridge.results.find(r=>r.key==='118-2024/s140').raw.documents` equals `[]` would close that.
+2. **One shape still fails closed:** a Senate roll with no `<document>` but a populated `<amendment>` produces empty document fields with non-empty amendment fields. The guard rejects it, which would stop a future replay rather than mislabel a vote. That's safe, but it's a known open shape.
+3. **Unsupported outcomes skip the collector cross-check** (`:132`, behaviour that predates this patch): for `unsupported_record`, a bill returned by the pinned collector isn't compared or flagged. The output stays null, so this isn't a correctness problem, just an unchecked disagreement.
+4. **Untested value cases:** there are no tests for `null` or whitespace-only field values with an empty list. Strict equality already rejects both, so this is test coverage only.
+
+**For you to verify:** I did not check the `original_*_sha256` values in the frozen-failure file, the receipt sha `afae9a04…` quoted in the sidecar doc, that the fixture is a byte-for-byte copy, or that replay1 is unchanged. Any replay2 outcome is also unverified.

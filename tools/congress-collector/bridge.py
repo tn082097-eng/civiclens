@@ -15,6 +15,8 @@ spec=importlib.util.spec_from_file_location('collector_runtime',HERE/'runtime.py
 runtime=importlib.util.module_from_spec(spec);spec.loader.exec_module(runtime)
 spec=importlib.util.spec_from_file_location('senate_documents',HERE/'senate_documents.py')
 senate_documents=importlib.util.module_from_spec(spec);spec.loader.exec_module(senate_documents)
+spec=importlib.util.spec_from_file_location('house_metadata',HERE/'house_metadata.py')
+house_metadata=importlib.util.module_from_spec(spec);spec.loader.exec_module(house_metadata)
 DISABLED=['lookup_legislator','require_congress_legislators_repo','download']
 
 
@@ -64,7 +66,7 @@ def raw_house(root):
     if root.tag!='rollcall-vote':raise ValueError('wrong House root')
     meta=root.find('vote-metadata')
     if meta is None:raise ValueError('missing vote-metadata')
-    if text(meta,'chamber')!='U.S. House of Representatives':raise ValueError('wrong House chamber')
+    house_metadata.validate_house_label(meta)
     session=text(meta,'session')
     if session not in ('1st','2nd'):raise ValueError('invalid House session')
     by_vote=meta.findall('vote-totals/totals-by-vote'); by_candidate=meta.findall('vote-totals/totals-by-candidate')

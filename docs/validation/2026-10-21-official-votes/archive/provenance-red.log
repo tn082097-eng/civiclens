@@ -1,0 +1,32 @@
+...E....E......E
+======================================================================
+ERROR: test_derivation_binds_originals_logic_and_revalidation_time (__main__.DerivedRunTests.test_derivation_binds_originals_logic_and_revalidation_time)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/test_revalidate_capture.py", line 54, in test_derivation_binds_originals_logic_and_revalidation_time
+    self.assertEqual(obj['derived_from']['window_run_sha256'],originals['window-run.json']);self.assertEqual(obj['derived_from']['manifest_sha256'],originals['acquisition/manifest.json'])
+                     ~~~^^^^^^^^^^^^^^^^
+KeyError: 'derived_from'
+
+======================================================================
+ERROR: test_receipts_and_original_record_unchanged (__main__.DerivedRunTests.test_receipts_and_original_record_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/test_revalidate_capture.py", line 18, in test_receipts_and_original_record_unchanged
+    self.assertEqual(out['original_outcome'],before['outcome']);self.assertEqual(out['original_reason'],before['reason'])
+                     ~~~^^^^^^^^^^^^^^^^^^^^
+KeyError: 'original_outcome'
+
+======================================================================
+ERROR: test_receipts_and_original_record_unchanged (__main__.ReceiptTests.test_receipts_and_original_record_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/test_revalidate_capture.py", line 18, in test_receipts_and_original_record_unchanged
+    self.assertEqual(out['original_outcome'],before['outcome']);self.assertEqual(out['original_reason'],before['reason'])
+                     ~~~^^^^^^^^^^^^^^^^^^^^
+KeyError: 'original_outcome'
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.010s
+
+FAILED (errors=3)

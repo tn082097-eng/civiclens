@@ -625,3 +625,70 @@ Official vote rows are the House Clerk roll-call XML and the Senate LIS
 roll-call XML. GovTrack is no longer an active source for votes or for
 vote→bill resolution. Historical GovTrack URLs stored in old artifacts and DB
 rows stay readable as legacy provenance only.
+
+## 2026-10-21 House metadata-label compatibility evidence
+
+Captured official `118-2023/h700` uses one `committee` label with literal text
+`U.S. House of Representatives`, with no `chamber` label. The complete 95,657-byte
+HTTP 200 response has SHA-256
+`c53ffef161351875dfa2e8ba69c17b718fb35f0fd2d8606168b8e9ba1589eea9`.
+The saved repair-packet XML was checked byte for byte against the original
+retained response; its original `malformed_source` receipt remains unchanged.
+
+The original `house-20261021T232934Z-79090ba9` capture finished `incomplete` under
+candidate `e3eb78956c36f1a4a275a8907d2f01f10f2ce6ba`: 1,989 complete HTTP 200
+responses, 1,366 acquired rolls, 623 metadata-label failures and 477 published
+rolls outside the window. Its failed manifest and receipts remain immutable.
+The shared plain/exact `chamber`/`committee` helper was subsequently integrated
+locally into active Python source before validation and subsequent commit/PR
+packaging; the original base commit does not identify this repaired candidate.
+
+A receipt-preserving offline derivative already exists at
+`artifacts/full-window-validation-2026-10-21/house-revalidated-committee-1/`.
+Its `revalidation.json` records no new HTTP requests and a derived manifest hash
+of `6d6d4d44359597c0f54c3aa061d5c3e3099cb3c59cc32355a5aa2efbba1aa99f`.
+The existing strict replay at
+`artifacts/full-window-validation-2026-10-21/checks/house-offline-replay-1/summary.json`
+records a pass across all 1,989 required House rolls for each of `H001047` and
+`A000370`, with 3,978 total isolated validation DB rows, 25 `unsupported_record`
+roll-resolution outcomes and four evidence-only `outOfServiceListings`.
+
+The review identified gaps in the first derivative's provenance linkage. The
+replacement `house-revalidated-committee-2` and `checks/house-offline-replay-2`
+now exist: the strict replay passed with hash-bound derivation proof, original
+failure states and capture timestamps preserved, and no new House HTTP requests.
+The proof also hashes the revalidation utility; original candidate revision remains
+null in that proof because the original manifest did not record it. Controller
+preflight separately identifies the original base. The controller addressed the
+three review findings; no second reviewer approval is claimed.
+See [source proof, original hashes and current evidence limits](docs/house-metadata-compatibility-source-2026-10-21.md).
+The initial stdlib workbench was preparation; the subsequent replay is bounded
+to two targets. Neither is House-wide member coverage or certification.
+
+## 2026-10-21 Senate empty-document procedural-vote evidence
+
+Frozen official `118-2024/s140` (April 17, 2024, motion to adjourn the Court of
+Impeachment sine die) has no source `document` or `amendment` elements. The exact
+27,960-byte HTTP 200 body is
+`fixtures/votes/official-samples/senate-procedural-2024-roll140.xml`, SHA-256
+`2ea755a07b4d9115619b17f4bd6d0e1af76032f6441dcde95b4c91aff6f99439`; the adjacent `.receipt.json`
+retains the complete original acquisition record and source-manifest digest.
+The sample is indexed in `fixtures/votes/manifest.json`; no new HTTP was used.
+
+The Senate source capture already acquired all 1,675 required rolls with complete
+HTTP 200 receipts; no revalidation derivative is needed. The original first full
+offline replay at `checks/senate-offline-replay-1` under the full-window artifacts
+remains failed: twelve `bundle first document mismatch` analysis failures for
+`118-2024/s129` through `118-2024/s140`, failed normalization for both targets
+`S000033` and `W000817`, and persistence `not_run`. Their captured bridge
+projections have `documents: []` and six explicit empty document fields.
+
+The generic fix accepts that empty array only with exactly those six explicit
+empty strings; no bill is inferred. Completed `checks/senate-offline-replay-2`
+passed all 1,675 rolls, zero bridge/analysis failures, and 1,675 persisted votes
+for each target (3,350 isolated rows); the first target remained unchanged after
+the second load. The twelve procedural resolutions stay `unsupported_record`
+with null bill; one separate roll remains `ambiguity`. The final TypeScript
+vote-path suite passed 359/359. See [source receipt, preserved failure and completed
+verification](docs/senate-empty-document-source-2026-10-21.md). These two-target
+results are not all-member certification or release readiness.

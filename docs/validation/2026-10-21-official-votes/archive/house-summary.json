@@ -1,0 +1,265 @@
+{
+  "verdict": "pass",
+  "startedAt": "2026-10-21T23:52:16.798Z",
+  "finishedAt": "2026-10-21T23:52:48.988Z",
+  "totalMs": 32189,
+  "reference": "H001047",
+  "targets": [
+    "H001047",
+    "A000370"
+  ],
+  "chamber": "house",
+  "asOf": "2026-10-21",
+  "window": {
+    "asOf": "2026-10-21",
+    "start": "2022-10-21",
+    "end": "2026-10-21",
+    "months": 48
+  },
+  "pid": 283391,
+  "dbGuard": {
+    "before": {
+      "exists": false,
+      "size": null,
+      "mtimeMs": null
+    },
+    "after": {
+      "exists": false,
+      "size": null,
+      "mtimeMs": null
+    },
+    "unchanged": true
+  },
+  "censusCounts": {
+    "requiredRolls": 1989,
+    "bridgeFailures": 0,
+    "analysisFailures": 0,
+    "outOfServiceListings": 4,
+    "resolutionOutcomeCounts": {
+      "resolved_bill": 1944,
+      "authoritative_non_bill": 20,
+      "unsupported_record": 25
+    },
+    "presentRolls": {
+      "H001047": 1989,
+      "A000370": 1989
+    }
+  },
+  "persistence": {
+    "status": "pass",
+    "totalVotesRows": 3978,
+    "perMember": {
+      "H001047": {
+        "memberId": "h001047",
+        "planRows": 1989,
+        "applied": 1989,
+        "dbRows": 1989,
+        "recorded": 1989
+      },
+      "A000370": {
+        "memberId": "a000370",
+        "planRows": 1989,
+        "applied": 1989,
+        "dbRows": 1989,
+        "recorded": 1989
+      }
+    }
+  },
+  "state": {
+    "steps": {
+      "1": {
+        "ms": 468
+      },
+      "2": {
+        "ms": 6
+      },
+      "3": {
+        "ms": 22397
+      },
+      "4": {
+        "ms": 872
+      },
+      "5": {
+        "ms": 1593
+      },
+      "6": {
+        "ms": 6627
+      }
+    },
+    "targets": {
+      "H001047": {
+        "inServiceStart": true,
+        "inServiceEnd": true,
+        "inServiceAsOf": true,
+        "status": "ok",
+        "votesCount": 1989,
+        "failure": null
+      },
+      "A000370": {
+        "inServiceStart": true,
+        "inServiceEnd": true,
+        "inServiceAsOf": true,
+        "status": "ok",
+        "votesCount": 1989,
+        "failure": null
+      }
+    },
+    "derivation": {
+      "proof": {
+        "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/house-revalidated-committee-2/revalidation.json",
+        "sha256": "f317eed520eacb434158ec205fca9675e88ef8b2f83f36442f52e5bf1eeb6d8e",
+        "bytes": 3299
+      },
+      "originalHashes": {
+        "window_run_sha256": "c33b64dfecb778670f2d5845c50abbfda7b0012fa8fda1f066d93674cfa47b0a",
+        "manifest_sha256": "755f1f8923fadffdf05e78ece7a60a1b85b02c1e7101f28210294ed17c1665c6"
+      },
+      "validatedAt": "2026-10-21T23:47:41.659635+00:00",
+      "revalidationScriptSha256": "50eeb3414a9e0053cf2bc0d447935545f2fef41fb9b78a6a5708753b98a620af"
+    },
+    "run": {
+      "manifestSha256": "c35d0885155c08156f1da9f7bcc9535567de3b832626b260a2a4ab115db7f78a",
+      "inventorySha256": "21cfa2d369c678272a8844c73d431c5a4066f3b836296c379dff6ba031fe53e7",
+      "window": [
+        "2022-10-21",
+        "2026-10-21"
+      ],
+      "manifestCounts": {
+        "acquired": 1989,
+        "excluded_outside_window": 477
+      },
+      "publishedRolls": 2466,
+      "requiredRolls": 1989
+    },
+    "identity": {
+      "commit": "d5af3d2d2490f8c6532c9490b1f47a76cacca699",
+      "snapshotSha256": "582e5b3e825b54b323c7720cac0f39d6d92e42baf1c009ccb78702a863ac9fe8",
+      "floor": "2019-01-03"
+    },
+    "runtime": {
+      "runtimeDir": "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/.runtime",
+      "python": "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/.runtime/venv/bin/python",
+      "runtime": {
+        "python": "3.12.3",
+        "packages": {
+          "charset-normalizer": "3.5.2",
+          "scrapelib": "2.4.1",
+          "certifi": "2026.7.22",
+          "requests": "2.34.2",
+          "lxml": "6.1.3",
+          "pytz": "2026.5",
+          "idna": "3.20",
+          "urllib3": "2.8.0"
+        },
+        "lock_sha256": "e5de05c0f32d5d928b57a36432f7e24132bba1a48771396e952151d1d41b11e8",
+        "vendor_manifest_sha256": "c9b17dc4b6b5cd0285a8649f0110d9ffc0b733bfc764fb778987650abec58e57",
+        "created_at": "2026-10-21T23:21:09.553757+00:00"
+      }
+    },
+    "bridge": {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/house-offline-replay-3/bridge-run.json",
+      "sha256": "aca5367f44c8c9f0e0144b6d83174c008e53ded31ad8ff0e00a8b3d659ab914e",
+      "bytes": 215423982,
+      "durationMs": 22397,
+      "collector": {
+        "commit": "8184bcb13160da2389dea4c902de67817db681fc",
+        "repository": "https://github.com/unitedstates/congress",
+        "vendor_manifest_sha256": "c9b17dc4b6b5cd0285a8649f0110d9ffc0b733bfc764fb778987650abec58e57"
+      },
+      "runtime": {
+        "lock_sha256": "e5de05c0f32d5d928b57a36432f7e24132bba1a48771396e952151d1d41b11e8",
+        "packages": {
+          "certifi": "2026.7.22",
+          "charset-normalizer": "3.5.2",
+          "idna": "3.20",
+          "lxml": "6.1.3",
+          "pytz": "2026.5",
+          "requests": "2.34.2",
+          "scrapelib": "2.4.1",
+          "urllib3": "2.8.0"
+        },
+        "python": "3.12.3"
+      },
+      "network": {
+        "interfaces": [
+          "lo"
+        ]
+      },
+      "inference_disabled": [
+        "lookup_legislator",
+        "require_congress_legislators_repo",
+        "download"
+      ],
+      "results": 1989
+    }
+  },
+  "outFiles": [
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/house-offline-replay-3/bridge-run.json",
+      "sha256": "aca5367f44c8c9f0e0144b6d83174c008e53ded31ad8ff0e00a8b3d659ab914e",
+      "bytes": 215423982
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/house-offline-replay-3/census.json",
+      "sha256": "e7828d19234e8339a99d814ce22d5c58664457218bab887f0cb3cd50a024250b",
+      "bytes": 340
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/house-offline-replay-3/coverage-A000370.json",
+      "sha256": "935d5558974b80537ff860eb6985143a8242d2be2b8171bbe23f29119a8a7cdd",
+      "bytes": 2107
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/house-offline-replay-3/coverage-H001047.json",
+      "sha256": "c0e1073ecbbdbeb5f7e7598d7ae583598fc959ab34bedd7ffbd566f7d074bea3",
+      "bytes": 2107
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/house-offline-replay-3/invocation.json",
+      "sha256": "135778e9688bbae7ffd3ef6d8b4dac4353df4b46c4aab69f1efe8bf849d412c7",
+      "bytes": 1311
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/house-offline-replay-3/persistence.json",
+      "sha256": "a8273a2123961d25f91d0bf22e7585438e2dd074903e16a491c1da561bec650b",
+      "bytes": 762
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/house-offline-replay-3/validation.duckdb",
+      "sha256": "baddbacf1250ece997373a75030eaf82eec3267b3ec46ebd10e6192495dc274b",
+      "bytes": 2371584
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/house-offline-replay-3/votes-A000370.json",
+      "sha256": "e6454e9c51ac10b124a9c535571f469a917778889898357f460b401aea0ac079",
+      "bytes": 1412359
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/checks/house-offline-replay-3/votes-H001047.json",
+      "sha256": "7e55b67f6f0b8dd962fd8f02882fc5099b274e3f299d5c84f845ecfd80cf074c",
+      "bytes": 1412337
+    }
+  ],
+  "runFiles": [
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/house-revalidated-committee-2/window-run.json",
+      "sha256": "992a63d56361280a8f180b12675b645002dffc8f8d8706eac79c721dd9a98c1f",
+      "bytes": 1429
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/house-revalidated-committee-2/acquisition/manifest.json",
+      "sha256": "c35d0885155c08156f1da9f7bcc9535567de3b832626b260a2a4ab115db7f78a",
+      "bytes": 6513193
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/house-revalidated-committee-2/discovery/inventory.json",
+      "sha256": "21cfa2d369c678272a8844c73d431c5a4066f3b836296c379dff6ba031fe53e7",
+      "bytes": 586881
+    },
+    {
+      "path": "/home/captainanime/Developer/civiclens-full-window-validation/artifacts/full-window-validation-2026-10-21/house-revalidated-committee-2/revalidation.json",
+      "sha256": "f317eed520eacb434158ec205fca9675e88ef8b2f83f36442f52e5bf1eeb6d8e",
+      "bytes": 3299
+    }
+  ]
+}

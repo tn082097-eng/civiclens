@@ -1,0 +1,65 @@
+"""Offline provenance controls; real captured body, SYNTHETIC corruptions only."""
+import copy, importlib.util, json, shutil, tempfile, unittest
+from types import SimpleNamespace
+from unittest.mock import patch
+from pathlib import Path
+HERE=Path(__file__).resolve().parent
+spec=importlib.util.spec_from_file_location('revalidate_capture',HERE/'revalidate_capture.py')
+R=importlib.util.module_from_spec(spec);spec.loader.exec_module(R)
+class ReceiptTests(unittest.TestCase):
+ def setUp(self):
+  self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup);self.root=Path(self.temp.name)
+  self.record=json.loads((HERE/'house-format-repair-packet/source-receipt.json').read_text())['captured_record']
+  p=self.root/self.record['response']['path'];p.parent.mkdir(parents=True);shutil.copyfile(HERE/'house-format-repair-packet/official-house-2023-roll700.xml',p)
+  self.parser=lambda body,row:{'key':row['key'],'proof':'SYNTHETIC parser control'}
+ def test_receipts_and_original_record_unchanged(self):
+  before=copy.deepcopy(self.record);out=R.revalidate_record(self.record,self.root,self.parser)
+  self.assertEqual(out['outcome'],'acquired');self.assertEqual(out['response'],before['response']);self.assertEqual(self.record,before)
+  self.assertEqual(out['original_outcome'],before['outcome']);self.assertEqual(out['original_reason'],before['reason'])
+  self.assertEqual(out['original_metadata'],before['metadata'])
+ def test_http_failure_cannot_be_rescued_by_valid_xml(self):
+  self.record['response']['http_status']=500
+  with self.assertRaises(ValueError):R.revalidate_record(self.record,self.root,self.parser)
+ def test_different_final_url_is_not_source_identity(self):
+  self.record['response']['final_url']='https://example.com/roll700.xml'
+  with self.assertRaises(ValueError):R.revalidate_record(self.record,self.root,self.parser)
+ def test_corrupt_body_hash_is_rejected(self):
+  p=self.root/self.record['response']['path'];b=p.read_bytes();p.write_bytes(b'X'+b[1:])
+  with self.assertRaises(ValueError):R.revalidate_record(self.record,self.root,self.parser)
+ def test_partial_response_is_rejected(self):
+  self.record['response']['body_complete']=False
+  with self.assertRaises(ValueError):R.revalidate_record(self.record,self.root,self.parser)
+ def test_escaping_response_path_is_rejected(self):
+  self.record['response']['path']='../escape'
+  with self.assertRaises(ValueError):R.revalidate_record(self.record,self.root,self.parser)
+ def test_conflicting_roll_key_is_rejected(self):
+  self.record['key']='118-2023/h699'
+  with self.assertRaises(ValueError):R.revalidate_record(self.record,self.root,self.parser)
+class DerivedRunTests(ReceiptTests):
+ def prepare(self):
+  self.source=self.root/'source';self.source.mkdir();shutil.move(str(self.root/'responses'),str(self.source/'acquisition/responses'))
+  self.dest=self.root/'artifacts/derived';self.dest.parent.mkdir()
+  self.manifest={'status':'incomplete','finished_at':'2026-10-21T23:38:34+00:00','started_at':'2026-10-21T23:29:00+00:00','required_rolls':1,'records':[self.record],'collector_revision':None}
+  mp=self.source/'acquisition/manifest.json';mp.write_text(json.dumps(self.manifest))
+  self.run={'chamber':'house','mode':'window','status':'incomplete','finished_at':self.manifest['finished_at'],'started_at':self.manifest['started_at'],'manifest_path':'acquisition/manifest.json','manifest_sha256':R.sha(mp),'discovery':{'inventory_path':'discovery/inventory.json','inventory_sha256':'synthetic-inventory-control'},'months':48,'as_of':'2026-10-21','window':['2022-10-21','2026-10-21']}
+  (self.source/'window-run.json').write_text(json.dumps(self.run))
+  return SimpleNamespace(window=self.run['window'],selected=[self.record],records=[self.record])
+ def test_derivation_binds_originals_logic_and_revalidation_time(self):
+  inventory=self.prepare();originals={p:R.sha(self.source/p) for p in ['window-run.json','acquisition/manifest.json']}
+  with patch.object(R,'ROOT',self.root),patch.object(R.adapter,'validate_inventory',return_value=inventory),patch.object(R.adapter,'validate_xml',self.parser):
+   result=R.revalidate(self.source,self.dest)
+  self.assertEqual(result['status'],'complete')
+  run=json.loads((self.dest/'window-run.json').read_text());m=json.loads((self.dest/'acquisition/manifest.json').read_text());proof=json.loads((self.dest/'revalidation.json').read_text())
+  for obj in [run,m]:
+   self.assertEqual(obj['derived_from']['window_run_sha256'],originals['window-run.json']);self.assertEqual(obj['derived_from']['manifest_sha256'],originals['acquisition/manifest.json'])
+   self.assertEqual(obj['revalidated_at'],proof['validated_at']);self.assertNotEqual(obj['finished_at'],self.run['finished_at'])
+  self.assertIsNone(proof['original_candidate']);self.assertEqual(proof['revalidation_script_sha256'],R.sha(R.__file__))
+  self.assertEqual(m['records'][0]['original_outcome'],'malformed_source')
+  self.assertEqual(m['records'][0]['response'],self.record['response'])
+  for p,digest in originals.items():self.assertEqual(R.sha(self.source/p),digest)
+ def test_bad_original_manifest_hash_stops_before_output(self):
+  inventory=self.prepare();(self.source/'acquisition/manifest.json').write_text('{}')
+  with patch.object(R,'ROOT',self.root),patch.object(R.adapter,'validate_inventory',return_value=inventory):
+   with self.assertRaisesRegex(ValueError,'original manifest hash differs'):R.revalidate(self.source,self.dest)
+  self.assertFalse(self.dest.exists())
+if __name__=='__main__':unittest.main()

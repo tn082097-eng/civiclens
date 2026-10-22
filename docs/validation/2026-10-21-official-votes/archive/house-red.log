@@ -1,0 +1,319 @@
+..E.E..E.FF........FF.......F.F.F.F.F.F..FF.F.....E.FF....FF..FFFFFF...F.F.F.F.F.F..FF.F..
+======================================================================
+ERROR: test_official_historic_acquisition (test_house_metadata.HouseMetadataTests.test_official_historic_acquisition)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 59, in test_official_historic_acquisition
+    result = adapter.validate_xml(BODY, ROW)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/adapter.py", line 309, in validate_xml
+    if field(name) != value:
+       ^^^^^^^^^^^
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/adapter.py", line 304, in field
+    raise ValueError(f'missing/duplicate/structured {name}')
+ValueError: missing/duplicate/structured chamber
+
+======================================================================
+ERROR: test_official_historic_raw_extraction (test_house_metadata.HouseMetadataTests.test_official_historic_raw_extraction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 70, in test_official_historic_raw_extraction
+    result = bridge.raw_house(ET.fromstring(BODY))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/bridge.py", line 67, in raw_house
+    if text(meta,'chamber')!='U.S. House of Representatives':raise ValueError('wrong House chamber')
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: wrong House chamber
+
+======================================================================
+ERROR: test_synthetic_acquisition_accept_committee_only (test_house_metadata.HouseMetadataTests.test_synthetic_acquisition_accept_committee_only)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 165, in test
+    result = extract(body, path)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 44, in extract
+    return adapter.validate_xml(body, ROW) if path == 'acquisition' else bridge.raw_house(ET.fromstring(body))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/adapter.py", line 309, in validate_xml
+    if field(name) != value:
+       ^^^^^^^^^^^
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/adapter.py", line 304, in field
+    raise ValueError(f'missing/duplicate/structured {name}')
+ValueError: missing/duplicate/structured chamber
+
+======================================================================
+ERROR: test_synthetic_raw_accept_committee_only (test_house_metadata.HouseMetadataTests.test_synthetic_raw_accept_committee_only)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 165, in test
+    result = extract(body, path)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 44, in extract
+    return adapter.validate_xml(body, ROW) if path == 'acquisition' else bridge.raw_house(ET.fromstring(body))
+                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/bridge.py", line 67, in raw_house
+    if text(meta,'chamber')!='U.S. House of Representatives':raise ValueError('wrong House chamber')
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: wrong House chamber
+
+======================================================================
+FAIL: test_synthetic_acquisition_reject_chamber_attributed_alone (test_house_metadata.HouseMetadataTests.test_synthetic_acquisition_reject_chamber_attributed_alone)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_acquisition_reject_chamber_attributed_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_acquisition_reject_chamber_attributed_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_acquisition_reject_chamber_padded_alone (test_house_metadata.HouseMetadataTests.test_synthetic_acquisition_reject_chamber_padded_alone)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_acquisition_reject_chamber_padded_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_acquisition_reject_chamber_padded_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_acquisition_reject_committee_attributed_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_acquisition_reject_committee_attributed_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_acquisition_reject_committee_blank_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_acquisition_reject_committee_blank_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_acquisition_reject_committee_case_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_acquisition_reject_committee_case_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_acquisition_reject_committee_duplicate_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_acquisition_reject_committee_duplicate_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_acquisition_reject_committee_empty_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_acquisition_reject_committee_empty_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_acquisition_reject_committee_padded_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_acquisition_reject_committee_padded_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_acquisition_reject_committee_structured_tail_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_acquisition_reject_committee_structured_tail_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_acquisition_reject_committee_structured_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_acquisition_reject_committee_structured_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_acquisition_reject_committee_wrong_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_acquisition_reject_committee_wrong_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_chamber_attributed_alone (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_chamber_attributed_alone)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_chamber_attributed_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_chamber_attributed_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_chamber_duplicate_alone (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_chamber_duplicate_alone)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_chamber_duplicate_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_chamber_duplicate_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_chamber_padded_alone (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_chamber_padded_alone)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_chamber_padded_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_chamber_padded_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_chamber_structured_alone (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_chamber_structured_alone)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_chamber_structured_tail_alone (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_chamber_structured_tail_alone)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_chamber_structured_tail_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_chamber_structured_tail_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_chamber_structured_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_chamber_structured_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_committee_attributed_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_committee_attributed_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_committee_blank_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_committee_blank_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_committee_case_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_committee_case_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_committee_duplicate_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_committee_duplicate_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_committee_empty_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_committee_empty_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_committee_padded_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_committee_padded_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_committee_structured_tail_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_committee_structured_tail_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_committee_structured_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_committee_structured_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_synthetic_raw_reject_committee_wrong_with_valid_other (test_house_metadata.HouseMetadataTests.test_synthetic_raw_reject_committee_wrong_with_valid_other)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/captainanime/Developer/civiclens-full-window-validation/tools/congress-collector/test_house_metadata.py", line 169, in test
+    with self.assertRaises(ValueError): extract(body, path)
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 90 tests in 0.555s
+
+FAILED (failures=32, errors=4)

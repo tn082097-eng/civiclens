@@ -1,0 +1,37 @@
+I've read all eleven named artifacts and am writing up the findings.
+
+# Verdict: **REQUEST_CHANGES**
+
+The code repair holds up. The shared helper is applied in both validation paths, and the evidence checks are sound: receipt, body hash, canonical URL, network namespace, and the original hashes are unchanged before and after. The counts are consistent: 1366 + 623 = 1989 attempted, 1989 + 477 = 2466 published, 1989 rows per target. The blocking problems are three provenance and documentation defects in how the derived evidence is recorded.
+
+## Blocking defects
+
+**1. The source-proof doc makes false and stale provenance claims.**
+- `docs/house-metadata-compatibility-source-2026-10-21.md:47` says "No original receipt, body, failed manifest **or active Python source was changed**." The patch does change active source: `controller-repair-review.patch:105-108` (`adapter.py:312`, the chamber removed from `expected`) and `:129-130` (`bridge.py` `raw_house`). Line 3 of the same doc says the repair was "integrated locally", so the doc contradicts itself.
+- `:49` says "No derived acquisition manifest was generated in this workbench." But `house-revalidated-committee-1/` now exists and feeds the replay PASS. The doc never mentions it, its hash (`6d6d4d44…`), or `revalidation.json`.
+- Minor: `:51` is missing spaces ("all1,989", "HTTP200", "rejected623").
+
+**2. The derived run artifacts pass themselves off as the original acquisition, and nothing hash-links them back.**
+- `house-revalidated-committee-1/window-run.json:11,17-18` keeps the original capture's `started_at`/`finished_at` (`23:38:34.600055`) next to `status: "complete"`. At that time the capture had actually finished `incomplete` (original `window-run.json:16-18`).
+- `acquisition/manifest.json:13,22` keeps `finished_at 23:38:34.529979` with `status: "acquisition_complete"` and an unchanged contract and `acquisition_semantics`. Nothing in the file marks it as derived or names the original manifest's sha256.
+- The 623 rescued records become `outcome: "acquired"`, `reason: null` with no record of their original outcome (`revalidate_capture.py:29`, `:59-65`).
+- The only link back is a free-text `reason` (`revalidate_capture.py:69`). `revalidation.json` points forward to the derived manifest, but nothing points back to it by hash. The replay `summary.json:230-246` `runFiles` hashes `window-run.json`, the manifest and the inventory, but not `revalidation.json`. So the replay PASS can't show from its own records that it ran on an offline-revalidated derivative rather than a real complete acquisition.
+- Fix: add in-band `derived_from` fields (both original sha256s), plus `revalidated_at`, the `revalidation.json` sha256, and per-record `original_outcome`/`original_reason`, or have the replay bind `revalidation.json`.
+
+**3. `revalidation.json` doesn't bind the logic that made the decision, and one field is a hardcoded constant.**
+- `validator_sha256` only hashes `tools/congress-collector/*.py` (`revalidate_capture.py:72`). It leaves out `revalidate_capture.py` itself, an uncommitted artifact that holds every HTTP/URL/hash/path gate (`:15-30`) and run-level gate (`:33-55`).
+- `original_candidate: "e3eb789…"` is a string literal, not read from the source run. The original manifest has `collector_revision: null`, and the doc's line 25 admits Git wasn't used to verify it.
+- `new_http_requests: 0` is also a literal, but the netns guard at `:33-34` backs it. `original_receipts_and_timestamps_preserved` is backed by the hash re-check at `:71`. Those two are acceptable.
+
+## What I checked and found sound (not defects)
+- `house_metadata.py`: exact text match, no attributes or children, each label at most once, at least one present, and a valid label can't mask an invalid one. Both paths call it: `adapter.py:312` and `bridge.py` `raw_house`. The test matrix covers acquisition and raw extraction symmetrically.
+- The doc's "solely missing chamber" claim (`:51`) holds by inference. `original-capture-frozen.json` records one reason string for all 623, and that string alone can't tell a missing chamber from a duplicate or structured one. But all 623 now pass a helper that still rejects duplicate or structured chambers, so each must lack a chamber and carry a valid committee label.
+- The frozen hashes (`c33b64df…`, `755f1f89…`) match `revalidation.json` `original_hashes`. The original `window-run.json` still says `incomplete` and references `755f1f89…`.
+
+## Evidence limits (no commands run)
+- I didn't hash any file, so I can't confirm the current tree matches the `validator_sha256` values, the frozen hashes, or the `runFiles` hashes, or that the original manifest is byte-identical today.
+- I didn't run the tests. `test_revalidate_capture.py` only exercises `revalidate_record` with a stub parser. The run-level `revalidate()` guards and the derived-manifest writes have no tests (a gap, not counted as a defect).
+- Metadata for the 1366 records that were already acquired was recomputed and overwritten without comparing it to the original (`:29`). Whether anything changed isn't recorded.
+- The replay covers two members (H001047, A000370), not House-wide member coverage. `member_coverage_validated` and `bill_resolution_validated` stay `false`, and 25 records are `unsupported_record`.
+- I don't know when `original-capture-frozen.json` was written relative to the revalidation.
+- I didn't read or touch the Senate artifacts.

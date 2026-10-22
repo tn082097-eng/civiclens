@@ -1,0 +1,17 @@
+{
+  "requiredRolls": 1989,
+  "bridgeFailures": [],
+  "analysisFailures": [],
+  "failureKeys": [],
+  "outOfServiceListings": 4,
+  "resolutionOutcomeCounts": {
+    "resolved_bill": 1944,
+    "authoritative_non_bill": 20,
+    "unsupported_record": 25
+  },
+  "presentRolls": {
+    "H001047": 1989,
+    "A000370": 1989
+  },
+  "accounted": 1989
+}

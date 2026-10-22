@@ -1,0 +1,52 @@
+{
+  "completed_at": "2026-10-21T23:55:49.952973+00:00",
+  "phase": "full_window_vote_validation",
+  "verdict": "PASS_AFTER_LOCAL_REPAIRS",
+  "candidate": "e3eb789 + uncommitted named-file House/Senate repairs; fingerprint bound",
+  "window": [
+    "2022-10-21",
+    "2026-10-21"
+  ],
+  "required_rolls": 3664,
+  "target_count": 4,
+  "isolated_vote_rows": 7328,
+  "house": {
+    "required_rolls": 1989,
+    "summary": "checks/house-offline-replay-3/summary.json"
+  },
+  "senate": {
+    "required_rolls": 1675,
+    "summary": "checks/senate-offline-replay-2/summary.json"
+  },
+  "verification": {
+    "typescript_tests": 359,
+    "python_tests": 205,
+    "provenance_controls": 16,
+    "typecheck_exit": 0,
+    "protected_files": 11,
+    "protected_changed": 0
+  },
+  "unresolved_resolution_outcomes": {
+    "house_unsupported": 25,
+    "senate_unsupported": 12,
+    "senate_ambiguity": 1
+  },
+  "source_snapshot_limit": "official listings at retained retrieval timestamps; no later-publication guarantee",
+  "integration": "uncommitted/unpushed/unmerged repairs; no deployment",
+  "certification": "NOT COMPLETE; six-stratum source/baseline/formatting-hold/independent-review gates outstanding",
+  "evidence_sha256": {
+    "checks/house-offline-replay-3/summary.json": "88b4d11ab6ffe8663fdd1c7975826b2b8b3d19067794318e7598840c562088e2",
+    "checks/senate-offline-replay-2/summary.json": "54d3599a29ab7f84b03f04f2a64ebbe90bc391ec981fa78c361ec4650d707da6",
+    "house-revalidated-committee-2/revalidation.json": "f317eed520eacb434158ec205fca9675e88ef8b2f83f36442f52e5bf1eeb6d8e",
+    "checks/final-candidate-fingerprint.json": "2968ad3f81767360c7f5d910da81bccf61bd824c64d3e28d22cc812b63e5ed2f",
+    "checks/final-vote-ts-regressions.log": "a4da3a4d9579e2a4992bac22df805b6b408f05cac43cccb7b198534aacb03f46",
+    "checks/final-vote-python-regressions.log": "ffd63760af34f85f5deb00d907208e419b4a07e167748190dcbb546f198a4da5",
+    "checks/final-candidate-tsc.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checks/claude-house-repair-review.txt": "d7f64b072f3a677814396dace35daea260cf8694e721941a39d36a2423070a12",
+    "checks/controller-review-disposition.json": "46b9c5bbdf78f9b43fb83873f98b38d99f56cb1624429b5501e65d38af5268ea",
+    "checks/claude-senate-repair-review.txt": "811813bda59f1a1fb72f1038798b7d093f445249653d6c9c29e9ca8533f1f495",
+    "checks/controller-senate-review-disposition.json": "b1cdc497ccd25849746ff3f61a98685a8d4794b23d6c1b3b814275aed76a1c81",
+    "checks/final-evidence-integrity.json": "311e2fec789abe34ecb83820bccbb0ee34ecb8f08338e73d7ba3f80a2d1b92d2",
+    "checks/protected-final.json": "364a3509b8b47393a109c7d052d01d6f311b03e27140b13b0d741532fea010c8"
+  }
+}

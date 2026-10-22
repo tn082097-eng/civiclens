@@ -1,0 +1,15 @@
+{
+  "verified_at": "2026-10-21T23:54:11.773757+00:00",
+  "checks": {
+    "senate_original_run": true,
+    "senate_original_manifest": true,
+    "senate_failed_summary": true,
+    "senate_failed_census": true,
+    "house_original_run": true,
+    "house_original_manifest": true,
+    "house-legacy-2023-roll700_receipt": true,
+    "house-legacy-2023-roll700_bytes": true,
+    "senate-procedural-2024-roll140_receipt": true,
+    "senate-procedural-2024-roll140_bytes": true
+  }
+}
