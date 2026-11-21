@@ -41,6 +41,13 @@ h2 { font-size: 19px; margin: 48px 0 14px; letter-spacing: -0.01em; }
 h2:first-child { margin-top: 0; }
 .lede { color: var(--fg-dim); margin: 0 0 24px; max-width: 720px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table-scroll { overflow-x: auto; }
+.table-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+@media (max-width: 600px) {
+  main { padding-inline: 16px; overflow-wrap: anywhere; }
+  main .kv { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+  main .tc-asset { min-width: 0; }
+}
 th, td { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { color: var(--fg-dim); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
 tbody tr:hover { background: rgba(255,255,255,0.02); }
@@ -116,8 +123,9 @@ footer a { color: var(--fg-dim); }
 .tag.after { color: var(--fg-muted); border-color: var(--fg-muted); opacity: 0.7; }
 .tag.bill-match { color: #4caf7d; border-color: rgba(76,175,125,0.4); background: rgba(76,175,125,0.06); cursor: help; }
 .section-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
-.section-tab { padding: 6px 14px; font-size: 13px; color: var(--fg-dim); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; user-select: none; }
+.section-tab { padding: 6px 14px; font: inherit; font-size: 13px; color: var(--fg-dim); background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; }
 .section-tab.active { color: var(--fg); border-bottom-color: var(--accent); }
+.section-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 .pac-totals { display: flex; gap: 16px; margin: 8px 0 4px; font-size: 13px; }
@@ -152,35 +160,32 @@ footer a { color: var(--fg-dim); }
 <body>
 <header>
   <h1>CivicLens</h1>
-  <div class="sub"><a href="index.html">Corpus</a> · Methodology · generated 2026-09-07 13:23Z</div>
+  <div class="sub"><a href="index.html">Corpus</a> · Methodology</div>
 </header>
 <main>
 
 <h2>Methodology</h2>
-<p class="lede" style="max-width:760px;">CivicLens reconstructs what members of Congress did — trades, votes, sponsorships, and donors — from primary sources, then runs a fixed set of deterministic detectors over that record. This page documents how each detector measures a pattern, how confidence is computed, and what the numbers can and cannot show. It reports patterns, not verdicts.</p>
+<p class="lede" style="max-width:760px;">CivicLens assembles disclosed trades, recorded votes, bill sponsorships, and campaign finance records for selected members of Congress. Coverage varies by source. The latest recorded trade or vote date on a profile does not establish that all records through that date are included.</p>
 
-<h2 id="how-flags-are-scored">How a flag is scored</h2>
+<h2 id="how-flags-are-scored">How to read a flag</h2>
 <div class="how-to-read">
   <ul>
-    <li><strong>A flag is a measured pattern</strong> in the public record — never an accusation or a finding of wrongdoing.</li>
-    <li><strong>Confidence comes from a permutation null model.</strong> For a scored detector, the observed count is compared against many shuffles of the member's <em>own</em> activity, holding their pace fixed. The p-value is the share of shuffles that match or exceed the observed count; a low p-value means the pattern is hard to produce by that member's ordinary behaviour alone.</li>
-    <li><strong>The timing detectors are scored against each member's own trading pace.</strong> The trade-vote and spousal-timing flags use a seeded per-member null — a volume-preserving date shuffle for high-volume traders, a calendar draw otherwise — so a member whose sheer trade count fills every window earns no signal from volume alone. A flag that scores at p ≥ 0.05 keeps rendering with explicit chance-level language and is visually capped at the lowest weight tier. The null does not model earnings-season or market-event clustering, so tightly-timed trades driven by public market events can still register. This scoring layer is pre-registered (statistic, null, thresholds, and seeds fixed in code before the run) in the project repository, docs/2026-07-20-timing-detectors-scoring.md.</li>
-    <li><strong>Statistics are shown, never invented.</strong> Detectors that are not scored against a null model say so plainly and show only the count of cited records — no fabricated p-value.</li>
-    <li><strong>Weight reflects evidence strength, not a verdict.</strong> Visual intensity on a flag card maps to the strength of the statistical signal; it carries no moral colour.</li>
-    <li><strong>Everything is reproducible.</strong> The null model is seeded, so the same inputs yield the same scores. Every flag cites real rows you can verify in the sections above it.</li>
+    <li><strong>Timing flags are descriptive counts.</strong> They summarize trades within a defined window before a vote. A committee handling a bill and a bill naming a company are different kinds of matches. A committee match can occur without the bill naming the traded company.</li>
+    <li><strong>Visual weight reflects the rule used for the flag.</strong> A highlighted card can represent more matches or a different type of match. The timing flags shown in this beta have no confirmatory statistical result.</li>
+    <li><strong>Trade–vote receipts use a separate calendar comparison.</strong> These pair a trade and a later vote through a shared topic and, where scoring is available, compare the gap with gaps from shuffled trade dates. This comparison applies to the individual pairs shown in that section.</li>
+    <li>The detector identifies reproducible patterns in available data. It does not establish causation or statistical significance.</li>
   </ul>
 </div>
 
-<h2 id="detectors">Detectors</h2>
-<p class="lede" style="margin-bottom:12px;">The deterministic detection pass. Each runs over the corpus and only emits a flag when it can cite real underlying rows.</p>
+<h2 id="detectors">Detector rules</h2>
 <div class="trade-card flag-card" style="margin-bottom:14px;">
   <div class="tc-header"><div class="tc-asset">Trade ↔ vote alignment</div><div class="tc-meta"><span class="muted">trade-vote-alignment</span></div></div>
-  <div class="fc-mech">How measured: Counts discretionary stock trades placed within 14 days before a vote on a bill the member&#39;s committee handled or whose text names the traded company, then compares that count to a seeded permutation null built from the member&#39;s own trading pace.</div>
+  <div class="fc-mech">How measured: Counts discretionary stock trades placed within 14 days before a vote on a bill the member&#39;s committee handled or whose text names the traded company.</div>
   <div class="fc-caveat">What this doesn't show: Timing proximity is not proof of intent or of non-public information. Committee jurisdiction is a proxy for influence, not evidence of a hearing on that company.</div>
 </div>
 <div class="trade-card flag-card" style="margin-bottom:14px;">
   <div class="tc-header"><div class="tc-asset">Spousal trade timing</div><div class="tc-meta"><span class="muted">spousal-trade-timing</span></div></div>
-  <div class="fc-mech">How measured: Flags trades held by a spouse or jointly, placed within 14 days before a vote on a bill the member&#39;s committee handled, then compares that count to a seeded permutation null built from the household&#39;s own trading pace.</div>
+  <div class="fc-mech">How measured: Flags trades held by a spouse or jointly, placed within 14 days before a vote on a bill the member&#39;s committee handled.</div>
   <div class="fc-caveat">What this doesn't show: Spouse or joint accounts may be independently managed. CivicLens has no hearing calendar; committee jurisdiction is the relevance proxy.</div>
 </div>
 <div class="trade-card flag-card" style="margin-bottom:14px;">
@@ -190,7 +195,7 @@ footer a { color: var(--fg-dim); }
 </div>
 
 <h2 id="rejected">Detectors we tested and rejected</h2>
-<p class="lede" style="max-width:760px;">A detector only ships if it can tell the real world from a shuffled one. Each candidate detector is pre-registered — statistic, null model, thresholds, and random seed fixed in code before the test runs — then run once against its null. If it fails, it is not published, not re-tuned, and not re-run. The failures are documented here with the same weight as the successes, because a platform that can only confirm its own hypotheses is an accusation engine, not a measurement instrument.</p>
+<p class="lede" style="max-width:760px;">These candidate detectors were tested against preregistered comparison models. The results did not support using them for public flags.</p>
 
 <div class="trade-card flag-card" style="margin-bottom:14px;">
   <div class="tc-header"><div class="tc-asset">District contracts ↔ trades (industry level)</div><div class="tc-meta"><span class="muted">rejected 2026-07-16 · p = 0.48</span></div></div>
@@ -206,15 +211,14 @@ footer a { color: var(--fg-dim); }
 
 <p style="max-width:760px;">Neither result proves the absence of a relationship between congressional trading and federal contracting. Each means one specific, honestly-tested method found nothing stronger than chance — and was retired instead of adjusted until it "worked."</p>
 
-<h2 id="sources">Primary sources</h2>
-<p class="lede" style="max-width:760px;">Every claim links back to the filing it came from. CivicLens draws only on primary sources: Congress.gov (bills, sponsorship, votes), GovTrack (vote records), OpenFEC (campaign finance), and House Clerk Periodic Transaction Reports (member trades). No claim rests on LLM-generated or stub data.</p>
+<h2 id="sources">Sources and coverage</h2>
+<p class="lede" style="max-width:760px;">Sources for this snapshot include Congress.gov for legislation, GovTrack for retained roll calls, OpenFEC for campaign finance, and House Clerk and Senate electronic disclosures for trades. Donor-theme comparisons use third-party industry classifications derived from FEC records. Former-staff links to Senate lobbying disclosures are withheld while office identities are verified.</p>
 
 <p style="margin-top: 32px;"><a class="row-link" href="index.html">← back to corpus</a></p>
 
 </main>
 <footer>
-Built from primary sources: Congress.gov, GovTrack, OpenFEC, House Clerk PFDs.
-Every claim links to its source. Voice rules: evidence before opinion — no editorial scoring.
+Sources include Congress.gov, GovTrack, OpenFEC, and House and Senate trade disclosures.
 </footer>
 </body>
 </html>

@@ -74,10 +74,10 @@ export function renderMoneyVotesSection(d: MoneyVotesData): string {
     <td>${t.focusedBills > 0 ? String(t.focusedBills) : '<span class="muted">0</span>'}</td>
     <td><span class="muted">${esc(t.cycles)}</span></td>
   </tr>`).join('');
-  const table = `<table>
+  const table = `<div class="table-scroll" role="region" aria-label="Donor theme records" tabindex="0"><table>
 <thead><tr><th>Donor theme</th><th>Mapped money</th><th>Share</th><th>Focused sponsored bills</th><th>Cycles</th></tr></thead>
 <tbody>${rows}</tbody>
-</table>`;
+</table></div>`;
   const crossRef =
     '<p class="muted">Where concentration and sponsorship meet the detector\'s ' +
     'thresholds, the flag appears under <a class="row-link" href="#sec-patterns">Patterns</a> ' +

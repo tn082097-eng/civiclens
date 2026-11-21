@@ -84,6 +84,8 @@ export interface CorpusReport {
 export interface ValidateCorpusOpts {
   /** Root holding task-* directories. Defaults to the repo's pipeline dir. */
   corpusDir?: string;
+  /** Exact approved task IDs resolved by the release verifier. */
+  taskIds?: readonly string[];
   /** Families that must exist. Defaults to REQUIRED_FAMILIES. */
   required?: readonly string[];
   /** Source-backed records excusing a required family's emptiness. */
@@ -95,9 +97,14 @@ export function validateCorpus(opts: ValidateCorpusOpts = {}): CorpusReport {
   const required = new Set(opts.required ?? REQUIRED_FAMILIES);
   const accounted = opts.accountedEmpty ?? {};
 
-  const taskDirs = existsSync(corpusDir)
+  if (opts.taskIds) {
+    if (opts.taskIds.length === 0) throw new Error('Release task IDs must be nonempty');
+    if (new Set(opts.taskIds).size !== opts.taskIds.length) throw new Error('Release task IDs must be unique');
+    if (opts.taskIds.some(id => !/^task-[a-z0-9-]+$/.test(id))) throw new Error('Release scope requires valid task IDs');
+  }
+  const taskDirs = opts.taskIds ?? (existsSync(corpusDir)
     ? readdirSync(corpusDir).filter(d => d.startsWith('task-'))
-    : [];
+    : []);
 
   const families: FamilyReport[] = [];
 

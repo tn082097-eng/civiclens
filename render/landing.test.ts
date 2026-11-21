@@ -24,12 +24,12 @@ test('renderLanding: member card carries name, sub-line, formatted inventory num
   assert.match(html, /1,923/);
   assert.match(html, /3,243/);
   assert.match(html, /href="members\/josh-gottheimer\.html"/);
-  assert.match(html, /data through <span class="mono">2026-06-30<\/span>/);
+  assert.match(html, /latest trade or vote on record <span class="mono">2026-06-30<\/span>/);
 });
 
 test('renderLanding: inventory language only — no detector/signal claims on the front door', () => {
   const html = renderLanding(manifest());
-  assert.ok(!/\bp\s*=|permutation|significant|flagged|suspicious/i.test(html));
+  assert.ok(!/\bp\s*=|permutation|significant|flagged|suspicious|stand out from chance|verified end-to-end/i.test(html));
   assert.match(html, /do not\s+establish causation or statistical significance/i);
   assert.match(html, /Public beta/);
 });
@@ -63,7 +63,7 @@ test('renderLanding: empty manifest fails loudly, count line pluralizes', () => 
   assert.match(renderLanding(two), />2 members</);
 });
 
-test('renderLanding: null dataThrough renders without a data-through claim', () => {
+test('renderLanding: null dataThrough renders without a latest-record date', () => {
   const html = renderLanding(manifest({ dataThrough: null }));
-  assert.ok(!/data through/.test(html));
+  assert.ok(!/latest trade or vote on record/.test(html));
 });

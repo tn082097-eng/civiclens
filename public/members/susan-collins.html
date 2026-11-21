@@ -41,6 +41,13 @@ h2 { font-size: 19px; margin: 48px 0 14px; letter-spacing: -0.01em; }
 h2:first-child { margin-top: 0; }
 .lede { color: var(--fg-dim); margin: 0 0 24px; max-width: 720px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table-scroll { overflow-x: auto; }
+.table-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+@media (max-width: 600px) {
+  main { padding-inline: 16px; overflow-wrap: anywhere; }
+  main .kv { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+  main .tc-asset { min-width: 0; }
+}
 th, td { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { color: var(--fg-dim); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
 tbody tr:hover { background: rgba(255,255,255,0.02); }
@@ -116,8 +123,9 @@ footer a { color: var(--fg-dim); }
 .tag.after { color: var(--fg-muted); border-color: var(--fg-muted); opacity: 0.7; }
 .tag.bill-match { color: #4caf7d; border-color: rgba(76,175,125,0.4); background: rgba(76,175,125,0.06); cursor: help; }
 .section-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
-.section-tab { padding: 6px 14px; font-size: 13px; color: var(--fg-dim); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; user-select: none; }
+.section-tab { padding: 6px 14px; font: inherit; font-size: 13px; color: var(--fg-dim); background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; }
 .section-tab.active { color: var(--fg); border-bottom-color: var(--accent); }
+.section-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 .pac-totals { display: flex; gap: 16px; margin: 8px 0 4px; font-size: 13px; }
@@ -152,7 +160,7 @@ footer a { color: var(--fg-dim); }
 <body>
 <header>
   <h1>CivicLens</h1>
-  <div class="sub"><a href="../index.html">Corpus</a> · Susan Collins · generated 2026-09-07 17:57Z</div>
+  <div class="sub"><a href="../index.html">Corpus</a> · Susan Collins</div>
 </header>
 <main>
 <h2 id="sec-identity">Susan Collins</h2>
@@ -178,12 +186,12 @@ footer a { color: var(--fg-dim); }
   <div class="glance-cell"><div class="glance-value">0</div><div class="glance-label">Trades within 14d of related vote</div></div>
 </div>
 
-<section class="receipts" id="sec-receipts"><h2>Trade–vote timing</h2><p class="coverage">667 of 1,700 roll-call votes are linked to a specific bill; the rest are procedural and cannot be matched. 28 disclosed trades · 13 theme-mappable · 0 theme-matched receipts.</p><p class="empty">No theme-matched trade→vote pairs on record for this member.</p></section>
+<section class="receipts" id="sec-receipts"><h2>Trade–vote timing</h2><p class="coverage">667 of 1,700 roll-call votes are linked to a specific bill in this snapshot. 28 disclosed trades · 13 theme-mappable · 0 theme-matched receipts.</p><p class="empty">No theme-matched trade→vote pairs on record for this member.</p></section>
 <h2 id="sec-coherence">Per-theme coherence</h2>
 <p class="muted">Not computed yet.</p>
 <h2 id="sec-money-votes">Money &amp; votes</h2>
 <p class="lede">Campaign money mapped to tradable-sector themes, next to the focused bills this member sponsored in the same theme. Unmapped money (labor, ideology, lawyers, retired, public-sector) is excluded by construction — shares are of $786.5K in mapped industry contributions.</p>
-<table>
+<div class="table-scroll" role="region" aria-label="Donor theme records" tabindex="0"><table>
 <thead><tr><th>Donor theme</th><th>Mapped money</th><th>Share</th><th>Focused sponsored bills</th><th>Cycles</th></tr></thead>
 <tbody>
   <tr>
@@ -263,7 +271,7 @@ footer a { color: var(--fg-dim); }
     <td>7</td>
     <td><span class="muted">2024</span></td>
   </tr></tbody>
-</table>
+</table></div>
 <p class="muted">Where concentration and sponsorship meet the detector's thresholds, the flag appears under <a class="row-link" href="#sec-patterns">Patterns</a> with its evidence.</p>
 <p class="muted">CivicLens analysis: themes are built from third-party-coded employer and occupation data derived from public FEC filings.</p>
 <p class="muted" style="font-style:italic;">Not yet computed: the statistical money–vote timing analysis — whether legislative activity clusters around donations beyond what chance predicts — is still in validation and has produced no results for any member. Shared sector concentration is context, not a timing claim, and implies no causation.</p>
@@ -436,15 +444,15 @@ footer a { color: var(--fg-dim); }
 <h2 id="sec-trades">Trades &amp; bills</h2>
 
 <p class="lede" style="margin-bottom:12px;">
-  Showing <strong>2</strong> discretionary equity trades made <em>before</em> a vote within 90 days.
-  T-bills, ETFs, index funds, munis, and bonds excluded — they carry no single-company vote nexus.
-  <a class="row-link" href="#all-trades-tab" onclick="showTab('tabs-susan-collins','all')">Show all 28 trades →</a>
+  Showing <strong>2</strong> trades that match the focused filters and occurred <em>before</em> a vote within 90 days.
+  The view excludes known broad-market funds and disclosures classified as ETFs, bonds, and similar assets.
+  <a class="row-link" href="#all-trades-tab" onclick="showTab('tabs-susan-collins','all')">Show 28 recent trades →</a>
 </p>
-<div class="section-tabs" id="tabs-susan-collins">
-  <div class="section-tab active" onclick="showTab('tabs-susan-collins','focused')" data-tab="focused">Focused (before-vote, discretionary)</div>
-  <div class="section-tab" onclick="showTab('tabs-susan-collins','all')" data-tab="all" id="all-trades-tab">All trades (28)</div>
+<div class="section-tabs" id="tabs-susan-collins" role="tablist" aria-label="Trade views">
+  <button type="button" class="section-tab active" id="focused-trades-tab" role="tab" aria-selected="true" aria-controls="focused-trades-panel" onclick="showTab('tabs-susan-collins','focused')" onkeydown="tradeTabKey(event)" data-tab="focused">Focused (before-vote)</button>
+  <button type="button" class="section-tab" id="all-trades-tab" role="tab" aria-selected="false" aria-controls="all-trades-panel" tabindex="-1" onclick="showTab('tabs-susan-collins','all')" onkeydown="tradeTabKey(event)" data-tab="all">All trades (28)</button>
 </div>
-<div class="tab-panel active" data-panel-for="tabs-susan-collins" data-panel="focused">
+<div class="tab-panel active" id="focused-trades-panel" role="tabpanel" aria-labelledby="focused-trades-tab" tabindex="0" data-panel-for="tabs-susan-collins" data-panel="focused">
 <div class="trade-card intensity-high"><div class="tc-header">
       <div class="tc-asset">
         <span style="color:var(--fg);font-weight:600;">AKAM</span> <span class="dim">— </span>Akamai Technologies, Inc. - Common Stock
@@ -515,8 +523,8 @@ footer a { color: var(--fg-dim); }
         </div>
       </div><div class="dim" style="font-size:11px;margin-top:4px;">+22 more votes in window</div></div></div>
 </div>
-<div class="tab-panel" data-panel-for="tabs-susan-collins" data-panel="all">
-<table>
+<div class="tab-panel" id="all-trades-panel" role="tabpanel" aria-labelledby="all-trades-tab" tabindex="0" data-panel-for="tabs-susan-collins" data-panel="all" hidden>
+<div class="table-scroll" role="region" aria-label="Trade disclosure records" tabindex="0"><table>
 <thead><tr><th>Date</th><th>Type</th><th>Asset</th><th>Amount band</th><th>Holder</th><th>Sub-account</th><th>Source</th></tr></thead>
 <tbody>
   <tr>
@@ -771,20 +779,38 @@ footer a { color: var(--fg-dim); }
     <td><span class="muted"></span></td>
     <td><a class="row-link" href="https://efdsearch.senate.gov/search/view/ptr/69388a65-26f9-4be6-9f6f-1865fc1140f9/" target="_blank" rel="noopener">PTR</a></td>
   </tr></tbody>
-</table>
+</table></div>
 </div>
 <script>
 function showTab(tabGroupId, panelName) {
   document.querySelectorAll('#' + tabGroupId + ' .section-tab').forEach(function(el) {
-    el.classList.toggle('active', el.dataset.tab === panelName);
+    const selected = el.dataset.tab === panelName;
+    el.classList.toggle('active', selected);
+    el.setAttribute('aria-selected', String(selected));
+    el.tabIndex = selected ? 0 : -1;
   });
   document.querySelectorAll('[data-panel-for="' + tabGroupId + '"]').forEach(function(el) {
-    el.classList.toggle('active', el.dataset.panel === panelName);
+    const selected = el.dataset.panel === panelName;
+    el.classList.toggle('active', selected);
+    el.hidden = !selected;
   });
+}
+
+function tradeTabKey(event) {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+  const current = event.currentTarget;
+  const tabs = Array.from(current.parentElement.querySelectorAll('[role="tab"]'));
+  const index = tabs.indexOf(current);
+  const next = event.key === 'Home' ? tabs[0]
+    : event.key === 'End' ? tabs[tabs.length - 1]
+    : tabs[(index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+  event.preventDefault();
+  next.click();
+  next.focus();
 }
 </script>
 <h2 id="sec-donors">Top donors (lifetime, 4-cycle FEC union)</h2>
-<table>
+<div class="table-scroll" role="region" aria-label="Top donor records" tabindex="0"><table>
 <thead><tr><th>Donor</th><th>Type</th><th class="num">Lifetime amount</th><th>Most recent</th><th>Source</th></tr></thead>
 <tbody>
   <tr>
@@ -892,627 +918,9 @@ function showTab(tabGroupId, panelName) {
     <td><span class="muted">2020-12-17</span></td>
     <td><a class="row-link" href="https://www.fec.gov/data/committee/C00314575/" target="_blank" rel="noopener">FEC</a></td>
   </tr></tbody>
-</table>
-<h2 id="sec-revolving">Revolving door — former staff now lobbying (77)</h2>
-
-<p class="lede">Registered federal lobbyists whose disclosed former government role names Susan Collins or a committee they sit on. Recency reflects each lobbyist's most recent disclosure filing — not a judgment.</p>
-<div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">ROBERT EPPLIN</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">LD, Sen. Collins; LD and LA, Sen. Smith; Analyst, OMB Budget Review- Division; Prof Staff, Senate Finance Committee; L.A. Sena. Packwood.</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>EPPLIN STRATEGIC PLANNING</strong> for CENTERLINE LIBERTIES, INC. · Civil Rights/Civil Liberties / Budget/Appropriations / Health Issues / Defense</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/4045c802-9972-42a8-85d7-27d7a04944e8/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">MICHAELA CAMPBELL</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Legislative Correspondent, Sen. Susan Collins</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>CONGRESSIONAL FIRE SERVICES INSTITUTE</strong> for CONGRESSIONAL FIRE SERVICES INSTITUTE · Taxation/Internal Revenue Code / Copyright/Patent/Trademark / Budget/Appropri…</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/91d475f4-bc6a-4e89-ae32-b2a844521880/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">MICHAEL DIROMA</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Deputy Assistant Secretary of the Treasury for Legislative Affairs (International); Tax Counsel, Senator Susan M. Collins</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>DIROMA ECK &amp; CO. LLP</strong> for CHICAGO ATLANTIC ADVISORS, LLC · Taxation/Internal Revenue Code</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/97c917af-0544-4b5b-8b1e-8b86c0183f2e/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">OLIVIA KURTZ</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Chief of Staff, Leg Director, Dep Leg Director, Sr Leg Asst, US Sen Susan Collins; Dep Staff Dir, Sen Special Comm on Aging; Leg Director, Sr Leg Asst, Leg Asst, Exec Asst, Rep Mike Castle</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>S-3 GROUP</strong> for NOVO NORDISK, INC. · Health Issues / Medicare/Medicaid / Trade (domestic/foreign)</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/7da64784-dca7-4fd1-bee1-ec9859e086d2/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">ROWAN BOST</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Legislative Aide, Office of Senator Susan Collins; Legislative Correspondent, Office of Senator Susan Collins; Intern, Office of Senator Susan Collins; Senate Page, Senator Olympia Snowe</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>STEPTOE LLP</strong> for RENCO MANUFACTURING · Manufacturing</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/b3dc498d-a9d5-417c-a7ee-d6533a249906/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">ROBERT EPPLIN</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">LD, Sen. Collins; LD Sen. Smith; Analyst, OMB Budget Review Division; Prof Staff, Senate Finance Committee; LA Sen. Packwood.</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>KED STRATEGIES, LLC</strong> for HUNTINGTON INGALLS INDUSTRIES, INC. · Defense</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/e70e76b7-b80b-4606-9c4b-7154272df06d/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">KEVIN KELLEY</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Communications Director of Senator Susan Collins; Staff Director for the US Senate Special Committee on Aging.</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>KED STRATEGIES, LLC</strong> for HUNTINGTON INGALLS INDUSTRIES, INC. · Defense</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/e70e76b7-b80b-4606-9c4b-7154272df06d/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">MICHAEL CIAMARRA</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Sen. Susan Collins &amp; Sen. Richard Shelby</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>SOUTHWEST AIRLINES</strong> for SOUTHWEST AIRLINES · Aviation/Airlines/Airports / Homeland Security / Budget/Appropriations / Bank…</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/9594a347-3da7-4f83-8a3b-c18ac751454d/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">MIKE WAKEFIELD</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Intern, Sen. John Warner; LA, Leg. Counsel, Rep. Mike Coffman; Military LA, Counsel, Sr. Counsel, Sen. Susan Collins; Professional Staff, Sr. Counsel, Senate Appropriations Cmte., Defense Subcmte.</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>HOLLAND &amp; KNIGHT LLP</strong> for CLARK STREET ASSOCIATES ON BEHALF OF CESIUMASTRO, INC. · Defense / Science/Technology</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/3b4cb8ec-8e13-49ea-97b3-ae054515d304/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">ALLISON FEIKES</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Legislative Asst., Sen. Susan Collins; Pro. Staff Member, Senate HELP Cmte. Employment &amp; Workplace Safety Subcmte.; Legislative Asst., Sen. Mike Braun; Legislative Asst. &amp; Legislative Cor., Rep. Barbara Comstock; Inte…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>FGS GLOBAL (US) LLC (FKA FGH HOLDINGS LLC)</strong> for CHICANOS POR LA CAUSA, INC. · Education / Economics/Economic Development</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/8310a1cd-d065-406c-b0ef-91139f694aa3/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">MOLLY FRANCES ROSS</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Intern, Staff Asst., Leg. Corr., Leg. Aide, Leg. Asst., Sen. Susan Collins</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>HOLLAND &amp; KNIGHT LLP</strong> for AMERICAN TERAWATT, INC. · Energy/Nuclear</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/a360b5a9-9306-4db4-87f1-bca8ab97fbe3/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">CAMERON O&#39;BRIEN</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Staff Member, Sen. Appropriations Committee - Transportation, HUD Subcommittee; Legislative Asst., Office of Sen. Susan Collins; Staff Asst., Office of Sen. Susan Collins; Legislative Correspondent, Office of Sen. Sus…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>WSP USA (FKA AS PARSONS BRINCKERHOFF, INC.)</strong> for WSP USA (FKA AS PARSONS BRINCKERHOFF, INC.) · Transportation / Budget/Appropriations / Energy/Nuclear / Taxation/Internal R…</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/0920b9e0-aea8-4937-9cb8-3cd6f9efd1e8/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">MICHAEL D BOPP</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2025 (fourth_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Associate Dir. at OMB; Staff dir. &amp; Chief Counsel, Sen.Homeland Security &amp; Gov. Affairs Committee; LegislativeDirector &amp; Gen. Counsel to Sen. Susan Collins; ChiefCounsel, House Education &amp; Workforce Subcommittee on Ov…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>GIBSON, DUNN &amp; CRUTCHER LLP</strong> for VICTIMS OF TERRORISM - IRAQ IED · Defense / Foreign Relations / Law Enforcement/Crime/Criminal Justice</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/4c1a9217-819a-4fcb-88a5-22f5e61ea94d/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">BRIAN JONES</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2025 (fourth_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Executive Office of the President - Speechwriter (2002-03); Sen. Susan Collins - Press Secretary &amp; Counsel (1999-2000); Rep. Mac Collins - Legislative Assistant (1995-99); Office of the Senate Majority Leader - Staff …</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>TRANE TECHNOLOGIES COMPANY LLC (FKA INGERSOLL RAND, TRANE, AMERICAN STANDARD)</strong> for TRANE TECHNOLOGIES COMPANY LLC (FKA INGERSOLL RAND TRANE AMERICAN STANDARD) · Trade (domestic/foreign) / Defense</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/44c716d8-fbfd-4d80-9e1e-44c1cf377d01/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">NATALIE SALMON</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2025 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Intern, Sen. Susan Collins</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>FGS GLOBAL (US) LLC (FKA FGH HOLDINGS LLC)</strong> for NIAGARA BOTTLING, LLC · Beverage Industry / Budget/Appropriations / Environment/Superfund</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/1111c35d-0578-44d6-8885-4be671fcef22/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">DARCI GREENACRE</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2025 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Director of Scheduling, Senator Susan Collins; Lobbyist</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>DRUMMOND WOODSUM STRATEGIC CONSULTING LLC</strong> for MAINE CHILDRENS TRUST · Budget/Appropriations</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/52ca3311-9e8d-4a72-9270-6569c31ed10c/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">BRYAN MICHAEL ALLEN</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2025 (third_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Staff Assistant, Legislative Correspondent, Legislative Aide, Sen. Susan Collins (R-ME)</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>FAEGRE DRINKER BIDDLE &amp; REATH LLP</strong> for SOLIDARITY HEALTHSHARE · Taxation/Internal Revenue Code</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/15c8f73c-4f42-4095-adab-82d1b3786105/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">KELSEY BYERLY</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2025 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Sen. Burr: Staff Asst 7/17-9/17, Leg Corr, 9/17-9/18, Leg Aide, 9/18-11/20, MLA, 11/20-1/23; Sen Collins: MLA 1/23-2/25</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>RTX CORPORATION AND AFFILIATES</strong> for RTX CORPORATION AND AFFILIATES · Defense / Aerospace / Aviation/Airlines/Airports / Budget/Appropriations</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/11136700-919d-4e0f-ab60-5bfa13f26617/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">AMANDA LINCOLN</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2025 (fourth_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Staff Director, Senate Health, Education, Labor, and Pensions Committee; Legislative Director, Sen. Mike Enzi; Health Policy Director, Sen. Susan Collins</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>BUCHANAN INGERSOLL &amp; ROONEY PC</strong> for VIDRINE PHARMACEUTICAL GROUP, LLC D/B/A BOUDREAUXS NEW DRUG STORE · Pharmacy</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/b819400a-0c1d-4966-9745-dba3e530af1d/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">MARIA PATTERSON OLSON</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2025 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Leg.Asst., Prof.Staff - Sen. Susan Collins; Prof.Staff - Senate HELP; Leg.Aide, Prof.Staff - Sen. Spec. Comm. Aging; Leg.Corr. - Sen. Luther Strange; Staff Asst. - Sen. Jeff Sessions; Intern - Rep. Austin Scott, Sens.…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>PHARMACEUTICAL RESEARCH AND MANUFACTURERS OF AMERICA</strong> for PHARMACEUTICAL RESEARCH AND MANUFACTURERS OF AMERICA · Budget/Appropriations / Copyright/Patent/Trademark / Health Issues / Trade (d…</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/75a3fc67-1a86-4825-a3d0-d29f4b8b5fd6/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-medium">
-  <div class="tc-header">
-    <div class="tc-asset">MARY DIETRICH</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Recent · last filed 2024 (fourth_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Prof Staff, Senate Appropriations Committee; Clerk, Senate Appropriations Committee; Chief of Staff, Senator Susan Collins.</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>KED STRATEGIES, LLC</strong> for OGUNQUIT PLAYHOUSE · Budget/Appropriations</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/361625fc-525a-4cf7-acea-6c7874305469/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-medium">
-  <div class="tc-header">
-    <div class="tc-asset">AMANDA HILL</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Recent · last filed 2023 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Legs Staff to: Rep Wes Watkins, 7/00-06/02; Sen. Inhofe, 02-08/2003; Sen. Collins, 07/06-03/07. Confidential Asst, Ofc of USTR, 06/02-02/03. Field Rep, Sen. Lankford, 1/2015-12/2016. HSGAC-RAFM, Maj Staff, 12/2016-12/…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>OKLAHOMA STATE UNIVERSITY</strong> for OKLAHOMA STATE UNIVERSITY · Agriculture / Budget/Appropriations / Defense / Education / Medical/Disease R…</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/0bbed217-c3bc-4743-91ea-6028ff349b69/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-medium">
-  <div class="tc-header">
-    <div class="tc-asset">WILLIAM BALL</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Recent · last filed 2023 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Sen. Susan Collins, 2010-2015; House Committee on Natural Resources, 2015-2020</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>FOLEY &amp; LARDNER LLP</strong> for NEW FORTRESS ENERGY INC. · Energy/Nuclear / Taxation/Internal Revenue Code</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/ad9915c5-e9cf-41ba-af54-2230d6c2f23b/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-medium">
-  <div class="tc-header">
-    <div class="tc-asset">MICHELE PEARCE</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Recent · last filed 2023 (fourth_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Staff Lead, Subcmte on Readiness, House Armed Services Committee; Senior Defense Advisor, U.S. Senator Susan Collins; Deputy General Counsel, Legislation, Department of Defense; Acting General Counsel and Principal De…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>COVINGTON &amp; BURLING LLP</strong> for XONA SPACE SYSTEMS, INC. · Defense</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/5a3ac88b-15b7-409c-9f4a-32b32f655996/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-medium">
-  <div class="tc-header">
-    <div class="tc-asset">MEREDITH COOLIDGE</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Recent · last filed 2023 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Intern, Office of Senator Susan Collins</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>STEPTOE LLP</strong> for COALITION FOR THE LIFE SCIENCES · Health Issues / Science/Technology</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/b8b302c8-4e26-4f91-8f4d-7304e900c489/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-medium">
-  <div class="tc-header">
-    <div class="tc-asset">MORGAN CASHWELL</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Recent · last filed 2023 (fourth_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Legislative Aide for Senator Collins, 2010-2013; Legislative Assistant for Congressman Patrick Murphy, 2013-2015; Legislative Assistant, Legal Counsel, and Legislative Director for Senator Angus King, 2015-2023</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>THE NATURE CONSERVANCY</strong> for NATURE CONSERVANCY · Energy/Nuclear</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/b8b8a603-03c6-4967-ad0e-6a9b3b59acef/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">WILLIAM CLARKSON</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2022 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Leg. Asst. Sen. Collins; Staff Asst. Sen. Coverdell</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>KING &amp; SPALDING LLP</strong> for KANEKA PHARMA AMERICA, LLC · Medicare/Medicaid</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/08e739e7-d41d-4bbe-aea2-ba35fc055187/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">AMY PELLEGRINO</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2022 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Rep. Rob Simmons, LA, 01-05; Sen. Olympia Snowe, Senior Policy Adv., 05-12; Sen. Susan Collins, Health Policy Dir., Aging Committee, 17-21; Sen. Susan Collins, Health Policy Dir., HELP Primary Health and Retirement Se…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>JOHNSON &amp; JOHNSON SERVICES, INC.</strong> for JOHNSON &amp; JOHNSON SERVICES INC · Health Issues</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/aabe30d7-b814-4f56-96e7-05dab1befad2/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">MICHAEL BOPP</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2022 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Associate Director at OMB; Staff Director &amp; Chief Counsel, Senate Homeland Security and Governmental Affairs Committee; Legislative Director and General Counsel to Sen. Susan Collins; Chief Counsel, House Education an…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>ANGLO AMERICAN</strong> for ANGLO AMERICAN · Economics/Economic Development / Foreign Relations / Natural Resources</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/e1bba97a-71f8-41b7-9be7-1f882d2899c8/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">PHOEBE FERRAIOLO</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2022 (fourth_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Dep. Press Secretary, Press Assistant, Senator Susan Collins</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>COGENT STRATEGIES LLC</strong> for NATIONAL NEWSPAPER ASSOCIATION · Media (information/publishing) / Budget/Appropriations</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/9fa22299-7c0f-4f17-be9a-e8a330d329cb/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">MARY BASKERVILLE</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2022 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Associate Director, White House Travel Office (1/2011-5/2014); Staff Assistant, Senator Collins (2/2010-5/2010); Intern, Senator Collins (7/2007-8/2007)</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>PMI US CORPORATE SERVICES INC. (FKA PMI GLOBAL SERVICES INC.)</strong> for PMI US CORPORATE SERVICES INC. (FKA PMI GLOBAL SERVICES INC.) · Tobacco</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/8a806225-f2d2-4d01-9ce8-0ee62e9b2db7/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">LARA ROSNER</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2022 (third_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Professional Staff, U.S. House Committee on Ways and Means (Jan. 2016 to July 2019) Professional Staff, U.S. Senate Special Committee on Aging (July 2019 to Feb. 2021) Senior Policy Adviser, Office of U.S. Senator Sus…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>AARP</strong> for AARP · Health Issues / Family issues/Abortion/Adoption / Taxation/Internal Revenue C…</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/d5d4c8cb-ba4f-47d3-99fc-1b1b324f68de/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">OLIVER WOLF</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2022 (third_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Legislative and Constituent Affairs Intern, Office of Sen. Susan Collins</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>DCI GROUP, L.L.C.</strong> for EN+ GROUP, IPJSC · Environment/Superfund</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/0f9feb7c-320c-42c9-ab46-6571ce23e872/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">PAUL A HOWARD</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2021 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Legislative Assistant, Sen. Collins (1998-2002)</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>ARNOLD &amp; PORTER KAYE SCHOLER LLP</strong> for BUSINESS CONTINUITY COALITION · Insurance</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/5ee41344-9461-4d26-ba97-94a92b6d5874/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">JARED RIFIS</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2021 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Sen. Susan Collins, 2010-2015; House Committee on Natural Resources, 2015-2020</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>FOLEY &amp; LARDNER LLP</strong> for FOUNDATION CONSUMER HEALTHCARE LLC · Pharmacy</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/26bb4301-ceb9-4efa-b170-1788a77fb7dd/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">JOHN VERONEAU</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2020 (third_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Deputy U.S. Trade Representative, General Counsel &amp; Assistant USTR for Congressional Affairs, Assistant Secretary &amp; DAS, Legislative Affairs, Department of Defense; Chief of Staff, U.S. Senator Susan Collins; Legislat…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>COVINGTON &amp; BURLING LLP</strong> for ROVI CORPORATION · Trade (domestic/foreign)</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/b8dd42a2-2f51-4016-a59f-4c8396d329ee/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">LINDSEY LEDWIN</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2020 (fourth_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">EA and Senior Scheduler, Sen. Olympia Snowe; Clerk, Sen. Comm. on Small Bus. and Entrprnrship; Staff Assist., Sen. Cohen, Special Comm. on Aging; Executive Assistant, Senator Susan Collins; Prof. Staff, Permanent Subc…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>TIBER CREEK GROUP</strong> for NIC INC. · Transportation / Health Issues / Budget/Appropriations / Government Issues / …</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/60180845-91f3-449e-a9f7-c7c540f0eac6/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">ELIZABETH R ANDERSON</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2020 (third_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Senator Pat Toomey, Communications Director &amp; Senator Susan Collins, Press Secretary</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>TRIBUTARY LLP</strong> for CHRO ASSOCIATION (FKA HR POLICY ASSOCIATION) · Health Issues</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/7c25dc4a-8636-45ab-ad1d-a395b543f96f/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">AMANDA HILL</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2020 (third_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">LA/LD to Rep Watkins,7/00-6/02; Sen. Inhofe, 2-8/2003; Sen. Collins, 7/06-3/07; Confidential Asst, Ofc of USTR, 6/02-2/03; Field Rep, Sen. Lankford, 1/15-12/16; HSGAC-RAFM, Majority Staff, 12/16-12/19</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>ROUSH GOVERNMENT RELATIONS</strong> for OKLAHOMA STATE UNIVERSITY · Education / Immigration / Defense / Agriculture / Science/Technology / Budget…</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/0e1f1085-c21c-4244-bcf7-487370e33b82/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">SEAN PATRICK CARROLL</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2020 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">U.S. Senator Susan Collins, Director of Constituent Service</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>CARRIER GLOBAL CORPORATION</strong> for CARRIER GLOBAL CORPORATION · Consumer Issues/Safety/Products / Trade (domestic/foreign) / Manufacturing / …</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/93eb0467-3971-4222-9862-e94d627c3057/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">PHILLIPS HINCH</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2019 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Leg Asst, HWMC, 2004-2006; Snr Econ. Policy Adv, Rep. Tom Reed, 2013-2016; Snr. Policy Adv, Sen. Susan Collins, 2016-2017</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>INTERNATIONAL COUNCIL OF SHOPPING CENTERS</strong> for INTERNATIONAL COUNCIL OF SHOPPING CENTERS · Taxation/Internal Revenue Code / Civil Rights/Civil Liberties / Transportation</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/55d8290d-58e0-4c97-a7cc-92724e1db1a2/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">MICHAELA CAMPBELL</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2019 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Legislative Correspondent, Senator Susan Collins (R-ME)</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>STEPTOE LLP</strong> for AMERICAN CLEAN POWER ASSOCIATION (FKA AMERICAN WIND ENERGY ASSOCIATION) · Budget/Appropriations / Transportation / Taxation/Internal Revenue Code / Ene…</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/f6c5b8d7-70fe-49be-aac7-e6a9d1b38af5/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">MATTHEW FURLOW</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2019 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Intern, Sen. Susan Collins, August - November, 2013; Intern, Rep. Reid Ribble, June - August, 2013; Page, U.S. House of Representatives, January - June, 2009</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>CHAMBER OF COMMERCE OF THE U.S.A.</strong> for CHAMBER OF COMMERCE OF THE U.S.A. · Automotive Industry / Telecommunications / Aviation/Airlines/Airports</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/cff4535d-f93f-4b7d-8234-bcdae6d80f59/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">KATHERINE SCONTRAS ANDERSON</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2018 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Leg. Correspondent, Senator Susan Collins (2003-2005)</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>BLANK ROME GOVERNMENT RELATIONS</strong> for ROBERTSON MONAGLE &amp; EASTAUGH PC (ON BEHALF OF CITY OF SEWARD AK) · Marine/Maritime/Boating/Fisheries / Budget/Appropriations / Environment/Super…</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/a22431d7-b825-49cc-a1c4-073795a813f1/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">MARY GRACE SCHLEY</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2018 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Legislative Correspondent, Senator Susan Collins</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>NATIONAL ALLIANCE OF FOREST OWNERS</strong> for NATIONAL ALLIANCE OF FOREST OWNERS · Energy/Nuclear / Agriculture / Government Issues / Clean Air and Water (quali…</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/91a5079c-4a49-4ae8-b33e-6456fd1529ff/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">MARY SCHLEY</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2018 (fourth_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Legislative Correspondent, Senator Susan Collins</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>INTEREL US</strong> for NATIONAL ALLIANCE OF FOREST OWNERS · Budget/Appropriations / Government Issues / Energy/Nuclear / Taxation/Interna…</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/75a2f1e3-1f34-4e5c-88ea-0a4ca57de902/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">KATHRYN ELIZABETH RENZ</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2018 (fourth_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Leg Counsel &amp; Senior Leg Asst Congressman Poliquin; Dir of Scheduling &amp; Counsel Sen Angus King, Jr.; Exec Asst &amp; Scheduler, Staff Asst/Asst Scheduler, Congressional Intern Senator Susan Collins; Summer Congressional I…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>PITNEY BOWES INC.</strong> for PITNEY BOWES INC. · Taxation/Internal Revenue Code / Postal</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/b1b22bc6-204b-41aa-885f-812911f7f89c/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">MICHAEL FRIEDBERG</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2026 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Staff Director, Rail Subcmte., House Transp. &amp; Infrastructure Cmte.; Professional Staff, House Appropriations Cmte.</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>HOLLAND &amp; KNIGHT LLP</strong> for CALIFORNIA FOREVER, LLC · Transportation / Housing / Roads/Highway / Railroads</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/da555802-4d83-49ad-b43d-da11e579c2ac/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">CORNELL TEAGUE</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Professional Staff, House Appropriations Cmte - Defense; Professional Staff, House Appropriations Cmte - Homeland</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>ALPINE GROUP PARTNERS, LLC.</strong> for SCOUTING AMERICA · Defense / Budget/Appropriations</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/433be449-b866-494f-bd49-3219dee299db/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">CEDRIC GRANT</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2026 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Chief of Staff - Rep. Hakeem Jeffries; Director - WH Office of Faith-based and Neighborhood Partnerships (Dept. of Commerce); Leadership Liaison/Policy Adviser - House Ways and Means Cmte (Rep. Charlie Rangel); Senior…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>AVOQ, LLC</strong> for PALANTIR TECHNOLOGIES, INC. · Science/Technology</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/efe4df2d-b20f-412a-b947-3243c8362481/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">KEVIN BAILEY</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2026 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Pro Staff, Senate Cmte on Ag, Nutrition &amp; Forestry; Sr Advisor, Rural Utilities Service &amp; Sr Leg Analyst to the Secretary, USDA; Policy Asst, WH Domestic Policy Council; Policy Asst to the Secretary &amp; Staff As &amp; Staff…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>FGS GLOBAL (US) LLC (FKA FGH HOLDINGS LLC)</strong> for PRO FOOD SOLUTIONS · Agriculture / Food Industry (safety, labeling, etc.) / Defense</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/ab7df019-dfbb-4912-bd46-e4a15da070d3/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">TODD WOOTEN</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2026 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">LA, Counsel, Sen. Blanche Lincoln; Leg. Dir, Sen. Debbie Stabenow; Prof. Staff, Sen. Agriculture Cmte., Prof. Staff, Sen. Energy &amp; Natural Resources Cmte., Prof. Staff, Sen. Finance Cmte.</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>HOLLAND &amp; KNIGHT LLP</strong> for NETRISE, INC. · Budget/Appropriations / Defense / Homeland Security</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/e8cbfd4e-69a7-4241-92dc-5d8a8d2a4bc7/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">ALISON GRAAB</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Attorney, Surface Transportation Board; Counsel, Senate Commerce Cmte; Policy Director, Senate Commerce Cmte.; Clerk, Senate Appropriations Cmte THUD</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>ALPINE GROUP PARTNERS, LLC.</strong> for THE SUSTAINABLE AVIATION FUEL COALITION · Agriculture / Aviation/Airlines/Airports / Budget/Appropriations / Energy/Nuc…</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/411fc02e-f003-482b-b04f-81c087e470b1/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">PARICK BRAERTON CARROLL</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Leg Asst. Rep. Ray LaHood, Leg Dir. Rep. Kevin Yoder, PSM Senate Appropriations Cmte.</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>TARPLIN, DOWNS &amp; YOUNG, LLC</strong> for BLUE CROSS BLUE SHIELD ASSOCIATION · Taxation/Internal Revenue Code / Budget/Appropriations / Medicare/Medicaid / …</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/64db35ca-2fdc-4e66-b373-4453debc74e4/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">DABNEY HEGG</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2026 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Clerk, Sen Approps Cmte; Prof Staff, Sen Approps Cmte; Sr ProfStaff,SenateCmte on Commerce, Science, and Transportation; Prof Staff,SenateCmte onCommerce, Science, and Transportation; LegAsst(Hollings);StaffAsst(Holli…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>CORNERSTONE GOVERNMENT AFFAIRS, INC.</strong> for PONCE HEALTH SCIENCES UNIVERSITY · Education / Housing / Urban Development/Municipalities</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/cb69a4a8-662c-4fdd-9467-503b208da403/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">SARA PETERS</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2026 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Deputy Staff Dir., Budget Dir., Counsel, House Cmte. on Appropriations; Dep. Dir., Govt Affairs, Policy, &amp; Strategic Planning, NHTSA; Professional Staff Member, Subcmte on THUD, House Cmte. on Appropriations; Leg. Cou…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>HOLLAND &amp; KNIGHT LLP</strong> for CALIFORNIA FOREVER, LLC · Transportation / Housing / Roads/Highway / Railroads</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/da555802-4d83-49ad-b43d-da11e579c2ac/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">HALIE CRAIG</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Policy Director, Senate Commerce, Science &amp; Transportation Cmte; Senior Advisor/Leg. Asst./Leg. Correspondent, Senator Pat Toomey; Policy Advisor, Senate Banking, Housing &amp; Urban Affairs Cmte; Staff Assistant, Senate …</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>ORIGIN ADVOCACY LLC</strong> for SAP AMERICA, INC. · Computer Industry / Trade (domestic/foreign)</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/8a4feb0c-544a-4618-919a-f59ff97d8ae7/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">JEFF RECZEK</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Dir. CDC Washington, Professional Staff Sen. Appropriations Cmte, Program Examiner OMB, Program Analyst Dept. of Transportation</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>TARPLIN, DOWNS &amp; YOUNG, LLC</strong> for NATIONAL COMPREHENSIVE CANCER NETWORK · Medicare/Medicaid / Health Issues</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/dded7904-4b43-47d1-952d-10df695c19f9/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">KARA FISCHER</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2026 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Deputy Chief of Staff, Principal Deputy Assistant Secretary for Government Affairs, USDOT; Acting Deputy Staff Director, Senior Counsel, Subcmte. Staff Director, Senate Commerce Committee</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>HOLLAND &amp; KNIGHT LLP</strong> for CALIFORNIA FOREVER, LLC · Transportation / Housing / Roads/Highway / Railroads</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/da555802-4d83-49ad-b43d-da11e579c2ac/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">RANDALL GERARD</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2025 (third_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Staff Asst., Sen. Commerce, Science &amp; Transportation Cmte.</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>COGENT STRATEGIES LLC</strong> for SATOSHI ACTION FUND · Banking</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/22062928-4760-4de7-9228-27abcb53ac51/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">CHARLIE ELLSWORTH</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2025 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Budget &amp; Appropriations Legis. Asst., Sen. Charles Schumer; Senior Policy Advisor, Democratic Policy and Comms. Cmte. (Sen. Harry Reid and Sen. Charles Schumer); Legis. Asst. &amp; Deputy Legis. Asst., Sen. Ben Nelson</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>PIONEER PUBLIC AFFAIRS</strong> for CONGRESSIONAL INTEGRITY PROJECT · Budget/Appropriations</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/419653cd-c59b-4054-ace4-f9760dd3d006/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">DENA BARON SMITH</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2025 (third_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Subcmte Staff Dir/Clerk, Appropriations Cmte, U.S. House of Representatives (2005-2021); Pro Staff Member/Staff Asst, Appropriations Cmte, U.S. House of Representatives (1999-2004); Program Analyst, U.S. Environmental…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>INVARIANT LLC</strong> for FIGMA, INC. · Computer Industry / Government Issues</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/e6473d5a-b51b-47cd-b6b8-e6db6aca268c/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">ADAM MATTHEW BERG</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2025 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Feb. 2017-Aug. 2022, Chief Counsel, House Appropriations Cmte; Jan. 2007-Feb. 2017, House Rules Cmte (Dept Staff Dir/Counsel 2015-17; Counsel 2013-14; Assoc Counsel 2010-13; Prof staff 2008-10; Research Dir 2007-08; S…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>SQUIRE PATTON BOGGS</strong> for HD HYUNDAI ELECTRIC CO. LTD. · Trade (domestic/foreign)</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/36789a30-a5ae-4c48-9ada-ba0031cef6d3/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">PHILIP KIKO</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2025 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">COS/General Counsel, House Judiciary Cmtee; Counsel. Rep Sensenbrenner Jr.; COS/General Counsel, Cmtee on House Administration; COS/General Counsel, Cmtee Select Cmtee, Surrounding Terrorist Attack in Benghazi; Chief …</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>WILLIAMS AND JENSEN, PLLC</strong> for VISA · Financial Institutions/Investments/Securities</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/c40eb8d7-8454-4afa-88f8-203978b11964/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">RACHEL DEVINE</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2025 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Cnsl, House Transportation &amp; Infrastructure Cmte (2009-2016), Staff Director &amp; Sr Cnsl, House Transportation &amp; Infrastructure Cmte, Subcmte on Aviation (2018-2019); Sr. Cnsl, Sen. Commerce Cmte, Subcmte on Aviation (1…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>RED CARR LLC</strong> for BOOM TECHNOLOGY · Aviation/Airlines/Airports</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/a04973d4-6afc-49f8-a604-311f210d2ff7/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">RANDALL GERARD</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Active · last filed 2025 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Staff Asst,. Sen Commerce, Science &amp; Transportation Cmte.</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>CONNECT STRATEGY LLC</strong> for CRYPTEX FINANCE · Financial Institutions/Investments/Securities</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/94c9527f-666f-4cb3-ab13-7ccbaff052d6/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-medium">
-  <div class="tc-header">
-    <div class="tc-asset">BRUCE M. EVANS</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Recent · last filed 2024 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Staff Director Senate Committee on Appropriations; Chief of Staff Senator Thad Cochran; Staff Director Senate Committee on Energy and Natural Resources; Clerk Senate Subcmte on Interior Appropriations</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>OWEN EVANS INGOLS</strong> for ORANO USA LLC · Energy/Nuclear</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/c76c0cec-1c54-41d2-a687-86d0a345e91a/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-medium">
-  <div class="tc-header">
-    <div class="tc-asset">EMMA EKMAN</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Recent · last filed 2024 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Intern, House Energy &amp; Commerce Subcmte. on Environment and Climate Change; Intern, Rep. Cathy McMorris Rodgers</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>HOLLAND &amp; KNIGHT LLP</strong> for AUTOMATED.CONNECTED.ELECTRIC.SHARED MOBILITY COALITION, INC. · Transportation</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/bdbefb7e-6d01-4711-8017-4d548ba9a0e2/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-medium">
-  <div class="tc-header">
-    <div class="tc-asset">JAMES SCHINDLER</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Recent · last filed 2024 (third_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Staff. Ast., Leg. Corr., Leg. Aide, Sen. David Vitter, 1/14 - 12/16; Special Ast., Adv., Sr. Adv., DOI BOEM, 1/17 - 1/21; Leg. Cnsl., Sen. Ted Cruz, 6/21 - 1/23; Leg. Cnsl, Sen. Cmte on Commerce, Science, &amp; Tranport.,…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>SHELL USA, INC. (FKA SHELL OIL COMPANY)</strong> for SHELL USA, INC. (FKA SHELL OIL COMPANY) · Natural Resources / Marine/Maritime/Boating/Fisheries</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/d767c4b2-92bd-4832-b66b-97bc47c6deb9/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">GREG ORLANDO</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Historical · last filed 2022 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Counsel, Senate Commerce Cmte 2013-16; Counsel, Sen. Roger Wicker 2011-13; Policy Specialist, Commerce Dept., 2010-11; Legal Advisor, FCC 2008; Leg Dir/Counsel, Rep. Mike Ferguson 2005-08; and Leg Dir, Rep. John Dooli…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>CLYBURN CONSULTING, LLC</strong> for NATIONAL HEALTHY START ASSOCIATION · Budget/Appropriations</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/870f2062-6191-4e02-8e8b-c74bb7dccd1e/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">PAUL CHURCHILL HUTTON</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Historical · last filed 2022 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">LC Sen John McCain; Research Asst., Senate Armed Services Cmte.; Professional Staff Member, Senate Armed Services Cmte; Military LA, Sen. John McCain; Sr. Policy Advisor, Sen. Manchin; Prof Staff, Senate Appropriation…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>VOLANSI, INC.</strong> for VOLANSI, INC. · Defense</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/07c70596-396b-4eae-8443-270f498ce8ce/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">STEPHEN PINKOS</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Historical · last filed 2022 (third_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Staff Sec, Domestic Policy Director &amp; Deputy NSA, Office of the Vice President; Policy Director/General Counsel, Rep. Kevin McCarthy; Deputy U/S of Commerce for IP, USPTO; Staff Director, House Jud Cmte</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>INTEL CORPORATION</strong> for INTEL CORPORATION · Manufacturing / Foreign Relations / Trade (domestic/foreign) / Defense</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/c9be0ee5-7821-46d8-9ca1-4bb0475ad15a/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">ERIC S BERGER</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Historical · last filed 2021 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Professional Staffer, House Energy and Commerce CMTE</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>LIBERTY PARTNERS GROUP, LLC</strong> for AMERICAN VASCULAR ASSOCIATES (OFFICE-BASED FACILITY ASSN OBFA) (FKA USPA) · Medicare/Medicaid</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/4ebf031e-6118-4b93-a5f9-8d669c3f1679/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">MATTHEW LEFFINGWELL</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Historical · last filed 2021 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">â€‹Director of Member Services Coalitions, House Appropriations Cmte.; CoS, Rep. Kay Granger; Deputy CoS, Rep. Kay Granger; Comms. Director, Rep. Kay Granger; Comms. Director, Rep. Jon Porter; Projects Director/Press …</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>TIBER CREEK GROUP</strong> for SAILDRONE, INC. · Budget/Appropriations / Defense / Marine/Maritime/Boating/Fisheries / Homelan…</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/1d090ff3-40c9-4fbf-a082-5fa583678b5d/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">JOHN BRANSCOME</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Historical · last filed 2021 (fourth_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Chief Counsel, Sen. Cmte on Commerce, Science &amp; Transportation; Comms. Counsel, Sr. Counsel, Staff Dir. - Sen. Cmte on Comm., Sci. &amp; Trans, Telecom Subcmte; FCC detailee - Sen. Amy Klobuchar; FCC detailee - Sen. Cmte …</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>META PLATFORMS, INC. AND VARIOUS SUBSIDIARIES</strong> for META PLATFORMS, INC. AND VARIOUS SUBSIDIARIES · Environment/Superfund / Disaster Planning/Emergencies / Copyright/Patent/Trad…</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/193ab137-373b-487d-847a-25986168fc90/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">ROBERT HOLIFIELD</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Historical · last filed 2020 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Staff Director, Senate Agriculture CommitteeÍ¾ Staff Director, Senate Finance Subcmte on Int&#39;l TradeÍ¾ Deputy Chief of Staff, CFTCÍ¾ Director of External Affairs, CFTC</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>LINCOLN POLICY GROUP</strong> for ALLIANCE OF COMMUNITY HEALTH PLANS · Health Issues / Medicare/Medicaid</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/534b3578-cf99-43e4-9a11-4396831a32b7/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">ELIZABETH MORRA</div>
-    <div class="tc-meta"><span class="tag">committee staff</span><span class="muted">Historical · last filed 2018 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Comm. Director, House Appropriations Cmte.</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>COGENT STRATEGIES LLC</strong> for REFUGEE COUNCIL USA · Budget/Appropriations / Immigration</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/6c6fb8bd-130a-4852-bd44-7c462c216105/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div>
+</table></div>
+<h2 id="sec-revolving">Former staff and lobbying</h2>
+<p class="muted">Withheld in this beta while CivicLens verifies which offices the disclosed roles refer to.</p>
 <h2 id="sec-outside-spending">Outside spending (Super PACs)</h2>
 
 <p class="lede" style="margin-bottom:8px;">
@@ -1579,7 +987,7 @@ function showTab(tabGroupId, panelName) {
 </div>
 
 <h2 id="sec-peers">Shared-donor peers in corpus</h2>
-<table>
+<div class="table-scroll" role="region" aria-label="Shared donor peers" tabindex="0"><table>
 <thead><tr><th>Peer</th><th class="num">Shared donors</th><th class="num">Combined amount</th></tr></thead>
 <tbody>
   <tr>
@@ -1707,10 +1115,10 @@ function showTab(tabGroupId, panelName) {
     <td class="num">1</td>
     <td class="num">$6.8K</td>
   </tr></tbody>
-</table>
+</table></div>
 <h2 id="sec-patterns">Patterns</h2>
 
-<p class="lede" style="margin-bottom:12px;">Named patterns from the deterministic detection pass. Each shows how it was measured, how confident the statistics are, and the records it cites — click an evidence chip to jump to the rows, or verify them in the sections above. Weight reflects the strength of the evidence, not a verdict. <a class="row-link" href="../methodology.html">How patterns are measured →</a></p>
+<p class="lede" style="margin-bottom:12px;">Each flag describes its rule and lists the records it cites. Visual weight can reflect the number and type of matches. <a class="row-link" href="../methodology.html">How patterns are measured →</a></p>
 <div class="trade-card flag-card intensity-medium">
         <div class="tc-header">
           <div class="tc-asset">Donor sector ↔ sponsorship</div>
@@ -1738,6 +1146,7 @@ function showTab(tabGroupId, panelName) {
 <h2 id="sec-cosponsor">Co-sponsorship</h2>
 
 <p class="lede" style="margin-bottom:8px;">Top peers by shared bills in the loaded corpus. <a class="row-link" href="../network.html">→ Full co-sponsorship network</a></p>
+<div class="table-scroll" role="region" aria-label="Co-sponsorship peers" tabindex="0">
 <table>
   <thead><tr><th>Peer</th><th class="num">Shared bills</th></tr></thead>
   <tbody>
@@ -1762,12 +1171,12 @@ function showTab(tabGroupId, panelName) {
       <td class="num">1131</td>
     </tr></tbody>
 </table>
+</div>
 
 <p style="margin-top: 32px;"><a class="row-link" href="../index.html">← back to corpus</a></p>
 </main>
 <footer>
-Built from primary sources: Congress.gov, GovTrack, OpenFEC, House Clerk PFDs.
-Every claim links to its source. Voice rules: evidence before opinion — no editorial scoring.
+Sources include Congress.gov, GovTrack, OpenFEC, and House and Senate trade disclosures.
 </footer>
 </body>
 </html>

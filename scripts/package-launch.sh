@@ -31,8 +31,8 @@ cd "$(dirname "$0")/.."
 # sitting member of the current Congress. Publication is opt-in — a member not
 # listed here cannot reach the site.
 MEMBERS=(
-  josh-gottheimer dan-goldman jared-moskowitz lois-frankel sheldon-whitehouse
-  nancy-pelosi blake-moore ron-wyden susan-collins dan-crenshaw
+  blake-moore dan-crenshaw lois-frankel nancy-pelosi
+  ron-wyden sheldon-whitehouse susan-collins
 )
 DB=data/civiclens.duckdb
 
@@ -47,6 +47,20 @@ for m in "${MEMBERS[@]}"; do
     exit 1
   fi
 done
+
+# Fail closed if a removed slug is still reachable in the public artifact.
+for page in public/members/*.html; do
+  [[ -e "$page" ]] || continue
+  slug=${page##*/}
+  slug=${slug%.html}
+  listed=false
+  for member in "${MEMBERS[@]}"; do
+    if [[ "$member" == "$slug" ]]; then listed=true; break; fi
+  done
+  "$listed" || { echo "public page outside the approved roster: $page" >&2; exit 1; }
+done
+
+npx --no-install tsx scripts/validate-release-roster.ts "${MEMBERS[@]}"
 
 npx tsx scripts/update-manifest.ts "${MEMBERS[@]}"
 npx tsx render/build.ts --landing

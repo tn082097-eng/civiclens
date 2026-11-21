@@ -41,6 +41,13 @@ h2 { font-size: 19px; margin: 48px 0 14px; letter-spacing: -0.01em; }
 h2:first-child { margin-top: 0; }
 .lede { color: var(--fg-dim); margin: 0 0 24px; max-width: 720px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table-scroll { overflow-x: auto; }
+.table-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+@media (max-width: 600px) {
+  main { padding-inline: 16px; overflow-wrap: anywhere; }
+  main .kv { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+  main .tc-asset { min-width: 0; }
+}
 th, td { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { color: var(--fg-dim); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
 tbody tr:hover { background: rgba(255,255,255,0.02); }
@@ -116,8 +123,9 @@ footer a { color: var(--fg-dim); }
 .tag.after { color: var(--fg-muted); border-color: var(--fg-muted); opacity: 0.7; }
 .tag.bill-match { color: #4caf7d; border-color: rgba(76,175,125,0.4); background: rgba(76,175,125,0.06); cursor: help; }
 .section-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
-.section-tab { padding: 6px 14px; font-size: 13px; color: var(--fg-dim); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; user-select: none; }
+.section-tab { padding: 6px 14px; font: inherit; font-size: 13px; color: var(--fg-dim); background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; }
 .section-tab.active { color: var(--fg); border-bottom-color: var(--accent); }
+.section-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 .pac-totals { display: flex; gap: 16px; margin: 8px 0 4px; font-size: 13px; }
@@ -152,7 +160,7 @@ footer a { color: var(--fg-dim); }
 <body>
 <header>
   <h1>CivicLens</h1>
-  <div class="sub"><a href="../index.html">Corpus</a> · Nancy Pelosi · generated 2026-09-07 17:57Z</div>
+  <div class="sub"><a href="../index.html">Corpus</a> · Nancy Pelosi</div>
 </header>
 <main>
 <h2 id="sec-identity">Nancy Pelosi</h2>
@@ -178,12 +186,12 @@ footer a { color: var(--fg-dim); }
   <div class="glance-cell"><div class="glance-value">0</div><div class="glance-label">Trades within 14d of related vote</div></div>
 </div>
 
-<section class="receipts" id="sec-receipts"><h2>Trade–vote timing</h2><p class="coverage">1,761 of 2,000 roll-call votes are linked to a specific bill; the rest are procedural and cannot be matched. 85 disclosed trades · 78 theme-mappable · 238 theme-matched receipts.</p><div class="receipt-distribution"><p class="distribution-meta">238 scored pairs across this member's own shuffled calendars.</p><svg class="receipt-histogram" viewBox="0 0 480 72" role="img" aria-label="Distribution of 238 shuffled-calendar comparisons from zero to one"><rect class="hist-bar" x="1" y="64" width="22" height="8"/><rect class="hist-bar" x="25" y="49" width="22" height="23"/><rect class="hist-bar" x="49" y="67" width="22" height="5"/><rect class="hist-bar" x="73" y="63" width="22" height="9"/><rect class="hist-bar" x="97" y="71" width="22" height="1"/><rect class="hist-bar" x="121" y="53" width="22" height="19"/><rect class="hist-bar" x="145" y="66" width="22" height="6"/><rect class="hist-bar" x="169" y="58" width="22" height="14"/><rect class="hist-bar" x="193" y="68" width="22" height="4"/><rect class="hist-bar" x="217" y="65" width="22" height="7"/><rect class="hist-bar" x="241" y="20" width="22" height="52"/><rect class="hist-bar" x="265" y="60" width="22" height="12"/><rect class="hist-bar" x="289" y="71" width="22" height="1"/><rect class="hist-bar" x="313" y="67" width="22" height="5"/><rect class="hist-bar" x="337" y="71" width="22" height="1"/><rect class="hist-bar" x="361" y="71" width="22" height="1"/><rect class="hist-bar" x="385" y="71" width="22" height="1"/><rect class="hist-bar" x="409" y="71" width="22" height="1"/><rect class="hist-bar" x="433" y="71" width="22" height="1"/><rect class="hist-bar" x="457" y="71" width="22" height="1"/></svg><p class="distribution-axis"><span>shorter gap</span><span>typical pair: 0.39</span><span>longer gap</span></p><p class="distribution-verdict">About 12 pairs this close would be expected by chance. Observed: 11. <strong>Consistent with chance.</strong></p></div><p class="receipt-cap">Showing the 20 shortest-gap pairs of 238. The full distribution is above.</p><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2023/20023080.pdf">sale-partial AAPL</a> on 2023-05-08 — <b>1 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2023/h204">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/1715">Advanced Weather Model Computing Development Act</a> (2023-05-09) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2023/20023080.pdf">sale-partial AAPL</a> on 2023-05-08 — <b>3 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2023/h212">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/1734">TRANQ Research Act of 2023</a> (2023-05-11) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2023/20023080.pdf">sale-partial AAPL</a> on 2023-05-08 — <b>78 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2023/h365">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/1338">SAT Streamlining Act</a> (2023-07-25) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2022/20021438.pdf">sale NVDA</a> on 2022-07-26 — <b>2 days later</b> → <a href="https://www.govtrack.us/congress/votes/117-2022/h404">voted</a> on <a href="https://www.congress.gov/bill/117th-congress/house-bill/4346">CHIPS and Science Act</a> (2022-07-28) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20024542.pdf">purchase PANW</a> on 2024-02-21 — <b>68 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2024/h153">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/4866">Fire Weather Development Act of 2024</a> (2024-04-29) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20024542.pdf">purchase PANW</a> on 2024-02-21 — <b>68 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2024/h154">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/4755">Privacy Enhancing Technology Research Act</a> (2024-04-29) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20024542.pdf">purchase PANW</a> on 2024-02-21 — <b>69 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2024/h158">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/6093">Weather Research and Forecasting Innovation Reauthorization Act of 2023 or the Weather Act Reauthorization Act of 2023</a> (2024-04-30) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20024542.pdf">purchase PANW</a> on 2024-02-21 — <b>77 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2024/h195">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/4143">National Construction Safety Team Enhancement Act of 2024</a> (2024-05-08) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20024542.pdf">purchase PANW</a> on 2024-02-21 — <b>84 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2024/h205">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/4510">NTIA Reauthorization Act of 2024</a> (2024-05-15) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20024542.pdf">purchase PANW</a> on 2024-02-21 — <b>19 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2024/h79">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/1752">E-BRIDGE Act</a> (2024-03-11) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20024542.pdf">purchase PANW</a> on 2024-02-21 — <b>21 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2024/h86">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/7521">Protecting Americans from Foreign Adversary Controlled Applications Act</a> (2024-03-13) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20030630.pdf">purchase AVGO</a> on 2025-06-20 — <b>24 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h191">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/house-bill/1709">Understanding Cybersecurity of Mobile Networks Act</a> (2025-07-14) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20030630.pdf">purchase AVGO</a> on 2025-06-20 — <b>25 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h196">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/house-bill/1717">Communications Security Act</a> (2025-07-15) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20030630.pdf">purchase AVGO</a> on 2025-06-20 — <b>150 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h287">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/house-bill/2659">Strengthening Cyber Resilience Against State-Sponsored Threats Act</a> (2025-11-17) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Energy"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20026590.pdf">purchase VST</a> on 2025-01-14 — <b>106 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h111">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/hjres/87">Providing congressional disapproval under chapter 8 of title 5, United States Code, of the rule submitted by the Environmental Protection Agency relating to &quot;California State Motor Vehicle and Engine Pollution Control Standards; Heavy-Duty Vehicle and Engine Emission Warranty and Maintenance Provisions; Advanced Clean Trucks; Zero Emission Airport Shuttle; Zero-Emission Power Train Certification; Waiver of Preemption; Notice of Decision&quot;.</a> (2025-04-30) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Energy"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20026590.pdf">purchase VST</a> on 2025-01-14 — <b>107 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h114">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/hjres/88">Providing congressional disapproval under chapter 8 of title 5, United States Code, of the rule submitted by the Environmental Protection Agency relating to &quot;California State Motor Vehicle and Engine Pollution Control Standards; Advanced Clean Cars II; Waiver of Preemption; Notice of Decision&quot;.</a> (2025-05-01) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Energy"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20026590.pdf">purchase VST</a> on 2025-01-14 — <b>1 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h13">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/house-bill/164">Promoting Opportunities to Widen Electrical Resilience Act of 2025 or the POWER Act of 2025</a> (2025-01-15) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Energy"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20026590.pdf">purchase VST</a> on 2025-01-14 — <b>128 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h143">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/sjres/31">A joint resolution providing for congressional disapproval under chapter 8 of title 5, United States Code, of the rule submitted by the Environmental Protection Agency relating to &quot;Review of Final Rule Reclassification of Major Sources as Area Sources Under Section 112 of the Clean Air Act&quot;.</a> (2025-05-22) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Energy"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20026590.pdf">purchase VST</a> on 2025-01-14 — <b>24 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h34">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/house-bill/26">Protecting American Energy Production Act</a> (2025-02-07) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Energy"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20026590.pdf">purchase VST</a> on 2025-01-14 — <b>24 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h35">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/house-bill/26">Protecting American Energy Production Act</a> (2025-02-07) · <span class="rarity rarity-ordinary">consistent with chance</span></article></section>
+<section class="receipts" id="sec-receipts"><h2>Trade–vote timing</h2><p class="coverage">1,761 of 2,000 roll-call votes are linked to a specific bill in this snapshot. 85 disclosed trades · 78 theme-mappable · 238 theme-matched receipts.</p><div class="receipt-distribution"><p class="distribution-meta">238 scored pairs across this member's own shuffled calendars.</p><svg class="receipt-histogram" viewBox="0 0 480 72" role="img" aria-label="Distribution of 238 shuffled-calendar comparisons from zero to one"><rect class="hist-bar" x="1" y="64" width="22" height="8"/><rect class="hist-bar" x="25" y="49" width="22" height="23"/><rect class="hist-bar" x="49" y="67" width="22" height="5"/><rect class="hist-bar" x="73" y="63" width="22" height="9"/><rect class="hist-bar" x="97" y="71" width="22" height="1"/><rect class="hist-bar" x="121" y="53" width="22" height="19"/><rect class="hist-bar" x="145" y="66" width="22" height="6"/><rect class="hist-bar" x="169" y="58" width="22" height="14"/><rect class="hist-bar" x="193" y="68" width="22" height="4"/><rect class="hist-bar" x="217" y="65" width="22" height="7"/><rect class="hist-bar" x="241" y="20" width="22" height="52"/><rect class="hist-bar" x="265" y="60" width="22" height="12"/><rect class="hist-bar" x="289" y="71" width="22" height="1"/><rect class="hist-bar" x="313" y="67" width="22" height="5"/><rect class="hist-bar" x="337" y="71" width="22" height="1"/><rect class="hist-bar" x="361" y="71" width="22" height="1"/><rect class="hist-bar" x="385" y="71" width="22" height="1"/><rect class="hist-bar" x="409" y="71" width="22" height="1"/><rect class="hist-bar" x="433" y="71" width="22" height="1"/><rect class="hist-bar" x="457" y="71" width="22" height="1"/></svg><p class="distribution-axis"><span>shorter gap</span><span>typical pair: 0.39</span><span>longer gap</span></p><p class="distribution-verdict">About 12 pairs this close would be expected by chance. Observed: 11. <strong>Consistent with chance.</strong></p></div><p class="receipt-cap">Showing the 20 shortest-gap pairs of 238. The full distribution is above.</p><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2023/20023080.pdf">sale-partial AAPL</a> on 2023-05-08 — <b>1 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2023/h204">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/1715">Advanced Weather Model Computing Development Act</a> (2023-05-09) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2023/20023080.pdf">sale-partial AAPL</a> on 2023-05-08 — <b>3 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2023/h212">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/1734">TRANQ Research Act of 2023</a> (2023-05-11) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2023/20023080.pdf">sale-partial AAPL</a> on 2023-05-08 — <b>78 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2023/h365">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/1338">SAT Streamlining Act</a> (2023-07-25) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2022/20021438.pdf">sale NVDA</a> on 2022-07-26 — <b>2 days later</b> → <a href="https://www.govtrack.us/congress/votes/117-2022/h404">voted</a> on <a href="https://www.congress.gov/bill/117th-congress/house-bill/4346">CHIPS and Science Act</a> (2022-07-28) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20024542.pdf">purchase PANW</a> on 2024-02-21 — <b>68 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2024/h153">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/4866">Fire Weather Development Act of 2024</a> (2024-04-29) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20024542.pdf">purchase PANW</a> on 2024-02-21 — <b>68 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2024/h154">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/4755">Privacy Enhancing Technology Research Act</a> (2024-04-29) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20024542.pdf">purchase PANW</a> on 2024-02-21 — <b>69 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2024/h158">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/6093">Weather Research and Forecasting Innovation Reauthorization Act of 2023 or the Weather Act Reauthorization Act of 2023</a> (2024-04-30) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20024542.pdf">purchase PANW</a> on 2024-02-21 — <b>77 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2024/h195">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/4143">National Construction Safety Team Enhancement Act of 2024</a> (2024-05-08) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20024542.pdf">purchase PANW</a> on 2024-02-21 — <b>84 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2024/h205">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/4510">NTIA Reauthorization Act of 2024</a> (2024-05-15) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20024542.pdf">purchase PANW</a> on 2024-02-21 — <b>19 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2024/h79">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/1752">E-BRIDGE Act</a> (2024-03-11) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20024542.pdf">purchase PANW</a> on 2024-02-21 — <b>21 days later</b> → <a href="https://www.govtrack.us/congress/votes/118-2024/h86">voted</a> on <a href="https://www.congress.gov/bill/118th-congress/house-bill/7521">Protecting Americans from Foreign Adversary Controlled Applications Act</a> (2024-03-13) · <span class="rarity rarity-rare">shorter than 19 of 20 shuffles</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20030630.pdf">purchase AVGO</a> on 2025-06-20 — <b>24 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h191">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/house-bill/1709">Understanding Cybersecurity of Mobile Networks Act</a> (2025-07-14) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20030630.pdf">purchase AVGO</a> on 2025-06-20 — <b>25 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h196">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/house-bill/1717">Communications Security Act</a> (2025-07-15) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Tech &amp; Semiconductors"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20030630.pdf">purchase AVGO</a> on 2025-06-20 — <b>150 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h287">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/house-bill/2659">Strengthening Cyber Resilience Against State-Sponsored Threats Act</a> (2025-11-17) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Energy"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20026590.pdf">purchase VST</a> on 2025-01-14 — <b>106 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h111">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/hjres/87">Providing congressional disapproval under chapter 8 of title 5, United States Code, of the rule submitted by the Environmental Protection Agency relating to &quot;California State Motor Vehicle and Engine Pollution Control Standards; Heavy-Duty Vehicle and Engine Emission Warranty and Maintenance Provisions; Advanced Clean Trucks; Zero Emission Airport Shuttle; Zero-Emission Power Train Certification; Waiver of Preemption; Notice of Decision&quot;.</a> (2025-04-30) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Energy"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20026590.pdf">purchase VST</a> on 2025-01-14 — <b>107 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h114">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/hjres/88">Providing congressional disapproval under chapter 8 of title 5, United States Code, of the rule submitted by the Environmental Protection Agency relating to &quot;California State Motor Vehicle and Engine Pollution Control Standards; Advanced Clean Cars II; Waiver of Preemption; Notice of Decision&quot;.</a> (2025-05-01) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Energy"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20026590.pdf">purchase VST</a> on 2025-01-14 — <b>1 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h13">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/house-bill/164">Promoting Opportunities to Widen Electrical Resilience Act of 2025 or the POWER Act of 2025</a> (2025-01-15) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Energy"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20026590.pdf">purchase VST</a> on 2025-01-14 — <b>128 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h143">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/sjres/31">A joint resolution providing for congressional disapproval under chapter 8 of title 5, United States Code, of the rule submitted by the Environmental Protection Agency relating to &quot;Review of Final Rule Reclassification of Major Sources as Area Sources Under Section 112 of the Clean Air Act&quot;.</a> (2025-05-22) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Energy"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20026590.pdf">purchase VST</a> on 2025-01-14 — <b>24 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h34">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/house-bill/26">Protecting American Energy Production Act</a> (2025-02-07) · <span class="rarity rarity-ordinary">consistent with chance</span></article><article class="receipt" data-theme="Energy"><a href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20026590.pdf">purchase VST</a> on 2025-01-14 — <b>24 days later</b> → <a href="https://www.govtrack.us/congress/votes/119-2025/h35">voted</a> on <a href="https://www.congress.gov/bill/119th-congress/house-bill/26">Protecting American Energy Production Act</a> (2025-02-07) · <span class="rarity rarity-ordinary">consistent with chance</span></article></section>
 <h2 id="sec-coherence">Per-theme coherence</h2>
 <p class="muted">Not computed yet.</p>
 <h2 id="sec-money-votes">Money &amp; votes</h2>
 <p class="lede">Campaign money mapped to tradable-sector themes, next to the focused bills this member sponsored in the same theme. Unmapped money (labor, ideology, lawyers, retired, public-sector) is excluded by construction — shares are of $999.3K in mapped industry contributions.</p>
-<table>
+<div class="table-scroll" role="region" aria-label="Donor theme records" tabindex="0"><table>
 <thead><tr><th>Donor theme</th><th>Mapped money</th><th>Share</th><th>Focused sponsored bills</th><th>Cycles</th></tr></thead>
 <tbody>
   <tr>
@@ -263,7 +271,7 @@ footer a { color: var(--fg-dim); }
     <td>15</td>
     <td><span class="muted">2024</span></td>
   </tr></tbody>
-</table>
+</table></div>
 <p class="muted">Where concentration and sponsorship meet the detector's thresholds, the flag appears under <a class="row-link" href="#sec-patterns">Patterns</a> with its evidence.</p>
 <p class="muted">CivicLens analysis: themes are built from third-party-coded employer and occupation data derived from public FEC filings.</p>
 <p class="muted" style="font-style:italic;">Not yet computed: the statistical money–vote timing analysis — whether legislative activity clusters around donations beyond what chance predicts — is still in validation and has produced no results for any member. Shared sector concentration is context, not a timing claim, and implies no causation.</p>
@@ -436,15 +444,15 @@ footer a { color: var(--fg-dim); }
 <h2 id="sec-trades">Trades &amp; bills</h2>
 
 <p class="lede" style="margin-bottom:12px;">
-  Showing <strong>76</strong> discretionary equity trades made <em>before</em> a vote within 90 days.
-  T-bills, ETFs, index funds, munis, and bonds excluded — they carry no single-company vote nexus.
-  <a class="row-link" href="#all-trades-tab" onclick="showTab('tabs-nancy-pelosi','all')">Show all 85 trades →</a>
+  Showing <strong>76</strong> trades that match the focused filters and occurred <em>before</em> a vote within 90 days.
+  The view excludes known broad-market funds and disclosures classified as ETFs, bonds, and similar assets.
+  <a class="row-link" href="#all-trades-tab" onclick="showTab('tabs-nancy-pelosi','all')">Show 85 recent trades →</a>
 </p>
-<div class="section-tabs" id="tabs-nancy-pelosi">
-  <div class="section-tab active" onclick="showTab('tabs-nancy-pelosi','focused')" data-tab="focused">Focused (before-vote, discretionary)</div>
-  <div class="section-tab" onclick="showTab('tabs-nancy-pelosi','all')" data-tab="all" id="all-trades-tab">All trades (85)</div>
+<div class="section-tabs" id="tabs-nancy-pelosi" role="tablist" aria-label="Trade views">
+  <button type="button" class="section-tab active" id="focused-trades-tab" role="tab" aria-selected="true" aria-controls="focused-trades-panel" onclick="showTab('tabs-nancy-pelosi','focused')" onkeydown="tradeTabKey(event)" data-tab="focused">Focused (before-vote)</button>
+  <button type="button" class="section-tab" id="all-trades-tab" role="tab" aria-selected="false" aria-controls="all-trades-panel" tabindex="-1" onclick="showTab('tabs-nancy-pelosi','all')" onkeydown="tradeTabKey(event)" data-tab="all">All trades (85)</button>
 </div>
-<div class="tab-panel active" data-panel-for="tabs-nancy-pelosi" data-panel="focused">
+<div class="tab-panel active" id="focused-trades-panel" role="tabpanel" aria-labelledby="focused-trades-tab" tabindex="0" data-panel-for="tabs-nancy-pelosi" data-panel="focused">
 <div class="trade-card intensity-high"><div class="tc-header">
       <div class="tc-asset">
         <span style="color:var(--fg);font-weight:600;">AMZN</span> <span class="dim">— </span>Amazon.com, Inc. - Common Stock
@@ -3017,8 +3025,8 @@ footer a { color: var(--fg-dim); }
         </div>
       </div><div class="dim" style="font-size:11px;margin-top:4px;">+52 more votes in window</div></div></div>
 </div>
-<div class="tab-panel" data-panel-for="tabs-nancy-pelosi" data-panel="all">
-<table>
+<div class="tab-panel" id="all-trades-panel" role="tabpanel" aria-labelledby="all-trades-tab" tabindex="0" data-panel-for="tabs-nancy-pelosi" data-panel="all" hidden>
+<div class="table-scroll" role="region" aria-label="Trade disclosure records" tabindex="0"><table>
 <thead><tr><th>Date</th><th>Type</th><th>Asset</th><th>Amount band</th><th>Holder</th><th>Sub-account</th><th>Source</th></tr></thead>
 <tbody>
   <tr>
@@ -3786,20 +3794,38 @@ footer a { color: var(--fg-dim); }
     <td><span class="muted"></span></td>
     <td><a class="row-link" href="https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2022/20020208.pdf" target="_blank" rel="noopener">PTR</a></td>
   </tr></tbody>
-</table>
+</table></div>
 </div>
 <script>
 function showTab(tabGroupId, panelName) {
   document.querySelectorAll('#' + tabGroupId + ' .section-tab').forEach(function(el) {
-    el.classList.toggle('active', el.dataset.tab === panelName);
+    const selected = el.dataset.tab === panelName;
+    el.classList.toggle('active', selected);
+    el.setAttribute('aria-selected', String(selected));
+    el.tabIndex = selected ? 0 : -1;
   });
   document.querySelectorAll('[data-panel-for="' + tabGroupId + '"]').forEach(function(el) {
-    el.classList.toggle('active', el.dataset.panel === panelName);
+    const selected = el.dataset.panel === panelName;
+    el.classList.toggle('active', selected);
+    el.hidden = !selected;
   });
+}
+
+function tradeTabKey(event) {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+  const current = event.currentTarget;
+  const tabs = Array.from(current.parentElement.querySelectorAll('[role="tab"]'));
+  const index = tabs.indexOf(current);
+  const next = event.key === 'Home' ? tabs[0]
+    : event.key === 'End' ? tabs[tabs.length - 1]
+    : tabs[(index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+  event.preventDefault();
+  next.click();
+  next.focus();
 }
 </script>
 <h2 id="sec-donors">Top donors (lifetime, 4-cycle FEC union)</h2>
-<table>
+<div class="table-scroll" role="region" aria-label="Top donor records" tabindex="0"><table>
 <thead><tr><th>Donor</th><th>Type</th><th class="num">Lifetime amount</th><th>Most recent</th><th>Source</th></tr></thead>
 <tbody>
   <tr>
@@ -3907,115 +3933,9 @@ function showTab(tabGroupId, panelName) {
     <td><span class="muted">2025-09-25</span></td>
     <td><a class="row-link" href="https://www.fec.gov/data/committee/C00213512/" target="_blank" rel="noopener">FEC</a></td>
   </tr></tbody>
-</table>
-<h2 id="sec-revolving">Revolving door — former staff now lobbying (13)</h2>
-
-<p class="lede">Registered federal lobbyists whose disclosed former government role names Nancy Pelosi or a committee they sit on. Recency reflects each lobbyist's most recent disclosure filing — not a judgment.</p>
-<div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">MARISA HARRILCHAK</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Former staff/floor assistant to Rep. Nancy Pelosi</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>POLSINELLI PC</strong> for B. BRAUN MEDICAL INC. · Health Issues</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/b7cb656c-2dca-4de8-b5dd-25b253b6ec95/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">STACEY ROLLAND</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Senior Advisor, U.S. Department of the Treasury (2013 2016); Senior Policy Advisor, Rep. Nancy Pelosi (2010 2013); Special Assistant, U.S. Department of the Treasury (2009-2010); Tax Counsel, Rep. Xavier Becerra (2007…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>ZERO ONE STRATEGIES</strong> for PAYWARD INC · Taxation/Internal Revenue Code</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/e83e6725-590f-4792-849a-5a40b48a3a5b/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">MICHAEL BLOOM</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Staff Asst.; Dir. of Intergovernmental Affairs; Dep. Policy Dir; Sr. Advisor - House Democratic Leader, Rep. Nancy Pelosi; Policy Associate; Dep. Policy Dir.; Dir. of Intergovernmental Affairs - Speaker of the House, …</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>TIKTOK USDS JOINT VENTURE LLC</strong> for TIKTOK USDS JOINT VENTURE LLC · Communications/Broadcasting/Radio/TV</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/69b8861f-1c10-4825-acf0-ee440299ba58/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">MARISA HARRILCHAK</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2026 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Former floor/ Staff assistant to Rep. Nancy Pelosi</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>TSG ADVOCATES DC, LLC</strong> for PRITIKIN ICR, LLC · Health Issues</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/504bf95d-56a6-439b-b0f2-3661c2e85a65/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">DEAN AGUILLEN</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2025 (third_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Sr. Advisor/ Director of Member Services/ Floor Asst, Rep. Nancy Pelosi; Director Intergovt Affairs/ COS Cong. Affairs/ Special Asst, U.S. Department of Labor; LA, Rep. Max Sandlin</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>OGR</strong> for CALIBER HOLDINGS LLC · Taxation/Internal Revenue Code</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/9a7c160b-4f76-4860-b340-720f5cc0d592/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-high">
-  <div class="tc-header">
-    <div class="tc-asset">JOHN MENGES</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Active · last filed 2025 (fourth_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Intern, Rep. Nancy Pelosi Office; Intern, Rep. Don Beyer&#39;s office; Scheduler, Julia Brownley</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>BROWNSTEIN HYATT FARBER SCHRECK, LLP</strong> for YELP · Computer Industry</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/7d33e455-456b-4327-bd15-88811bbd8ff2/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-medium">
-  <div class="tc-header">
-    <div class="tc-asset">GEORGE C CRAWFORD</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Recent · last filed 2024 (third_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Chief of Staff: Rep. Pelosi (CA-12)</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>KING &amp; SPALDING LLP</strong> for SEABOARD CORPORATION · Agriculture / Transportation</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/50f48517-0e8c-441f-8526-376751ec9c9f/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-medium">
-  <div class="tc-header">
-    <div class="tc-asset">STACEY ROLLAND</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Recent · last filed 2024 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Senior Advisor, U.S. Department of the Treasury (2013-2016); Senior Policy Advisor, Rep. Nancy Pelosi (2010-2013); Special Assistant, U.S. Department of the Treasury (2009-2010); Tax Counsel, Rep. Xavier Becerra (2007…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>FORBES-TATE</strong> for EDWARD D. JONES &amp; CO., L.P. · Retirement / Taxation/Internal Revenue Code / Financial Institutions/Investme…</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/d09258dc-c706-4200-9cc5-ca071770dcb2/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-medium">
-  <div class="tc-header">
-    <div class="tc-asset">MICAELA FERNANDEZ ALLEN</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Recent · last filed 2023 (first_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Special Asst. to the President, Office of Legislative Affairs, 2009-2014; Advisor, Rep. Nancy Pelosi, 2007-2009; Special Events &amp; Protocol, Sergeant at Arms, 2003-2007;Staff Assistant, Rep. Juanita Millender-McDonald,…</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>OPEN SOCIETY ACTION FUND</strong> for OPEN SOCIETY ACTION FUND · Economics/Economic Development / Foreign Relations</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/bfbf2b89-8346-4b65-b0de-cd9dfbf04b03/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">CATLIN O&#39;NEILL</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2022 (second_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Chief of Staff, Congresswoman Nancy Pelosi (2011-13), Deputy Director Legislative Operations, Speaker of the House Pelosi (2005-11), Executive Assistant, House Democratic Leader (2003-05), Special Events Coordinator, …</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>LINKEDIN CORPORATION</strong> for LINKEDIN CORPORATION · Economics/Economic Development / Labor Issues/Antitrust/Workplace / Computer …</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/92150018-90d3-4a1f-9a25-6fb609b2d91f/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">CHRISTOPHER MATTHIESEN</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2021 (third_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Chief of Staff, Rep. Suzanne Kosmas, Dep. Chief of Staff, Rep. Nick Lampson, Staff Assistant for Rep. Nancy Pelosi</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>FEDERAL HALL POLICY ADVISORS, LLC</strong> for MEMBERS EXCHANGE · Financial Institutions/Investments/Securities</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/87cca8e1-ad41-474c-884f-4727830907c2/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">KATE LEANNE JENSEN</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2020 (fourth_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Adv. Team; Special Projects - Rep. Pelosi</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>STEPTOE LLP</strong> for COUNCIL OF INSURANCE AGENTS AND BROKERS · Insurance / Banking / Health Issues</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/dcc67355-cc9e-4cd2-ba26-4707cb88719b/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div><div class="trade-card intensity-low">
-  <div class="tc-header">
-    <div class="tc-asset">MICHAEL BLOOM</div>
-    <div class="tc-meta"><span class="tag">former staff</span><span class="muted">Historical · last filed 2020 (third_quarter)</span></div>
-  </div>
-  <div style="font-size:13px;">Staff Asst., Dir. of Intergovernmental Affairs, Dep. Policy Dir. and Sr. Advisor - House Democratic Leader, Rep. Nancy Pelosi; Policy Associate, Dep. Policy Dir. and Dir. of Intergovernmental Affairs - Speaker of the …</div>
-  <div class="muted" style="font-size:12px;margin-top:6px;">now at <strong>BYTEDANCE INC.</strong> for BYTEDANCE INC. · Communications/Broadcasting/Radio/TV / Trade (domestic/foreign)</div>
-  <div style="margin-top:6px;"><a class="row-link" href="https://lda.senate.gov/api/v1/filings/3e146912-f253-4ffb-b8c2-29340c31ef63/?format=json" target="_blank" rel="noopener">filing ↗</a></div>
-</div>
+</table></div>
+<h2 id="sec-revolving">Former staff and lobbying</h2>
+<p class="muted">Withheld in this beta while CivicLens verifies which offices the disclosed roles refer to.</p>
 <h2 id="sec-outside-spending">Outside spending (Super PACs)</h2>
 
 <p class="lede" style="margin-bottom:8px;">
@@ -4058,7 +3978,7 @@ function showTab(tabGroupId, panelName) {
 </div>
 
 <h2 id="sec-peers">Shared-donor peers in corpus</h2>
-<table>
+<div class="table-scroll" role="region" aria-label="Shared donor peers" tabindex="0"><table>
 <thead><tr><th>Peer</th><th class="num">Shared donors</th><th class="num">Combined amount</th></tr></thead>
 <tbody>
   <tr>
@@ -4226,10 +4146,10 @@ function showTab(tabGroupId, panelName) {
     <td class="num">1</td>
     <td class="num">$10.0K</td>
   </tr></tbody>
-</table>
+</table></div>
 <h2 id="sec-patterns">Patterns</h2>
 
-<p class="lede" style="margin-bottom:12px;">Named patterns from the deterministic detection pass. Each shows how it was measured, how confident the statistics are, and the records it cites — click an evidence chip to jump to the rows, or verify them in the sections above. Weight reflects the strength of the evidence, not a verdict. <a class="row-link" href="../methodology.html">How patterns are measured →</a></p>
+<p class="lede" style="margin-bottom:12px;">Each flag describes its rule and lists the records it cites. Visual weight can reflect the number and type of matches. <a class="row-link" href="../methodology.html">How patterns are measured →</a></p>
 <div class="trade-card flag-card intensity-high">
         <div class="tc-header">
           <div class="tc-asset">Donor sector ↔ sponsorship</div>
@@ -4245,6 +4165,7 @@ function showTab(tabGroupId, panelName) {
 <h2 id="sec-cosponsor">Co-sponsorship</h2>
 
 <p class="lede" style="margin-bottom:8px;">Top peers by shared bills in the loaded corpus. <a class="row-link" href="../network.html">→ Full co-sponsorship network</a></p>
+<div class="table-scroll" role="region" aria-label="Co-sponsorship peers" tabindex="0">
 <table>
   <thead><tr><th>Peer</th><th class="num">Shared bills</th></tr></thead>
   <tbody>
@@ -4269,12 +4190,12 @@ function showTab(tabGroupId, panelName) {
       <td class="num">824</td>
     </tr></tbody>
 </table>
+</div>
 
 <p style="margin-top: 32px;"><a class="row-link" href="../index.html">← back to corpus</a></p>
 </main>
 <footer>
-Built from primary sources: Congress.gov, GovTrack, OpenFEC, House Clerk PFDs.
-Every claim links to its source. Voice rules: evidence before opinion — no editorial scoring.
+Sources include Congress.gov, GovTrack, OpenFEC, and House and Senate trade disclosures.
 </footer>
 </body>
 </html>

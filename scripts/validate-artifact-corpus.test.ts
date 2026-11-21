@@ -88,6 +88,23 @@ test('a required family that produced a valid artifact passes', () => {
   }
 });
 
+test('a release scope validates every selected task and keeps the full-corpus failure visible', () => {
+  const root = corpusDir();
+  try {
+    writeArtifact(root, 'task-1', 'summarizer', summarizerArtifact());
+    mkdirSync(join(root, 'task-historical-failure'));
+    const opts = { corpusDir: root, required: ['summarizer'] };
+    assert.equal(validateCorpus(opts).ok, false);
+    assert.equal(validateCorpus({ ...opts, taskIds: ['task-1'] }).ok, true);
+    assert.equal(validateCorpus({ ...opts, taskIds: ['task-1', 'task-missing'] }).ok, false);
+    assert.throws(() => validateCorpus({ ...opts, taskIds: [] }), /nonempty/);
+    assert.throws(() => validateCorpus({ ...opts, taskIds: ['task-1', 'task-1'] }), /unique/);
+    assert.throws(() => validateCorpus({ ...opts, taskIds: ['task-../outside'] }), /valid task IDs/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('a NON-required family with zero artifacts still passes (unchanged behavior)', () => {
   const root = corpusDir();
   try {

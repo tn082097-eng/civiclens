@@ -93,6 +93,21 @@ her last day — she is excluded as a non-sitting member, not as a data defect.
 
 ## C. Deployment: verified-artifact, never a CI rebuild
 
+**November 21 beta amendment.** Package only the explicitly approved roster.
+The packager checks each slug against the launch manifest and the same
+database snapshot used for rendering. It requires a recorded approved run
+with valid required artifacts, a canonical sitting-member identity, and an
+eligible theme-gaps artifact. The release reviewer also checks current
+office status against official rosters. The seven-profile beta excludes
+Goldman, Gottheimer and Moskowitz until their release evidence and renders
+are ready.
+
+The roster check is the artifact-corpus gate for this static beta. The
+full `npm run validate:corpus` command still validates historical tasks and
+reports incomplete runs. Historical tasks, including failures, stay in the
+evidence record. Passing the roster check does not certify the pipeline for
+other members or establish that source coverage is complete.
+
 - `.github/workflows/deploy.yml` (workflow_dispatch-only, dormant) originally
   invoked `render/build.ts`, which requires `data/civiclens.duckdb`. The DB is
   not in git and must never be published: the repo is public, a Release asset

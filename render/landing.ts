@@ -40,16 +40,12 @@ const STAT_LABELS: [keyof PublishedMemberStats, string][] = [
 ];
 
 const LEDE =
-  'CivicLens reconstructs what members of Congress did — trades, votes, ' +
-  'sponsorships, and donors — from primary sources, and flags where the timing ' +
-  'or the money lines up in ways that stand out from chance. Every flag is ' +
-  'reproducible and links back to the filing it came from. It reports patterns, ' +
-  'not verdicts.';
+  'Explore disclosed trades, recorded votes, bill sponsorships, and campaign ' +
+  'finance records for a small set of members of Congress.';
 
 const BETA =
-  'Public beta: every published member is verified end-to-end against the same ' +
-  'methodology. Members appear here once they have enough disclosed trades to ' +
-  'analyse; the roster expands as each member’s data passes that verification.';
+  'Public beta. Counts reflect the records loaded into this snapshot. Coverage ' +
+  'varies by source, and newer filings or votes may be missing.';
 
 const NO_CAUSATION =
   'Detectors identify reproducible patterns in available data. They do not ' +
@@ -76,7 +72,7 @@ function memberCard(m: PublishedMember): string {
       <div class="stat"><dd>${fmtInt(m.stats[key])}</dd><dt>${esc(label)}</dt></div>`).join('');
   const thru = m.dataThrough === null
     ? '<span></span>'
-    : `<span>data through <span class="mono">${esc(m.dataThrough)}</span></span>`;
+    : `<span>latest trade or vote on record <span class="mono">${esc(m.dataThrough)}</span></span>`;
   return `
   <a class="card" href="members/${m.slug}.html">
     <h2>${esc(m.name)}</h2>

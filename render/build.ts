@@ -22,17 +22,15 @@ import { fileURLToPath } from 'node:url';
 import { getDb } from '../db/init.js';
 import {
   findSharedDonors,
-  findTradesNearVotes,
   findSuspiciousTrades,
   suspiciousTradesCorpus,
   memberTradeSummary,
   cosponsorNetwork,
   tradeBillNexus,
-  revolvingDoorConnections,
   type TradeNearVote,
   type NexusRow,
-  type RevolvingConnection,
 } from '../db/queries.js';
+import { BROAD_MARKET_ETFS } from '../pipeline/patterns/_filters.js';
 import { fetchSuperPacIE } from '../lib/fec-ie.js';
 import type { SuperPacIEReport, SuperPacIE, SuperPacFunder } from '../lib/types.js';
 import type { ThemeGapReceipts } from '../lib/schemas.js';
@@ -45,7 +43,7 @@ import {
 import { DONOR_SQL, SPONSORED_SQL } from '../pipeline/patterns/donor-sector-vote-alignment.js';
 import { loadThemeGapsOrSentinel } from './load-artifacts.js';
 import { renderLanding, type PublishedManifest } from './landing.js';
-import { revolvingEmptyShell, outsideSpendingEmptyShell } from './empty-shells.js';
+import { outsideSpendingEmptyShell } from './empty-shells.js';
 import { orderIeCycles, ieCycleLabel, ieFetchOutcome, ieUnavailableNote } from './ie-cycles.js';
 
 const OUT_DIR = SITE_DIR;
@@ -159,7 +157,7 @@ function renderReceiptDistribution(a: ThemeGapReceipts): string {
 export function renderReceiptsSection(a: ThemeGapReceipts): string {
   const cov = `<p class="coverage">` +
     `${fmtN(a.coverage.votesBillLinked)} of ${fmtN(a.coverage.votesTotal)} roll-call votes are linked to a ` +
-    `specific bill; the rest are procedural and cannot be matched. ` +
+    `specific bill in this snapshot. ` +
     `${fmtN(a.disclosedTradeCount)} disclosed trades · ${fmtN(a.tradeCount)} theme-mappable · ` +
     `${fmtN(a.receipts.length)} theme-matched receipts.</p>`;
 
@@ -351,6 +349,13 @@ h2 { font-size: 19px; margin: 48px 0 14px; letter-spacing: -0.01em; }
 h2:first-child { margin-top: 0; }
 .lede { color: var(--fg-dim); margin: 0 0 24px; max-width: 720px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table-scroll { overflow-x: auto; }
+.table-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+@media (max-width: 600px) {
+  main { padding-inline: 16px; overflow-wrap: anywhere; }
+  main .kv { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+  main .tc-asset { min-width: 0; }
+}
 th, td { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { color: var(--fg-dim); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
 tbody tr:hover { background: rgba(255,255,255,0.02); }
@@ -426,8 +431,9 @@ footer a { color: var(--fg-dim); }
 .tag.after { color: var(--fg-muted); border-color: var(--fg-muted); opacity: 0.7; }
 .tag.bill-match { color: #4caf7d; border-color: rgba(76,175,125,0.4); background: rgba(76,175,125,0.06); cursor: help; }
 .section-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
-.section-tab { padding: 6px 14px; font-size: 13px; color: var(--fg-dim); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; user-select: none; }
+.section-tab { padding: 6px 14px; font: inherit; font-size: 13px; color: var(--fg-dim); background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; }
 .section-tab.active { color: var(--fg); border-bottom-color: var(--accent); }
+.section-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 .pac-totals { display: flex; gap: 16px; margin: 8px 0 4px; font-size: 13px; }
@@ -460,7 +466,6 @@ footer a { color: var(--fg-dim); }
 `;
 
 function layout(title: string, breadcrumb: string, body: string): string {
-  const fetchedAt = new Date().toISOString().slice(0, 16).replace('T', ' ');
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -472,14 +477,13 @@ function layout(title: string, breadcrumb: string, body: string): string {
 <body>
 <header>
   <h1>CivicLens</h1>
-  <div class="sub">${breadcrumb} · generated ${esc(fetchedAt)}Z</div>
+  <div class="sub">${breadcrumb}</div>
 </header>
 <main>
 ${body}
 </main>
 <footer>
-Built from primary sources: Congress.gov, GovTrack, OpenFEC, House Clerk PFDs.
-Every claim links to its source. Voice rules: evidence before opinion — no editorial scoring.
+Sources include Congress.gov, GovTrack, OpenFEC, and House and Senate trade disclosures.
 </footer>
 </body>
 </html>`;
@@ -838,7 +842,9 @@ async function fetchTopDonors(memberId: string, limit = 15): Promise<any[]> {
   return await r.getRowObjects() as any[];
 }
 
-async function fetchAllTrades(memberId: string, limit = 500): Promise<any[]> {
+const RECENT_TRADES_LIMIT = 500;
+
+async function fetchAllTrades(memberId: string, limit = RECENT_TRADES_LIMIT): Promise<any[]> {
   const conn = await getDb();
   const r = await conn.run(
     `SELECT filing_id, tx_date, tx_type, asset, ticker, asset_type, amount_band, holder,
@@ -1251,10 +1257,12 @@ function renderCosponsorEmbed(edges: CosponsorEdgeForMember[]): string {
     </tr>`).join('');
   return `
 <p class="lede" style="margin-bottom:8px;">Top peers by shared bills in the loaded corpus. <a class="row-link" href="../network.html">→ Full co-sponsorship network</a></p>
+<div class="table-scroll" role="region" aria-label="Co-sponsorship peers" tabindex="0">
 <table>
   <thead><tr><th>Peer</th><th class="num">Shared bills</th></tr></thead>
   <tbody>${rows}</tbody>
 </table>
+</div>
 `;
 }
 
@@ -1295,8 +1303,7 @@ const PATTERN_META: Record<string, { mechanism: string; caveat: string }> = {
   'trade-vote-alignment': {
     mechanism:
       'Counts discretionary stock trades placed within 14 days before a vote on a bill the ' +
-      "member's committee handled or whose text names the traded company, then compares that " +
-      "count to a seeded permutation null built from the member's own trading pace.",
+      "member's committee handled or whose text names the traded company.",
     caveat:
       'Timing proximity is not proof of intent or of non-public information. Committee ' +
       'jurisdiction is a proxy for influence, not evidence of a hearing on that company.',
@@ -1304,8 +1311,7 @@ const PATTERN_META: Record<string, { mechanism: string; caveat: string }> = {
   'spousal-trade-timing': {
     mechanism:
       'Flags trades held by a spouse or jointly, placed within 14 days before a vote on a ' +
-      "bill the member's committee handled, then compares that count to a seeded permutation " +
-      "null built from the household's own trading pace.",
+      "bill the member's committee handled.",
     caveat:
       'Spouse or joint accounts may be independently managed. CivicLens has no hearing ' +
       'calendar; committee jurisdiction is the relevance proxy.',
@@ -1482,7 +1488,7 @@ async function renderPatterns(memberSlug: string): Promise<string> {
     .join('\n');
 
   return `
-<p class="lede" style="margin-bottom:12px;">Named patterns from the deterministic detection pass. Each shows how it was measured, how confident the statistics are, and the records it cites — click an evidence chip to jump to the rows, or verify them in the sections above. Weight reflects the strength of the evidence, not a verdict. <a class="row-link" href="../methodology.html">How patterns are measured →</a></p>
+<p class="lede" style="margin-bottom:12px;">Each flag describes its rule and lists the records it cites. Visual weight can reflect the number and type of matches. <a class="row-link" href="../methodology.html">How patterns are measured →</a></p>
 ${cards}`;
 }
 
@@ -1604,18 +1610,17 @@ ${cycleBlocks}
 }
 
 export async function buildMemberPage(m: MemberDetail): Promise<void> {
-  const [donors, trades, peers, suspiciousPairs, allTradePairs, timeline, cosponsorEdges, revolving] = await Promise.all([
+  const [donors, trades, peers, suspiciousPairs, timeline, cosponsorEdges] = await Promise.all([
     fetchTopDonors(m.member_id),
     fetchAllTrades(m.member_id),
     findSharedDonors(m.member_id),
     findSuspiciousTrades(m.member_id, 90),    // discretionary, before-vote only
-    findTradesNearVotes(m.member_id, 30),     // all trades for raw count
     fetchTimelineData(m.member_id),
     fetchCosponsorEdgesForMember(m.member_id, 5),
-    revolvingDoorConnections(m.member_id, m.name, m.chamber ?? null),
   ]);
-  const collapsedSuspicious = collapseTrades(suspiciousPairs);
-  const collapsedTrades = collapseTrades(allTradePairs);
+  const collapsedSuspicious = collapseTrades(
+    suspiciousPairs.filter(p => !BROAD_MARKET_ETFS.includes(p.ticker?.toUpperCase() ?? '')),
+  );
 
   const meta = `<div class="kv">
     <div class="k">Party</div>            <div><span class="tag ${partyClass(m.party ?? '')}">${esc(m.party ?? '?')}</span></div>
@@ -1631,7 +1636,7 @@ export async function buildMemberPage(m: MemberDetail): Promise<void> {
 
   const donorsBlock = donors.length === 0
     ? '<p class="muted">No donors loaded.</p>'
-    : `<table>
+    : `<div class="table-scroll" role="region" aria-label="Top donor records" tabindex="0"><table>
 <thead><tr><th>Donor</th><th>Type</th><th class="num">Lifetime amount</th><th>Most recent</th><th>Source</th></tr></thead>
 <tbody>${donors.map(d => `
   <tr>
@@ -1641,44 +1646,15 @@ export async function buildMemberPage(m: MemberDetail): Promise<void> {
     <td><span class="muted">${esc(d.latest_date ? String(d.latest_date) : '—')}</span></td>
     <td><a class="row-link" href="${esc(safeUrl(d.source_url))}" target="_blank" rel="noopener">FEC</a></td>
   </tr>`).join('')}</tbody>
-</table>`;
+</table></div>`;
 
-  // Revolving door — former staff / committee staff now registered to lobby.
-  // Deterministic (db/queries.ts). Recency tier drives weight only; never "risk".
-  const revolvingTierLabel: Record<RevolvingConnection['recencyTier'], string> = {
-    active: 'Active', recent: 'Recent', historical: 'Historical',
-  };
-  const revolvingIntensity: Record<RevolvingConnection['recencyTier'], string> = {
-    active: 'intensity-high', recent: 'intensity-medium', historical: 'intensity-low',
-  };
-  const revolvingBlock = revolving.length === 0
-    ? revolvingEmptyShell()
-    : sectionShell('sec-revolving', `Revolving door — former staff now lobbying (${revolving.length})`, `
-<p class="lede">Registered federal lobbyists whose disclosed former government role names ${esc(m.name)} or a committee they sit on. Recency reflects each lobbyist's most recent disclosure filing — not a judgment.</p>
-${revolving.map(c => {
-  const role = c.formerRole.length > 220 ? c.formerRole.slice(0, 217) + '…' : c.formerRole;
-  const tieTag = c.matchType === 'direct' ? 'former staff' : 'committee staff';
-  const issues = c.generalIssues && c.generalIssues.length > 80 ? c.generalIssues.slice(0, 77) + '…' : c.generalIssues;
-  const sub = [
-    c.currentEmployer ? `now at <strong>${esc(c.currentEmployer)}</strong>` : '',
-    c.latestClient ? `for ${esc(c.latestClient)}` : '',
-    issues ? `· ${esc(issues)}` : '',
-  ].filter(Boolean).join(' ');
-  const src = c.sourceUrl ? `<a class="row-link" href="${esc(safeUrl(c.sourceUrl))}" target="_blank" rel="noopener">filing ↗</a>` : '';
-  return `<div class="trade-card ${revolvingIntensity[c.recencyTier]}">
-  <div class="tc-header">
-    <div class="tc-asset">${esc(c.lobbyistName)}</div>
-    <div class="tc-meta"><span class="tag">${tieTag}</span><span class="muted">${revolvingTierLabel[c.recencyTier]} · last filed ${esc(c.latestFilingYear)}${c.latestFilingPeriod ? ` (${esc(c.latestFilingPeriod)})` : ''}</span></div>
-  </div>
-  <div style="font-size:13px;">${esc(role)}</div>
-  ${sub ? `<div class="muted" style="font-size:12px;margin-top:6px;">${sub}</div>` : ''}
-  ${src ? `<div style="margin-top:6px;">${src}</div>` : ''}
-</div>`;
-}).join('')}`);
+  // The existing surname and committee keyword matcher can misattribute roles.
+  const revolvingBlock = sectionShell('sec-revolving', 'Former staff and lobbying',
+    '<p class="muted">Withheld in this beta while CivicLens verifies which offices the disclosed roles refer to.</p>');
 
   const peersBlock = peers.length === 0
     ? '<p class="muted">No shared-donor peers in corpus.</p>'
-    : `<table>
+    : `<div class="table-scroll" role="region" aria-label="Shared donor peers" tabindex="0"><table>
 <thead><tr><th>Peer</th><th class="num">Shared donors</th><th class="num">Combined amount</th></tr></thead>
 <tbody>${peers.map(p => `
   <tr>
@@ -1686,7 +1662,7 @@ ${revolving.map(c => {
     <td class="num">${p.shared_count}</td>
     <td class="num">${fmtMoney(p.combined_amount)}</td>
   </tr>`).join('')}</tbody>
-</table>`;
+</table></div>`;
 
   // ── Card renderer for one collapsed trade ───────────────────────────────
   function renderTradeCard(t: TradeRow): string {
@@ -1771,15 +1747,15 @@ ${revolving.map(c => {
   }
 
   const suspiciousTradesBlock = collapsedSuspicious.length === 0 && trades.length === 0
-    ? '<p class="muted">No PFD trades in DB. Run the loader if expected.</p>'
+    ? '<p class="muted">No trades on record in this snapshot.</p>'
     : collapsedSuspicious.length === 0
-    ? `<p class="muted">${trades.length} trade${trades.length === 1 ? '' : 's'} on file — none are discretionary equity trades before a vote within 90 days.</p>`
+    ? `<p class="muted">No trades in this snapshot met the focused filters.</p>`
     : collapsedSuspicious.map(renderTradeCard).join('');
 
   // All trades tab (flat table, regardless of type or proximity)
   const allTradesBlock = trades.length === 0
     ? ''
-    : `<table>
+    : `<div class="table-scroll" role="region" aria-label="Trade disclosure records" tabindex="0"><table>
 <thead><tr><th>Date</th><th>Type</th><th>Asset</th><th>Amount band</th><th>Holder</th><th>Sub-account</th><th>Source</th></tr></thead>
 <tbody>${trades.map(t => `
   <tr>
@@ -1791,7 +1767,7 @@ ${revolving.map(c => {
     <td><span class="muted">${esc(t.sub_account ?? '')}</span></td>
     <td><a class="row-link" href="${esc(safeUrl(t.source_url))}" target="_blank" rel="noopener">PTR</a></td>
   </tr>`).join('')}</tbody>
-</table>`;
+</table></div>`;
 
   const timelineBlock = buildTimelineBlock(m.member_id, timeline.votes, timeline.trades);
   // A member with no IE rows still gets the current cycle checked, so the empty
@@ -1805,30 +1781,49 @@ ${revolving.map(c => {
   const glanceBlock = renderActivityGlance(glance);
   const tabId = `tabs-${m.member_id.replace(/[^a-z0-9]/g, '-')}`;
 
+  const tradeTableLabel = trades.length === RECENT_TRADES_LIMIT ? 'Most recent trades' : 'All trades';
   const tradesInner = `
 <p class="lede" style="margin-bottom:12px;">
-  Showing <strong>${collapsedSuspicious.length}</strong> discretionary equity trade${collapsedSuspicious.length === 1 ? '' : 's'} made <em>before</em> a vote within 90 days.
-  T-bills, ETFs, index funds, munis, and bonds excluded — they carry no single-company vote nexus.
-  ${collapsedTrades.length > collapsedSuspicious.length ? `<a class="row-link" href="#all-trades-tab" onclick="showTab('${esc(tabId)}','all')">Show all ${trades.length} trades →</a>` : ''}
+  Showing <strong>${collapsedSuspicious.length}</strong> trade${collapsedSuspicious.length === 1 ? '' : 's'} that match the focused filters and occurred <em>before</em> a vote within 90 days.
+  The view excludes known broad-market funds and disclosures classified as ETFs, bonds, and similar assets.
+  ${trades.length > 0 ? `<a class="row-link" href="#all-trades-tab" onclick="showTab('${esc(tabId)}','all')">Show ${trades.length} recent trade${trades.length === 1 ? '' : 's'} →</a>` : ''}
 </p>
-<div class="section-tabs" id="${esc(tabId)}">
-  <div class="section-tab active" onclick="showTab('${esc(tabId)}','focused')" data-tab="focused">Focused (before-vote, discretionary)</div>
-  <div class="section-tab" onclick="showTab('${esc(tabId)}','all')" data-tab="all" id="all-trades-tab">All trades (${trades.length})</div>
+<div class="section-tabs" id="${esc(tabId)}" role="tablist" aria-label="Trade views">
+  <button type="button" class="section-tab active" id="focused-trades-tab" role="tab" aria-selected="true" aria-controls="focused-trades-panel" onclick="showTab('${esc(tabId)}','focused')" onkeydown="tradeTabKey(event)" data-tab="focused">Focused (before-vote)</button>
+  <button type="button" class="section-tab" id="all-trades-tab" role="tab" aria-selected="false" aria-controls="all-trades-panel" tabindex="-1" onclick="showTab('${esc(tabId)}','all')" onkeydown="tradeTabKey(event)" data-tab="all">${tradeTableLabel} (${trades.length})</button>
 </div>
-<div class="tab-panel active" data-panel-for="${esc(tabId)}" data-panel="focused">
+<div class="tab-panel active" id="focused-trades-panel" role="tabpanel" aria-labelledby="focused-trades-tab" tabindex="0" data-panel-for="${esc(tabId)}" data-panel="focused">
 ${suspiciousTradesBlock}
 </div>
-<div class="tab-panel" data-panel-for="${esc(tabId)}" data-panel="all">
-${allTradesBlock || '<p class="muted">No trades in DB.</p>'}
+<div class="tab-panel" id="all-trades-panel" role="tabpanel" aria-labelledby="all-trades-tab" tabindex="0" data-panel-for="${esc(tabId)}" data-panel="all" hidden>
+${allTradesBlock || '<p class="muted">No trades on record in this snapshot.</p>'}
 </div>
 <script>
 function showTab(tabGroupId, panelName) {
   document.querySelectorAll('#' + tabGroupId + ' .section-tab').forEach(function(el) {
-    el.classList.toggle('active', el.dataset.tab === panelName);
+    const selected = el.dataset.tab === panelName;
+    el.classList.toggle('active', selected);
+    el.setAttribute('aria-selected', String(selected));
+    el.tabIndex = selected ? 0 : -1;
   });
   document.querySelectorAll('[data-panel-for="' + tabGroupId + '"]').forEach(function(el) {
-    el.classList.toggle('active', el.dataset.panel === panelName);
+    const selected = el.dataset.panel === panelName;
+    el.classList.toggle('active', selected);
+    el.hidden = !selected;
   });
+}
+
+function tradeTabKey(event) {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+  const current = event.currentTarget;
+  const tabs = Array.from(current.parentElement.querySelectorAll('[role="tab"]'));
+  const index = tabs.indexOf(current);
+  const next = event.key === 'Home' ? tabs[0]
+    : event.key === 'End' ? tabs[tabs.length - 1]
+    : tabs[(index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+  event.preventDefault();
+  next.click();
+  next.focus();
 }
 </script>`;
 
@@ -1861,7 +1856,7 @@ function showTab(tabGroupId, panelName) {
 
   const html = layout(`CivicLens — ${m.name}`, `<a href="../index.html">Corpus</a> · ${esc(m.name)}`, body);
   writeFileSync(resolve(MEMBERS_DIR, `${m.member_id}.html`), html);
-  console.log(`  ✓ site/members/${m.member_id}.html  (${donors.length}d ${trades.length}t ${collapsedTrades.length}p ${peers.length}peers)`);
+  console.log(`  ✓ site/members/${m.member_id}.html  (${donors.length}d ${trades.length}t ${collapsedSuspicious.length} focused trades ${peers.length}peers)`);
 }
 
 // ─── Co-sponsorship network page ────────────────────────────────────────────
@@ -2344,6 +2339,7 @@ ${feed}
 // flag cards use, so the detector catalogue here never drifts from what renders
 // on profiles. No DB reads, no schema dependency.
 async function buildMethodology(): Promise<void> {
+  mkdirSync(OUT_DIR, { recursive: true });
   const detectorBlocks = Object.keys(PATTERN_META)
     .map(key => {
       const label = PATTERN_LABELS[key] ?? key;
@@ -2358,26 +2354,23 @@ async function buildMethodology(): Promise<void> {
 
   const body = `
 <h2>Methodology</h2>
-<p class="lede" style="max-width:760px;">CivicLens reconstructs what members of Congress did — trades, votes, sponsorships, and donors — from primary sources, then runs a fixed set of deterministic detectors over that record. This page documents how each detector measures a pattern, how confidence is computed, and what the numbers can and cannot show. It reports patterns, not verdicts.</p>
+<p class="lede" style="max-width:760px;">CivicLens assembles disclosed trades, recorded votes, bill sponsorships, and campaign finance records for selected members of Congress. Coverage varies by source. The latest recorded trade or vote date on a profile does not establish that all records through that date are included.</p>
 
-<h2 id="how-flags-are-scored">How a flag is scored</h2>
+<h2 id="how-flags-are-scored">How to read a flag</h2>
 <div class="how-to-read">
   <ul>
-    <li><strong>A flag is a measured pattern</strong> in the public record — never an accusation or a finding of wrongdoing.</li>
-    <li><strong>Confidence comes from a permutation null model.</strong> For a scored detector, the observed count is compared against many shuffles of the member's <em>own</em> activity, holding their pace fixed. The p-value is the share of shuffles that match or exceed the observed count; a low p-value means the pattern is hard to produce by that member's ordinary behaviour alone.</li>
-    <li><strong>The timing detectors are scored against each member's own trading pace.</strong> The trade-vote and spousal-timing flags use a seeded per-member null — a volume-preserving date shuffle for high-volume traders, a calendar draw otherwise — so a member whose sheer trade count fills every window earns no signal from volume alone. A flag that scores at p ≥ 0.05 keeps rendering with explicit chance-level language and is visually capped at the lowest weight tier. The null does not model earnings-season or market-event clustering, so tightly-timed trades driven by public market events can still register. This scoring layer is pre-registered (statistic, null, thresholds, and seeds fixed in code before the run) in the project repository, docs/2026-07-20-timing-detectors-scoring.md.</li>
-    <li><strong>Statistics are shown, never invented.</strong> Detectors that are not scored against a null model say so plainly and show only the count of cited records — no fabricated p-value.</li>
-    <li><strong>Weight reflects evidence strength, not a verdict.</strong> Visual intensity on a flag card maps to the strength of the statistical signal; it carries no moral colour.</li>
-    <li><strong>Everything is reproducible.</strong> The null model is seeded, so the same inputs yield the same scores. Every flag cites real rows you can verify in the sections above it.</li>
+    <li><strong>Timing flags are descriptive counts.</strong> They summarize trades within a defined window before a vote. A committee handling a bill and a bill naming a company are different kinds of matches. A committee match can occur without the bill naming the traded company.</li>
+    <li><strong>Visual weight reflects the rule used for the flag.</strong> A highlighted card can represent more matches or a different type of match. The timing flags shown in this beta have no confirmatory statistical result.</li>
+    <li><strong>Trade–vote receipts use a separate calendar comparison.</strong> These pair a trade and a later vote through a shared topic and, where scoring is available, compare the gap with gaps from shuffled trade dates. This comparison applies to the individual pairs shown in that section.</li>
+    <li>The detector identifies reproducible patterns in available data. It does not establish causation or statistical significance.</li>
   </ul>
 </div>
 
-<h2 id="detectors">Detectors</h2>
-<p class="lede" style="margin-bottom:12px;">The deterministic detection pass. Each runs over the corpus and only emits a flag when it can cite real underlying rows.</p>
+<h2 id="detectors">Detector rules</h2>
 ${detectorBlocks}
 
 <h2 id="rejected">Detectors we tested and rejected</h2>
-<p class="lede" style="max-width:760px;">A detector only ships if it can tell the real world from a shuffled one. Each candidate detector is pre-registered — statistic, null model, thresholds, and random seed fixed in code before the test runs — then run once against its null. If it fails, it is not published, not re-tuned, and not re-run. The failures are documented here with the same weight as the successes, because a platform that can only confirm its own hypotheses is an accusation engine, not a measurement instrument.</p>
+<p class="lede" style="max-width:760px;">These candidate detectors were tested against preregistered comparison models. The results did not support using them for public flags.</p>
 
 <div class="trade-card flag-card" style="margin-bottom:14px;">
   <div class="tc-header"><div class="tc-asset">District contracts ↔ trades (industry level)</div><div class="tc-meta"><span class="muted">rejected 2026-07-16 · p = 0.48</span></div></div>
@@ -2393,8 +2386,8 @@ ${detectorBlocks}
 
 <p style="max-width:760px;">Neither result proves the absence of a relationship between congressional trading and federal contracting. Each means one specific, honestly-tested method found nothing stronger than chance — and was retired instead of adjusted until it "worked."</p>
 
-<h2 id="sources">Primary sources</h2>
-<p class="lede" style="max-width:760px;">Every claim links back to the filing it came from. CivicLens draws only on primary sources: Congress.gov (bills, sponsorship, votes), GovTrack (vote records), OpenFEC (campaign finance), and House Clerk Periodic Transaction Reports (member trades). No claim rests on LLM-generated or stub data.</p>
+<h2 id="sources">Sources and coverage</h2>
+<p class="lede" style="max-width:760px;">Sources for this snapshot include Congress.gov for legislation, GovTrack for retained roll calls, OpenFEC for campaign finance, and House Clerk and Senate electronic disclosures for trades. Donor-theme comparisons use third-party industry classifications derived from FEC records. Former-staff links to Senate lobbying disclosures are withheld while office identities are verified.</p>
 
 <p style="margin-top: 32px;"><a class="row-link" href="index.html">← back to corpus</a></p>
 `;
@@ -2449,6 +2442,7 @@ export async function buildOne(memberId: string): Promise<void> {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const mi = process.argv.indexOf('--member');
   const run = process.argv.includes('--landing') ? buildLanding()
+    : process.argv.includes('--methodology') ? buildMethodology()
     : mi >= 0 && process.argv[mi + 1] ? buildOne(process.argv[mi + 1]) : buildAll();
   run.then(() => process.exit(0)).catch(e => { console.error(e); process.exit(1); });
 }
