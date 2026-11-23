@@ -31,6 +31,21 @@
       "dataThrough": "2026-07-23"
     },
     {
+      "slug": "josh-gottheimer",
+      "name": "Josh Gottheimer",
+      "party": "Democrat",
+      "chamber": "house",
+      "state": "NJ",
+      "stats": {
+        "trades": 2027,
+        "votes": 2100,
+        "sponsored": 196,
+        "cosponsored": 3243,
+        "donors": 99
+      },
+      "dataThrough": "2026-07-23"
+    },
+    {
       "slug": "lois-frankel",
       "name": "Lois Frankel",
       "party": "Democrat",
@@ -44,6 +59,21 @@
         "donors": 100
       },
       "dataThrough": "2026-07-23"
+    },
+    {
+      "slug": "mitch-mcconnell",
+      "name": "Mitch McConnell",
+      "party": "Republican",
+      "chamber": "senate",
+      "state": "KY",
+      "stats": {
+        "trades": 22,
+        "votes": 1700,
+        "sponsored": 539,
+        "cosponsored": 2289,
+        "donors": 20
+      },
+      "dataThrough": "2026-06-01"
     },
     {
       "slug": "nancy-pelosi",

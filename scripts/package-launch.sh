@@ -31,7 +31,7 @@ cd "$(dirname "$0")/.."
 # sitting member of the current Congress. Publication is opt-in — a member not
 # listed here cannot reach the site.
 MEMBERS=(
-  blake-moore dan-crenshaw lois-frankel nancy-pelosi
+  blake-moore dan-crenshaw josh-gottheimer lois-frankel mitch-mcconnell nancy-pelosi
   ron-wyden sheldon-whitehouse susan-collins
 )
 DB=data/civiclens.duckdb

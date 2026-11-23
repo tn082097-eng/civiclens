@@ -98,9 +98,10 @@ The packager checks each slug against the launch manifest and the same
 database snapshot used for rendering. It requires a recorded approved run
 with valid required artifacts, a canonical sitting-member identity, and an
 eligible theme-gaps artifact. The release reviewer also checks current
-office status against official rosters. The seven-profile beta excludes
-Goldman, Gottheimer and Moskowitz until their release evidence and renders
-are ready.
+office status against official rosters. The initial seven-profile beta
+excluded Goldman, Gottheimer and Moskowitz until their release evidence and
+renders were ready. The November 23 expansion adds Josh Gottheimer and
+Mitch McConnell after both passed the roster and repeat-render checks.
 
 The roster check is the artifact-corpus gate for this static beta. The
 full `npm run validate:corpus` command still validates historical tasks and
