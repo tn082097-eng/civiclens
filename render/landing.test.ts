@@ -23,6 +23,8 @@ test('renderLanding: member card carries name, sub-line, formatted inventory num
   assert.match(html, /Democrat · NJ · House/);
   assert.match(html, /1,923/);
   assert.match(html, /3,243/);
+  assert.match(html, /trades on record/);
+  assert.doesNotMatch(html, /2,000|floor votes/);
   assert.match(html, /href="members\/josh-gottheimer\.html"/);
   assert.match(html, /latest trade or vote on record <span class="mono">2026-06-30<\/span>/);
 });

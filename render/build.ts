@@ -1199,11 +1199,11 @@ function renderActivityGlance(g: ActivityGlance): string {
   const cell = (label: string, value: string) =>
     `<div class="glance-cell"><div class="glance-value">${value}</div><div class="glance-label">${esc(label)}</div></div>`;
   return `
-<p class="lede" style="margin-bottom:8px;">${CURRENT_CONGRESS}th Congress, ${CYCLE_START.slice(0,4)}–${CYCLE_END.slice(0,4)} cycle. Counts only.</p>
+<p class="lede" style="margin-bottom:8px;">${CURRENT_CONGRESS}th Congress, ${CYCLE_START.slice(0,4)}–${CYCLE_END.slice(0,4)} cycle. Roll-call records cover the loaded snapshot and include recorded absences.</p>
 <div class="glance-grid">
   ${cell('Trades',                   g.trades.toLocaleString())}
   ${cell('Trade volume',             fmtMoney(g.tradeVolume))}
-  ${cell('Votes cast',               g.votes.toLocaleString())}
+  ${cell('Roll calls in snapshot',   g.votes.toLocaleString())}
   ${cell('Bills sponsored (all-time)', g.billsSponsored.toLocaleString())}
   ${cell('Top donor type',           g.topDonorType ?? '—')}
   ${cell('Distinct tickers traded',  g.distinctTickers.toLocaleString())}

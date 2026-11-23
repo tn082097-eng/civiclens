@@ -33,7 +33,6 @@ export interface PublishedManifest {
 
 const STAT_LABELS: [keyof PublishedMemberStats, string][] = [
   ['trades', 'trades on record'],
-  ['votes', 'floor votes'],
   ['sponsored', 'bills sponsored'],
   ['cosponsored', 'bills cosponsored'],
   ['donors', 'donor records'],
