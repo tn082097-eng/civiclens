@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
@@ -17,7 +17,7 @@ test('a successful Senate PTR search is recorded as a target- and range-specific
       canonicalName: 'Kevin Cramer',
       fromYear: 2023,
       toYear: 2026,
-      filingIds: [],
+      filingIds: ['S-FOUND-2', 'S-FOUND-1'],
       fetchedAt: '2026-09-09T12:00:00.000Z',
     });
 
@@ -33,8 +33,8 @@ test('a successful Senate PTR search is recorded as a target- and range-specific
       canonicalName: 'Kevin Cramer',
       fromYear: 2023,
       toYear: 2026,
-      filingIds: [],
-      filingCount: 0,
+      filingIds: ['S-FOUND-1', 'S-FOUND-2'],
+      filingCount: 2,
       sourceUrl: 'https://efdsearch.senate.gov/search/report/data/',
       fetchedAt: '2026-09-09T12:00:00.000Z',
     });
@@ -71,7 +71,7 @@ test('an incomplete PTR download does not replace an earlier successful receipt'
       canonicalName: 'Kevin Cramer',
       fromYear: 2023,
       toYear: 2025,
-      filingIds: [],
+      filingIds: ['S-FOUND-1'],
       fetchedAt: '2026-09-08T12:00:00.000Z',
     });
 
@@ -87,6 +87,38 @@ test('an incomplete PTR download does not replace an earlier successful receipt'
 
     assert.equal(result, null);
     assert.deepEqual(readSenateSearchReceipt(cacheRoot, 'C001096'), original);
+  } finally {
+    rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+test('a zero-filing search cannot be written or read back as a receipt', () => {
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'senate-receipt-'));
+  try {
+    const empty = {
+      bioguideId: 'C001035',
+      canonicalName: 'Susan M. Collins',
+      fromYear: 2026,
+      toYear: 2026,
+      filingIds: [] as string[],
+      fetchedAt: '2026-11-24T12:00:00.000Z',
+    };
+    assert.throws(() => writeSenateSearchReceipt(cacheRoot, empty), /cannot certify zero Senate PTR filings/);
+    assert.throws(
+      () => writeCompleteSenateSearchReceipt(cacheRoot, { ...empty, completedFilingIds: [] }),
+      /cannot certify zero Senate PTR filings/,
+    );
+
+    // A legacy receipt written before the rule is rejected on read.
+    mkdirSync(join(cacheRoot, '_search-receipts'), { recursive: true });
+    writeFileSync(join(cacheRoot, '_search-receipts', 'C001035.json'), JSON.stringify({
+      schemaVersion: 1, kind: 'senate-ptr-search', status: 'success',
+      bioguideId: 'C001035', canonicalName: 'Susan M. Collins', fromYear: 2026, toYear: 2026,
+      filingIds: [], filingCount: 0,
+      sourceUrl: 'https://efdsearch.senate.gov/search/report/data/',
+      fetchedAt: '2026-11-24T12:00:00.000Z',
+    }));
+    assert.throws(() => readSenateSearchReceipt(cacheRoot, 'C001035'), /records zero filings/);
   } finally {
     rmSync(cacheRoot, { recursive: true, force: true });
   }

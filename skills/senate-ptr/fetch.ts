@@ -13,14 +13,18 @@
  *
  * Usage:
  *   npx tsx skills/senate-ptr/fetch.ts --name "Susan Collins"
+ *   npx tsx skills/senate-ptr/fetch.ts --bioguide C001035
  *   npx tsx skills/senate-ptr/fetch.ts --names names.txt [--from-year 2022] [--to-year 2026]
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { SENATE_CACHE } from '../../lib/paths.js';
-import { getLegislatorIndex } from '../../lib/legislators.js';
-import { writeCompleteSenateSearchReceipt } from '../../lib/senate-ptr-receipt.js';
+import { getLegislatorIndex, type LegislatorIdentity } from '../../lib/legislators.js';
+import {
+  EMPTY_SEARCH_NOT_EVIDENCE,
+  writeCompleteSenateSearchReceipt,
+} from '../../lib/senate-ptr-receipt.js';
 
 // Canonical cache location (data/caches/senate-ptr-cache) — must match the
 // loader side. The old repo-root senate-ptr-cache/ predates the data/ restructure.
@@ -50,6 +54,11 @@ export interface SenatePTR {
   ptrUrl: string;
   transactions: SenateTransaction[];
 }
+
+type SenateSearchTarget = Pick<LegislatorIdentity, 'first' | 'last'> & {
+  bioguideId: string;
+  canonicalName: string;
+};
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -264,9 +273,9 @@ export async function fetchSenatePtrs(
     fromYear?: number;
     toYear?: number;
     cacheDir?: string;
-    receiptTargets?: Map<string, { bioguideId: string; canonicalName: string }>;
+    receiptTargets?: Map<string, SenateSearchTarget>;
   } = {},
-): Promise<{ fetched: number; cached: number; errors: number }> {
+): Promise<{ fetched: number; cached: number; errors: number; unconfirmedEmpty: number }> {
   const fromYear = opts.fromYear ?? 2022;
   const toYear   = opts.toYear   ?? new Date().getFullYear();
   const fromDate = `01/01/${fromYear} 00:00:00`;
@@ -276,14 +285,15 @@ export async function fetchSenatePtrs(
   mkdirSync(cacheDir, { recursive: true });
   console.log(`Fetching Senate PTRs for ${names.length} senator(s) (${fromYear}–${toYear})…`);
 
-  let fetched = 0, cached = 0, errors = 0;
+  let fetched = 0, cached = 0, errors = 0, unconfirmedEmpty = 0;
   const session = await getSession();
   await sleep(DELAY_MS);
 
   for (const fullName of names) {
+    const target = opts.receiptTargets?.get(fullName);
     const parts     = fullName.trim().split(/\s+/);
-    const lastName  = parts[parts.length - 1];
-    const firstName = parts.slice(0, -1).join(' ');
+    const lastName  = target?.last?.trim() || parts[parts.length - 1];
+    const firstName = target?.first?.trim() || parts.slice(0, -1).join(' ');
 
     process.stdout.write(`  [${fullName}] searching…\r`);
     let refs: PtrRef[] = [];
@@ -295,18 +305,11 @@ export async function fetchSenatePtrs(
     }
 
     if (refs.length === 0) {
-      const target = opts.receiptTargets?.get(fullName);
-      if (target) {
-        writeCompleteSenateSearchReceipt(cacheDir, {
-          ...target,
-          fromYear,
-          toYear,
-          filingIds: [],
-          completedFilingIds: [],
-          fetchedAt: new Date().toISOString(),
-        });
-      }
-      console.log(`  — ${fullName}: no PTRs found (${fromYear}–${toYear})`);
+      // No receipt: a name query that misses the filer's recorded name looks
+      // identical to a senator with no PTRs. Any earlier receipt is left as is.
+      unconfirmedEmpty++;
+      console.log(`  ? ${fullName}: zero results for "${firstName}" "${lastName}" ` +
+        `(${fromYear}–${toYear}); not recorded: ${EMPTY_SEARCH_NOT_EVIDENCE}`);
       continue;
     }
 
@@ -348,7 +351,6 @@ export async function fetchSenatePtrs(
       }
     }
 
-    const target = opts.receiptTargets?.get(fullName);
     if (target) {
       writeCompleteSenateSearchReceipt(cacheDir, {
         ...target,
@@ -363,7 +365,7 @@ export async function fetchSenatePtrs(
     console.log(`  ✓ ${fullName}: ${refs.length} PTR(s) (${memberFetched} new, ${memberCached} cached)`);
   }
 
-  return { fetched, cached, errors };
+  return { fetched, cached, errors, unconfirmedEmpty };
 }
 
 // ─── CLI ──────────────────────────────────────────────────────────────────────
@@ -385,7 +387,7 @@ async function main() {
     process.exit(1);
   }
 
-  let receiptTargets: Map<string, { bioguideId: string; canonicalName: string }> | undefined;
+  let receiptTargets: Map<string, SenateSearchTarget> | undefined;
   let names: string[];
   if (bioguideArg) {
     const identity = getLegislatorIndex().get(bioguideArg);
@@ -396,6 +398,8 @@ async function main() {
     receiptTargets = new Map([[identity.officialFull, {
       bioguideId: identity.bioguide,
       canonicalName: identity.officialFull,
+      first: identity.first,
+      last: identity.last,
     }]]);
   } else {
     names = existsSync(namesArg!)
@@ -406,14 +410,15 @@ async function main() {
   const fromYear = get('--from-year') ? parseInt(get('--from-year')!) : undefined;
   const toYear   = get('--to-year')   ? parseInt(get('--to-year')!)   : undefined;
 
-  const { fetched, cached, errors } = await fetchSenatePtrs(names, {
+  const { fetched, cached, errors, unconfirmedEmpty } = await fetchSenatePtrs(names, {
     fromYear,
     toYear,
     receiptTargets,
   });
-  console.log(`\nDone: ${fetched} new, ${cached} cached, ${errors} errors`);
+  console.log(`\nDone: ${fetched} new, ${cached} cached, ${errors} errors, ` +
+    `${unconfirmedEmpty} zero-result (unconfirmed) searches`);
   console.log(`Cache: ${CACHE_DIR}`);
-  process.exit(errors > 0 ? 1 : 0);
+  process.exit(errors > 0 || unconfirmedEmpty > 0 ? 1 : 0);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

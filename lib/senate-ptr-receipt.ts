@@ -10,6 +10,17 @@ import { resolve } from 'node:path';
 export const SENATE_PTR_SEARCH_SOURCE =
   'https://efdsearch.senate.gov/search/report/data/';
 
+/**
+ * EFDS search is a first/last-name query. A query that misses the filer's
+ * recorded name (legal name vs nickname, a middle initial) returns zero rows
+ * exactly like a senator with no PTRs, so a zero-result search is not
+ * identity-matched evidence and can never certify verified-empty. Receipts
+ * therefore record only nonempty filing inventories, and an empty receipt on
+ * disk (written before this rule) is rejected rather than read as evidence.
+ */
+export const EMPTY_SEARCH_NOT_EVIDENCE =
+  'a zero-result EFDS name search cannot certify zero Senate PTR filings';
+
 export interface SenateSearchReceipt {
   schemaVersion: 1;
   kind: 'senate-ptr-search';
@@ -64,6 +75,10 @@ function validateReceipt(value: unknown, expectedBioguide?: string): SenateSearc
       new Set(receipt.filingIds).size !== receipt.filingIds.length ||
       receipt.filingCount !== receipt.filingIds.length) {
     throw new Error('malformed Senate PTR search filing inventory');
+  }
+  if (receipt.filingCount === 0) {
+    throw new Error(`Senate PTR search receipt for ${receipt.bioguideId} records zero filings; ` +
+      `${EMPTY_SEARCH_NOT_EVIDENCE}`);
   }
   if (receipt.sourceUrl !== SENATE_PTR_SEARCH_SOURCE ||
       typeof receipt.fetchedAt !== 'string' || Number.isNaN(Date.parse(receipt.fetchedAt))) {

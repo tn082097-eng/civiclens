@@ -81,7 +81,6 @@ export async function loadSenatePtrs(
   totalTx: number;
   unmatched: number;
   targetMatched: number;
-  verifiedEmpty: boolean;
 }> {
   const conn = deps.conn ?? (await getDb());
   if (!deps.conn) await applySchema();
@@ -102,12 +101,11 @@ export async function loadSenatePtrs(
         `No year directories and no successful Senate PTR search receipt for ${scope.bioguideId}`,
       );
     }
-    if (receipt.filingCount > 0) {
-      throw new Error(
-        `Senate PTR indexed filing JSON missing: ${receipt.filingIds.join(', ')}`,
-      );
-    }
-    return { filers: [], totalTx: 0, unmatched: 0, targetMatched: 0, verifiedEmpty: true };
+    // A receipt always lists at least one filing (zero-result searches are not
+    // evidence; see lib/senate-ptr-receipt.ts), so an empty cache is missing data.
+    throw new Error(
+      `Senate PTR indexed filing JSON missing: ${receipt.filingIds.join(', ')}`,
+    );
   }
 
   const fetchedAt = new Date().toISOString();
@@ -243,8 +241,7 @@ export async function loadSenatePtrs(
   if (scope.kind === 'member' && targetMatched === 0 && !receipt) {
     throw new Error(`No successful Senate PTR search receipt for ${scope.bioguideId}`);
   }
-  const verifiedEmpty = scope.kind === 'member' && targetMatched === 0 && receipt?.filingCount === 0;
-  return { filers: [...summaryMap.values()], totalTx, unmatched, targetMatched, verifiedEmpty };
+  return { filers: [...summaryMap.values()], totalTx, unmatched, targetMatched };
 }
 
 // ─── CLI ──────────────────────────────────────────────────────────────────────
@@ -255,7 +252,7 @@ async function main() {
   const scope = await resolveScope(parseScopeArgs(process.argv.slice(2)));
 
   console.log(`Loading Senate PTRs${dryRun ? ' (dry-run)' : ''}…\n`);
-  const { filers, totalTx, unmatched, verifiedEmpty } = await loadSenatePtrs(scope, { dryRun });
+  const { filers, totalTx, unmatched } = await loadSenatePtrs(scope, { dryRun });
 
   const nameW = Math.max(20, ...filers.map(f => f.name.length));
   const memberW = Math.max(20, ...filers.map(f => (f.memberId ?? 'unmatched').length));
@@ -270,9 +267,6 @@ async function main() {
   }
   console.log(line);
   console.log(`Total: ${filers.length} filer(s), ${totalTx} transactions, ${unmatched} unmatched`);
-  if (verifiedEmpty && scope.kind === 'member') {
-    console.log(`Verified empty: successful EFDS search found zero PTR filings for ${scope.bioguideId}; DB unchanged.`);
-  }
   process.exit(unmatched > 0 ? 1 : 0);
 }
 

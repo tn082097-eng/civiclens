@@ -127,23 +127,27 @@ test('senate all mode writes every senator', async () => {
   }
 });
 
-test('member mode accepts a source-verified empty Senate PTR search and changes no rows', async () => {
-  const { conn, cleanup } = await tempDb();
-  const cacheRoot = mkdtempSync(join(tmpdir(), 'senate-cache-'));
-  try {
-    await insertMember(conn, { memberId: 'maria-cantwell', name: 'Maria Cantwell', chamber: 'senate', state: 'WA' });
-    writeSearchReceipt(cacheRoot);
-    const before = await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index');
+test('member mode rejects a legacy zero-filing receipt instead of treating it as verified empty', async () => {
+  // A zero-result EFDS name search is not identity-matched evidence (the
+  // 2026-11-24 C001035 receipt recorded zero filings for a senator with three).
+  for (const withOtherFiling of [false, true]) {
+    const { conn, cleanup } = await tempDb();
+    const cacheRoot = mkdtempSync(join(tmpdir(), 'senate-cache-'));
+    try {
+      await seedTwoSenators(conn);
+      if (withOtherFiling) writeFiling(cacheRoot, 2024, filing('S-PM-1', 'Patty', 'Murray', 'MSFT'));
+      writeSearchReceipt(cacheRoot);
+      const before = await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index');
 
-    const result = await loadSenatePtrs(senatorScope('maria-cantwell'), { conn, cacheRoot });
-
-    assert.equal(result.verifiedEmpty, true);
-    assert.equal(result.totalTx, 0);
-    assert.equal(result.targetMatched, 0);
-    assert.equal(await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index'), before);
-  } finally {
-    cleanup();
-    rmSync(cacheRoot, { recursive: true, force: true });
+      await assert.rejects(
+        loadSenatePtrs(senatorScope('maria-cantwell'), { conn, cacheRoot }),
+        /records zero filings; a zero-result EFDS name search cannot certify/,
+      );
+      assert.equal(await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index'), before);
+    } finally {
+      cleanup();
+      rmSync(cacheRoot, { recursive: true, force: true });
+    }
   }
 });
 
