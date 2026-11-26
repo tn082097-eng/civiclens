@@ -162,24 +162,49 @@
   "not_frozen": "No frozen official treaty XML, House amendment XML, or House journal/adjourn/motion XML exists in this package. Senate menus other than 119/1 and House listing pages other than those listed are not frozen.",
   "identity_snapshot": {
     "repository": "https://github.com/unitedstates/congress-legislators",
-    "commit": "d5af3d2d2490f8c6532c9490b1f47a76cacca699",
-    "license": "CC0-1.0 (LICENSE sha256 a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499)",
+    "commit": "2b1fe728159fe5f5e145277794106e800719eb50",
+    "license": "CC0-1.0 (LICENSE sha256 a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499, 7048 bytes, captured 2026-11-26; receipt artifacts/2026-11-24-roster-freshness/identity-probe/license-receipt-2b1fe72.json)",
+    "as_of": "2026-11-24",
     "inputs": [
       {
         "name": "legislators-current.yaml",
-        "url": "https://raw.githubusercontent.com/unitedstates/congress-legislators/d5af3d2d2490f8c6532c9490b1f47a76cacca699/legislators-current.yaml",
-        "bytes": 1081187,
-        "sha256": "bd32e62b1c89e9585e4ec49df5676563510e9435d779c061ff50139833f73a49"
+        "url": "https://raw.githubusercontent.com/unitedstates/congress-legislators/2b1fe728159fe5f5e145277794106e800719eb50/legislators-current.yaml",
+        "bytes": 1081522,
+        "sha256": "e805231b79539bf1a0d2ae2fc0698f41a60165ee28ec1f467ba7730884e5e753"
       },
       {
         "name": "legislators-historical.yaml",
-        "url": "https://raw.githubusercontent.com/unitedstates/congress-legislators/d5af3d2d2490f8c6532c9490b1f47a76cacca699/legislators-historical.yaml",
+        "url": "https://raw.githubusercontent.com/unitedstates/congress-legislators/2b1fe728159fe5f5e145277794106e800719eb50/legislators-historical.yaml",
         "bytes": 8997407,
-        "sha256": "9641615f336b3113d6f89152e3441128cbdc3f61ccf87c65da3a015076c78c91",
-        "note": "complete second fetch after documented 8 MiB cap; the first .partial response (8388609 bytes, sha256 09244e2c...) is incomplete and must never be parsed"
+        "sha256": "ea7a1e35e7854418033b155420b522d3cefffc9763b67d7044cde45b8e49a355"
       }
     ],
+    "receipts": "artifacts/2026-11-24-roster-freshness/identity-probe/source-receipts.json (ignored run directory; summarized in SOURCES.md)",
     "raw_yaml_committed": false,
-    "derived_mapping": "fixtures/votes/identity/ (written by the derivation script; hash recorded there)"
+    "derived_mapping": "fixtures/votes/identity/legislators-2b1fe72-voting-terms.json (sha256 c5c8509eb23ad9e414644810cfef5f160508b87a1cd4a3472ebea2af1fa2fe46)",
+    "superseded": [
+      {
+        "repository": "https://github.com/unitedstates/congress-legislators",
+        "commit": "d5af3d2d2490f8c6532c9490b1f47a76cacca699",
+        "license": "CC0-1.0 (LICENSE sha256 a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499)",
+        "inputs": [
+          {
+            "name": "legislators-current.yaml",
+            "url": "https://raw.githubusercontent.com/unitedstates/congress-legislators/d5af3d2d2490f8c6532c9490b1f47a76cacca699/legislators-current.yaml",
+            "bytes": 1081187,
+            "sha256": "bd32e62b1c89e9585e4ec49df5676563510e9435d779c061ff50139833f73a49"
+          },
+          {
+            "name": "legislators-historical.yaml",
+            "url": "https://raw.githubusercontent.com/unitedstates/congress-legislators/d5af3d2d2490f8c6532c9490b1f47a76cacca699/legislators-historical.yaml",
+            "bytes": 8997407,
+            "sha256": "9641615f336b3113d6f89152e3441128cbdc3f61ccf87c65da3a015076c78c91",
+            "note": "complete second fetch after documented 8 MiB cap; the first .partial response (8388609 bytes, sha256 09244e2c...) is incomplete and must never be parsed"
+          }
+        ],
+        "raw_yaml_committed": false,
+        "derived_mapping": "fixtures/votes/identity/legislators-d5af3d2-voting-terms.json (sha256 582e5b3e825b54b323c7720cac0f39d6d92e42baf1c009ccb78702a863ac9fe8)"
+      }
+    ]
   }
 }

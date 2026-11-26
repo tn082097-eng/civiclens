@@ -476,3 +476,14 @@ retain their first-projection and existing bundle checks; contradictory or
 partially populated empty-array projections fail closed. This corrects the
 downstream empty-array consistency check without changing acquisition receipts.
 See the [captured procedural source and preserved failure](senate-empty-document-source-2026-10-21.md).
+
+### Identity pin refresh (amendment 2026-11-24)
+
+The identity bullet above now refers to congress-legislators
+`2b1fe728159fe5f5e145277794106e800719eb50`, not `d5af3d2`. The mapping stays
+dated and keeps the `2019-01-03` floor. It also gains an `as_of` limit
+(`2026-11-24`, the capture date). A roll or member date after `as_of` fails
+closed with `date_after_snapshot` until the pin is refreshed. The refresh changes
+only two senators' terms (H001104, M001244). Receipts and the diff are recorded
+in `SOURCES.md`. No other identity rule changes: House ids stay bioguide, Senate
+ids stay LIS → bioguide, and name-based lookup stays disabled.

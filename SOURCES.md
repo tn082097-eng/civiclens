@@ -595,8 +595,62 @@ five were captured 2026-10-16 13:11 UTC. Existing samples, House 2025 roll 1
 (QUORUM) and Senate 119/1 roll 1, remain valid. No treaty, House amendment or
 House journal/adjourn/motion XML is frozen.
 
-**Identity snapshot.** The source is `unitedstates/congress-legislators` at
-commit `d5af3d2d2490f8c6532c9490b1f47a76cacca699`, licensed CC0.
+**Identity snapshot (current, refreshed 2026-11-24).** The source is
+`unitedstates/congress-legislators` at commit
+`2b1fe728159fe5f5e145277794106e800719eb50`, CC0. Receipts are in the ignored
+run directory `artifacts/2026-11-24-roster-freshness/identity-probe/`
+(`source-receipts.json`, and `license-receipt-2b1fe72.json` for the LICENSE).
+Every capture below returned HTTP 200 with no redirect and a complete body. The
+data captures were fetched on 2026-11-24 between 06:37:21 and 06:37:23 UTC; the
+LICENSE was fetched on 2026-11-26 at 12:20:14 UTC. Its bytes are identical to
+the LICENSE recorded for `d5af3d2` (CC0 1.0 Universal).
+
+| Capture | URL | Bytes | SHA256 |
+|---|---|---|---|
+| `legislators-current.yaml` | `https://raw.githubusercontent.com/unitedstates/congress-legislators/2b1fe728159fe5f5e145277794106e800719eb50/legislators-current.yaml` | 1,081,522 | `e805231b79539bf1a0d2ae2fc0698f41a60165ee28ec1f467ba7730884e5e753` |
+| `legislators-historical.yaml` | `https://raw.githubusercontent.com/unitedstates/congress-legislators/2b1fe728159fe5f5e145277794106e800719eb50/legislators-historical.yaml` | 8,997,407 | `ea7a1e35e7854418033b155420b522d3cefffc9763b67d7044cde45b8e49a355` |
+| previous historical (re-fetch of `d5af3d2`) | `https://raw.githubusercontent.com/unitedstates/congress-legislators/d5af3d2d2490f8c6532c9490b1f47a76cacca699/legislators-historical.yaml` | 8,997,407 | `9641615f336b3113d6f89152e3441128cbdc3f61ccf87c65da3a015076c78c91` |
+| Senate, Ohio senators | `https://www.senate.gov/states/OH/senators.htm` | 41,832 | `9e1175dd3efa7083157e8a0f9886a3e31c7dab90082139e8ebe2bd124433d120` |
+| Senate, Florida senators | `https://www.senate.gov/states/FL/senators.htm` | 33,019 | `dc926af30f37e94a582fd5a7f0b654a919a0677ec9171146223244242474708c` |
+| Ohio Revised Code 3521.02 | `https://codes.ohio.gov/ohio-revised-code/section-3521.02` | 16,561 | `c3de34c3e854f9b82b12a00a432fe7c12fbac233a7fa064999ea0edd931cac74` |
+| `LICENSE` | `https://raw.githubusercontent.com/unitedstates/congress-legislators/2b1fe728159fe5f5e145277794106e800719eb50/LICENSE` | 7,048 | `a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499` |
+
+Why it was refreshed: under the previous pin, Jon Husted (H001104/S438) and
+Ashley Moody (M001244/S439) both ended on 2026-11-03. Official Senate XML records
+both voting from 2026-11-09 through 2026-11-20, so the identity check rejected 23
+November Senate rolls. On the captured Senate pages, both senators' service runs
+from Jan. 21, 2025 to "Present".
+
+The derived mapping is
+`fixtures/votes/identity/legislators-2b1fe72-voting-terms.json`, sha256
+`c5c8509eb23ad9e414644810cfef5f160508b87a1cd4a3472ebea2af1fa2fe46`. It holds
+895 people and 2,492 terms and uses contract version 2. Against the previous
+mapping, only two people differ:
+
+- H001104 Husted: the appointed term now ends `2026-12-15` instead of
+  `2026-11-03`. The new end matches Ohio R.C. 3521.02: an appointee serves
+  "until the fifteenth day of December" after the next regular state election.
+- M001244 Moody: a special-election term runs `2026-11-04` to `2029-01-03`
+  after the appointed term ends `2026-11-03`.
+
+The historical YAML is the same length as before but has a different hash. The
+re-fetched `d5af3d2` copy matches its original pin, and the 49 changed lines are
+start/end dates of terms in 2001 or earlier. All of them fall before the floor
+and none reaches the derived mapping.
+
+**As-of limit.** The snapshot is trusted only through `as_of` `2026-11-24`, the
+capture date. Identity lookups after that date fail with `date_after_snapshot`
+until the pin is refreshed. This limit also bounds Husted's scheduled end date:
+it is not used past 2026-11-24, and an early departure would not go undetected
+past the capture date. Whether service on 2026-12-15 itself counts (the end date
+is inclusive) is therefore not relied on.
+
+**Identity snapshot (superseded).** The original source is
+`unitedstates/congress-legislators` at commit
+`d5af3d2d2490f8c6532c9490b1f47a76cacca699`, licensed CC0. Its derived mapping
+`fixtures/votes/identity/legislators-d5af3d2-voting-terms.json` (sha256
+`582e5b3e…ac9fe8`) is kept for the archived validation records that cite it. The
+current loader rejects it.
 
 | File | Bytes | SHA256 |
 |---|---|---|

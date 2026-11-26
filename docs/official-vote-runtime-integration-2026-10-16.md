@@ -321,6 +321,14 @@ pattern. Fetch functions are injectable for tests.
   `unmapped_voter`, `voter_not_in_service`). The lookup itself stays strict;
   the approved listing rule in §4 is applied only by the normalizer.
 
+- **Amendment (pin refresh 2026-11-24).** The pin is now commit
+  `2b1fe728159fe5f5e145277794106e800719eb50`. The output is
+  `fixtures/votes/identity/legislators-2b1fe72-voting-terms.json` with contract
+  `version:2` and a new top-level `as_of` (`2026-11-24`). `IdentityIndex` also
+  exposes `asOf`. Both lookups throw `date_after_snapshot` for a date after
+  `as_of`. Inputs, receipts and the two-person diff are in `SOURCES.md`
+  (identity snapshot, current). Everything else in this section is unchanged.
+
 ## 4. Normalization (owner: official-vote-ingest, TS)
 
 `skills/researcher/official-member-votes.ts` is pure: no I/O except reading

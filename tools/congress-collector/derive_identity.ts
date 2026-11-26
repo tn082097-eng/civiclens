@@ -3,9 +3,13 @@ import {readFileSync, writeFileSync, mkdirSync} from 'node:fs';
 import {dirname} from 'node:path';
 import {createHash} from 'node:crypto';
 import yaml from 'js-yaml';
-const commit='d5af3d2d2490f8c6532c9490b1f47a76cacca699';
+const commit='2b1fe728159fe5f5e145277794106e800719eb50';
 const floor='2019-01-03';
-const pins=[['legislators-current.yaml',1081187,'bd32e62b1c89e9585e4ec49df5676563510e9435d779c061ff50139833f73a49'],['legislators-historical.yaml',8997407,'9641615f336b3113d6f89152e3441128cbdc3f61ccf87c65da3a015076c78c91']] as const;
+// Last date this snapshot is trusted for: the day its inputs and the Senate
+// service cross-checks were captured (SOURCES.md, identity snapshot refresh).
+// Lookups after this date fail closed until the pin is refreshed.
+const asOf='2026-11-24';
+const pins=[['legislators-current.yaml',1081522,'e805231b79539bf1a0d2ae2fc0698f41a60165ee28ec1f467ba7730884e5e753'],['legislators-historical.yaml',8997407,'ea7a1e35e7854418033b155420b522d3cefffc9763b67d7044cde45b8e49a355']] as const;
 const args=process.argv.slice(2);
 function arg(flag:string) {const n=args.indexOf(flag);if(n<0||!args[n+1]||args[n+1].startsWith('--'))throw new Error(`missing ${flag}`);return args[n+1];}
 if(args.length!==6||new Set(args.filter(a=>a.startsWith('--'))).size!==3)throw new Error('expected --current --historical --out');
@@ -36,6 +40,6 @@ for(let n=0;n<2;n++){
 }
 people.sort((a,b)=>a.bioguide.localeCompare(b.bioguide));
 function sorted(v:any):any {if(Array.isArray(v))return v.map(sorted);if(v!==null&&typeof v==='object')return Object.fromEntries(Object.keys(v).sort().map(k=>[k,sorted(v[k])]));return v;}
-const result={contract:'civiclens.official-vote-identity',version:1,source:{repository:'https://github.com/unitedstates/congress-legislators',commit,license:'CC0-1.0',inputs:pins.map(([name,bytes,sha256])=>({name,bytes,sha256,url:`https://raw.githubusercontent.com/unitedstates/congress-legislators/${commit}/${name}`}))},floor,exclusion:'Exclude people without rep/sen terms ending on or after 2019-01-03; keep only terms ending on or after the floor.',people};
+const result={contract:'civiclens.official-vote-identity',version:2,as_of:asOf,source:{repository:'https://github.com/unitedstates/congress-legislators',commit,license:'CC0-1.0',inputs:pins.map(([name,bytes,sha256])=>({name,bytes,sha256,url:`https://raw.githubusercontent.com/unitedstates/congress-legislators/${commit}/${name}`}))},floor,exclusion:'Exclude people without rep/sen terms ending on or after 2019-01-03; keep only terms ending on or after the floor.',people};
 mkdirSync(dirname(output),{recursive:true});writeFileSync(output,JSON.stringify(sorted(result),null,2)+'\n');
 console.log(JSON.stringify({output,people:people.length,terms:people.reduce((n,p)=>n+p.terms.length,0),sha256:createHash('sha256').update(readFileSync(output)).digest('hex')}));
