@@ -13,6 +13,7 @@ import { join } from 'node:path';
 import { tempDb, insertMember, snapshot } from './__testkit__/temp-db.js';
 import { loadPfdYear } from './load-pfd.js';
 import type { IngestScope } from '../lib/ingest-scope.js';
+import { loadIdentityIndex, type IdentityIndex } from '../lib/official-identity.js';
 
 function memberScope(slug: string): IngestScope {
   return { kind: 'member', slug, bioguideId: 'X', memberId: slug, chamber: 'house' };
@@ -36,14 +37,28 @@ function writeFiling(cacheRoot: string, year: number, filing: any): void {
 
 function writeIndex(cacheRoot: string, year: number, records: Array<{
   last: string; first: string; filingType: string; stateDistrict: string; docId: string; recordYear?: number;
+  filingDate?: string;
 }>): void {
   const dir = join(cacheRoot, 'index');
   mkdirSync(dir, { recursive: true });
   const members = records.map(r => `<Member>
     <Last>${r.last}</Last><First>${r.first}</First><FilingType>${r.filingType}</FilingType>
-    <StateDst>${r.stateDistrict}</StateDst><Year>${r.recordYear ?? year}</Year><DocID>${r.docId}</DocID>
+    <StateDst>${r.stateDistrict}</StateDst><Year>${r.recordYear ?? year}</Year>
+    <FilingDate>${r.filingDate ?? `1/15/${r.recordYear ?? year}`}</FilingDate><DocID>${r.docId}</DocID>
   </Member>`).join('\n');
   writeFileSync(join(dir, `${year}FD.xml`), `<FinancialDisclosure>${members}</FinancialDisclosure>`);
+}
+
+/** Pinned seat occupancy stand-in: every lookup returns these holders. */
+function seats(...holders: string[]) {
+  const calls: string[] = [];
+  const index = {
+    houseSeatHolders(state: string, district: number, from: string, to: string) {
+      calls.push(`${state}${district}:${from}..${to}`);
+      return holders;
+    },
+  } as unknown as IdentityIndex;
+  return { seatIdentity: () => index, calls };
 }
 
 function filing(filingId: string, name: string, sd: string, ticker: string) {
@@ -257,9 +272,9 @@ test('an ambiguous same-district surname record fails closed instead of proving 
     ]);
     await assert.rejects(
       () => loadPfdYear(2024, memberScope('jane-doe'), {
-        conn, cacheRoot, legislatorIndex: janeIdentity(),
+        conn, cacheRoot, legislatorIndex: janeIdentity(), ...seats('X', 'Y'),
       }),
-      /no \*\.json files/i,
+      /ambiguous target identity.*no \*\.json files/i,
     );
   } finally {
     cleanup();
@@ -372,8 +387,96 @@ for (const defect of ['ambiguous-index', 'incomplete-index-record', 'wrong-extra
       await seedTwoMembers(conn);
       writeFiling(cacheRoot, 2024, filing('1000001', defect === 'wrong-extracted-member' ? 'John Roe' : 'Jane Doe', defect === 'wrong-extracted-member' ? 'NY03' : 'CA12', 'AAPL'));
       writeIndex(cacheRoot, 2024, [{ last: 'Doe', first: defect === 'ambiguous-index' ? 'Janet' : 'Jane', filingType: 'P', stateDistrict: 'CA12', docId: defect === 'incomplete-index-record' ? '' : '1000001' }]);
-      await assert.rejects(() => loadPfdYear(2024, memberScope('jane-doe'), { conn, cacheRoot, legislatorIndex: janeIdentity() }));
+      await assert.rejects(() => loadPfdYear(2024, memberScope('jane-doe'), {
+        conn, cacheRoot, legislatorIndex: janeIdentity(), ...seats('X', 'Y'),
+      }));
       assert.equal(await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index'), '[]');
     } finally { cleanup(); rmSync(cacheRoot, { recursive: true, force: true }); }
   });
 }
+
+// ─── Seat identity (gate 1, 2026-11-26) ─────────────────────────────────────
+// The Clerk index often records a legal first name ("Daniel") where the pinned
+// identity records the short name ("Dan"). A same-surname PTR in the target's
+// own seat is the target's when the pinned snapshot shows the target as the
+// seat's sole holder from January 1 through the filing date.
+
+async function seatCase(opts: {
+  holders: string[]; extracted?: { name: string; status?: string; sd?: string } | null; filingDate?: string;
+}) {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'pfd-seat-'));
+  await seedTwoMembers(conn);
+  mkdirSync(join(cacheRoot, '2024'), { recursive: true });
+  if (opts.extracted) {
+    const f = filing('20000001', opts.extracted.name, opts.extracted.sd ?? 'CA12', 'AAPL');
+    f.filer.status = opts.extracted.status ?? 'Member';
+    writeFiling(cacheRoot, 2024, f);
+  }
+  writeIndex(cacheRoot, 2024, [{
+    last: 'Doe', first: 'Janet', filingType: 'P', stateDistrict: 'CA12', docId: '20000001',
+    filingDate: opts.filingDate ?? '7/16/2024',
+  }]);
+  const seat = seats(...opts.holders);
+  const run = () => loadPfdYear(2024, memberScope('jane-doe'), {
+    conn, cacheRoot, legislatorIndex: janeIdentity(), seatIdentity: seat.seatIdentity,
+  });
+  const rows = () => snapshot(conn, 'pfd_transactions', 'filing_id, tx_index');
+  return { run, rows, calls: seat.calls, done: () => { cleanup(); rmSync(cacheRoot, { recursive: true, force: true }); } };
+}
+
+test('seat identity: a legal-name PTR in the sole holder\'s seat loads for the target', async () => {
+  const c = await seatCase({ holders: ['X'], extracted: { name: 'Hon. Janet Doe' } });
+  try {
+    const r = await c.run();
+    assert.equal(r.targetMatched, 1);
+    assert.equal(r.totalTx, 1);
+    assert.equal(r.verifiedEmpty, false);
+    assert.deepEqual(c.calls, ['CA12:2024-01-01..2024-07-16']);
+    assert.match(await c.rows(), /20000001/);
+  } finally { c.done(); }
+});
+
+test('seat identity: another holder of the seat in the span keeps the record ambiguous', async () => {
+  const c = await seatCase({ holders: ['X', 'Y'], extracted: { name: 'Hon. Janet Doe' } });
+  try {
+    await assert.rejects(c.run, /ambiguous target identity/);
+    assert.equal(await c.rows(), '[]');
+  } finally { c.done(); }
+});
+
+test('seat identity: a filing date the pin cannot cover keeps the record ambiguous', async () => {
+  const c = await seatCase({ holders: ['X'], extracted: { name: 'Hon. Janet Doe' }, filingDate: '' });
+  try {
+    await assert.rejects(c.run, /ambiguous target identity/);
+    assert.deepEqual(c.calls, []);
+    assert.equal(await c.rows(), '[]');
+  } finally { c.done(); }
+});
+
+test('seat identity: the extracted filing must name a Member for the same seat', async () => {
+  for (const extracted of [
+    { name: 'Hon. Janet Doe', status: 'Candidate' },
+    { name: 'Hon. Janet Doe', sd: 'CA13' },
+  ]) {
+    const c = await seatCase({ holders: ['X'], extracted });
+    try {
+      await assert.rejects(c.run, /seat identity|ambiguous or mismatched/);
+      assert.equal(await c.rows(), '[]');
+    } finally { c.done(); }
+  }
+});
+
+test('seat identity never proves absence: an unextracted seat-matched PTR fails closed', async () => {
+  const c = await seatCase({ holders: ['X'], extracted: null });
+  try {
+    await assert.rejects(c.run, /20000001.*not extracted|not extracted.*20000001/);
+  } finally { c.done(); }
+});
+
+test('pinned snapshot: TX02 had one holder in 2026 through the Crenshaw filing date, and later dates fail', () => {
+  const pinned = loadIdentityIndex();
+  assert.deepEqual(pinned.houseSeatHolders('TX', 2, '2026-01-01', '2026-07-16'), ['C001120']);
+  assert.throws(() => pinned.houseSeatHolders('TX', 2, '2026-01-01', '2026-12-31'), /after snapshot as_of/);
+  assert.throws(() => pinned.houseSeatHolders('TX', 2, '2018-01-01', '2018-07-16'), /before/);
+});

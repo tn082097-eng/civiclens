@@ -22,6 +22,7 @@ import { applySchema, getDb } from './init.js';
 import { PFD_CACHE as PFD_CACHE_ROOT } from '../lib/paths.js';
 import { getLegislatorIndex, type LegislatorIdentity } from '../lib/legislators.js';
 import type { IngestScope } from '../lib/ingest-scope.js';
+import { loadIdentityIndex, type IdentityIndex } from '../lib/official-identity.js';
 
 // ─── Validation ─────────────────────────────────────────────────────────────
 //
@@ -222,6 +223,8 @@ export interface PfdDeps {
   conn?: DuckDBConnection;
   cacheRoot?: string;
   legislatorIndex?: Map<string, LegislatorIdentity>;
+  /** Hash-pinned seat occupancy for the seat-identity rule; defaults to the pinned snapshot. */
+  seatIdentity?: () => IdentityIndex;
 }
 
 // ─── Filer-to-member resolution ─────────────────────────────────────────────
@@ -308,6 +311,7 @@ interface IndexedHouseFiling {
   first: string;
   filingType: string;
   stateDistrict: string;
+  filingDate: string;
   docId: string;
 }
 
@@ -329,6 +333,7 @@ function parseHouseIndex(xml: string): IndexedHouseFiling[] {
     first: xmlValue(match[1], 'First'),
     filingType: xmlValue(match[1], 'FilingType'),
     stateDistrict: xmlValue(match[1], 'StateDst'),
+    filingDate: xmlValue(match[1], 'FilingDate'),
     docId: xmlValue(match[1], 'DocID'),
   }));
 }
@@ -341,12 +346,51 @@ function firstIndexToken(value: string): string {
   return normalizeIndexName(value).split(' ')[0] ?? '';
 }
 
+/** Index target PTRs. `seatOnly` maps each docId accepted by seat identity
+ *  (not by first name) to its index StateDst, for the extraction check. */
+interface IndexedTarget {
+  ids: string[];
+  seatOnly: Map<string, string>;
+}
+
+function usDateToIso(value: string): string | null {
+  const m = value.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  return m ? `${m[3]}-${m[1].padStart(2, '0')}-${m[2].padStart(2, '0')}` : null;
+}
+
+/**
+ * Seat identity: a same-surname PTR in the target's own seat belongs to the
+ * target when the hash-pinned snapshot shows the target as the ONLY holder of
+ * that seat from January 1 of the record's year through its filing date. This
+ * replaces first-name matching, which fails on legal names vs. pinned short
+ * names ("Daniel" vs "Dan"). Any other holder in that span, an unparseable
+ * filing date, or a date outside the pin's [floor, as_of] leaves the record
+ * ambiguous, so the caller fails closed.
+ */
+function soleSeatHolder(
+  record: IndexedHouseFiling,
+  targetBioguide: string,
+  seatIdentity: () => IdentityIndex,
+): boolean {
+  const seat = record.stateDistrict.toUpperCase().match(/^([A-Z]{2})(\d{2,3})$/);
+  const filed = usDateToIso(record.filingDate);
+  if (!seat || !filed || record.year === null || !filed.startsWith(`${record.year}-`)) return false;
+  let holders: string[];
+  try {
+    holders = seatIdentity().houseSeatHolders(seat[1], Number(seat[2]), `${record.year}-01-01`, filed);
+  } catch {
+    return false;
+  }
+  return holders.length === 1 && holders[0] === targetBioguide;
+}
+
 async function indexedTargetPtrIds(
   year: number,
   scope: IngestScope,
   cacheRoot: string,
   legislators: Map<string, LegislatorIdentity>,
-): Promise<string[] | null> {
+  seatIdentity: () => IdentityIndex,
+): Promise<IndexedTarget | null> {
   if (scope.kind !== 'member' || scope.chamber !== 'house') return null;
   const member = legislators.get(scope.bioguideId);
   if (!member || member.chamber !== 'House' || member.district === null) return null;
@@ -377,16 +421,27 @@ async function indexedTargetPtrIds(
     .filter(record => districts.has(record.stateDistrict.toUpperCase().replace(/[^A-Z0-9]/g, '')))
     .filter(record => firstIndexToken(record.last) === last);
 
-  // A same-district/surname record whose first name cannot be matched exactly
-  // makes the negative proof ambiguous. Fail closed instead of declaring zero.
-  if (possibleTargetRecords.some(record => !allowedFirst.has(firstIndexToken(record.first)))) {
-    throw new Error('ambiguous target identity in authoritative House index (no *.json files can prove absence)');
+  // A same-district/surname record is the target's when its first name
+  // matches, or when the pinned snapshot shows the target as the seat's sole
+  // holder (seat identity). Otherwise the negative proof is ambiguous: fail
+  // closed instead of declaring zero.
+  const seatOnly = new Map<string, string>();
+  for (const record of possibleTargetRecords) {
+    if (allowedFirst.has(firstIndexToken(record.first))) continue;
+    if (!soleSeatHolder(record, member.bioguide, seatIdentity)) {
+      throw new Error('ambiguous target identity in authoritative House index (no *.json files can prove absence)');
+    }
+    seatOnly.set(record.docId, record.stateDistrict.toUpperCase());
+  }
+  for (const record of possibleTargetRecords) {
+    // A docId accepted by first name elsewhere needs no seat check.
+    if (allowedFirst.has(firstIndexToken(record.first))) seatOnly.delete(record.docId);
   }
 
   if (possibleTargetRecords.length === 0 && !existsSync(resolve(indexDir, `${year}FD.xml`))) {
     throw new Error(`missing authoritative House index for ${year}`);
   }
-  return [...new Set(possibleTargetRecords.map(record => record.docId))].sort();
+  return { ids: [...new Set(possibleTargetRecords.map(record => record.docId))].sort(), seatOnly };
 }
 
 /** One filing withheld from production, with the reason. */
@@ -420,9 +475,12 @@ export async function loadPfdYear(
   }
 
   const jsonFiles = readdirSync(dir).filter(f => f.endsWith('.json') && !f.endsWith('.hold.json')).sort();
-  const indexedIds = await indexedTargetPtrIds(
-    year, scope, cacheRoot, deps.legislatorIndex ?? getLegislatorIndex(),
+  let pinnedSeats: IdentityIndex | null = null;
+  const seatIdentity = deps.seatIdentity ?? (() => (pinnedSeats ??= loadIdentityIndex()));
+  const indexed = await indexedTargetPtrIds(
+    year, scope, cacheRoot, deps.legislatorIndex ?? getLegislatorIndex(), seatIdentity,
   );
+  const indexedIds = indexed?.ids ?? null;
   const holds = new Map<string, WithheldFiling>();
   for (const file of readdirSync(dir).filter(f => f.endsWith('.hold.json'))) {
     const receipt = JSON.parse(readFileSync(resolve(dir, file), 'utf8'));
@@ -463,6 +521,11 @@ export async function loadPfdYear(
       const resolved = await resolveFiler(String(rec.filer.name), String(rec.filer.stateDistrict ?? ''), conn);
       if (resolved.memberId !== scope.memberId || resolved.confidence !== 1) {
         throw new Error(`indexed filing ${id} has ambiguous or mismatched extracted member identity`);
+      }
+      const seat = indexed?.seatOnly.get(id);
+      if (seat !== undefined && (String(rec.filer.status ?? '') !== 'Member'
+          || String(rec.filer.stateDistrict ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '') !== seat)) {
+        throw new Error(`indexed filing ${id} matched by seat identity, but the filing does not name a Member for ${seat}`);
       }
     }
   }

@@ -104,6 +104,12 @@ one of `--member <slug|name>`, `--bioguide <id>`, or `--all`.
   certificate (`docs/senate-ptr-verified-empty.md`): a complete name-free
   index with no filing under the member's official surname. A zero-result
   name search is never evidence of zero PTRs.
+- **House PTR identity** accepts a same-seat, same-surname index PTR whose first
+  name differs from the pinned identity ("Daniel" vs "Dan") only by seat
+  identity: the hash-pinned snapshot shows the target as the seat's sole holder
+  from January 1 through the filing date, and the extracted filing names a
+  Member for that seat (`docs/house-ptr-seat-identity.md`). Anything else stays
+  ambiguous and fails closed; seat identity never yields `verified-empty`.
 - OpenSecrets is optional for a base run. If it is not collected, record
   `not-collected`; never present that state as evidence that no donor data exists.
 - **Formatting hold and skip.** When an authoritative filing exists but the

@@ -12,6 +12,8 @@ export interface IdentityIndex {
  commit:string;snapshotSha256:string;floor:string;asOf:string;
  personForVoter(chamber:Chamber,voterId:string,date:string):string;
  inService(bioguide:string,chamber:Chamber,date:string):boolean;
+ /** Every bioguide with a House term for this state and district overlapping [from, to]. Both dates must lie in [floor, as_of]. */
+ houseSeatHolders(state:string,district:number,from:string,to:string):string[];
 }
 interface Person {bioguide:string;lis:string|null;terms:Array<{chamber:Chamber;start:string;end:string;state:string;district:number|null}>}
 function fail(code:string,message:string):never {throw new OfficialVoteFailure('identity',code,message);}
@@ -33,5 +35,6 @@ export function loadIdentityIndex(path=IDENTITY_SNAPSHOT_PATH,expectedSha256=IDE
  return {commit:snapshot.source.commit,snapshotSha256:hash,floor:snapshot.floor,asOf:snapshot.as_of,
   personForVoter(chamber,voterId,date){validate(chamber,date);const p=(chamber==='house'?byBio:byLis).get(voterId);if(!p)fail('unmapped_voter',`${chamber} ${voterId}`);if(!serves(p,chamber,date))fail('voter_not_in_service',`${voterId} on ${date}`);return p.bioguide;},
   inService(bioguide,chamber,date){validate(chamber,date);const p=byBio.get(bioguide);if(!p)fail('unmapped_voter',`unknown target ${bioguide}`);return serves(p,chamber,date);},
+  houseSeatHolders(state,district,from,to){validate('house',from);validate('house',to);if(from>to)fail('invalid_date',`${from} after ${to}`);if(!/^[A-Z]{2}$/.test(state)||!Number.isInteger(district)||district<0)fail('invalid_seat',`${state}${district}`);return [...byBio.values()].filter(p=>p.terms.some(t=>t.chamber==='house'&&t.state===state&&(t.district??0)===district&&t.start<=to&&t.end>=from)).map(p=>p.bioguide).sort();},
  };
 }
