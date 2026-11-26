@@ -17,13 +17,21 @@ import type { DuckDBConnection } from '@duckdb/node-api';
 import { applySchema, getDb } from './init.js';
 import { SENATE_CACHE } from '../lib/paths.js';
 import type { IngestScope } from '../lib/ingest-scope.js';
-import { readSenateSearchReceipt } from '../lib/senate-ptr-receipt.js';
+import {
+  readSenateEmptyCertificate,
+  readSenateSearchReceipt,
+  type SenateEmptyCertificate,
+} from '../lib/senate-ptr-receipt.js';
+import { identitySurnameTokens } from '../lib/senate-ptr-index.js';
+import { getLegislatorIndex } from '../lib/legislators.js';
 
 /** Injected deps: tests pass a temp conn + cache root; prod passes nothing. */
 export interface SenateDeps {
   dryRun?: boolean;
   conn?: DuckDBConnection;
   cacheRoot?: string;
+  /** Official identity used to re-check a verified-empty certificate; defaults to the pinned YAML. */
+  identity?: { last: string; officialFull: string };
 }
 
 // ─── Member resolution ────────────────────────────────────────────────────────
@@ -81,6 +89,8 @@ export async function loadSenatePtrs(
   totalTx: number;
   unmatched: number;
   targetMatched: number;
+  /** Set only when a re-verified chamber-index certificate proves zero PTRs. */
+  verifiedEmpty: SenateEmptyCertificate | null;
 }> {
   const conn = deps.conn ?? (await getDb());
   if (!deps.conn) await applySchema();
@@ -93,9 +103,25 @@ export async function loadSenatePtrs(
   const receipt = scope.kind === 'member'
     ? readSenateSearchReceipt(cacheRoot, scope.bioguideId)
     : null;
+  let empty: SenateEmptyCertificate | null = null;
+  if (scope.kind === 'member') {
+    const bioguideId = scope.bioguideId;
+    empty = readSenateEmptyCertificate(cacheRoot, bioguideId, () => {
+      const identity = deps.identity ?? getLegislatorIndex().get(bioguideId);
+      if (!identity) throw new Error(`no official identity for ${bioguideId}`);
+      return identitySurnameTokens(identity);
+    })?.certificate ?? null;
+    if (empty && receipt) {
+      throw new Error(`Senate PTR evidence for ${scope.bioguideId} contradicts itself: a ` +
+        `filing receipt and a verified-empty certificate both exist`);
+    }
+  }
   const years = readdirSync(cacheRoot).filter(d => /^\d{4}$/.test(d)).sort();
   if (years.length === 0) {
     if (scope.kind === 'all') throw new Error('No year directories in senate-ptr-cache');
+    if (empty) {
+      return { filers: [], totalTx: 0, unmatched: 0, targetMatched: 0, verifiedEmpty: empty };
+    }
     if (!receipt) {
       throw new Error(
         `No year directories and no successful Senate PTR search receipt for ${scope.bioguideId}`,
@@ -117,6 +143,7 @@ export async function loadSenatePtrs(
 
   // Resolve and validate the complete member batch before the first DELETE.
   // Otherwise a later unresolved filing could leave earlier filings committed.
+  let preflightTargets = 0;
   for (const year of years) {
     const dir = resolve(cacheRoot, year);
     const jsonFiles = readdirSync(dir).filter(f => f.endsWith('.json'));
@@ -136,12 +163,18 @@ export async function loadSenatePtrs(
         resolutionCache.set(key, resolution);
       }
       const isTarget = scope.kind === 'all' || resolution.memberId === scope.memberId;
+      if (isTarget) preflightTargets++;
       if (isTarget && (!Array.isArray(rec?.transactions) || rec.transactions.length === 0)) {
         throw new Error(
           `Senate PTR ${filingId} has zero transactions and is unresolved; no target filings were replaced`,
         );
       }
     }
+  }
+
+  if (scope.kind === 'member' && empty && preflightTargets > 0) {
+    throw new Error(`Senate verified-empty certificate for ${scope.bioguideId} is contradicted by ` +
+      `${preflightTargets} cached filing(s); no target filings were written`);
   }
 
   for (const year of years) {
@@ -238,10 +271,20 @@ export async function loadSenatePtrs(
       throw new Error(`Senate PTR indexed filing JSON missing: ${missing.join(', ')}`);
     }
   }
-  if (scope.kind === 'member' && targetMatched === 0 && !receipt) {
-    throw new Error(`No successful Senate PTR search receipt for ${scope.bioguideId}`);
+  if (scope.kind === 'member' && targetMatched === 0 && !receipt && !empty) {
+    throw new Error(`No successful Senate PTR search receipt or verified-empty certificate ` +
+      `for ${scope.bioguideId}`);
   }
-  return { filers: [...summaryMap.values()], totalTx, unmatched, targetMatched };
+  return {
+    filers: [...summaryMap.values()], totalTx, unmatched, targetMatched,
+    verifiedEmpty: scope.kind === 'member' && targetMatched === 0 ? empty : null,
+  };
+}
+
+export function verifiedEmptyLine(c: SenateEmptyCertificate): string {
+  return `Verified empty: the chamber-wide EFDS index of ${c.index.filingCount} PTRs ` +
+    `(${c.fromYear}–${c.toYear}, sha256 ${c.index.sha256.slice(0, 12)}…) has none under surname ` +
+    `${c.surnameTokens.join('/')} for ${c.bioguideId}; DB unchanged.`;
 }
 
 // ─── CLI ──────────────────────────────────────────────────────────────────────
@@ -252,7 +295,7 @@ async function main() {
   const scope = await resolveScope(parseScopeArgs(process.argv.slice(2)));
 
   console.log(`Loading Senate PTRs${dryRun ? ' (dry-run)' : ''}…\n`);
-  const { filers, totalTx, unmatched } = await loadSenatePtrs(scope, { dryRun });
+  const { filers, totalTx, unmatched, verifiedEmpty } = await loadSenatePtrs(scope, { dryRun });
 
   const nameW = Math.max(20, ...filers.map(f => f.name.length));
   const memberW = Math.max(20, ...filers.map(f => (f.memberId ?? 'unmatched').length));
@@ -267,6 +310,7 @@ async function main() {
   }
   console.log(line);
   console.log(`Total: ${filers.length} filer(s), ${totalTx} transactions, ${unmatched} unmatched`);
+  if (verifiedEmpty) console.log(verifiedEmptyLine(verifiedEmpty));
   process.exit(unmatched > 0 ? 1 : 0);
 }
 

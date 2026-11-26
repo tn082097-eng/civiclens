@@ -1,0 +1,116 @@
+{
+  "retrievedAt": "2026-11-26",
+  "source": "efdsearch.senate.gov (Senate eFD); responses stored byte for byte",
+  "purpose": "gate 4: evidence for a Senate verified-empty PTR result (lib/senate-ptr-index.ts)",
+  "files": [
+    {
+      "file": "all-2026-last-collins.json",
+      "sha256": "34823497c3a85ca8fcdcca174658d440b6ecc76df95460c7d7b1bc513b0908be",
+      "bytes": 880,
+      "request": {
+        "endpoint": "POST https://efdsearch.senate.gov/search/report/data/",
+        "start": 0,
+        "length": 100,
+        "senator_state": "",
+        "submitted": "01/01/2026..12/31/2026",
+        "last_name": "Collins",
+        "report_types[]": "11",
+        "filer_types[]": "1"
+      },
+      "recordsTotal": 4,
+      "rows": 4,
+      "distinct": 4,
+      "shows": "the bracketed report_types[]/filer_types[] filters are ignored: an Annual Report is returned"
+    },
+    {
+      "file": "all-2026-susan-m-collins.json",
+      "sha256": "b5add1a5d624430894b0f3370b73001d1d16f1b00fcfe73c99a95bb81f0bdaca",
+      "bytes": 80,
+      "request": {
+        "endpoint": "POST https://efdsearch.senate.gov/search/report/data/",
+        "start": 0,
+        "length": 100,
+        "senator_state": "",
+        "submitted": "01/01/2026..12/31/2026",
+        "first_name": "Susan M.",
+        "last_name": "Collins",
+        "report_types[]": "11",
+        "filer_types[]": "1"
+      },
+      "recordsTotal": 0,
+      "rows": 0,
+      "distinct": 0,
+      "shows": "EFDS stores the first name 'Susan M' (no period); the display-name query returns 0 rows (the C001035 false empty)"
+    },
+    {
+      "file": "ptr-anyfiler-2026.json",
+      "sha256": "4378d968dacc1d77a4dfe3f577fe4b2abbf3fd034f80b3acec91c2dae8a0a5ca",
+      "bytes": 20496,
+      "request": {
+        "endpoint": "POST https://efdsearch.senate.gov/search/report/data/",
+        "start": 0,
+        "length": 100,
+        "senator_state": "",
+        "submitted": "01/01/2026..12/31/2026",
+        "report_types": "[11]"
+      },
+      "recordsTotal": 148,
+      "rows": 100,
+      "distinct": 100,
+      "shows": "recordsTotal 148, but one page holds at most 100 rows"
+    },
+    {
+      "file": "ptr-anyfiler-2026-collins.json",
+      "sha256": "76593dd44536acef7fb62a5a8eda17b5c56f6814b5c7403ed73cc9a5153ca2b9",
+      "bytes": 690,
+      "request": {
+        "endpoint": "POST https://efdsearch.senate.gov/search/report/data/",
+        "start": 0,
+        "length": 100,
+        "senator_state": "",
+        "submitted": "01/01/2026..12/31/2026",
+        "report_types": "[11]",
+        "last_name": "Collins"
+      },
+      "recordsTotal": 3,
+      "rows": 3,
+      "distinct": 3,
+      "shows": "Collins's 3 PTRs, recorded as 'Susan M' / 'Collins, Susan M. (Senator)'"
+    },
+    {
+      "file": "ptr-anyfiler-2026H1.json",
+      "sha256": "a40d020b24db3ae9a243a4ec0b3aac0e6a0836cd4824814734bf9965b055bf65",
+      "bytes": 17110,
+      "request": {
+        "endpoint": "POST https://efdsearch.senate.gov/search/report/data/",
+        "start": 0,
+        "length": 100,
+        "senator_state": "",
+        "submitted": "01/01/2026..06/30/2026",
+        "report_types": "[11]"
+      },
+      "recordsTotal": 84,
+      "rows": 84,
+      "distinct": 84,
+      "shows": "window fits one page: 84 rows, 84 distinct; includes paper PTRs (/search/view/paper/)"
+    },
+    {
+      "file": "ptr-anyfiler-2026H2.json",
+      "sha256": "ce0f59af37dd293a74abefc149b9e9a92f74909b496f5bc453e9e9cd2f19c1b9",
+      "bytes": 13202,
+      "request": {
+        "endpoint": "POST https://efdsearch.senate.gov/search/report/data/",
+        "start": 0,
+        "length": 100,
+        "senator_state": "",
+        "submitted": "07/01/2026..12/31/2026",
+        "report_types": "[11]"
+      },
+      "recordsTotal": 64,
+      "rows": 64,
+      "distinct": 64,
+      "shows": "64 rows, 64 distinct; H1 + H2 = 148 = recordsTotal"
+    }
+  ],
+  "note": "The unfiltered 2026 window (516 rows, paged 6 times, 516 distinct) is kept outside git under artifacts/2026-11-26-senate-empty-rule/probe/."
+}

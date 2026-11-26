@@ -5,12 +5,14 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync, mkdirSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { tempDb, insertMember, snapshot } from './__testkit__/temp-db.js';
 import { loadSenatePtrs } from './load-senate-ptr.js';
 import type { IngestScope } from '../lib/ingest-scope.js';
+import { collectSenatePtrIndex, type SenatePtrIndex } from '../lib/senate-ptr-index.js';
+import { writeSenateEmptyCertificate } from '../lib/senate-ptr-receipt.js';
 
 function senatorScope(slug: string): IngestScope {
   return { kind: 'member', slug, bioguideId: 'X', memberId: slug, chamber: 'senate' };
@@ -253,6 +255,132 @@ test('a zero-transaction filing is rejected before an earlier target filing can 
       await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index'),
       before,
       'the valid earlier filing must not commit when the member batch is unresolved',
+    );
+  } finally {
+    cleanup();
+    rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+// ─── verified-empty from the chamber-wide index ──────────────────────────────
+
+const CANTWELL = { last: 'Cantwell', officialFull: 'Maria Cantwell' };
+
+async function chamberIndex(rows: Array<[string, string, string, string]>): Promise<SenatePtrIndex> {
+  // [uuid, first, last, MM/DD/YYYY]
+  const data = rows.map(([id, first, last, date]) => [first, last, `${last}, ${first} (Senator)`,
+    `<a href="/search/view/ptr/${id}/">Periodic Transaction Report for ${date}</a>`, date]);
+  return collectSenatePtrIndex(async () => ({ recordsTotal: data.length, data }),
+    2023, 2026, '2026-11-26T12:00:00.000Z');
+}
+
+const MURRAY_INDEX_ROW: [string, string, string, string] =
+  ['11111111-2222-4333-8444-555555555555', 'Patty', 'Murray', '02/01/2024'];
+
+function certify(cacheRoot: string, index: SenatePtrIndex, surnameTokens = ['cantwell']) {
+  return writeSenateEmptyCertificate(cacheRoot, {
+    bioguideId: 'X', canonicalName: 'Maria Cantwell', surnameTokens, index,
+    certifiedAt: '2026-11-26T12:00:00.000Z',
+  });
+}
+
+test('member mode accepts a chamber-index verified-empty certificate and changes no rows', async () => {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'senate-cache-'));
+  try {
+    await seedTwoSenators(conn);
+    writeFiling(cacheRoot, 2024, filing('S-PM-1', 'Patty', 'Murray', 'MSFT'));
+    certify(cacheRoot, await chamberIndex([MURRAY_INDEX_ROW]));
+    const before = await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index');
+
+    const result = await loadSenatePtrs(senatorScope('maria-cantwell'), {
+      conn, cacheRoot, identity: CANTWELL,
+    });
+
+    assert.equal(result.targetMatched, 0);
+    assert.equal(result.verifiedEmpty?.index.filingCount, 1);
+    assert.equal(await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index'), before);
+  } finally {
+    cleanup();
+    rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+test('a certificate cannot be written when the index lists a filing under the surname', async () => {
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'senate-cache-'));
+  try {
+    const index = await chamberIndex([['aaaaaaaa-2222-4333-8444-555555555555', 'M', 'CANTWELL', '03/01/2025']]);
+    assert.throws(() => certify(cacheRoot, index), /cannot certify zero Senate PTR filings for X/);
+  } finally {
+    rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+test('member mode rejects a certificate checked against a different surname than the official one', async () => {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'senate-cache-'));
+  try {
+    await seedTwoSenators(conn);
+    certify(cacheRoot, await chamberIndex([MURRAY_INDEX_ROW]), ['cantwel']);
+    await assert.rejects(
+      loadSenatePtrs(senatorScope('maria-cantwell'), { conn, cacheRoot, identity: CANTWELL }),
+      /checked against surname cantwel, not the official cantwell/,
+    );
+  } finally {
+    cleanup();
+    rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+test('member mode rejects a certificate whose stored index was edited', async () => {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'senate-cache-'));
+  try {
+    await seedTwoSenators(conn);
+    const certificate = certify(cacheRoot, await chamberIndex([MURRAY_INDEX_ROW]));
+    const indexPath = join(cacheRoot, certificate.index.path);
+    const stored = JSON.parse(readFileSync(indexPath, 'utf8'));
+    stored.filings[0].lastName = 'Cantwell';
+    writeFileSync(indexPath, JSON.stringify(stored));
+    await assert.rejects(
+      loadSenatePtrs(senatorScope('maria-cantwell'), { conn, cacheRoot, identity: CANTWELL }),
+      /digest does not match/,
+    );
+  } finally {
+    cleanup();
+    rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+test('member mode rejects a certificate contradicted by a cached target filing', async () => {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'senate-cache-'));
+  try {
+    await seedTwoSenators(conn);
+    certify(cacheRoot, await chamberIndex([MURRAY_INDEX_ROW]));
+    writeFiling(cacheRoot, 2025, filing('S-CANT-1', 'Maria', 'Cantwell', 'AAPL'));
+    const before = await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index');
+    await assert.rejects(
+      loadSenatePtrs(senatorScope('maria-cantwell'), { conn, cacheRoot, identity: CANTWELL }),
+      /contradicted by 1 cached filing\(s\); no target filings were written/,
+    );
+    assert.equal(await snapshot(conn, 'pfd_transactions', 'filing_id, tx_index'), before);
+  } finally {
+    cleanup();
+    rmSync(cacheRoot, { recursive: true, force: true });
+  }
+});
+
+test('member mode rejects a certificate alongside a filing receipt', async () => {
+  const { conn, cleanup } = await tempDb();
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'senate-cache-'));
+  try {
+    await seedTwoSenators(conn);
+    certify(cacheRoot, await chamberIndex([MURRAY_INDEX_ROW]));
+    writeSearchReceipt(cacheRoot, { filingIds: ['S-CANT-1'] });
+    await assert.rejects(
+      loadSenatePtrs(senatorScope('maria-cantwell'), { conn, cacheRoot, identity: CANTWELL }),
+      /contradicts itself/,
     );
   } finally {
     cleanup();

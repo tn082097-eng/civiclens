@@ -100,6 +100,10 @@ one of `--member <slug|name>`, `--bioguide <id>`, or `--all`.
   district-recipient loaders because they do not feed a live page; they remain
   House-only substrate for a separately authorized detector workflow. Never
   invent a statewide substitute for a senator.
+- **Senate `verified-empty`** comes only from a chamber-wide EFDS PTR index
+  certificate (`docs/senate-ptr-verified-empty.md`): a complete name-free
+  index with no filing under the member's official surname. A zero-result
+  name search is never evidence of zero PTRs.
 - OpenSecrets is optional for a base run. If it is not collected, record
   `not-collected`; never present that state as evidence that no donor data exists.
 - **Formatting hold and skip.** When an authoritative filing exists but the

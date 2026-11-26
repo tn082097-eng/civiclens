@@ -746,3 +746,18 @@ with null bill; one separate roll remains `ambiguity`. The final TypeScript
 vote-path suite passed 359/359. See [source receipt, preserved failure and completed
 verification](docs/senate-empty-document-source-2026-10-21.md). These two-target
 results are not all-member certification or release readiness.
+
+---
+
+## Senate eFD — chamber-wide PTR index for `verified-empty` (2026-11-26)
+
+- Endpoint: `POST https://efdsearch.senate.gov/search/report/data/`. The session and agreement are the same as `skills/senate-ptr/fetch.ts`.
+- Query: `report_types=[11]` with empty `first_name`, `last_name` and `senator_state`, and no filer type. One page per date window (`length=100`).
+- Frozen responses with sha256 manifest: `fixtures/senate-ptr/efds-index-2026-11-26/`.
+- Observed behavior:
+  - The bracketed `report_types[]` / `filer_types[]` parameters are ignored.
+  - Pages are capped at 100 rows.
+  - `recordsTotal` is the window's full count.
+  - Paper PTRs are `/search/view/paper/<id>/`.
+  - Filer names are stored as filed (`Susan M`, not `Susan M.`).
+- Rule and live check: `docs/senate-ptr-verified-empty.md`.

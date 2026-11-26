@@ -24,7 +24,15 @@ import { getLegislatorIndex, type LegislatorIdentity } from '../../lib/legislato
 import {
   EMPTY_SEARCH_NOT_EVIDENCE,
   writeCompleteSenateSearchReceipt,
+  writeSenateEmptyCertificate,
 } from '../../lib/senate-ptr-receipt.js';
+import {
+  collectSenatePtrIndex,
+  findSurnameCandidates,
+  identitySurnameTokens,
+  SENATE_INDEX_PAGE_LIMIT,
+  type SenatePtrIndex,
+} from '../../lib/senate-ptr-index.js';
 
 // Canonical cache location (data/caches/senate-ptr-cache) — must match the
 // loader side. The old repo-root senate-ptr-cache/ predates the data/ restructure.
@@ -215,6 +223,51 @@ async function searchPtrs(
   return results;
 }
 
+// ─── Chamber-wide index (verified-empty evidence) ──────────────────────────────
+
+function isoToUs(iso: string): string {
+  const [y, m, d] = iso.split('-');
+  return `${m}/${d}/${y}`;
+}
+
+/** Every PTR filed in the window, listed without a name. See lib/senate-ptr-index.ts. */
+async function fetchChamberIndex(
+  session: Session,
+  fromYear: number,
+  toYear: number,
+): Promise<SenatePtrIndex> {
+  return collectSenatePtrIndex(async window => {
+    await sleep(DELAY_MS);
+    const body = new URLSearchParams({
+      start: '0',
+      length: String(SENATE_INDEX_PAGE_LIMIT),
+      report_types: '[11]',
+      submitted_start_date: `${isoToUs(window.from)} 00:00:00`,
+      submitted_end_date: `${isoToUs(window.to)} 23:59:59`,
+      first_name: '',
+      last_name: '',
+      senator_state: '',
+      csrfmiddlewaretoken: session.csrfToken,
+    });
+    const r = await fetch(`${BASE}/search/report/data/`, {
+      method: 'POST',
+      headers: {
+        'User-Agent': UA,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Referer': `${BASE}/search/home/`,
+        'Cookie': session.cookie,
+        'X-CSRFToken': session.csrfToken,
+      },
+      body: body.toString(),
+      signal: AbortSignal.timeout(20_000),
+    });
+    if (!r.ok) throw new Error(`index: HTTP ${r.status}`);
+    const d = await r.json() as any;
+    if (d?.result !== 'ok') throw new Error(`index: ${JSON.stringify(d?.result)}`);
+    return { recordsTotal: d.recordsTotal, data: d.data };
+  }, fromYear, toYear, new Date().toISOString());
+}
+
 // ─── Parse PTR HTML ───────────────────────────────────────────────────────────
 
 async function fetchPtr(session: Session, ptrId: string): Promise<SenateTransaction[]> {
@@ -275,7 +328,13 @@ export async function fetchSenatePtrs(
     cacheDir?: string;
     receiptTargets?: Map<string, SenateSearchTarget>;
   } = {},
-): Promise<{ fetched: number; cached: number; errors: number; unconfirmedEmpty: number }> {
+): Promise<{
+  fetched: number;
+  cached: number;
+  errors: number;
+  unconfirmedEmpty: number;
+  verifiedEmpty: number;
+}> {
   const fromYear = opts.fromYear ?? 2022;
   const toYear   = opts.toYear   ?? new Date().getFullYear();
   const fromDate = `01/01/${fromYear} 00:00:00`;
@@ -285,7 +344,8 @@ export async function fetchSenatePtrs(
   mkdirSync(cacheDir, { recursive: true });
   console.log(`Fetching Senate PTRs for ${names.length} senator(s) (${fromYear}–${toYear})…`);
 
-  let fetched = 0, cached = 0, errors = 0, unconfirmedEmpty = 0;
+  let fetched = 0, cached = 0, errors = 0, unconfirmedEmpty = 0, verifiedEmpty = 0;
+  let chamberIndex: Promise<SenatePtrIndex> | null = null;
   const session = await getSession();
   await sleep(DELAY_MS);
 
@@ -305,11 +365,46 @@ export async function fetchSenatePtrs(
     }
 
     if (refs.length === 0) {
-      // No receipt: a name query that misses the filer's recorded name looks
-      // identical to a senator with no PTRs. Any earlier receipt is left as is.
-      unconfirmedEmpty++;
-      console.log(`  ? ${fullName}: zero results for "${firstName}" "${lastName}" ` +
-        `(${fromYear}–${toYear}); not recorded: ${EMPTY_SEARCH_NOT_EVIDENCE}`);
+      // A name query that misses the filer's recorded name looks identical to a
+      // senator with no PTRs, so the name search writes nothing. For an
+      // identity-resolved target, the chamber-wide index decides instead.
+      if (!target) {
+        unconfirmedEmpty++;
+        console.log(`  ? ${fullName}: zero results for "${firstName}" "${lastName}" ` +
+          `(${fromYear}–${toYear}); not recorded: ${EMPTY_SEARCH_NOT_EVIDENCE}`);
+        continue;
+      }
+      let index: SenatePtrIndex;
+      try {
+        chamberIndex ??= fetchChamberIndex(session, fromYear, toYear);
+        index = await chamberIndex;
+      } catch (e: any) {
+        console.log(`\n  ✗ ${fullName}: chamber-wide PTR index failed: ${e.message}`);
+        chamberIndex = null;
+        errors++; continue;
+      }
+      const surnames = identitySurnameTokens({ last: target.last, officialFull: target.canonicalName });
+      const candidates = findSurnameCandidates(index, surnames);
+      if (candidates.length > 0) {
+        unconfirmedEmpty++;
+        console.log(`  ? ${fullName}: zero results for "${firstName}" "${lastName}", but the ` +
+          `chamber-wide index lists ${candidates.length} PTR(s) under surname ` +
+          `${surnames.join('/')}: ` +
+          candidates.map(c => `${c.firstName} ${c.lastName} ${c.dateReceived} ${c.kind}:${c.filingId}`)
+            .join('; ') + '; not certified empty');
+        continue;
+      }
+      writeSenateEmptyCertificate(cacheDir, {
+        bioguideId: target.bioguideId,
+        canonicalName: target.canonicalName,
+        surnameTokens: surnames,
+        index,
+        certifiedAt: new Date().toISOString(),
+      });
+      verifiedEmpty++;
+      console.log(`  ✓ ${fullName}: verified-empty; the chamber-wide index of ` +
+        `${index.filingCount} PTRs (${fromYear}–${toYear}, sha256 ${index.sha256.slice(0, 12)}…) ` +
+        `has none under surname ${surnames.join('/')}`);
       continue;
     }
 
@@ -365,7 +460,7 @@ export async function fetchSenatePtrs(
     console.log(`  ✓ ${fullName}: ${refs.length} PTR(s) (${memberFetched} new, ${memberCached} cached)`);
   }
 
-  return { fetched, cached, errors, unconfirmedEmpty };
+  return { fetched, cached, errors, unconfirmedEmpty, verifiedEmpty };
 }
 
 // ─── CLI ──────────────────────────────────────────────────────────────────────
@@ -410,13 +505,13 @@ async function main() {
   const fromYear = get('--from-year') ? parseInt(get('--from-year')!) : undefined;
   const toYear   = get('--to-year')   ? parseInt(get('--to-year')!)   : undefined;
 
-  const { fetched, cached, errors, unconfirmedEmpty } = await fetchSenatePtrs(names, {
+  const { fetched, cached, errors, unconfirmedEmpty, verifiedEmpty } = await fetchSenatePtrs(names, {
     fromYear,
     toYear,
     receiptTargets,
   });
   console.log(`\nDone: ${fetched} new, ${cached} cached, ${errors} errors, ` +
-    `${unconfirmedEmpty} zero-result (unconfirmed) searches`);
+    `${verifiedEmpty} verified-empty, ${unconfirmedEmpty} zero-result (unconfirmed) searches`);
   console.log(`Cache: ${CACHE_DIR}`);
   process.exit(errors > 0 || unconfirmedEmpty > 0 ? 1 : 0);
 }

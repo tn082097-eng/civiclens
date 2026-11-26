@@ -515,7 +515,7 @@ ${bold('CivicLens Pipeline Runner')}
     const { loadSenatePtrs } = await import('../db/load-senate-ptr.js');
     const { parseScopeArgs, resolveScope } = await import('../lib/ingest-scope.js');
     const scope = await resolveScope(parseScopeArgs(process.argv.slice(3)));
-    const { filers, totalTx, unmatched } = await loadSenatePtrs(scope, { dryRun });
+    const { filers, totalTx, unmatched, verifiedEmpty } = await loadSenatePtrs(scope, { dryRun });
     const nameW = Math.max(20, ...filers.map((f: any) => f.name.length));
     const memberW = Math.max(20, ...filers.map((f: any) => (f.memberId ?? 'unmatched').length));
     const line = '─'.repeat(nameW + memberW + 30);
@@ -527,6 +527,10 @@ ${bold('CivicLens Pipeline Runner')}
     }
     console.log(line);
     console.log(`Total: ${filers.length} filer(s), ${totalTx} transactions, ${unmatched} unmatched`);
+    if (verifiedEmpty) {
+      const { verifiedEmptyLine } = await import('../db/load-senate-ptr.js');
+      console.log(verifiedEmptyLine(verifiedEmpty));
+    }
     process.exit(unmatched > 0 ? 1 : 0);
   })().catch(e => { console.error(red(`\nFatal: ${e.message}`)); process.exit(1); });
 } else if (arg === '--append') {
