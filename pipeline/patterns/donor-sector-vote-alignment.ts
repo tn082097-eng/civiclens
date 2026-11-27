@@ -56,7 +56,7 @@ SELECT theme,
 FROM v_member_donor_theme
 WHERE member_id = ?
 GROUP BY theme
-ORDER BY theme_total DESC
+ORDER BY theme_total DESC, theme
 `;
 
 // Focused bills the member SPONSORED, matched to themes. Mirrors the
@@ -91,6 +91,9 @@ WHERE b.member_id = ?
   AND b.title NOT ILIKE '%concurrent resolution%'
   AND b.title NOT ILIKE '%congressional budget for%'
   AND regexp_extract(b.bill_id, '[-/](hr|s|hjres|sjres)[-/]', 1) <> ''
+-- Total order: the first titles become the public example bills, so they
+-- must not depend on DuckDB's internal row order. Newest first.
+ORDER BY m.theme, b.introduced_at DESC NULLS LAST, b.bill_id
 `;
 
 // Top contributing industries within a theme, for citation.
@@ -100,7 +103,7 @@ FROM donor_industry di
 JOIN donor_industry_theme t ON di.industry ILIKE t.industry_pattern
 WHERE di.member_id = ? AND t.theme = ?
 GROUP BY di.industry
-ORDER BY total DESC
+ORDER BY total DESC, di.industry
 LIMIT 3
 `;
 
