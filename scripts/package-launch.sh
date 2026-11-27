@@ -62,6 +62,15 @@ done
 
 npx --no-install tsx scripts/validate-release-roster.ts "${MEMBERS[@]}"
 
+# The published copy names official House Clerk and Senate roll-call records as
+# the vote source. Fail closed if a verified page still cites a GovTrack vote.
+for m in "${MEMBERS[@]}"; do
+  if grep -q 'govtrack\.us/congress/votes' "site/members/${m}.html"; then
+    echo "verified render for ${m} cites a GovTrack vote; the published copy names official roll-call sources" >&2
+    exit 1
+  fi
+done
+
 npx tsx scripts/update-manifest.ts "${MEMBERS[@]}"
 npx tsx render/build.ts --landing
 

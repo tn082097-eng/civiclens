@@ -483,7 +483,7 @@ function layout(title: string, breadcrumb: string, body: string): string {
 ${body}
 </main>
 <footer>
-Sources include Congress.gov, GovTrack, OpenFEC, and House and Senate trade disclosures.
+Sources include Congress.gov, House Clerk and Senate roll-call records, OpenFEC, and House and Senate trade disclosures.
 </footer>
 </body>
 </html>`;
@@ -2387,7 +2387,7 @@ ${detectorBlocks}
 <p style="max-width:760px;">Neither result proves the absence of a relationship between congressional trading and federal contracting. Each means one specific, honestly-tested method found nothing stronger than chance — and was retired instead of adjusted until it "worked."</p>
 
 <h2 id="sources">Sources and coverage</h2>
-<p class="lede" style="max-width:760px;">Sources for this snapshot include Congress.gov for legislation, GovTrack for retained roll calls, OpenFEC for campaign finance, and House Clerk and Senate electronic disclosures for trades. Donor-theme comparisons use third-party industry classifications derived from FEC records. Former-staff links to Senate lobbying disclosures are withheld while office identities are verified.</p>
+<p class="lede" style="max-width:760px;">Sources for this snapshot include Congress.gov for legislation and bill summaries, official House Clerk and Senate roll-call records for votes, OpenFEC for campaign finance, and House Clerk and Senate electronic disclosures for trades. Donor-theme comparisons use third-party industry classifications derived from FEC records. Former-staff links to Senate lobbying disclosures are withheld while office identities are verified.</p>
 
 <p style="margin-top: 32px;"><a class="row-link" href="index.html">← back to corpus</a></p>
 `;
