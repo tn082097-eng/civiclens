@@ -487,3 +487,11 @@ closed with `date_after_snapshot` until the pin is refreshed. The refresh change
 only two senators' terms (H001104, M001244). Receipts and the diff are recorded
 in `SOURCES.md`. No other identity rule changes: House ids stay bioguide, Senate
 ids stay LIS → bioguide, and name-based lookup stays disabled.
+
+### Identity `as_of` refresh (amendment 2026-11-26)
+
+The commit stays the same. A re-capture on 2026-11-26 moved `as_of` to
+`2026-11-26` (`legislators-2b1fe72-asof-2026-11-26-voting-terms.json`). This is
+allowed only after the snapshot's in-service people match the official House
+Clerk and Senate member lists for the new date (`lib/identity-roster-check.ts`).
+People and terms are unchanged. Receipts and the cross-check are in `SOURCES.md`.

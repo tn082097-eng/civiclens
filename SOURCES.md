@@ -595,7 +595,60 @@ five were captured 2026-10-16 13:11 UTC. Existing samples, House 2025 roll 1
 (QUORUM) and Senate 119/1 roll 1, remain valid. No treaty, House amendment or
 House journal/adjourn/motion XML is frozen.
 
-**Identity snapshot (current, refreshed 2026-11-24).** The source is
+**Identity snapshot (current, re-captured 2026-11-26).** The commit is the
+same, `2b1fe728159fe5f5e145277794106e800719eb50`: on 2026-11-26 the upstream
+`main` branch still pointed to it (latest commit 2026-11-22). Only `as_of` moves,
+from `2026-11-24` to `2026-11-26`. Receipts are in the ignored run directory
+`artifacts/2026-11-26-identity-pin/` (`source-receipts.json`). Every capture
+returned HTTP 200 with no redirect and a complete body. They were fetched
+between 2026-11-27 00:24:06 and 00:24:38 UTC, which is the evening of
+2026-11-26 Eastern time.
+
+| Capture | URL | Bytes | SHA256 |
+|---|---|---|---|
+| `legislators-current.yaml` | `https://raw.githubusercontent.com/unitedstates/congress-legislators/2b1fe728159fe5f5e145277794106e800719eb50/legislators-current.yaml` | 1,081,522 | `e805231b79539bf1a0d2ae2fc0698f41a60165ee28ec1f467ba7730884e5e753` |
+| `legislators-historical.yaml` | `https://raw.githubusercontent.com/unitedstates/congress-legislators/2b1fe728159fe5f5e145277794106e800719eb50/legislators-historical.yaml` | 8,997,407 | `ea7a1e35e7854418033b155420b522d3cefffc9763b67d7044cde45b8e49a355` |
+| `LICENSE` | `https://raw.githubusercontent.com/unitedstates/congress-legislators/2b1fe728159fe5f5e145277794106e800719eb50/LICENSE` | 7,048 | `a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499` |
+| House Clerk member list | `https://clerk.house.gov/xml/lists/MemberData.xml` | 557,204 | `84458803178118dd612e41ff119daf2976e59d9f96780d8c794eba52d717711d` |
+| House Clerk vacancies | `https://clerk.house.gov/Members/ViewVacancies` | 29,423 | `b9a5fd352c1c74c8f740ec3857767647046539521a8bf3bc0c8b0668df10f469` |
+| Senate member list | `https://www.senate.gov/general/contact_information/senators_cfm.xml` | 52,652 | `fb91218c16df6ea2105f85107086e41e0a92dbb48681c4d1f54cb9a12541d792` |
+
+All three upstream files are byte-identical to the 2026-11-24 pins.
+
+`tools/congress-collector/derive_identity.ts` now takes `--as-of`. Run with
+`--as-of 2026-11-24` on the 2026-11-24 inputs, it reproduces the archived
+mapping exactly (`c5c8509e…`). Run twice with `--as-of 2026-11-26`, it produced
+byte-identical output:
+`fixtures/votes/identity/legislators-2b1fe72-asof-2026-11-26-voting-terms.json`,
+sha256 `55764e7ce55dc58ea41f56895bb04fbf843fdfb3fb1fdc79ed5c38a41c8ec6a1`. It
+holds the same 895 people and 2,492 terms, and the only changed line is
+`as_of`.
+
+**Why `as_of` may move: official-roster cross-check.** A capture date alone
+does not show that nobody left office after upstream last changed. So
+`tools/congress-collector/crosscheck_identity_roster.ts`
+(`lib/identity-roster-check.ts`) compared the snapshot's in-service people on
+2026-11-26 with the official lists. Report:
+`artifacts/2026-11-26-identity-pin/roster-check-2026-11-26.json`.
+
+- **House:** 439 Clerk members and 439 in the snapshot, the same people in the
+  same seats. The Clerk writes American Samoa as `AQ00`; the check maps that to
+  `AS`.
+- **Vacancies:** the Clerk lists FL20 and TX23, and the snapshot has no holder
+  for either.
+- **Senate:** 100 and 100, the same people.
+- **Successors this year:** the 2026 successor start dates for GA13, GA14, CA01
+  and CA14 equal the oath dates on the Clerk's vacancy page.
+
+The Clerk member list carries `publish-date="November 3, 2026"`. The vacancy
+page, fetched the same evening, lists FL20 and TX23 as the only open seats, and
+its most recent change is a September 2 oath.
+
+**As-of limit.** Lookups after `2026-11-26` fail with `date_after_snapshot`. The
+next refresh must re-capture the inputs, pass the roster cross-check for its
+new date, and derive with that `--as-of`.
+
+**Identity snapshot (superseded 2026-11-26; refreshed 2026-11-24).** The source is
 `unitedstates/congress-legislators` at commit
 `2b1fe728159fe5f5e145277794106e800719eb50`, CC0. Receipts are in the ignored
 run directory `artifacts/2026-11-24-roster-freshness/identity-probe/`
@@ -638,7 +691,7 @@ re-fetched `d5af3d2` copy matches its original pin, and the 49 changed lines are
 start/end dates of terms in 2001 or earlier. All of them fall before the floor
 and none reaches the derived mapping.
 
-**As-of limit.** The snapshot is trusted only through `as_of` `2026-11-24`, the
+**As-of limit (this snapshot).** The snapshot is trusted only through `as_of` `2026-11-24`, the
 capture date. Identity lookups after that date fail with `date_after_snapshot`
 until the pin is refreshed. This limit also bounds Husted's scheduled end date:
 it is not used past 2026-11-24, and an early departure would not go undetected

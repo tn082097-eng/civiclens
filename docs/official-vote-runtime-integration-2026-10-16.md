@@ -328,6 +328,11 @@ pattern. Fetch functions are injectable for tests.
   exposes `asOf`. Both lookups throw `date_after_snapshot` for a date after
   `as_of`. Inputs, receipts and the two-person diff are in `SOURCES.md`
   (identity snapshot, current). Everything else in this section is unchanged.
+- **Amendment (as_of refresh 2026-11-26).** Same commit, re-captured. The
+  output is now `fixtures/votes/identity/legislators-2b1fe72-asof-2026-11-26-voting-terms.json`
+  (sha256 `55764e7c…c6a1`), with `as_of` `2026-11-26` after an official-roster
+  cross-check. `derive_identity.ts` takes `--as-of`. People and terms are
+  unchanged.
 
 ## 4. Normalization (owner: official-vote-ingest, TS)
 

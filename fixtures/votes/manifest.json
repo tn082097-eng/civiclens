@@ -163,8 +163,8 @@
   "identity_snapshot": {
     "repository": "https://github.com/unitedstates/congress-legislators",
     "commit": "2b1fe728159fe5f5e145277794106e800719eb50",
-    "license": "CC0-1.0 (LICENSE sha256 a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499, 7048 bytes, captured 2026-11-26; receipt artifacts/2026-11-24-roster-freshness/identity-probe/license-receipt-2b1fe72.json)",
-    "as_of": "2026-11-24",
+    "license": "CC0-1.0 (LICENSE sha256 a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499, 7048 bytes, re-captured 2026-11-26; receipt artifacts/2026-11-26-identity-pin/source-receipts.json)",
+    "as_of": "2026-11-26",
     "inputs": [
       {
         "name": "legislators-current.yaml",
@@ -179,10 +179,35 @@
         "sha256": "ea7a1e35e7854418033b155420b522d3cefffc9763b67d7044cde45b8e49a355"
       }
     ],
-    "receipts": "artifacts/2026-11-24-roster-freshness/identity-probe/source-receipts.json (ignored run directory; summarized in SOURCES.md)",
+    "receipts": "artifacts/2026-11-26-identity-pin/source-receipts.json (ignored run directory; summarized in SOURCES.md)",
     "raw_yaml_committed": false,
-    "derived_mapping": "fixtures/votes/identity/legislators-2b1fe72-voting-terms.json (sha256 c5c8509eb23ad9e414644810cfef5f160508b87a1cd4a3472ebea2af1fa2fe46)",
+    "derived_mapping": "fixtures/votes/identity/legislators-2b1fe72-asof-2026-11-26-voting-terms.json (sha256 55764e7ce55dc58ea41f56895bb04fbf843fdfb3fb1fdc79ed5c38a41c8ec6a1)",
+    "roster_crosscheck": "artifacts/2026-11-26-identity-pin/roster-check-2026-11-26.json: House 439/439 and vacancies FL20, TX23; Senate 100/100 (MemberData.xml sha256 84458803178118dd612e41ff119daf2976e59d9f96780d8c794eba52d717711d, senators_cfm.xml sha256 fb91218c16df6ea2105f85107086e41e0a92dbb48681c4d1f54cb9a12541d792)",
     "superseded": [
+      {
+        "repository": "https://github.com/unitedstates/congress-legislators",
+        "commit": "2b1fe728159fe5f5e145277794106e800719eb50",
+        "license": "CC0-1.0 (LICENSE sha256 a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499, 7048 bytes, captured 2026-11-26; receipt artifacts/2026-11-24-roster-freshness/identity-probe/license-receipt-2b1fe72.json)",
+        "as_of": "2026-11-24",
+        "inputs": [
+          {
+            "name": "legislators-current.yaml",
+            "url": "https://raw.githubusercontent.com/unitedstates/congress-legislators/2b1fe728159fe5f5e145277794106e800719eb50/legislators-current.yaml",
+            "bytes": 1081522,
+            "sha256": "e805231b79539bf1a0d2ae2fc0698f41a60165ee28ec1f467ba7730884e5e753"
+          },
+          {
+            "name": "legislators-historical.yaml",
+            "url": "https://raw.githubusercontent.com/unitedstates/congress-legislators/2b1fe728159fe5f5e145277794106e800719eb50/legislators-historical.yaml",
+            "bytes": 8997407,
+            "sha256": "ea7a1e35e7854418033b155420b522d3cefffc9763b67d7044cde45b8e49a355"
+          }
+        ],
+        "receipts": "artifacts/2026-11-24-roster-freshness/identity-probe/source-receipts.json (ignored run directory; summarized in SOURCES.md)",
+        "raw_yaml_committed": false,
+        "derived_mapping": "fixtures/votes/identity/legislators-2b1fe72-voting-terms.json (sha256 c5c8509eb23ad9e414644810cfef5f160508b87a1cd4a3472ebea2af1fa2fe46)",
+        "note": "Same commit as the current pin; superseded only by the 2026-11-26 re-capture that moved as_of."
+      },
       {
         "repository": "https://github.com/unitedstates/congress-legislators",
         "commit": "d5af3d2d2490f8c6532c9490b1f47a76cacca699",

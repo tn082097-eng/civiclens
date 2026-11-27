@@ -36,23 +36,30 @@ test('snapshot hash is verified before parsing',()=>{
 });
 // Boundary cases from the 2026-11-24 pin refresh (SOURCES.md). The previous pin
 // ended both appointed senators on 2026-11-03 although official Senate XML
-// records them voting through 2026-11-20.
+// records them voting through 2026-11-20. The 2026-11-26 re-capture of the same
+// commit moved as_of after an official-roster cross-check.
 test('pinned snapshot identity and as_of limit',()=>{
  const i=loadIdentityIndex();
  assert.equal(i.commit,'2b1fe728159fe5f5e145277794106e800719eb50');
- assert.equal(i.asOf,'2026-11-24');
- assert.equal(i.personForVoter('senate','S428','2026-11-24'),i.personForVoter('senate','S428','2025-01-15'));
- assert.throws(()=>i.personForVoter('senate','S428','2026-11-25'),code('date_after_snapshot'));
- assert.throws(()=>i.inService('A000370','house','2026-11-25'),code('date_after_snapshot'));
+ assert.equal(i.asOf,'2026-11-26');
+ assert.equal(i.personForVoter('senate','S428','2026-11-26'),i.personForVoter('senate','S428','2025-01-15'));
+ assert.throws(()=>i.personForVoter('senate','S428','2026-11-27'),code('date_after_snapshot'));
+ assert.throws(()=>i.inService('A000370','house','2026-11-27'),code('date_after_snapshot'));
+});
+test('the 2026-11-24 snapshot stays byte-identical except as_of, and the loader rejects it',()=>{
+ const old=fileURLToPath(new URL('../fixtures/votes/identity/legislators-2b1fe72-voting-terms.json',import.meta.url));
+ const oldBytes=readFileSync(old,'utf8'),newBytes=readFileSync(IDENTITY_SNAPSHOT_PATH,'utf8');
+ assert.equal(oldBytes.replace('"as_of": "2026-11-24"','"as_of": "2026-11-26"'),newBytes);
+ assert.throws(()=>loadIdentityIndex(old,'c5c8509eb23ad9e414644810cfef5f160508b87a1cd4a3472ebea2af1fa2fe46'),code('invalid_snapshot'));
 });
 test('Husted (S438) serves through the November 2026 rolls',()=>{
  const i=loadIdentityIndex();
- for(const d of ['2025-01-21','2026-11-03','2026-11-04','2026-11-20','2026-11-24'])assert.equal(i.personForVoter('senate','S438',d),'H001104');
+ for(const d of ['2025-01-21','2026-11-03','2026-11-04','2026-11-20','2026-11-26'])assert.equal(i.personForVoter('senate','S438',d),'H001104');
  assert.throws(()=>i.personForVoter('senate','S438','2025-01-20'),code('voter_not_in_service'));
 });
 test('Moody (S439) has no gap between appointment and special-election terms',()=>{
  const i=loadIdentityIndex();
- for(const d of ['2026-11-03','2026-11-04','2026-11-20','2026-11-24'])assert.equal(i.personForVoter('senate','S439',d),'M001244');
+ for(const d of ['2026-11-03','2026-11-04','2026-11-20','2026-11-26'])assert.equal(i.personForVoter('senate','S439',d),'M001244');
 });
 test('superseded d5af3d2 snapshot is rejected by the current contract',()=>{
  const old=fileURLToPath(new URL('../fixtures/votes/identity/legislators-d5af3d2-voting-terms.json',import.meta.url));

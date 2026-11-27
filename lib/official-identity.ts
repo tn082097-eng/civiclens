@@ -6,8 +6,10 @@ import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {OfficialVoteFailure} from './official-vote-types.js';
 import {isIsoDate, type Chamber} from './vote-source.js';
-export const IDENTITY_SNAPSHOT_PATH=fileURLToPath(new URL('../fixtures/votes/identity/legislators-2b1fe72-voting-terms.json',import.meta.url));
-export const IDENTITY_SNAPSHOT_SHA256='c5c8509eb23ad9e414644810cfef5f160508b87a1cd4a3472ebea2af1fa2fe46';
+export const IDENTITY_SNAPSHOT_PATH=fileURLToPath(new URL('../fixtures/votes/identity/legislators-2b1fe72-asof-2026-11-26-voting-terms.json',import.meta.url));
+export const IDENTITY_SNAPSHOT_SHA256='55764e7ce55dc58ea41f56895bb04fbf843fdfb3fb1fdc79ed5c38a41c8ec6a1';
+/** Last trusted date: capture plus official-roster cross-check (SOURCES.md). */
+export const IDENTITY_AS_OF='2026-11-26';
 export interface IdentityIndex {
  commit:string;snapshotSha256:string;floor:string;asOf:string;
  personForVoter(chamber:Chamber,voterId:string,date:string):string;
@@ -22,7 +24,7 @@ export function loadIdentityIndex(path=IDENTITY_SNAPSHOT_PATH,expectedSha256=IDE
  const hash=createHash('sha256').update(bytes).digest('hex');
  if(hash!==expectedSha256)return fail('snapshot_hash_mismatch','identity snapshot differs from pinned hash');
  let snapshot:any;try{snapshot=JSON.parse(bytes.toString('utf8'));}catch(e){return fail('invalid_snapshot',String(e));}
- if(snapshot?.contract!=='civiclens.official-vote-identity'||snapshot.version!==2||snapshot.source?.commit!=='2b1fe728159fe5f5e145277794106e800719eb50'||snapshot.floor!=='2019-01-03'||snapshot.as_of!=='2026-11-24'||!Array.isArray(snapshot.people)||snapshot.people.length===0)fail('invalid_snapshot','invalid identity contract');
+ if(snapshot?.contract!=='civiclens.official-vote-identity'||snapshot.version!==2||snapshot.source?.commit!=='2b1fe728159fe5f5e145277794106e800719eb50'||snapshot.floor!=='2019-01-03'||snapshot.as_of!==IDENTITY_AS_OF||!Array.isArray(snapshot.people)||snapshot.people.length===0)fail('invalid_snapshot','invalid identity contract');
  const byBio=new Map<string,Person>(),byLis=new Map<string,Person>();
  for(const p of snapshot.people as Person[]){
   if(!p||typeof p.bioguide!=='string'||!/^[A-Z]\d{6}$/.test(p.bioguide)||byBio.has(p.bioguide)||!Array.isArray(p.terms)||!p.terms.length)fail('invalid_snapshot','missing or duplicate person');

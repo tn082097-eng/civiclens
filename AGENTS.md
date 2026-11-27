@@ -110,6 +110,11 @@ one of `--member <slug|name>`, `--bioguide <id>`, or `--all`.
   from January 1 through the filing date, and the extracted filing names a
   Member for that seat (`docs/house-ptr-seat-identity.md`). Anything else stays
   ambiguous and fails closed; seat identity never yields `verified-empty`.
+- **Identity pin `as_of`** (`lib/official-identity.ts`) is a fail-closed limit:
+  lookups after it are refused. Move it only by the refresh in
+  `fixtures/votes/identity/README.md`: re-capture with receipts, pass
+  `crosscheck_identity_roster.ts` against the official House and Senate member
+  lists for the new date, derive twice with `--as-of`. Never loosen the guard.
 - OpenSecrets is optional for a base run. If it is not collected, record
   `not-collected`; never present that state as evidence that no donor data exists.
 - **Formatting hold and skip.** When an authoritative filing exists but the

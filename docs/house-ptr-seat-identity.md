@@ -13,14 +13,14 @@ A House index PTR (`FilingType` P) belongs to the target member when:
 3. its surname matches the target's pinned surname; and
 4. one of the following holds:
    - **Name match.** Its first name matches the pinned `first` or `nickname`. This is unchanged.
-   - **Seat identity.** The hash-pinned identity snapshot (`fixtures/votes/identity/legislators-2b1fe72-voting-terms.json`, sha256 `c5c8509e…`, via `lib/official-identity.ts` `houseSeatHolders`) lists the target as the **only** holder of that seat from January 1 of the record's year through its `FilingDate`.
+   - **Seat identity.** The hash-pinned identity snapshot (the current pin in `lib/official-identity.ts`, via `houseSeatHolders`; `as_of` 2026-11-26 since the re-capture) lists the target as the **only** holder of that seat from January 1 of the record's year through its `FilingDate`.
 
 A record accepted by seat identity also needs an extracted filing that names a `Member` for the same seat. It must also resolve to the target with confidence 1.
 
 If any part of this fails, the record stays ambiguous and the loader refuses. That covers:
 - a second seat holder in the span, such as a new Congress starting on January 3;
 - a missing or unparseable filing date, or one outside the record's year;
-- a date outside the pin's `[2019-01-03, 2026-11-24]` window;
+- a date outside the pin's `[2019-01-03, as_of]` window;
 - an extracted filing with a different status or seat.
 
 Seat identity never produces `verified-empty`. A seat-matched PTR that hasn't been extracted fails as "not extracted".

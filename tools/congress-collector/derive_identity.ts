@@ -5,16 +5,18 @@ import {createHash} from 'node:crypto';
 import yaml from 'js-yaml';
 const commit='2b1fe728159fe5f5e145277794106e800719eb50';
 const floor='2019-01-03';
-// Last date this snapshot is trusted for: the day its inputs and the Senate
-// service cross-checks were captured (SOURCES.md, identity snapshot refresh).
-// Lookups after this date fail closed until the pin is refreshed.
-const asOf='2026-11-24';
+// --as-of is the last date the snapshot is trusted for: the day its inputs were
+// captured and cross-checked against the official House and Senate rosters
+// (SOURCES.md, identity snapshot refresh). Lookups after it fail closed until
+// the next refresh. It is an argument, so a re-capture of the same commit needs
+// no code change and the archived snapshots stay reproducible.
 const pins=[['legislators-current.yaml',1081522,'e805231b79539bf1a0d2ae2fc0698f41a60165ee28ec1f467ba7730884e5e753'],['legislators-historical.yaml',8997407,'ea7a1e35e7854418033b155420b522d3cefffc9763b67d7044cde45b8e49a355']] as const;
 const args=process.argv.slice(2);
 function arg(flag:string) {const n=args.indexOf(flag);if(n<0||!args[n+1]||args[n+1].startsWith('--'))throw new Error(`missing ${flag}`);return args[n+1];}
-if(args.length!==6||new Set(args.filter(a=>a.startsWith('--'))).size!==3)throw new Error('expected --current --historical --out');
-const paths=[arg('--current'),arg('--historical')]; const output=arg('--out');
+if(args.length!==8||new Set(args.filter(a=>a.startsWith('--'))).size!==4)throw new Error('expected --current --historical --as-of --out');
+const paths=[arg('--current'),arg('--historical')]; const output=arg('--out'); const asOf=arg('--as-of');
 function iso(v:unknown):v is string {return typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&new Date(v+'T00:00:00Z').toISOString().slice(0,10)===v;}
+if(!iso(asOf)||asOf<floor)throw new Error(`invalid --as-of: ${asOf}`);
 const seenBio=new Set<string>(),seenLis=new Set<string>();
 const people=[];
 for(let n=0;n<2;n++){
