@@ -8,12 +8,12 @@
       "state": "UT",
       "stats": {
         "trades": 43,
-        "votes": 2100,
+        "votes": 1994,
         "sponsored": 95,
         "cosponsored": 617,
         "donors": 100
       },
-      "dataThrough": "2026-07-23"
+      "dataThrough": "2026-11-19"
     },
     {
       "slug": "dan-crenshaw",
@@ -22,13 +22,13 @@
       "chamber": "house",
       "state": "TX",
       "stats": {
-        "trades": 16,
-        "votes": 2100,
+        "trades": 24,
+        "votes": 1994,
         "sponsored": 91,
         "cosponsored": 1260,
         "donors": 99
       },
-      "dataThrough": "2026-07-23"
+      "dataThrough": "2026-11-19"
     },
     {
       "slug": "josh-gottheimer",
@@ -37,13 +37,13 @@
       "chamber": "house",
       "state": "NJ",
       "stats": {
-        "trades": 2027,
-        "votes": 2100,
+        "trades": 2105,
+        "votes": 1994,
         "sponsored": 196,
         "cosponsored": 3243,
         "donors": 99
       },
-      "dataThrough": "2026-07-23"
+      "dataThrough": "2026-11-19"
     },
     {
       "slug": "lois-frankel",
@@ -53,12 +53,12 @@
       "state": "FL",
       "stats": {
         "trades": 388,
-        "votes": 2100,
+        "votes": 1994,
         "sponsored": 92,
         "cosponsored": 2267,
         "donors": 100
       },
-      "dataThrough": "2026-07-23"
+      "dataThrough": "2026-11-19"
     },
     {
       "slug": "mitch-mcconnell",
@@ -67,13 +67,13 @@
       "chamber": "senate",
       "state": "KY",
       "stats": {
-        "trades": 22,
-        "votes": 1700,
+        "trades": 23,
+        "votes": 1693,
         "sponsored": 539,
         "cosponsored": 2289,
         "donors": 20
       },
-      "dataThrough": "2026-06-01"
+      "dataThrough": "2026-11-20"
     },
     {
       "slug": "nancy-pelosi",
@@ -82,13 +82,13 @@
       "chamber": "house",
       "state": "CA",
       "stats": {
-        "trades": 85,
-        "votes": 2000,
+        "trades": 97,
+        "votes": 1940,
         "sponsored": 173,
         "cosponsored": 5070,
         "donors": 100
       },
-      "dataThrough": "2026-07-23"
+      "dataThrough": "2026-11-19"
     },
     {
       "slug": "ron-wyden",
@@ -97,13 +97,13 @@
       "chamber": "senate",
       "state": "OR",
       "stats": {
-        "trades": 36,
-        "votes": 1700,
+        "trades": 37,
+        "votes": 1693,
         "sponsored": 43,
         "cosponsored": 7621,
         "donors": 100
       },
-      "dataThrough": "2026-07-27"
+      "dataThrough": "2026-11-20"
     },
     {
       "slug": "sheldon-whitehouse",
@@ -112,13 +112,13 @@
       "chamber": "senate",
       "state": "RI",
       "stats": {
-        "trades": 126,
-        "votes": 1700,
+        "trades": 139,
+        "votes": 1693,
         "sponsored": 137,
         "cosponsored": 4273,
         "donors": 100
       },
-      "dataThrough": "2026-07-27"
+      "dataThrough": "2026-11-20"
     },
     {
       "slug": "susan-collins",
@@ -128,12 +128,12 @@
       "state": "ME",
       "stats": {
         "trades": 28,
-        "votes": 1700,
+        "votes": 1693,
         "sponsored": 156,
         "cosponsored": 5426,
         "donors": 100
       },
-      "dataThrough": "2026-07-27"
+      "dataThrough": "2026-11-20"
     }
   ]
 }
