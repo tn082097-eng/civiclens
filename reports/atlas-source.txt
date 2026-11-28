@@ -1,0 +1,455 @@
+CIVICLENS ATLAS
+How public data becomes evidence.
+
+project status, 2026-07-26
+
+A spoken version of the CivicLens system atlas. Everything the interactive
+map holds is written out below in reading order, including the detail panels
+that are normally hidden behind a click.
+
+Contents: Part 1, the story. Part 2, project status. Part 3, the system
+piece by piece. Part 4, how the pieces connect.
+
+======================================================================
+
+PART 1. THE STORY
+
+1. It begins with the public record.
+
+Ten streams of official government records, stock trades, votes, campaign money, lobbying filings. Nothing is invented: if a source can't be reached, the system stops rather than guessing.
+
+2. Everything converges into one database.
+
+Every stream is cleaned up and filed into a single database. Every row of it can be traced back to the official document it came from.
+
+3. Detectors interrogate the data.
+
+Each detector asks one narrow question, like "did this trade land suspiciously close to a vote?" Every hit is then tested against random chance, so a coincidence can't be dressed up as a pattern.
+
+  trade-vote-alignment: A member trades a stock in the two weeks before a vote their own committee controlled, or before a bill that names the very company they traded.
+
+  spousal-trade-timing: The same timing check, applied to trades made by a member's spouse or joint accounts.
+
+  donor-sector-vote-alignment: A member writes bills in exactly the industries their campaign donations come from.
+
+  recipient-trade overlap: Built, not yet run, does a member trade stock of the specific companies winning contracts in their own district? Pre-registered null, blind confirmation. (Its theme-level predecessor tested clean against chance and was honestly retired.)
+
+4. Evidence becomes thirteen sections.
+
+Every member's page has the same thirteen sections. When there's no data for one, the page says so out loud, nothing is ever quietly left out. And rebuilding the site always produces exactly the same pages, so any change is a deliberate one.
+
+5. The site is checked, then published as-is.
+
+The finished site is built and double-checked on one trusted computer, then published to the web exactly as built, the hosting service never rebuilds or changes anything, and private keys never leave the machine.
+
+  Note: the front page only reports counts, it never makes claims
+
+6. Now explore the whole system.
+
+Hover to trace connections. Click anything to zoom in. Search to jump.
+
+The thirteen sections every member page carries: identity, glance, receipts, coherence, money votes, timeline, trades, donors, revolving, outside spending, peers, patterns, cosponsor.
+
+======================================================================
+
+PART 2. PROJECT STATUS
+
+Shipped through the publish gate
+
+Phases: P0 complete; P1 roster complete; P2 data complete; P3 analysis complete; P4 launch complete; governance (current).
+
+The site is live since July 9, 2026, two members published (Gottheimer + Pelosi). Since then the project spent its effort on saying no properly. The recipient-trade detector ran its one pre-registered test on July 19 and failed the gate (p equals 0.74); it was published as a null result rather than tuned into significance, the second dead spine filed as a negative experiment. That discipline is now machinery, not intention: a confirmatory-run registry plus an in-path guard refuses a second run on a consumed detector, and unevidenced invalidation fails closed. Ingestion was repaired the same way, every broad loader now demands an explicit member and fails closed without one, so routine onboarding can no longer overwrite a neighbour's rows or accidentally consume the parked timing detectors' single run. Amber dots mark what is genuinely open.
+
+Open queue:
+
+  negative-control gate, awaiting authorisation (blocked)
+  a vote-attribute scramble must show the scorer stays quiet on noise before the real confirmatory run is allowed. Parked: it needs an explicit go-ahead, and running it early would burn the one preregistered run
+
+  one-shot confirmatory run (blocked)
+  registered but unconsumed in docs/confirmatory-runs.md. Both timing detectors are filtered out of routine onboarding so a new member can never trigger their first p-values by accident
+
+======================================================================
+
+PART 3. THE SYSTEM, PIECE BY PIECE
+
+-- DATA SOURCE (11 items) --
+
+1. Researcher agent
+   Identifier: load-from-tasks.ts
+
+   The starting point for each new member: gathers their basics, votes, bills, donors, committees, straight from official sources.
+
+   Fetch: Live primary sources via skills/researcher/fetch.ts, never stub data.
+
+   Loader: db/load-from-tasks.ts (member-creation path)
+
+   Provides: Roster, donors, votes, bills, committees, controversies
+
+   Tables: members, donors, votes, bills, committees, controversies
+
+2. House Clerk, PFD
+   Identifier: --load-pfd
+
+   The stock trades House members are required to report, from the House Clerk's office.
+
+   Loader: db/load-pfd.ts
+
+   Flag: --load-pfd year[,year], supports --dry-run
+
+   Reads: pfd-cache/{year}/*.json
+
+   Table: pfd_transactions (shared with Senate PTR)
+
+3. Senate EFDS, PTR
+   Identifier: --load-senate-ptr
+
+   The same required stock-trade reports, for Senators. Both chambers land in one shared table.
+
+   Loader: db/load-senate-ptr.ts
+
+   Flag: --load-senate-ptr
+
+   Reads: senate-ptr-cache/{year}/*.json
+
+   Table: pfd_transactions (shared with House PFD)
+
+4. OpenFEC, Super PAC IE
+   Identifier: --load-fec-ie
+
+   Money outside groups (super PACs) spent for or against each member, from the Federal Election Commission.
+
+   Fetch: lib/fec-ie.ts, then api.open.fec.gov/v1 (needs OPENFEC_API_KEY)
+
+   Loader: db/load-fec-ie.ts
+
+   Flag: --load-fec-ie cycle[,cycle]
+
+   Tables: super_pac_ie, super_pac_ie_filings
+
+   Feeds: Outside-spending section on member pages
+
+5. OpenSecrets, donor industries
+   Identifier: --load-opensecrets
+
+   Which industries a member's campaign money comes from. Used internally to power detectors, never republished on the site.
+
+   Loader: db/load-opensecrets.ts, pure parser, no network (site sits behind 403/Cloudflare)
+
+   Flag: --load-opensecrets cycle[,cycle]
+
+   Reads: pfd-cache/opensecrets/cycle/member_id.html
+
+   Coverage: 2024 complete: 45 members with rows + 1 verified-empty (McCarthy, resigned Dec 2023), 46/46 cache files load clean
+
+   Tables: donor_industry, donor_industry_theme
+
+   Rule: Fuels detectors, but is never published as a site section (terms + primary-source rule)
+
+6. Senate LDA, lobbying
+   Identifier: --load-lda
+
+   Who is lobbying Congress, including which former staffers came back as lobbyists (the "revolving door").
+
+   Api: lda.senate.gov/api/v1/filings/
+
+   Loader: db/load-lda.ts
+
+   Flag: --load-lda [--years 2018-2026]
+
+   Tables: lda_filings, lda_lobbyists, then view v_lobbyist_latest
+
+7. Congress.gov, bills and votes
+   Identifier: --load-bills
+
+   Official bill summaries, and the link between each recorded vote and the bill it was actually about.
+
+   Loader: db/load-bill-summaries.ts (needs CONGRESS_API_KEY)
+
+   Flag: --load-bills [--api-pass] [--api-limit N]
+
+   Writes: bill_summaries, fills votes.bill_id, the linkage every trade-vote detector depends on
+
+8. Congress.gov, sponsorship
+   Identifier: --load-sponsored
+
+   Which bills each member wrote or signed onto, and what policy area each bill belongs to.
+
+   Loaders: db/load-sponsored.ts, db/load-cosponsored.ts
+
+   Flag: --load-sponsored [member-id]
+
+   Writes: Sponsor rows + policy area on bills
+
+9. unitedstates.io + FEC IDs
+   Identifier: backfills
+
+   ID plumbing: connects the same person across different government databases so records line up.
+
+   Loaders: db/backfill-bioguide.ts, db/backfill-committees.ts, db/backfill-fec-candidate.ts
+
+   Writes: members.bioguide_id, committee membership, members.fec_candidate_id
+
+10. USAspending, district contracts
+   Identifier: load-district-recipients.ts
+
+   Federal contract dollars flowing into each member's district, recipient by recipient, with SAM.gov parent companies resolved at the source.
+
+   Api: api.usaspending.gov, spending_by_award (itemized, CY2023, 25) + GET /recipient/{id}/ for the SAM.gov parent
+
+   Loader: db/load-district-recipients.ts (harvest queued, 33 districts)
+
+   Tables: district_contract_recipient, recipient_parent
+
+   Trap: district_original, not district_current, "money in while they held the seat"
+
+   Feeds: The recipient-trade overlap detector
+
+11. Reference crosswalks
+   Identifier: --load-*
+
+   Translation tables: which company belongs to which industry, and which industry maps to which policy theme.
+
+   Loaders: db/load-ticker-sectors.ts, db/load-sector-crosswalk.ts, db/load-bill-subjects.ts
+
+   Flags: --load-ticker-sectors, --load-sector-crosswalk, --load-bill-subjects
+
+   Tables: ticker_sectors, sic_theme, theme_bill_match, bill_subjects
+
+
+-- DATABASE (1 item) --
+
+1. DuckDB
+   Identifier: data/civiclens.duckdb
+
+   The single home for all the data. Every row in it can be traced back to an official government source.
+
+   Roster: members, member_aliases, committees, controversies
+
+   Bills and votes: bills, votes, bill_summaries, bill_committees, bill_subjects
+
+   Trades: pfd_transactions
+
+   Money: donors, super_pac_ie, super_pac_ie_filings, donor_industry, donor_industry_theme
+
+   Lobbying: lda_filings, lda_lobbyists, v_lobbyist_latest
+
+   Contracts: district_contract_recipient, recipient_parent, recipient_ticker
+
+   Crosswalks: ticker_sectors, sic_theme, theme_bill_match, ticker_theme_override
+
+   Analysis: pipeline_runs, predictions, pattern_hits
+
+   Key views: v_top_donors, v_trades_near_votes, v_suspicious_trades, v_trade_bill_nexus, v_member_donor_theme, v_theme_eligible_votes, v_shared_donors, v_shared_committees, v_member_trade_summary, v_member_freshness
+
+
+-- ANALYSIS (7 items) --
+
+1. trade-vote-alignment
+   Identifier: detector, parked
+
+   Flags a stock trade made in the two weeks before a vote the member's own committee controlled, or before a bill naming that very company. Descriptive today: it can show you a pattern, but it is not yet allowed to call it significant.
+
+   Queued now: negative-control gate, awaiting authorisation, a vote-attribute scramble must show the scorer stays quiet on noise before the real confirmatory run is allowed. Parked: it needs an explicit go-ahead, and running it early would burn the one preregistered run
+
+   File: pipeline/patterns/trade-vote-alignment.ts
+
+   Signal: Trade within 14 days before a vote on a bill the member's committee had jurisdiction over, or whose text names the traded company
+
+   Parked: Registered, unconsumed. Its one preregistered confirmatory run is still unspent, held behind a negative-control gate that needs explicit authorisation
+
+   Why parked: Basket traders saturate a 14-day window mechanically: 1,900+ trades will land near some vote by volume alone. Until the null model says otherwise, hits render capped and captioned as unscored
+
+   Protection: Filtered out of run-patterns --member entirely, so onboarding a new member can never compute its first p-values as a side effect
+
+   Writes: pattern_hits, then rendered in the Patterns section
+
+2. spousal-trade-timing
+   Identifier: detector, parked
+
+   The same timing check, applied to trades made by the member's spouse or from joint accounts. Parked alongside its sibling.
+
+   Queued now: one-shot confirmatory run, registered but unconsumed in docs/confirmatory-runs.md. Both timing detectors are filtered out of routine onboarding so a new member can never trigger their first p-values by accident
+
+   File: pipeline/patterns/spousal-trade-timing.ts
+
+   Signal: Spouse/joint holding traded within 14 days before an own-committee vote
+
+   Parked: Registered, unconsumed, same gate, same single-run budget as trade-vote-alignment
+
+   Writes: pattern_hits
+
+3. donor-sector-vote-alignment
+   Identifier: detector
+
+   Flags a member writing bills in exactly the industries their campaign donations are concentrated in.
+
+   File: pipeline/patterns/donor-sector-vote-alignment.ts
+
+   Signal: Member sponsors focused legislation in an economic-sector theme among their donors' top concentrations
+
+   Inputs: OpenSecrets donor-industry + donor_industry_theme crosswalk
+
+   Writes: pattern_hits
+
+4. recipient-trade overlap (planned or gated)
+   Identifier: gated, published as a null
+
+   Does a member personally trade stock of the specific companies receiving federal contracts in their own district? Answer, as tested: no. Both spines were gated by their own pre-registered null and filed as negative results.
+
+   Status: Ran once, 2026-07-19, GATE FAIL (a47ca81). Thread closed; the detector was never registered
+
+   Result: S1 breadth p equals 0.7445, S2 exposure p equals 0.3760, members traded fewer own-district recipients than chance. Negative control clean 0/20, so the null is real, not broken machinery
+
+   Predecessor: The theme-level spine failed first (p equals 0.48). Two dead spines, filed as negative experiments, defense money is everywhere; named contractors are not
+
+   Power: Only 9 of 33 members had in-window traded tickers, and 15 near-universal defence/health tickers were ubiquity-excluded. Thin power, recorded as-is rather than tuned away
+
+   Honesty: Published to the live methodology page as "Detectors we tested and rejected", the null is the finding, not a failure to hide
+
+   Left behind: The substrate stays as infrastructure: 397 hand-confirmed recipient_ticker rows (blind curation, identity fields only) + the USAspending/SAM.gov loaders. Any variant is a NEW detector with a NEW pre-registration
+
+   Files: pipeline/patterns/recipient-trade-{candidates,overlap,baseline}.ts, spec docs/2026-07-17-recipient-trade-detector.md, audit trail docs/recipient-trade-curation-2026-07-18/
+
+5. Confirmatory-run guard
+   Identifier: the one-shot rule, enforced
+
+   The part that stops the project fooling itself. A detector gets exactly one preregistered test. Spend it, and the answer stands, pass or fail. This is not a convention anyone has to remember; it is code that refuses.
+
+   Files: docs/confirmatory-runs.md (registry), scripts/confirmatory-guard.ts, ADR docs/adr/0003
+
+   The rule: One confirmatory run per detector. A FAIL is archived as a negative result, never retuned, reseeded, or quietly re-run until it passes
+
+   In-path: The guard sits inside the five baseline runners, before any DB access. A consumed detector halts the process, you cannot forget to check, because checking is not a step you perform
+
+   Fails closed: Marking a run invalidated is not enough to reopen it: without a documented evidence reference the guard still refuses. The escape hatch needs a paper trail
+
+   Ledger: consumed-fail times 3 (both district spines, recipient-trade), registered times 2 (the parked timing pair)
+
+   Why it exists: Two detectors have already died by this rule. That is the point, a transparency project that cannot publish a null result is just narrative with a database attached
+
+6. Member-scope contract
+   Identifier: lib/ingest-scope.ts
+
+   "Onboard one member" now means one member at every command boundary. A loader with no target refuses to run rather than silently assuming you meant everyone.
+
+   File: lib/ingest-scope.ts, boundaries in AGENTS.md
+
+   Contract: Exactly one of --member, --bioguide, or --all. No selector fails closed, absence never means all
+
+   Identity first: A slug resolves to exactly one canonical bioguide before any network call or DB write; unknown or ambiguous fails loud rather than guessing
+
+   Blast radius: Five broad loaders made member-scoped and transactional. Two-member fixtures prove the other member's rows stay byte-identical through every affected table
+
+   Chamber branch: A senator uses Senate PTRs and must not run House PFD or district loaders, no statewide substitute exists, so those are skipped, not approximated
+
+   Why: The old default let a one-member run overwrite a neighbour's data, or consume a parked detector's single preregistered run by accident
+
+7. Agent pipeline
+   Identifier: agents/pipeline.ts
+
+   The assembly line that builds each member's profile, nine fixed steps, run the same way every time. AI writes only the narrative text; it never touches the data.
+
+   Order: Researcher, then Data Checker, then (Predictor, skipped by default), then Trade Analyst, then Summarizer, then Code Checker, then Final Reviewer
+
+   Hard stages: Researcher, Data Checker, Summarizer, abort after retry
+
+   Soft stages: Trade Analyst, Code Checker, warn + continue
+
+   Gate: Final Reviewer is a pure deterministic gate (LLM call stripped)
+
+   Shrinking on purpose: Connection Mapper and Revolving Door were deleted, not rewritten, both became deterministic SQL (findSharedDonors(), revolvingDoorConnections). Two LLM stages remain where three agents used to speculate
+
+   Models: Summarizer + Trade Analyst default claude-sonnet-4-6; env-overridable per agent
+
+   Runner: Detectors run via pipeline/run-patterns.ts, --member slug for one member, --all for the roster. The member path is timing-safe: it filters the parked timing pair before any detect or write
+
+
+-- RENDER AND PUBLISH (4 items) --
+
+1. Member pages
+   Identifier: render/build.ts
+
+   Each member's page, the same thirteen sections every time. Missing data is stated plainly, never quietly hidden.
+
+   Files: render/build.ts + render/member-sections.ts
+
+   Sections: identity, glance, receipts, coherence, money-votes, timeline, trades, donors, revolving, outside-spending, peers, patterns, cosponsor
+
+   Determinism: Rebuilding always produces exactly the same pages, render/skeleton.golden.test.ts checks this, and every database query is fully ordered so results can never shuffle
+
+   Rule: When a section has no data, the page says so, a section can never silently disappear
+
+2. Landing page
+   Identifier: render/landing.ts
+
+   The front page. It only reports what has been published, simple counts, never claims or accusations.
+
+   File: render/landing.ts, then renderLanding()
+
+   Source: render/published-members.json only (ADR 0002 section C), refreshed by scripts/update-manifest.ts
+
+   Content: Masthead, hero, published-record member cards, method, inventory counts only, never detector output
+
+   Guard: A test (render/landing.test.ts) enforces that the front page only counts, it never claims
+
+3. Verified artifact
+   Identifier: package-launch.sh
+
+   The safety gate: the finished site is double-checked on one trusted computer, then published exactly as built, nothing rebuilds it along the way.
+
+   Package: scripts/package-launch.sh assembles public/ (landing, methodology, member pages)
+
+   Guard: Freshness check refuses to package when the DB is newer than a member's verified render
+
+   Workflow: .github/workflows/deploy.yml, workflow_dispatch only, dormant by design
+
+   Why: Public repo: raw OpenSecrets-derived tables and API keys never leave the machine
+
+4. GitHub Pages
+   Identifier: the public site
+
+   The public website, live since July 9, 2026, with two members published so far.
+
+   Deploy: actions/upload-pages-artifact, then actions/deploy-pages
+
+   State: Public beta: 2 members published (Gottheimer, Pelosi) of 57 loaded in the DB
+
+   Promise: Every claim on the site traces back through this map to a primary source
+
+
+======================================================================
+
+PART 4. HOW THE PIECES CONNECT
+
+  Researcher agent connects to DuckDB.
+  House Clerk, PFD connects to DuckDB.
+  Senate EFDS, PTR connects to DuckDB.
+  OpenFEC, Super PAC IE connects to DuckDB.
+  OpenSecrets, donor industries connects to DuckDB.
+  Senate LDA, lobbying connects to DuckDB.
+  Congress.gov, bills and votes connects to DuckDB.
+  Congress.gov, sponsorship connects to DuckDB.
+  unitedstates.io + FEC IDs connects to DuckDB.
+  USAspending, district contracts connects to DuckDB.
+  Reference crosswalks connects to DuckDB.
+  DuckDB connects to trade-vote-alignment.
+  DuckDB connects to spousal-trade-timing.
+  DuckDB connects to donor-sector-vote-alignment.
+  DuckDB connects to recipient-trade overlap.
+  DuckDB connects to Agent pipeline.
+  Confirmatory-run guard connects to trade-vote-alignment.
+  Confirmatory-run guard connects to spousal-trade-timing.
+  Confirmatory-run guard connects to recipient-trade overlap.
+  Member-scope contract connects to DuckDB.
+  Member-scope contract connects to Agent pipeline.
+  trade-vote-alignment connects to Member pages.
+  spousal-trade-timing connects to Member pages.
+  donor-sector-vote-alignment connects to Member pages.
+  Agent pipeline connects to Member pages.
+  DuckDB connects to Member pages.
+  Member pages connects to Landing page.
+  Member pages connects to Verified artifact.
+  Landing page connects to Verified artifact.
+  Verified artifact connects to GitHub Pages.
+
+End of the CivicLens atlas.

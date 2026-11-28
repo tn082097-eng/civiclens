@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>CivicLens Atlas</title>
+<style>
+@page { size: Letter; margin: 17mm 15mm 15mm 15mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: "Source Serif Pro", Georgia, "Times New Roman", serif;
+  font-size: 10.1pt; line-height: 1.5; color: #14161c; margin: 0;
+}
+code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 8.6pt; background: #eef0f6; padding: 0.3mm 1mm;
+  border-radius: 0.8mm; color: #2a2f45;
+}
+.cover { padding-top: 46mm; page-break-after: always; }
+.cover h1 {
+  font-size: 33pt; letter-spacing: -0.022em; margin: 0 0 3mm;
+  line-height: 1.02; font-weight: 600;
+}
+.cover .tag { font-size: 13.5pt; color: #3f4660; margin: 0 0 12mm; font-style: italic; }
+.cover .meta {
+  font-family: ui-sans-serif, system-ui, sans-serif; font-size: 8.6pt;
+  letter-spacing: 0.1em; text-transform: uppercase; color: #6a7189;
+  border-top: 2px solid #14161c; padding-top: 3mm; margin-top: 4mm;
+}
+.cover .note {
+  margin-top: 13mm; font-size: 9.4pt; color: #3f4660; max-width: 108mm;
+  line-height: 1.55;
+}
+.toc { margin-top: 9mm; font-size: 9.6pt; }
+.toc div { padding: 1.1mm 0; border-bottom: 0.4px solid #d8dbe6; }
+.toc b { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 8.2pt;
+  letter-spacing: 0.09em; color: #6a7189; margin-right: 3mm; }
+h2.part {
+  font-size: 8.8pt; font-family: ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.16em; text-transform: uppercase; color: #4d5470;
+  margin: 0 0 5mm; padding-bottom: 2mm; border-bottom: 2px solid #14161c;
+  page-break-after: avoid;
+}
+h3.group {
+  font-size: 11.6pt; margin: 8mm 0 3mm; letter-spacing: -0.005em;
+  page-break-after: avoid;
+}
+.gcount {
+  font-family: ui-sans-serif, system-ui, sans-serif; font-size: 7.6pt;
+  letter-spacing: 0.08em; text-transform: uppercase; color: #6a7189;
+  border: 0.6px solid #b9bfd2; border-radius: 6mm; padding: 0.5mm 2mm;
+  vertical-align: 0.9mm; margin-left: 2.5mm; font-weight: 600;
+}
+.story { margin: 0 0 4mm; page-break-inside: avoid; }
+.story .n {
+  font-family: ui-sans-serif, system-ui, sans-serif; font-size: 8pt;
+  font-weight: 700; color: #8a91a8; letter-spacing: 0.06em;
+}
+.story h4 { font-size: 11.4pt; margin: 0.6mm 0 1.4mm; letter-spacing: -0.008em; }
+.story p { margin: 0; color: #2b3145; }
+.item {
+  page-break-inside: avoid; margin: 0 0 4.5mm; padding: 2.6mm 0 0 0;
+  border-top: 0.5px solid #d8dbe6;
+}
+.item:first-of-type { border-top: none; }
+.item .hd { margin-bottom: 1.4mm; }
+.item h4 { font-size: 10.7pt; margin: 0; display: inline; letter-spacing: -0.005em; }
+.item .id {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 8pt;
+  color: #6a7189; margin-left: 2.5mm;
+}
+.item .lead { margin: 0 0 1.8mm; color: #2b3145; }
+table.f { width: 100%; border-collapse: collapse; font-size: 8.9pt; }
+table.f td { padding: 0.9mm 0; vertical-align: top; border: none; }
+table.f td.k {
+  width: 27mm; font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 7.6pt; letter-spacing: 0.05em; text-transform: uppercase;
+  color: #6a7189; padding-right: 3mm; padding-top: 1.35mm; font-weight: 600;
+}
+table.f td.v { color: #2b3145; }
+p.body { margin: 0 0 2.6mm; }
+p.sub {
+  margin: 0 0 2.2mm 5mm; color: #3f4660; font-size: 9.5pt;
+  border-left: 1.5px solid #c3c9da; padding-left: 3.5mm;
+}
+.flag {
+  display: block; margin: 1.6mm 0 0; padding: 1.8mm 2.6mm;
+  border-left: 2.2px solid #9a3324; background: #fbf3f1;
+  font-size: 8.5pt; color: #6d2a1e; line-height: 1.42;
+}
+.flag b { font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 7.4pt; letter-spacing: 0.08em; text-transform: uppercase; }
+.edges { column-count: 2; column-gap: 9mm; font-size: 9pt; margin-top: 1mm; }
+.edges div {
+  break-inside: avoid; padding: 0.75mm 0; color: #2b3145;
+  border-bottom: 0.4px solid #e2e5ee;
+}
+.edges .a { font-weight: 600; }
+.edges .to { color: #8a91a8; font-size: 8pt; }
+.end {
+  margin-top: 8mm; padding-top: 2.5mm; border-top: 2px solid #14161c;
+  font-size: 8.2pt; color: #6a7189;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.05em;
+}
+.newpage { page-break-before: always; }
+</style></head><body>
+
+<div class="cover">
+<h1>CivicLens Atlas</h1>
+<p class="tag">How public data becomes evidence.</p>
+<div class="meta">System atlas &nbsp;·&nbsp; project status 26 July 2026</div>
+<p class="note">A written edition of the CivicLens system atlas. Everything the
+interactive map holds is set out below in reading order, including the detail
+panels normally hidden behind a click.</p>
+<div class="toc">
+<div><b>Part 1</b> The story</div>
+<div><b>Part 2</b> Project status</div>
+<div><b>Part 3</b> The system, piece by piece</div>
+<div><b>Part 4</b> How the pieces connect</div>
+</div>
+<p class="note" style="margin-top:10mm;font-size:8.6pt;color:#6a7189;">
+Typeset from the atlas text export. Content is reproduced as written; one
+factual annotation is marked inline where repository evidence disagrees.</p>
+</div>
+<h2 class="part">Part 1 — The Story</h2>
+<div class="story"><div class="n">1</div><h4>It begins with the public record.</h4></div>
+<p class="body">Ten streams of official government records, stock trades, votes, campaign money, lobbying filings. Nothing is invented: if a source can't be reached, the system stops rather than guessing.</p>
+<div class="story"><div class="n">2</div><h4>Everything converges into one database.</h4></div>
+<p class="body">Every stream is cleaned up and filed into a single database. Every row of it can be traced back to the official document it came from.</p>
+<div class="story"><div class="n">3</div><h4>Detectors interrogate the data.</h4></div>
+<p class="body">Each detector asks one narrow question, like "did this trade land suspiciously close to a vote?" Every hit is then tested against random chance, so a coincidence can't be dressed up as a pattern.</p>
+<p class="sub">trade-vote-alignment: A member trades a stock in the two weeks before a vote their own committee controlled, or before a bill that names the very company they traded.</p>
+<p class="sub">spousal-trade-timing: The same timing check, applied to trades made by a member's spouse or joint accounts.</p>
+<p class="sub">donor-sector-vote-alignment: A member writes bills in exactly the industries their campaign donations come from.</p>
+<p class="sub">recipient-trade overlap: Built, not yet run, does a member trade stock of the specific companies winning contracts in their own district? Pre-registered null, blind confirmation. (Its theme-level predecessor tested clean against chance and was honestly retired.)</p>
+<div class="story"><div class="n">4</div><h4>Evidence becomes thirteen sections.</h4></div>
+<p class="body">Every member's page has the same thirteen sections. When there's no data for one, the page says so out loud, nothing is ever quietly left out. And rebuilding the site always produces exactly the same pages, so any change is a deliberate one.</p>
+<div class="story"><div class="n">5</div><h4>The site is checked, then published as-is.</h4></div>
+<p class="body">The finished site is built and double-checked on one trusted computer, then published to the web exactly as built, the hosting service never rebuilds or changes anything, and private keys never leave the machine.</p>
+<p class="sub">Note: the front page only reports counts, it never makes claims</p>
+<div class="story"><div class="n">6</div><h4>Now explore the whole system.</h4></div>
+<p class="body">Hover to trace connections. Click anything to zoom in. Search to jump.</p>
+<p class="body">The thirteen sections every member page carries: identity, glance, receipts, coherence, money votes, timeline, trades, donors, revolving, outside spending, peers, patterns, cosponsor.</p>
+<div class="newpage"></div><h2 class="part">Part 2 — Project Status</h2>
+<p class="body">Shipped through the publish gate</p>
+<p class="body">Phases: P0 complete; P1 roster complete; P2 data complete; P3 analysis complete; P4 launch complete; governance (current).</p>
+<p class="body">The site is live since July 9, 2026, two members published (Gottheimer + Pelosi). Since then the project spent its effort on saying no properly. The recipient-trade detector ran its one pre-registered test on July 19 and failed the gate (p = 0.74); it was published as a null result rather than tuned into significance, the second dead spine filed as a negative experiment. That discipline is now machinery, not intention: a confirmatory-run registry plus an in-path guard refuses a second run on a consumed detector, and unevidenced invalidation fails closed. Ingestion was repaired the same way, every broad loader now demands an explicit member and fails closed without one, so routine onboarding can no longer overwrite a neighbour's rows or accidentally consume the parked timing detectors' single run. Amber dots mark what is genuinely open.</p><p class="flag"><b>Annotation — repository evidence</b><br>Repository check on 26 July 2026 finds <b>one</b> member published, not two: <code>public/members/</code> contains only <code>josh-gottheimer.html</code>. Pelosi appears solely in test fixtures and planning documents. 57 members are ingested in the database; ingestion scope and publication scope differ.</p>
+<p class="body">Open queue:</p>
+<p class="sub">negative-control gate, awaiting authorisation (blocked)</p>
+<p class="sub">a vote-attribute scramble must show the scorer stays quiet on noise before the real confirmatory run is allowed. Parked: it needs an explicit go-ahead, and running it early would burn the one preregistered run</p>
+<p class="sub">one-shot confirmatory run (blocked)</p>
+<p class="sub">registered but unconsumed in <code>docs/confirmatory-runs.md</code>. Both timing detectors are filtered out of routine onboarding so a new member can never trigger their first p-values by accident</p>
+<div class="newpage"></div><h2 class="part">Part 3 — The System, Piece By Piece</h2>
+<h3 class="group">Data Source<span class="gcount">11</span></h3>
+<div class="item"><div class="hd"><h4>Researcher agent</h4><span class="id">load-from-tasks.ts</span></div><table class="f"><tr><td class="k">The starting point for each new member</td><td class="v">gathers their basics, votes, bills, donors, committees, straight from official sources.</td></tr><tr><td class="k">Fetch</td><td class="v">Live primary sources via <code>skills/researcher/fetch.ts</code>, never stub data.</td></tr><tr><td class="k">Loader</td><td class="v"><code>db/load-from-tasks.ts</code> (member-creation path)</td></tr><tr><td class="k">Provides</td><td class="v">Roster, donors, votes, bills, committees, controversies</td></tr><tr><td class="k">Tables</td><td class="v">members, donors, votes, bills, committees, controversies</td></tr></table></div>
+<div class="item"><div class="hd"><h4>House Clerk, PFD</h4><span class="id">--load-pfd</span></div><p class="lead">The stock trades House members are required to report, from the House Clerk's office.</p><table class="f"><tr><td class="k">Loader</td><td class="v"><code>db/load-pfd.ts</code></td></tr><tr><td class="k">Flag</td><td class="v"><code>--load-pfd</code> year[,year], supports <code>--dry-run</code></td></tr><tr><td class="k">Reads</td><td class="v">pfd-cache/{year}/*.json</td></tr><tr><td class="k">Table</td><td class="v">pfd_transactions (shared with Senate PTR)</td></tr></table></div>
+<div class="item"><div class="hd"><h4>Senate EFDS, PTR</h4><span class="id">--load-senate-ptr</span></div><p class="lead">The same required stock-trade reports, for Senators. Both chambers land in one shared table.</p><table class="f"><tr><td class="k">Loader</td><td class="v"><code>db/load-senate-ptr.ts</code></td></tr><tr><td class="k">Flag</td><td class="v"><code>--load-senate-ptr</code></td></tr><tr><td class="k">Reads</td><td class="v">senate-ptr-cache/{year}/*.json</td></tr><tr><td class="k">Table</td><td class="v">pfd_transactions (shared with House PFD)</td></tr></table></div>
+<div class="item"><div class="hd"><h4>OpenFEC, Super PAC IE</h4><span class="id">--load-fec-ie</span></div><p class="lead">Money outside groups (super PACs) spent for or against each member, from the Federal Election Commission.</p><table class="f"><tr><td class="k">Fetch</td><td class="v"><code>lib/fec-ie.ts</code>, then api.open.fec.gov/v1 (needs OPENFEC_API_KEY)</td></tr><tr><td class="k">Loader</td><td class="v"><code>db/load-fec-ie.ts</code></td></tr><tr><td class="k">Flag</td><td class="v"><code>--load-fec-ie</code> cycle[,cycle]</td></tr><tr><td class="k">Tables</td><td class="v">super_pac_ie, super_pac_ie_filings</td></tr><tr><td class="k">Feeds</td><td class="v">Outside-spending section on member pages</td></tr></table></div>
+<div class="item"><div class="hd"><h4>OpenSecrets, donor industries</h4><span class="id">--load-opensecrets</span></div><p class="lead">Which industries a member's campaign money comes from. Used internally to power detectors, never republished on the site.</p><table class="f"><tr><td class="k">Loader</td><td class="v"><code>db/load-opensecrets.ts</code>, pure parser, no network (site sits behind 403/Cloudflare)</td></tr><tr><td class="k">Flag</td><td class="v"><code>--load-opensecrets</code> cycle[,cycle]</td></tr><tr><td class="k">Reads</td><td class="v"><code>pfd-cache/opensecrets/cycle/member_id.html</code></td></tr><tr><td class="k">Coverage</td><td class="v">2024 complete: 45 members with rows + 1 verified-empty (McCarthy, resigned Dec 2023), 46/46 cache files load clean</td></tr><tr><td class="k">Tables</td><td class="v">donor_industry, donor_industry_theme</td></tr><tr><td class="k">Rule</td><td class="v">Fuels detectors, but is never published as a site section (terms + primary-source rule)</td></tr></table></div>
+<div class="item"><div class="hd"><h4>Senate LDA, lobbying</h4><span class="id">--load-lda</span></div><p class="lead">Who is lobbying Congress, including which former staffers came back as lobbyists (the "revolving door").</p><table class="f"><tr><td class="k">Api</td><td class="v">lda.senate.gov/api/v1/filings/</td></tr><tr><td class="k">Loader</td><td class="v"><code>db/load-lda.ts</code></td></tr><tr><td class="k">Flag</td><td class="v"><code>--load-lda</code> [<code>--years</code> 2018-2026]</td></tr><tr><td class="k">Tables</td><td class="v">lda_filings, lda_lobbyists, then view v_lobbyist_latest</td></tr></table></div>
+<div class="item"><div class="hd"><h4>Congress.gov, bills and votes</h4><span class="id">--load-bills</span></div><p class="lead">Official bill summaries, and the link between each recorded vote and the bill it was actually about.</p><table class="f"><tr><td class="k">Loader</td><td class="v"><code>db/load-bill-summaries.ts</code> (needs CONGRESS_API_KEY)</td></tr><tr><td class="k">Flag</td><td class="v"><code>--load-bills</code> [<code>--api-pass</code>] [<code>--api-limit</code> N]</td></tr><tr><td class="k">Writes</td><td class="v">bill_summaries, fills votes.bill_id, the linkage every trade-vote detector depends on</td></tr></table></div>
+<div class="item"><div class="hd"><h4>Congress.gov, sponsorship</h4><span class="id">--load-sponsored</span></div><p class="lead">Which bills each member wrote or signed onto, and what policy area each bill belongs to.</p><table class="f"><tr><td class="k">Loaders</td><td class="v"><code>db/load-sponsored.ts</code>, <code>db/load-cosponsored.ts</code></td></tr><tr><td class="k">Flag</td><td class="v"><code>--load-sponsored</code> [member-id]</td></tr><tr><td class="k">Writes</td><td class="v">Sponsor rows + policy area on bills</td></tr></table></div>
+<div class="item"><div class="hd"><h4>unitedstates.io + FEC IDs</h4><span class="id">backfills</span></div><table class="f"><tr><td class="k">ID plumbing</td><td class="v">connects the same person across different government databases so records line up.</td></tr><tr><td class="k">Loaders</td><td class="v"><code>db/backfill-bioguide.ts</code>, <code>db/backfill-committees.ts</code>, <code>db/backfill-fec-candidate.ts</code></td></tr><tr><td class="k">Writes</td><td class="v">members.bioguide_id, committee membership, members.fec_candidate_id</td></tr></table></div>
+<div class="item"><div class="hd"><h4>USAspending, district contracts</h4><span class="id">load-district-recipients.ts</span></div><p class="lead">Federal contract dollars flowing into each member's district, recipient by recipient, with SAM.gov parent companies resolved at the source.</p><table class="f"><tr><td class="k">Api</td><td class="v">api.usaspending.gov, spending_by_award (itemized, CY2023, 25) + GET /recipient/{id}/ for the SAM.gov parent</td></tr><tr><td class="k">Loader</td><td class="v"><code>db/load-district-recipients.ts</code> (harvest queued, 33 districts)</td></tr><tr><td class="k">Tables</td><td class="v">district_contract_recipient, recipient_parent</td></tr><tr><td class="k">Trap</td><td class="v">district_original, not district_current, "money in while they held the seat"</td></tr><tr><td class="k">Feeds</td><td class="v">The recipient-trade overlap detector</td></tr></table></div>
+<div class="item"><div class="hd"><h4>Reference crosswalks</h4><span class="id">--load-*</span></div><table class="f"><tr><td class="k">Translation tables</td><td class="v">which company belongs to which industry, and which industry maps to which policy theme.</td></tr><tr><td class="k">Loaders</td><td class="v"><code>db/load-ticker-sectors.ts</code>, <code>db/load-sector-crosswalk.ts</code>, <code>db/load-bill-subjects.ts</code></td></tr><tr><td class="k">Flags</td><td class="v"><code>--load-ticker-sectors</code>, <code>--load-sector-crosswalk</code>, <code>--load-bill-subjects</code></td></tr><tr><td class="k">Tables</td><td class="v">ticker_sectors, sic_theme, theme_bill_match, bill_subjects</td></tr></table></div>
+<h3 class="group">Database<span class="gcount">1</span></h3>
+<div class="item"><div class="hd"><h4>DuckDB</h4><span class="id">data/civiclens.duckdb</span></div><p class="lead">The single home for all the data. Every row in it can be traced back to an official government source.</p><table class="f"><tr><td class="k">Roster</td><td class="v">members, member_aliases, committees, controversies</td></tr><tr><td class="k">Bills and votes</td><td class="v">bills, votes, bill_summaries, bill_committees, bill_subjects</td></tr><tr><td class="k">Trades</td><td class="v">pfd_transactions</td></tr><tr><td class="k">Money</td><td class="v">donors, super_pac_ie, super_pac_ie_filings, donor_industry, donor_industry_theme</td></tr><tr><td class="k">Lobbying</td><td class="v">lda_filings, lda_lobbyists, v_lobbyist_latest</td></tr><tr><td class="k">Contracts</td><td class="v">district_contract_recipient, recipient_parent, recipient_ticker</td></tr><tr><td class="k">Crosswalks</td><td class="v">ticker_sectors, sic_theme, theme_bill_match, ticker_theme_override</td></tr><tr><td class="k">Analysis</td><td class="v">pipeline_runs, predictions, pattern_hits</td></tr><tr><td class="k">Key views</td><td class="v">v_top_donors, v_trades_near_votes, v_suspicious_trades, v_trade_bill_nexus, v_member_donor_theme, v_theme_eligible_votes, v_shared_donors, v_shared_committees, v_member_trade_summary, v_member_freshness</td></tr></table></div>
+<h3 class="group">Analysis<span class="gcount">7</span></h3>
+<div class="item"><div class="hd"><h4>trade-vote-alignment</h4><span class="id">detector, parked</span></div><p class="lead">Flags a stock trade made in the two weeks before a vote the member's own committee controlled, or before a bill naming that very company. Descriptive today: it can show you a pattern, but it is not yet allowed to call it significant.</p><table class="f"><tr><td class="k">Queued now</td><td class="v">negative-control gate, awaiting authorisation, a vote-attribute scramble must show the scorer stays quiet on noise before the real confirmatory run is allowed. Parked: it needs an explicit go-ahead, and running it early would burn the one preregistered run</td></tr><tr><td class="k">File</td><td class="v"><code>pipeline/patterns/trade-vote-alignment.ts</code></td></tr><tr><td class="k">Signal</td><td class="v">Trade within 14 days before a vote on a bill the member's committee had jurisdiction over, or whose text names the traded company</td></tr><tr><td class="k">Parked</td><td class="v">Registered, unconsumed. Its one preregistered confirmatory run is still unspent, held behind a negative-control gate that needs explicit authorisation</td></tr><tr><td class="k">Why parked</td><td class="v">Basket traders saturate a 14-day window mechanically: 1,900+ trades will land near some vote by volume alone. Until the null model says otherwise, hits render capped and captioned as unscored</td></tr><tr><td class="k">Protection</td><td class="v">Filtered out of run-patterns <code>--member</code> entirely, so onboarding a new member can never compute its first p-values as a side effect</td></tr><tr><td class="k">Writes</td><td class="v">pattern_hits, then rendered in the Patterns section</td></tr></table></div>
+<div class="item"><div class="hd"><h4>spousal-trade-timing</h4><span class="id">detector, parked</span></div><p class="lead">The same timing check, applied to trades made by the member's spouse or from joint accounts. Parked alongside its sibling.</p><table class="f"><tr><td class="k">Queued now</td><td class="v">one-shot confirmatory run, registered but unconsumed in <code>docs/confirmatory-runs.md</code>. Both timing detectors are filtered out of routine onboarding so a new member can never trigger their first p-values by accident</td></tr><tr><td class="k">File</td><td class="v"><code>pipeline/patterns/spousal-trade-timing.ts</code></td></tr><tr><td class="k">Signal</td><td class="v">Spouse/joint holding traded within 14 days before an own-committee vote</td></tr><tr><td class="k">Parked</td><td class="v">Registered, unconsumed, same gate, same single-run budget as trade-vote-alignment</td></tr><tr><td class="k">Writes</td><td class="v">pattern_hits</td></tr></table></div>
+<div class="item"><div class="hd"><h4>donor-sector-vote-alignment</h4><span class="id">detector</span></div><p class="lead">Flags a member writing bills in exactly the industries their campaign donations are concentrated in.</p><table class="f"><tr><td class="k">File</td><td class="v"><code>pipeline/patterns/donor-sector-vote-alignment.ts</code></td></tr><tr><td class="k">Signal</td><td class="v">Member sponsors focused legislation in an economic-sector theme among their donors' top concentrations</td></tr><tr><td class="k">Inputs</td><td class="v">OpenSecrets donor-industry + donor_industry_theme crosswalk</td></tr><tr><td class="k">Writes</td><td class="v">pattern_hits</td></tr></table></div>
+<div class="item"><div class="hd"><h4>recipient-trade overlap (planned or gated)</h4><span class="id">gated, published as a null</span></div><p class="lead">Does a member personally trade stock of the specific companies receiving federal contracts in their own district? Answer, as tested: no. Both spines were gated by their own pre-registered null and filed as negative results.</p><table class="f"><tr><td class="k">Status</td><td class="v">Ran once, 2026-07-19, GATE FAIL (a47ca81). Thread closed; the detector was never registered</td></tr><tr><td class="k">Result</td><td class="v">S1 breadth p = 0.7445, S2 exposure p = 0.3760, members traded fewer own-district recipients than chance. Negative control clean 0/20, so the null is real, not broken machinery</td></tr><tr><td class="k">Predecessor</td><td class="v">The theme-level spine failed first (p = 0.48). Two dead spines, filed as negative experiments, defense money is everywhere; named contractors are not</td></tr><tr><td class="k">Power</td><td class="v">Only 9 of 33 members had in-window traded tickers, and 15 near-universal defence/health tickers were ubiquity-excluded. Thin power, recorded as-is rather than tuned away</td></tr><tr><td class="k">Honesty</td><td class="v">Published to the live methodology page as "Detectors we tested and rejected", the null is the finding, not a failure to hide</td></tr><tr><td class="k">Left behind</td><td class="v">The substrate stays as infrastructure: 397 hand-confirmed recipient_ticker rows (blind curation, identity fields only) + the USAspending/SAM.gov loaders. Any variant is a NEW detector with a NEW pre-registration</td></tr><tr><td class="k">Files</td><td class="v">pipeline/patterns/recipient-trade-{candidates,overlap,baseline}.ts, spec <code>docs/2026-07-17-recipient-trade-detector.md</code>, audit trail docs/recipient-trade-curation-2026-07-18/</td></tr></table></div>
+<div class="item"><div class="hd"><h4>Confirmatory-run guard</h4><span class="id">the one-shot rule, enforced</span></div><p class="lead">The part that stops the project fooling itself. A detector gets exactly one preregistered test. Spend it, and the answer stands, pass or fail. This is not a convention anyone has to remember; it is code that refuses.</p><p class="lead">In-path: The guard sits inside the five baseline runners, before any DB access. A consumed detector halts the process, you cannot forget to check, because checking is not a step you perform</p><table class="f"><tr><td class="k">Files</td><td class="v"><code>docs/confirmatory-runs.md</code> (registry), <code>scripts/confirmatory-guard.ts</code>, ADR docs/adr/0003</td></tr><tr><td class="k">The rule</td><td class="v">One confirmatory run per detector. A FAIL is archived as a negative result, never retuned, reseeded, or quietly re-run until it passes</td></tr><tr><td class="k">Fails closed</td><td class="v">Marking a run invalidated is not enough to reopen it: without a documented evidence reference the guard still refuses. The escape hatch needs a paper trail</td></tr><tr><td class="k">Ledger</td><td class="v">consumed-fail × 3 (both district spines, recipient-trade), registered × 2 (the parked timing pair)</td></tr><tr><td class="k">Why it exists</td><td class="v">Two detectors have already died by this rule. That is the point, a transparency project that cannot publish a null result is just narrative with a database attached</td></tr></table></div>
+<div class="item"><div class="hd"><h4>Member-scope contract</h4><span class="id">lib/ingest-scope.ts</span></div><p class="lead">"Onboard one member" now means one member at every command boundary. A loader with no target refuses to run rather than silently assuming you meant everyone.</p><table class="f"><tr><td class="k">File</td><td class="v"><code>lib/ingest-scope.ts</code>, boundaries in <code>AGENTS.md</code></td></tr><tr><td class="k">Contract</td><td class="v">Exactly one of <code>--member</code>, <code>--bioguide</code>, or <code>--all</code>. No selector fails closed, absence never means all</td></tr><tr><td class="k">Identity first</td><td class="v">A slug resolves to exactly one canonical bioguide before any network call or DB write; unknown or ambiguous fails loud rather than guessing</td></tr><tr><td class="k">Blast radius</td><td class="v">Five broad loaders made member-scoped and transactional. Two-member fixtures prove the other member's rows stay byte-identical through every affected table</td></tr><tr><td class="k">Chamber branch</td><td class="v">A senator uses Senate PTRs and must not run House PFD or district loaders, no statewide substitute exists, so those are skipped, not approximated</td></tr><tr><td class="k">Why</td><td class="v">The old default let a one-member run overwrite a neighbour's data, or consume a parked detector's single preregistered run by accident</td></tr></table></div>
+<div class="item"><div class="hd"><h4>Agent pipeline</h4><span class="id">agents/pipeline.ts</span></div><p class="lead">The assembly line that builds each member's profile, nine fixed steps, run the same way every time. AI writes only the narrative text; it never touches the data.</p><table class="f"><tr><td class="k">Order</td><td class="v">Researcher, then Data Checker, then (Predictor, skipped by default), then Trade Analyst, then Summarizer, then Code Checker, then Final Reviewer</td></tr><tr><td class="k">Hard stages</td><td class="v">Researcher, Data Checker, Summarizer, abort after retry</td></tr><tr><td class="k">Soft stages</td><td class="v">Trade Analyst, Code Checker, warn + continue</td></tr><tr><td class="k">Gate</td><td class="v">Final Reviewer is a pure deterministic gate (LLM call stripped)</td></tr><tr><td class="k">Shrinking on purpose</td><td class="v">Connection Mapper and Revolving Door were deleted, not rewritten, both became deterministic SQL (findSharedDonors(), revolvingDoorConnections). Two LLM stages remain where three agents used to speculate</td></tr><tr><td class="k">Models</td><td class="v">Summarizer + Trade Analyst default claude-sonnet-4-6; env-overridable per agent</td></tr><tr><td class="k">Runner</td><td class="v">Detectors run via <code>pipeline/run-patterns.ts</code>, <code>--member</code> slug for one member, <code>--all</code> for the roster. The member path is timing-safe: it filters the parked timing pair before any detect or write</td></tr></table></div>
+<h3 class="group">Render And Publish<span class="gcount">4</span></h3>
+<div class="item"><div class="hd"><h4>Member pages</h4><span class="id">render/build.ts</span></div><p class="lead">Each member's page, the same thirteen sections every time. Missing data is stated plainly, never quietly hidden.</p><table class="f"><tr><td class="k">Files</td><td class="v"><code>render/build.ts</code> + <code>render/member-sections.ts</code></td></tr><tr><td class="k">Sections</td><td class="v">identity, glance, receipts, coherence, money-votes, timeline, trades, donors, revolving, outside-spending, peers, patterns, cosponsor</td></tr><tr><td class="k">Determinism</td><td class="v">Rebuilding always produces exactly the same pages, <code>render/skeleton.golden.test.ts</code> checks this, and every database query is fully ordered so results can never shuffle</td></tr><tr><td class="k">Rule</td><td class="v">When a section has no data, the page says so, a section can never silently disappear</td></tr></table></div>
+<div class="item"><div class="hd"><h4>Landing page</h4><span class="id">render/landing.ts</span></div><p class="lead">The front page. It only reports what has been published, simple counts, never claims or accusations.</p><table class="f"><tr><td class="k">File</td><td class="v"><code>render/landing.ts</code>, then renderLanding()</td></tr><tr><td class="k">Source</td><td class="v"><code>render/published-members.json</code> only (ADR 0002 section C), refreshed by <code>scripts/update-manifest.ts</code></td></tr><tr><td class="k">Content</td><td class="v">Masthead, hero, published-record member cards, method, inventory counts only, never detector output</td></tr><tr><td class="k">Guard</td><td class="v">A test (<code>render/landing.test.ts</code>) enforces that the front page only counts, it never claims</td></tr></table></div>
+<div class="item"><div class="hd"><h4>Verified artifact</h4><span class="id">package-launch.sh</span></div><table class="f"><tr><td class="k">The safety gate</td><td class="v">the finished site is double-checked on one trusted computer, then published exactly as built, nothing rebuilds it along the way.</td></tr><tr><td class="k">Package</td><td class="v"><code>scripts/package-launch.sh</code> assembles public/ (landing, methodology, member pages)</td></tr><tr><td class="k">Guard</td><td class="v">Freshness check refuses to package when the DB is newer than a member's verified render</td></tr><tr><td class="k">Workflow</td><td class="v"><code>.github/workflows/deploy.yml</code>, workflow_dispatch only, dormant by design</td></tr><tr><td class="k">Why</td><td class="v">Public repo: raw OpenSecrets-derived tables and API keys never leave the machine</td></tr></table></div>
+<div class="item"><div class="hd"><h4>GitHub Pages</h4><span class="id">the public site</span></div><p class="lead">The public website, live since July 9, 2026, with two members published so far.</p><table class="f"><tr><td class="k">Deploy</td><td class="v">actions/upload-pages-artifact, then actions/deploy-pages</td></tr><tr><td class="k">State</td><td class="v">Public beta: 2 members published (Gottheimer, Pelosi) of 57 loaded in the DB</td></tr><tr><td class="k"></td><td class="v"><span class="flag"><b>Annotation — repository evidence</b><br>The committed launch artifact contains one member page (<code>josh-gottheimer.html</code>); <code>published-members.json</code> lists one member. Pelosi appears only in fixtures and planning documents. Verified 26 Jul 2026.</span></td></tr><tr><td class="k">Promise</td><td class="v">Every claim on the site traces back through this map to a primary source</td></tr></table></div>
+<div class="newpage"></div><h2 class="part">Part 4 — How The Pieces Connect</h2>
+<p class="body">End of the CivicLens atlas.</p>
+<div class="edges">
+<div><span class="a">Researcher agent</span> <span class="to">→</span> DuckDB</div>
+<div><span class="a">House Clerk, PFD</span> <span class="to">→</span> DuckDB</div>
+<div><span class="a">Senate EFDS, PTR</span> <span class="to">→</span> DuckDB</div>
+<div><span class="a">OpenFEC, Super PAC IE</span> <span class="to">→</span> DuckDB</div>
+<div><span class="a">OpenSecrets, donor industries</span> <span class="to">→</span> DuckDB</div>
+<div><span class="a">Senate LDA, lobbying</span> <span class="to">→</span> DuckDB</div>
+<div><span class="a">Congress.gov, bills and votes</span> <span class="to">→</span> DuckDB</div>
+<div><span class="a">Congress.gov, sponsorship</span> <span class="to">→</span> DuckDB</div>
+<div><span class="a">unitedstates.io + FEC IDs</span> <span class="to">→</span> DuckDB</div>
+<div><span class="a">USAspending, district contracts</span> <span class="to">→</span> DuckDB</div>
+<div><span class="a">Reference crosswalks</span> <span class="to">→</span> DuckDB</div>
+<div><span class="a">DuckDB</span> <span class="to">→</span> trade-vote-alignment</div>
+<div><span class="a">DuckDB</span> <span class="to">→</span> spousal-trade-timing</div>
+<div><span class="a">DuckDB</span> <span class="to">→</span> donor-sector-vote-alignment</div>
+<div><span class="a">DuckDB</span> <span class="to">→</span> recipient-trade overlap</div>
+<div><span class="a">DuckDB</span> <span class="to">→</span> Agent pipeline</div>
+<div><span class="a">Confirmatory-run guard</span> <span class="to">→</span> trade-vote-alignment</div>
+<div><span class="a">Confirmatory-run guard</span> <span class="to">→</span> spousal-trade-timing</div>
+<div><span class="a">Confirmatory-run guard</span> <span class="to">→</span> recipient-trade overlap</div>
+<div><span class="a">Member-scope contract</span> <span class="to">→</span> DuckDB</div>
+<div><span class="a">Member-scope contract</span> <span class="to">→</span> Agent pipeline</div>
+<div><span class="a">trade-vote-alignment</span> <span class="to">→</span> Member pages</div>
+<div><span class="a">spousal-trade-timing</span> <span class="to">→</span> Member pages</div>
+<div><span class="a">donor-sector-vote-alignment</span> <span class="to">→</span> Member pages</div>
+<div><span class="a">Agent pipeline</span> <span class="to">→</span> Member pages</div>
+<div><span class="a">DuckDB</span> <span class="to">→</span> Member pages</div>
+<div><span class="a">Member pages</span> <span class="to">→</span> Landing page</div>
+<div><span class="a">Member pages</span> <span class="to">→</span> Verified artifact</div>
+<div><span class="a">Landing page</span> <span class="to">→</span> Verified artifact</div>
+<div><span class="a">Verified artifact</span> <span class="to">→</span> GitHub Pages</div>
+</div>
+<p class="end">End of the CivicLens atlas.</p>
+</body></html>
